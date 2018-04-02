@@ -12,6 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Autofac;
+using ReportServer.Desktop.Interfaces;
+using ReportServer.Desktop.Model;
+using ReportServer.Desktop.ViewModel;
 
 namespace ReportServer.Desktop
 {
@@ -23,6 +27,8 @@ namespace ReportServer.Desktop
         public MainWindow()
         {
             InitializeComponent();
+            BootsTrap.Init();
+            DataContext = BootsTrap.Container.Resolve<ICore>();
         }
     }
 }

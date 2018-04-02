@@ -15,5 +15,6 @@ namespace ReportServer.Desktop.Interfaces
         void LoadSelectedTaskById(int id);
         void LoadSelectedInstanceById(int id);
         void LoadInstanceCompactsByTaskId(int taskId);
+        void OnStart();
     }
 }
