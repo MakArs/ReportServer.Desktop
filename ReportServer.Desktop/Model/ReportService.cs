@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
 using ReportServer.Desktop.Interfaces;
 using Gerakul.HttpUtils.Core;
@@ -11,12 +10,19 @@ namespace ReportServer.Desktop.Model
 {
     public class ReportService:IReportService
     {
+        private readonly ISimpleHttpClient _client;
         
+
+        public ReportService(ISimpleHttpClient client)
+        {
+            _client = client;
+        }
+
         public List<ApiTaskCompact> LoadAllTaskCompacts()
         {
-            throw new NotImplementedException();
-            // CustomHttpClient client = CustomHttpClient.Create
-            //(JsonContentSerializer, JsonContentSerializer, "http://localhost:12345");
+            var resp=Task.Factory.StartNew(() => _client.SendEnsure<string>(HttpMethod.Get, "/api/v1/reports"));
+            var result = resp.Result;
+            return new List<ApiTaskCompact>();
         }
 
         public ApiTask LoadTaskById(int id)

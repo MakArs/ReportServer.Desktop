@@ -6,7 +6,8 @@ using ReportServer.Desktop.Interfaces;
 using ReactiveCommand = ReactiveUI.ReactiveCommand;
 
 namespace ReportServer.Desktop.ViewModel
-{[AddINotifyPropertyChangedInterface]
+{
+    [AddINotifyPropertyChangedInterface]
     public class Core : ICore
     {
         private ObservableCollection<ApiTaskCompact> _taskCompacts;

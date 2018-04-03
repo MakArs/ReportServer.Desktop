@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using Gerakul.HttpUtils.Core;
 using Gerakul.HttpUtils.Json;
 using ReportServer.Desktop.Interfaces;
@@ -29,20 +24,11 @@ namespace ReportServer.Desktop
                 .As<IReportService>()
                 .SingleInstance();
 
-            builder
-                .RegisterType<JsonContentSerializer>()
-                .As<IHttpContentGetter>()
-                .SingleInstance();
+            var jsonClient = JsonHttpClient.Create("http://localhost:12345");
 
-            builder
-                .RegisterType<JsonContentSerializer>()
-                .As<IHttpContentParser>()
-                .SingleInstance();
-
-            builder
-                .RegisterType<JsonHttpClient>()
+            builder.RegisterInstance(jsonClient)
                 .As<ISimpleHttpClient>()
-                .SingleInstance();
+                .SingleInstance(); 
 
             Container = builder.Build();
         }
