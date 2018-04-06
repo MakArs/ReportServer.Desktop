@@ -19,6 +19,7 @@ using Gerakul.HttpUtils.Core;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Model;
 using ReportServer.Desktop.ViewModel;
+using Xceed.Wpf.Toolkit.Core.Converters;
 
 namespace ReportServer.Desktop
 {
@@ -32,7 +33,8 @@ namespace ReportServer.Desktop
             InitializeComponent();
             BootsTrap.Init();
             var t = BootsTrap.Container.Resolve<IReportService>();
-            var tt=t.LoadAllTaskCompacts();
+            var ttt = t.LoadInstanceCompactsByTaskId(4);
+            var sa = ttt;
             DataContext = BootsTrap.Container.Resolve<ICore>();
         }
     }

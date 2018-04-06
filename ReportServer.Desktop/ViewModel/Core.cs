@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 using PropertyChanged;
 using ReactiveUI;
 using ReactiveUI.Legacy;
@@ -39,14 +40,15 @@ namespace ReportServer.Desktop.ViewModel
                 => LoadInstanceCompactsByTaskId(taskId));
         }
 
-        public void LoadTaskCompacts()
+        public async void LoadTaskCompacts()
         {
-            var taskList = _reportService.LoadAllTaskCompacts();
+            var taskList =  _reportService.LoadAllTaskCompacts();
             lock (this)
             {
                 _taskCompacts.Clear();
-                foreach (var task in taskList)
-                    _taskCompacts.Add(task);
+
+                //foreach (var task in taskList)
+                //    _taskCompacts.Add(json task);
             }
         }
 

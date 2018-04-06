@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ReportServer.Desktop.Interfaces;
 using Gerakul.HttpUtils.Core;
-using Gerakul.HttpUtils.Json;
+using Newtonsoft.Json;
 
 namespace ReportServer.Desktop.Model
 {
@@ -20,29 +20,28 @@ namespace ReportServer.Desktop.Model
 
         public List<ApiTaskCompact> LoadAllTaskCompacts()
         {
-            var resp=Task.Factory.StartNew(() => _client.SendEnsure<string>(HttpMethod.Get, "/api/v1/reports"));
-            var result = resp.Result;
-            return new List<ApiTaskCompact>();
+            return _client.Get<List<ApiTaskCompact>>("/api/v1/reports");
         }
 
         public ApiTask LoadTaskById(int id)
         {
-            throw new NotImplementedException();
+            return _client.Get<ApiTask>($"/api/v1/reports/{id}");
         }
 
         public ApiInstance LoadInstanceById(int id)
         {
-            throw new NotImplementedException();
+            return _client.Get<ApiInstance>($"/api/v1/instances/{id}");
         }
 
         public List<ApiInstanceCompact> LoadInstanceCompactsByTaskId(int taskId)
         {
-            throw new NotImplementedException();
+            return _client.Get<List<ApiInstanceCompact>>($"/api/v1/reports/{taskId}/instances");
         }
 
         public List<ApiInstanceCompact> LoadInstanceCompacts()
         {
-            throw new NotImplementedException();
+            return _client.Get<List<ApiInstanceCompact>>($"/api/v1/instances");
         }
     }
 }
+
