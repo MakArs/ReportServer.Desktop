@@ -42,7 +42,7 @@ namespace ReportServer.Desktop.ViewModel
 
         public async void LoadTaskCompacts()
         {
-            var taskList =  _reportService.LoadAllTaskCompacts();
+            var taskList =  _reportService.GetAllTaskCompacts();
             lock (this)
             {
                 _taskCompacts.Clear();
@@ -54,7 +54,7 @@ namespace ReportServer.Desktop.ViewModel
 
         public void LoadInstanceCompacts()
         {
-            var instanceList = _reportService.LoadInstanceCompacts();
+            var instanceList = _reportService.GetInstanceCompacts();
             lock (this)
             {
                 _instanceCompacts.Clear();
@@ -65,17 +65,17 @@ namespace ReportServer.Desktop.ViewModel
 
         public void LoadSelectedTaskById(int id)
         {
-            SelectedTask = _reportService.LoadTaskById(id);
+            SelectedTask = _reportService.GetTaskById(id);
         }
 
         public void LoadSelectedInstanceById(int id)
         {
-            SelectedInstance = _reportService.LoadInstanceById(id);
+            SelectedInstance = _reportService.GetInstanceById(id);
         }
 
         public void LoadInstanceCompactsByTaskId(int taskId)
         {
-            var instanceList = _reportService.LoadInstanceCompactsByTaskId(taskId);
+            var instanceList = _reportService.GetInstanceCompactsByTaskId(taskId);
             lock (this)
             {
                 _selectedTaskInstanceCompacts.Clear();

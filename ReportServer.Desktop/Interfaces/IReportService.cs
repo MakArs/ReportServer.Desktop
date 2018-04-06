@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Gerakul.HttpUtils.Core;
 
 namespace ReportServer.Desktop.Interfaces
 {
@@ -18,6 +19,7 @@ namespace ReportServer.Desktop.Interfaces
         public int QueryTimeOut { get; set; }
         public int TaskType { get; set; }
     }
+
     public class ApiTaskCompact
     {
         public int Id { get; set; }
@@ -67,10 +69,14 @@ namespace ReportServer.Desktop.Interfaces
 
     public interface IReportService
     {
-        List<ApiTaskCompact> LoadAllTaskCompacts();
-        ApiTask LoadTaskById(int id);
-        ApiInstance LoadInstanceById(int id);
-        List<ApiInstanceCompact> LoadInstanceCompactsByTaskId(int taskId);
-        List<ApiInstanceCompact> LoadInstanceCompacts();
+        List<ApiTaskCompact> GetAllTaskCompacts();
+        ApiTask GetTaskById(int id);
+        List<ApiInstanceCompact> GetInstanceCompacts();
+        List<ApiInstanceCompact> GetInstanceCompactsByTaskId(int taskId);
+        ApiInstance GetInstanceById(int id);
+        HttpResult<string> DeleteTask(int id);
+        HttpResult<string> DeleteInstance(int id);
+        HttpResult<string> PostTask(ApiTask task);
+        HttpResult<string> PutTask(ApiTask task);
     }
 }

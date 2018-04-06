@@ -33,8 +33,15 @@ namespace ReportServer.Desktop
             InitializeComponent();
             BootsTrap.Init();
             var t = BootsTrap.Container.Resolve<IReportService>();
-            var ttt = t.LoadInstanceCompactsByTaskId(4);
-            var sa = ttt;
+            var newtask=new ApiTask()
+            {
+                ConnectionString = null,Id = 12,ScheduleId = 3,Query = "weeklyreport_de",QueryTimeOut = 60,
+                ViewTemplate = "weeklyreport_ve",RecepientGroupId = 1,TryCount = 5,
+                TaskType = 2
+            };
+            t.DeleteTask(12);
+            t.DeleteTask(13);
+            t.DeleteTask(14);
             DataContext = BootsTrap.Container.Resolve<ICore>();
         }
     }

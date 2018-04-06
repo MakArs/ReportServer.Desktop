@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Autofac;
@@ -41,11 +42,30 @@ namespace ReportServer.Desktop
 
 public static class JsonHttpClientTimeExtension
 {
-    public static T Get<T>(this ISimpleHttpClient client,string path)
+    public static T Get<T>(this ISimpleHttpClient client, string path)
     {
         var task = Task.Factory.StartNew(() => client.Send<string>(HttpMethod.Get, path));
         task.Wait();
-        var t = task.Result.Result.Body;
         return JsonConvert.DeserializeObject<T>(task.Result.Result.Body);
+    }
+
+    public static HttpResult<string> Delete(this ISimpleHttpClient client, string path)
+    {
+        var task = Task.Factory.StartNew(() => client.Send<string>(HttpMethod.Delete, path));
+        task.Wait();
+        return task.Result.Result;
+    }
+
+    public static HttpResult<string> Post<T>(this ISimpleHttpClient client, string path, T postBody)
+    {
+        var task = Task.Factory.StartNew(() => client.Send<string>(HttpMethod.Post, path, null, postBody));
+        task.Wait();
+        return task.Result.Result;
+    }
+    public static HttpResult<string> Put<T>(this ISimpleHttpClient client, string path, T postBody)
+    {
+        var task = Task.Factory.StartNew(() => client.Send<string>(HttpMethod.Put, path, null, postBody));
+        task.Wait();
+        return task.Result.Result;
     }
 }
