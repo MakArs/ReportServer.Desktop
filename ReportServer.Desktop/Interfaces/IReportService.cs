@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Gerakul.HttpUtils.Core;
 
 namespace ReportServer.Desktop.Interfaces
@@ -74,9 +71,10 @@ namespace ReportServer.Desktop.Interfaces
         List<ApiInstanceCompact> GetInstanceCompacts();
         List<ApiInstanceCompact> GetInstanceCompactsByTaskId(int taskId);
         ApiInstance GetInstanceById(int id);
-        HttpResult<string> DeleteTask(int id);
-        HttpResult<string> DeleteInstance(int id);
-        HttpResult<string> PostTask(ApiTask task);
-        HttpResult<string> PutTask(ApiTask task);
+
+        void DeleteTask(int id);
+        void DeleteInstance(int id);
+        int CreateTask(ApiTask task);
+        void UpdateTask(ApiTask task);
     }
 }

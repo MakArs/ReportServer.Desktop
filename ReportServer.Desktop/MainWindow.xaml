@@ -4,9 +4,108 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReportServer.Desktop"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="ReportRedactor" MinHeight="600" MinWidth="900"  Height="600" Width="900">
+        Title="ReportRedactor" MinHeight="800" MinWidth="1200">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+    </Window.Resources>
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="3.5*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Добавить"></Button>
+            <Button Content="Удалить" ></Button>
+            <Button Content="Изменить" ></Button>
+        </StackPanel>
+
+        <ListView HorizontalContentAlignment="Stretch"  ItemsSource="{Binding TaskCompacts}"  Grid.Row="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Id"  DisplayMemberBinding="{Binding Id}" Width="20"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding ScheduleId}">ScheduleId</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding ConnectionString}">ConnectionString</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding RecepientGroupId}">RecepientGroupId</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding TryCount}">TryCount</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding QueryTimeOut}">QueryTimeOut</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding TaskType}">TaskType</GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
     </Grid>
 </Window>
+
+<!--
+            xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    <xcad:DockingManager Grid.Row="1" BorderBrush="MidnightBlue" BorderThickness="0.5" >
+            <xcad:DockingManager.Theme>
+                <xcad:MetroTheme/>
+            </xcad:DockingManager.Theme>
+            <xcad:DockingManager.AnchorableHeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Title}" />
+                    </StackPanel>
+                </DataTemplate>
+            </xcad:DockingManager.AnchorableHeaderTemplate>
+            <xcad:LayoutRoot>
+                <xcad:LayoutPanel>
+                    <xcad:LayoutAnchorablePane DockWidth="250">
+
+                        <xcad:LayoutAnchorable Title="Tasks" CanHide="False" CanClose="False">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="27*"/>
+                                    <RowDefinition Height="441*"/>
+                                    <RowDefinition Height="43*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock  Text="Id "></TextBlock>
+                                    <TextBlock  Text="ScheduleId "></TextBlock>
+                                    <TextBlock  Text="ConnectionString "></TextBlock>
+                                    <TextBlock  Text="RecepientGroupId "></TextBlock>
+                                    <TextBlock  Text="TryCount "></TextBlock>
+                                    <TextBlock  Text="QueryTimeOut "></TextBlock>
+                                    <TextBlock  Text="TaskType "></TextBlock>
+                                </StackPanel>
+                                <ListBox HorizontalContentAlignment="Stretch"  ItemsSource="{Binding _taskCompacts}" Grid.RowSpan="2" Grid.Row="1">
+                                    <ListBox.ItemTemplate >
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock  Text="{Binding Path=Id}"> </TextBlock>
+                                                <TextBlock  Text="{Binding Path=ScheduleId}"> </TextBlock>
+                                                <TextBlock  Text="{Binding Path=ConnectionString}"> </TextBlock>
+                                                <TextBlock  Text="{Binding Path=RecepientGroupId}"> </TextBlock>
+                                                <TextBlock  Text="{Binding Path=TryCount}"> </TextBlock>
+                                                <TextBlock  Text="{Binding Path=QueryTimeOut}"> </TextBlock>
+                                                <TextBlock  Text="{Binding Path=TaskType}"> </TextBlock>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <Button Grid.Row="2"  Command="{Binding StartCommand}" Padding="150 0 0 0">Обновить данные</Button>
+                            </Grid>
+                        </xcad:LayoutAnchorable>
+
+                    </xcad:LayoutAnchorablePane>
+                </xcad:LayoutPanel>
+            </xcad:LayoutRoot>
+        </xcad:DockingManager>-->
+
+
+
