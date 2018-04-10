@@ -31,19 +31,25 @@ namespace ReportServer.Desktop.ViewModel
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
             
             this.ObservableForProperty(s => s.SelectedTaskCompact)
-                .Where(x => x != null)
+                .Where(x => x.Value != null)
                 .Subscribe(_ =>
                 {
                     LoadInstanceCompactsByTaskId(_.Value.Id);
                     LoadSelectedTaskById(_.Value.Id);
                 });
+            this.ObservableForProperty(s => s.SelectedTaskCompact)
+                .Where(x => x.Value == null)
+                .Subscribe(_ => SelectedTask = null);
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
-                .Where(x => x != null)
+                .Where(x => x.Value != null)
                 .Subscribe(_ =>
                 {
                     LoadSelectedInstanceById(_.Value.Id);
                 });
+            this.ObservableForProperty(s => s.SelectedInstanceCompact)
+                .Where(x => x.Value == null)
+                .Subscribe(_ =>  SelectedInstance = null);
 
             OnStart();
         }
