@@ -1,46 +1,49 @@
-﻿using System.Collections.ObjectModel;
-using PropertyChanged;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Reactive.Linq;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Interfaces;
-using ReactiveCommand = ReactiveUI.ReactiveCommand;
 
 namespace ReportServer.Desktop.ViewModel
 {
-    [AddINotifyPropertyChangedInterface]
-    public class Core : ICore
+    public class Core : ReactiveObject, ICore
     {
         private readonly IReportService _reportService;
 
         public ObservableCollection<ApiTaskCompact> TaskCompacts { get; set; }
-        public ObservableCollection<ApiInstanceCompact> InstanceCompacts { get; set; }
+        public ObservableCollection<ApiInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
 
-        public readonly ObservableCollection<ApiInstanceCompact> _selectedTaskInstanceCompacts;
+        [Reactive] public ApiTaskCompact SelectedTaskCompact { get; set; } //todo:check for null
+        [Reactive] public ApiInstanceCompact SelectedInstanceCompact { get; set; }
+        [Reactive] public ApiTask SelectedTask { get; set; }
+        [Reactive] public ApiInstance SelectedInstance { get; set; }
 
-        private ApiInstance SelectedInstance { get; set; }
-        private ApiTask SelectedTask { get; set; }
-
-        public ReactiveCommand StartCommand { get; }
-        public ReactiveCommand LoadTaskCompactsCommand { get; }
-        public ReactiveCommand LoadInstanceCompactsCommand { get; }
-        public ReactiveCommand LoadSelectedTaskByIdCommand { get; }
-        public ReactiveCommand LoadSelectedInstanceByIdCommand { get; }
-        public ReactiveCommand LoadInstanceCompactsByTaskIdCommand { get; }
+        public ReactiveCommand RefreshTasksCommand { get; }
 
         public Core(IReportService reportService)
         {
             _reportService = reportService;
 
             TaskCompacts = new ObservableCollection<ApiTaskCompact>();
-            InstanceCompacts = new ObservableCollection<ApiInstanceCompact>();
+            SelectedTaskInstanceCompacts = new ObservableCollection<ApiInstanceCompact>();
 
-            StartCommand = ReactiveCommand.Create(OnStart);
-            LoadTaskCompactsCommand = ReactiveCommand.Create(LoadTaskCompacts);
-            LoadInstanceCompactsCommand = ReactiveCommand.Create(LoadInstanceCompacts);
-            LoadSelectedTaskByIdCommand = ReactiveCommand.Create((int id)
-                => LoadSelectedTaskById(id));
-            LoadSelectedInstanceByIdCommand = ReactiveCommand.Create((int id)
-                => LoadSelectedInstanceById(id));
-            LoadInstanceCompactsByTaskIdCommand = ReactiveCommand.Create((int taskId)
-                => LoadInstanceCompactsByTaskId(taskId));
+            RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
+            
+            this.ObservableForProperty(s => s.SelectedTaskCompact)
+                .Where(x => x != null)
+                .Subscribe(_ =>
+                {
+                    LoadInstanceCompactsByTaskId(_.Value.Id);
+                    LoadSelectedTaskById(_.Value.Id);
+                });
+
+            this.ObservableForProperty(s => s.SelectedInstanceCompact)
+                .Where(x => x != null)
+                .Subscribe(_ =>
+                {
+                    LoadSelectedInstanceById(_.Value.Id);
+                });
 
             OnStart();
         }
@@ -52,15 +55,7 @@ namespace ReportServer.Desktop.ViewModel
             foreach (var task in taskList)
                 TaskCompacts.Add(task);
         }
-
-        public void LoadInstanceCompacts()
-        {
-            var instanceList = _reportService.GetInstanceCompacts();
-            InstanceCompacts.Clear();
-            foreach (var instance in instanceList)
-                InstanceCompacts.Add(instance);
-        }
-
+        
         public void LoadSelectedTaskById(int id)
         {
             SelectedTask = _reportService.GetTaskById(id);
@@ -74,15 +69,14 @@ namespace ReportServer.Desktop.ViewModel
         public void LoadInstanceCompactsByTaskId(int taskId)
         {
             var instanceList = _reportService.GetInstanceCompactsByTaskId(taskId);
-            _selectedTaskInstanceCompacts.Clear();
+            SelectedTaskInstanceCompacts.Clear();
             foreach (var instance in instanceList)
-                _selectedTaskInstanceCompacts.Add(instance);
+                SelectedTaskInstanceCompacts.Add(instance);
         }
 
         public void OnStart()
         {
             LoadTaskCompacts();
-            LoadInstanceCompacts();
         }
     }
 }

@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReportServer.Desktop"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="ReportRedactor" MinHeight="800" MinWidth="1200">
     <Window.Resources>
@@ -12,18 +11,43 @@
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="5"/>
         </Style>
+        <Style TargetType="GridViewColumnHeader">
+            <Setter Property="Padding" Value="20 5 20 5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+            <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+        </Style>
+        <Style TargetType="ListViewItem">
+            <Setter Property="BorderBrush" Value="Black"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+        </Style>
+        <Style TargetType="Rectangle">
+            <Setter Property="Stroke" Value="Black"></Setter>
+            <Setter Property="Fill" Value="Transparent"></Setter>
+            <Setter Property="StrokeThickness" Value="0.5"></Setter>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="TextWrapping" Value="Wrap"></Setter>
+        </Style>
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="3.5*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Horizontal">
@@ -31,20 +55,142 @@
             <Button Content="Удалить" ></Button>
             <Button Content="Изменить" ></Button>
         </StackPanel>
+        <!--buttons-->
 
-        <ListView HorizontalContentAlignment="Stretch"  ItemsSource="{Binding TaskCompacts}"  Grid.Row="1">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Id"  DisplayMemberBinding="{Binding Id}" Width="20"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding ScheduleId}">ScheduleId</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding ConnectionString}">ConnectionString</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding RecepientGroupId}">RecepientGroupId</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding TryCount}">TryCount</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding QueryTimeOut}">QueryTimeOut</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding TaskType}">TaskType</GridViewColumn>
+        <ListView  HorizontalContentAlignment="Stretch" ItemsSource="{Binding TaskCompacts}"  Grid.Row="1" SelectedItem="{Binding SelectedTaskCompact}">
+            <ListView.View >
+                <GridView >
+                    <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" />
+                    <GridViewColumn Header="ScheduleId" DisplayMemberBinding="{Binding ScheduleId}"/>
+                    <GridViewColumn Header="ConnectionString" DisplayMemberBinding="{Binding ConnectionString}"/>
+                    <GridViewColumn Header="RecepientGroupId" DisplayMemberBinding="{Binding RecepientGroupId}"/>
+                    <GridViewColumn Header="TryCount" DisplayMemberBinding="{Binding TryCount}"/>
+                    <GridViewColumn Header="QueryTimeOut" DisplayMemberBinding="{Binding QueryTimeOut}"/>
+                    <GridViewColumn Header="TaskType" DisplayMemberBinding="{Binding TaskType}"/>
                 </GridView>
             </ListView.View>
         </ListView>
+        <!--tasks-->
+        <GridSplitter Grid.Column="1" Grid.Row="1" Width="2.5" VerticalAlignment="Stretch" HorizontalAlignment="Center" ShowsPreview="False"></GridSplitter>
+
+        <Grid Grid.Row="1" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <ListView HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedTaskInstanceCompacts}" SelectedItem="{Binding SelectedInstanceCompact}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Id"  DisplayMemberBinding="{Binding Id}" />
+                        <GridViewColumn Header="TaskId"  DisplayMemberBinding="{Binding TaskId}" />
+                        <GridViewColumn Header="StartTime"  DisplayMemberBinding="{Binding StartTime}" />
+                        <GridViewColumn Header="Duration"  DisplayMemberBinding="{Binding Duration}"/>
+                        <GridViewColumn Header="State"  DisplayMemberBinding="{Binding State}" />
+                        <GridViewColumn Header="TryNumber"  DisplayMemberBinding="{Binding TryNumber}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <GridSplitter  Grid.Row="1" Height="2.5" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="False"></GridSplitter>
+            <Grid Grid.Row="2" >
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Rectangle Grid.ColumnSpan="2"/>
+                <Rectangle Grid.ColumnSpan="2" Grid.Row="1"/>
+                <Rectangle Grid.ColumnSpan="2" Grid.Row="2"/>
+                <Rectangle Grid.ColumnSpan="2" Grid.Row="3"/>
+                <Rectangle Grid.ColumnSpan="2" Grid.Row="4"/>
+                <Rectangle Grid.ColumnSpan="2" Grid.Row="5"/>
+                <Rectangle Grid.ColumnSpan="2" Grid.Row="6"/>
+                <Rectangle Grid.ColumnSpan="2" Grid.Row="7"/>
+                <Rectangle Grid.ColumnSpan="2" Grid.Row="8"/>
+                <Rectangle Grid.RowSpan="9" />
+
+                <Label Content="Id"/>
+                <Label Grid.Row="1"  Content="ScheduleId"/>
+                <Label Grid.Row="2"  Content="ConnectionString"/>
+                <Label Grid.Row="3"  Content="ViewTemplate"/>
+                <Label Grid.Row="4"  Content="Query"/>
+                <Label Grid.Row="5"  Content="RecepientGroupId"/>
+                <Label Grid.Row="6"  Content="TryCount"/>
+                <Label Grid.Row="7"  Content="QueryTimeOut"/>
+                <Label Grid.Row="8"  Content="QueryTimeOut"/>
+
+                <TextBox Grid.Column="1"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.Id}"/>
+                <TextBox Grid.Column="1" Grid.Row="1"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ScheduleId}"/>
+                <TextBox Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ConnectionString}"/>
+                <TextBox Grid.Column="1" Grid.Row="3"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ViewTemplate}"/>
+                <TextBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.Query}"/>
+                <TextBox Grid.Column="1" Grid.Row="5"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.RecepientGroupId}"/>
+                <TextBox Grid.Column="1" Grid.Row="6"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.TryCount}"/>
+                <TextBox Grid.Column="1" Grid.Row="7"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.QueryTimeOut}"/>
+                <TextBox Grid.Column="1" Grid.Row="8"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.TaskType}"/>
+            </Grid>
+        </Grid>
+
+        <GridSplitter  Grid.Row="2" Height="2.5" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="False"></GridSplitter>
+        <Grid Grid.Row="3" Grid.ColumnSpan="3">
+
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Rectangle Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="1" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="2" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="3" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="4" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="5" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.RowSpan="6"/>
+            <Rectangle Grid.Column="2" Grid.RowSpan="6" />
+            <Rectangle Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
+            <Rectangle Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Grid.RowSpan="3"/>
+
+            <Label Content="Id"/>
+            <Label Grid.Row="1"  Content="TaskId"/>
+            <Label Grid.Row="2"  Content="StartTime"/>
+            <Label Grid.Row="3"  Content="Duration"/>
+            <Label Grid.Row="4"  Content="State"/>
+            <Label Grid.Row="5"  Content="TryNumber"/>
+            <Label Grid.Column="2" Grid.RowSpan="3"  Content="Data"/>
+            <Label Grid.Column="2" Grid.Row="3" Grid.RowSpan="3"  Content="ViewData"/>
+
+            <TextBlock Grid.Column="1"  HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.Id}"/>
+            <TextBlock Grid.Column="1" Grid.Row="1"  HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.TaskId}"/>
+            <TextBlock Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.StartTime}"/>
+            <TextBlock Grid.Column="1" Grid.Row="3"  HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.Duration}"/>
+            <TextBlock Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.State}"/>
+            <TextBlock Grid.Column="1" Grid.Row="5"  HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.TryNumber}"/>
+            <TextBlock Grid.Column="3" Grid.RowSpan="3"  HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.Data}"/>
+            <TextBlock Grid.Column="3" Grid.Row="3" Grid.RowSpan="3" HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.ViewData}"/>
+        </Grid>
 
     </Grid>
 </Window>

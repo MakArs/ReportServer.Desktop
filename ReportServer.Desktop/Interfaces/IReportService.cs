@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Gerakul.HttpUtils.Core;
+using ReactiveUI;
 
 namespace ReportServer.Desktop.Interfaces
 {
@@ -17,7 +18,7 @@ namespace ReportServer.Desktop.Interfaces
         public int TaskType { get; set; }
     }
 
-    public class ApiTaskCompact
+    public class ApiTaskCompact 
     {
         public int Id { get; set; }
         public int ScheduleId { get; set; }
