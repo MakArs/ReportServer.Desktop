@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using Autofac;
+using AutoMapper;
 using Monik.Client;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Model;
@@ -24,6 +25,7 @@ namespace ReportServer.Desktop
                 .As<IReportService>()
                 .SingleInstance();
 
+            //monik
             var logSender = new AzureSender(
                 ConfigurationManager.AppSettings["monikendpoint"],
                 "incoming");
@@ -46,7 +48,31 @@ namespace ReportServer.Desktop
                 .As<IClientControl>()
                 .SingleInstance();
 
+            //mapper
+            var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile(typeof(MapperProfile)));
+
+            builder.RegisterInstance(mapperConfig)
+                .As<MapperConfiguration>()
+                .SingleInstance();
+
+            builder.Register(c => c.Resolve<MapperConfiguration>()
+                .CreateMapper())
+                .As<IMapper>()
+                .SingleInstance();
+
             Container = builder.Build();
         }
     }
+
+    public class MapperProfile : Profile
+    {
+        public MapperProfile()
+        {
+            CreateMap<ApiTaskCompact, ViewModelTaskCompact>()
+                .ForMember("TaskType",opt=>opt.MapFrom(s=>(TaskType)s.TaskType));
+            CreateMap<ApiTask, ViewModelTask>()
+                .ForMember("TaskType", opt => opt.MapFrom(s => (TaskType)s.TaskType));
+        }
+    }
+
 }

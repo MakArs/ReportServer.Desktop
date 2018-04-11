@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Autofac;
+using AutoMapper;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.ViewModel;
 
@@ -14,7 +15,8 @@ namespace ReportServer.Desktop
         {
             InitializeComponent();
             BootsTrap.Init();
-            var t = BootsTrap.Container.Resolve<IReportService>();
+            var r = BootsTrap.Container.Resolve<IReportService>();
+            var m= BootsTrap.Container.Resolve<IMapper>();
             var newtask = new ApiTask()
             {
                 ConnectionString = null,
@@ -28,7 +30,7 @@ namespace ReportServer.Desktop
                 TaskType = 1
             };
             //t.UpdateTask(newtask);
-            DataContext = new Core(t);
+            DataContext = new Core(r,m);
         }
     }
 }

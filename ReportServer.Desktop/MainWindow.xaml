@@ -61,9 +61,9 @@
             <ListView.View >
                 <GridView >
                     <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" />
-                    <GridViewColumn Header="ScheduleId" DisplayMemberBinding="{Binding ScheduleId}"/>
+                    <GridViewColumn Header="Schedule" DisplayMemberBinding="{Binding Schedule}"/>
                     <GridViewColumn Header="ConnectionString" DisplayMemberBinding="{Binding ConnectionString}"/>
-                    <GridViewColumn Header="RecepientGroupId" DisplayMemberBinding="{Binding RecepientGroupId}"/>
+                    <GridViewColumn Header="RecepientGroup" DisplayMemberBinding="{Binding RecepientGroup}"/>
                     <GridViewColumn Header="TryCount" DisplayMemberBinding="{Binding TryCount}"/>
                     <GridViewColumn Header="QueryTimeOut" DisplayMemberBinding="{Binding QueryTimeOut}"/>
                     <GridViewColumn Header="TaskType" DisplayMemberBinding="{Binding TaskType}"/>
@@ -123,21 +123,21 @@
                 <Rectangle Grid.RowSpan="9" />
 
                 <Label Content="Id"/>
-                <Label Grid.Row="1"  Content="ScheduleId"/>
+                <Label Grid.Row="1"  Content="Schedule"/>
                 <Label Grid.Row="2"  Content="ConnectionString"/>
                 <Label Grid.Row="3"  Content="ViewTemplate"/>
                 <Label Grid.Row="4"  Content="Query"/>
-                <Label Grid.Row="5"  Content="RecepientGroupId"/>
+                <Label Grid.Row="5"  Content="RecepientAddresses"/>
                 <Label Grid.Row="6"  Content="TryCount"/>
                 <Label Grid.Row="7"  Content="QueryTimeOut"/>
                 <Label Grid.Row="8"  Content="QueryTimeOut"/>
 
                 <TextBox Grid.Column="1"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.Id}"/>
-                <TextBox Grid.Column="1" Grid.Row="1"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ScheduleId}"/>
+                <TextBox Grid.Column="1" Grid.Row="1"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.Schedule}"/>
                 <TextBox Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ConnectionString}"/>
                 <TextBox Grid.Column="1" Grid.Row="3"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ViewTemplate}"/>
                 <TextBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.Query}"/>
-                <TextBox Grid.Column="1" Grid.Row="5"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.RecepientGroupId}"/>
+                <TextBox Grid.Column="1" Grid.Row="5"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.RecepientAddresses}"/>
                 <TextBox Grid.Column="1" Grid.Row="6"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.TryCount}"/>
                 <TextBox Grid.Column="1" Grid.Row="7"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.QueryTimeOut}"/>
                 <TextBox Grid.Column="1" Grid.Row="8"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.TaskType}"/>

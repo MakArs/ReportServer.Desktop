@@ -34,6 +34,16 @@ namespace ReportServer.Desktop.Model
             return _client.Get<ApiInstance>($"/api/v1/instances/{id}");
         }
 
+        public List<ApiSchedule> GetSchedules()
+        {
+            return _client.Get<List<ApiSchedule>>("/api/v1/schedules/");
+        }
+
+        public List<ApiRecepientGroup> GetRecepientGroups()
+        {
+            return _client.Get<List<ApiRecepientGroup>>("/api/v1/recepientgroups/");
+        }
+
         public List<ApiInstanceCompact> GetInstanceCompactsByTaskId(int taskId)
         {
             return _client.Get<List<ApiInstanceCompact>>($"/api/v1/reports/{taskId}/instances");

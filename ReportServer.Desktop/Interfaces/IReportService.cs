@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Gerakul.HttpUtils.Core;
-using ReactiveUI;
 
 namespace ReportServer.Desktop.Interfaces
 {
@@ -72,6 +70,8 @@ namespace ReportServer.Desktop.Interfaces
         List<ApiInstanceCompact> GetInstanceCompacts();
         List<ApiInstanceCompact> GetInstanceCompactsByTaskId(int taskId);
         ApiInstance GetInstanceById(int id);
+        List<ApiSchedule> GetSchedules();
+        List<ApiRecepientGroup> GetRecepientGroups();
 
         void DeleteTask(int id);
         void DeleteInstance(int id);
