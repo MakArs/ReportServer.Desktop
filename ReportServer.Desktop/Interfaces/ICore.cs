@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReportServer.Desktop.Interfaces
 {
@@ -22,7 +18,7 @@ namespace ReportServer.Desktop.Interfaces
         public int Id { get; set; }
         public string Schedule { get; set; }
         public string ConnectionString { get; set; }
-        public string RecepientAddresses { get; set; }
+        public string RecepientGroup { get; set; }
         public string ViewTemplate { get; set; }
         public string Query { get; set; }
         public int TryCount { get; set; }
@@ -34,6 +30,35 @@ namespace ReportServer.Desktop.Interfaces
     {
         Common = 1,
         Custom = 2
+    }
+
+    public class ViewModelInstanceCompact
+    {
+        public int Id { get; set; }
+        public int TaskId { get; set; }
+        public DateTime StartTime { get; set; }
+        public int Duration { get; set; }
+        public InstanceState State { get; set; }
+        public int TryNumber { get; set; }
+    }
+
+    public class ViewModelInstance
+    {
+        public int Id { get; set; }
+        public string Data { get; set; } = "";
+        public string ViewData { get; set; } = "";
+        public int TaskId { get; set; }
+        public DateTime StartTime { get; set; }
+        public int Duration { get; set; }
+        public InstanceState State { get; set; }
+        public int TryNumber { get; set; }
+    }
+
+    public enum InstanceState
+    {
+        InProcess = 1,
+        Success = 2,
+        Failed = 3
     }
 
     public interface ICore

@@ -151,6 +151,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BootsTrap.cs" />
+    <Compile Include="Converters\BaseConverter.cs" />
+    <Compile Include="Converters\IntMsToMinsConverter.cs" />
     <Compile Include="Interfaces\ICore.cs" />
     <Compile Include="Interfaces\IMonik.cs" />
     <Compile Include="Interfaces\IReportService.cs" />

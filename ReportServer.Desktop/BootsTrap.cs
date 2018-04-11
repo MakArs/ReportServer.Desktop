@@ -56,7 +56,7 @@ namespace ReportServer.Desktop
                 .SingleInstance();
 
             builder.Register(c => c.Resolve<MapperConfiguration>()
-                .CreateMapper())
+                    .CreateMapper())
                 .As<IMapper>()
                 .SingleInstance();
 
@@ -69,10 +69,16 @@ namespace ReportServer.Desktop
         public MapperProfile()
         {
             CreateMap<ApiTaskCompact, ViewModelTaskCompact>()
-                .ForMember("TaskType",opt=>opt.MapFrom(s=>(TaskType)s.TaskType));
+                .ForMember("TaskType", opt => opt.MapFrom(s => (TaskType) s.TaskType));
+
             CreateMap<ApiTask, ViewModelTask>()
-                .ForMember("TaskType", opt => opt.MapFrom(s => (TaskType)s.TaskType));
+                .ForMember("TaskType", opt => opt.MapFrom(s => (TaskType) s.TaskType));
+
+            CreateMap<ApiInstanceCompact, ViewModelInstanceCompact>()
+                .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
+
+            CreateMap<ApiInstance, ViewModelInstance>()
+                .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
         }
     }
-
 }

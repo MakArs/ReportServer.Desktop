@@ -16,50 +16,51 @@ namespace ReportServer.Desktop.ViewModel
         private readonly IMapper _mapper;
 
         public ReactiveList<ViewModelTaskCompact> TaskCompacts { get; set; }
-        public ReactiveList<ApiInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
-        private readonly List<ApiSchedule> _schedules;
-        private readonly List<ApiRecepientGroup> _recepientGroups;
+        public ReactiveList<ViewModelInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
+        public ReactiveList<ApiSchedule> Schedules { get; set; }
+        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
 
-        [Reactive] public ViewModelTaskCompact SelectedTaskCompact { get; set; } 
-        [Reactive] public ApiInstanceCompact SelectedInstanceCompact { get; set; }
+        [Reactive] public ViewModelTaskCompact SelectedTaskCompact { get; set; }
+        [Reactive] public ViewModelInstanceCompact SelectedInstanceCompact { get; set; }
         [Reactive] public ViewModelTask SelectedTask { get; set; }
-        [Reactive] public ApiInstance SelectedInstance { get; set; }
+        [Reactive] public ViewModelInstance SelectedInstance { get; set; }
 
 
         public ReactiveCommand RefreshTasksCommand { get; }
 
-        public Core(IReportService reportService,IMapper mapper)
+        public Core(IReportService reportService, IMapper mapper)
         {
             _reportService = reportService;
             _mapper = mapper;
 
             TaskCompacts = new ReactiveList<ViewModelTaskCompact>();
-            SelectedTaskInstanceCompacts = new ReactiveList<ApiInstanceCompact>();
-            _schedules=new List<ApiSchedule>();
-            _recepientGroups=new List<ApiRecepientGroup>();
+            SelectedTaskInstanceCompacts = new ReactiveList<ViewModelInstanceCompact>();
+            Schedules = new ReactiveList<ApiSchedule>();
+            RecepientGroups = new ReactiveList<ApiRecepientGroup>();
 
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
-            
-            this.ObservableForProperty(s => s.SelectedTaskCompact) //ObservableForProperty ignores initial nulls,whenanyvalue not?
+
+            this.ObservableForProperty(s =>
+                    s.SelectedTaskCompact) //ObservableForProperty ignores initial nulls,whenanyvalue not?
                 .Where(x => x.Value != null)
-                .Subscribe(_ =>
+                .Subscribe(x =>
                 {
-                    LoadInstanceCompactsByTaskId(_.Value.Id);
-                    LoadSelectedTaskById(_.Value.Id);
+                    LoadInstanceCompactsByTaskId(x.Value.Id);
+                    LoadSelectedTaskById(x.Value.Id);
                 });
+
             this.ObservableForProperty(s => s.SelectedTaskCompact)
                 .Where(x => x.Value == null)
                 .Subscribe(_ => SelectedTask = null);
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value != null)
-                .Subscribe(_ =>
-                {
-                    LoadSelectedInstanceById(_.Value.Id);
-                });
+                .Subscribe(x => LoadSelectedInstanceById(x.Value.Id));
+
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value == null)
-                .Subscribe(_ =>  SelectedInstance = null);
+                .Subscribe(_ => SelectedInstance = null);
+
             OnStart();
         }
 
@@ -72,32 +73,32 @@ namespace ReportServer.Desktop.ViewModel
             {
                 var vtask = _mapper.Map<ViewModelTaskCompact>(task);
 
-                vtask.Schedule = _schedules
+                vtask.Schedule = Schedules
                     .FirstOrDefault(s => s.Id == task.ScheduleId)?.Name;
 
-                vtask.RecepientGroup = _recepientGroups
-                    .FirstOrDefault(r=>r.Id==task.RecepientGroupId)?.Name;
+                vtask.RecepientGroup = RecepientGroups
+                    .FirstOrDefault(r => r.Id == task.RecepientGroupId)?.Name;
 
                 TaskCompacts.Add(vtask);
             }
         }
-        
+
         public void LoadSchedules()
         {
             var scheduleList = _reportService.GetSchedules();
-            _schedules.Clear();
+            Schedules.Clear();
 
             foreach (var schedule in scheduleList)
-                _schedules.Add(schedule);
+                Schedules.Add(schedule);
         }
 
         public void LoadRecepientGroups()
         {
             var recepientGroupList = _reportService.GetRecepientGroups();
-            _recepientGroups.Clear();
+            RecepientGroups.Clear();
 
             foreach (var group in recepientGroupList)
-            _recepientGroups.Add(group);
+                RecepientGroups.Add(group);
         }
 
         public void LoadSelectedTaskById(int id)
@@ -105,16 +106,18 @@ namespace ReportServer.Desktop.ViewModel
             var apitask = _reportService.GetTaskById(id);
             var selTask = _mapper.Map<ViewModelTask>(apitask);
 
-            selTask.Schedule = _schedules
-                .FirstOrDefault(s => s.Id == apitask.ScheduleId)?.Schedule;
-            selTask.RecepientAddresses= _recepientGroups
-                .FirstOrDefault(r => r.Id == apitask.RecepientGroupId)?.Addresses;
+            selTask.Schedule = Schedules
+                .FirstOrDefault(s => s.Id == apitask.ScheduleId)?.Name;
+
+            selTask.RecepientGroup = RecepientGroups
+                .FirstOrDefault(r => r.Id == apitask.RecepientGroupId)?.Name;
+
             SelectedTask = selTask;
         }
 
         public void LoadSelectedInstanceById(int id)
         {
-            SelectedInstance = _reportService.GetInstanceById(id);
+            SelectedInstance = _mapper.Map<ViewModelInstance>(_reportService.GetInstanceById(id));
         }
 
         public void LoadInstanceCompactsByTaskId(int taskId)
@@ -123,7 +126,7 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTaskInstanceCompacts.Clear();
 
             foreach (var instance in instanceList)
-                SelectedTaskInstanceCompacts.Add(instance);
+                SelectedTaskInstanceCompacts.Add(_mapper.Map<ViewModelInstanceCompact>(instance));
         }
 
         public void OnStart()
