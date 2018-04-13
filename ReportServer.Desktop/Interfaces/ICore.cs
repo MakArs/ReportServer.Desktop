@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reactive;
+using System.Threading.Tasks;
 
 namespace ReportServer.Desktop.Interfaces
 {
@@ -70,5 +72,7 @@ namespace ReportServer.Desktop.Interfaces
         void LoadSelectedInstanceById(int id);
         void LoadInstanceCompactsByTaskId(int taskId);
         void OnStart();
+        void OpenPageInBrowser(string htmlPage);
+        string GetHtmlPageByTaskId(int taskId);
     }
 }

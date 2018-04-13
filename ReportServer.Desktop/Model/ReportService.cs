@@ -44,6 +44,20 @@ namespace ReportServer.Desktop.Model
             return _client.Get<List<ApiRecepientGroup>>("/api/v1/recepientgroups/");
         }
 
+        public string GetCurrentTaskViewById(int taskId)
+        {
+
+            var task = Task.Factory.StartNew(() => _client.Send<string>(HttpMethod.Get, $"/api/v1/reports/{taskId}/currentviews"));
+            task.Wait();
+
+            var responseCode = task.Result.Result.Response.StatusCode;
+
+            if (responseCode != HttpStatusCode.OK)
+                throw new Exception($"Http return error {responseCode.ToString()}");
+
+            return task.Result.Result.Body;
+        }
+
         public List<ApiInstanceCompact> GetInstanceCompactsByTaskId(int taskId)
         {
             return _client.Get<List<ApiInstanceCompact>>($"/api/v1/reports/{taskId}/instances");

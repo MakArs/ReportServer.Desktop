@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using AutoMapper;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -26,7 +29,9 @@ namespace ReportServer.Desktop.ViewModel
         [Reactive] public ViewModelInstance SelectedInstance { get; set; }
 
 
-        public ReactiveCommand RefreshTasksCommand { get; }
+        public ReactiveCommand RefreshTasksCommand { get; set; }
+        public ReactiveCommand OpenPage { get; set; }
+        public ReactiveCommand OpenCurrentTaskView { get; set; }
 
         public Core(IReportService reportService, IMapper mapper)
         {
@@ -39,6 +44,12 @@ namespace ReportServer.Desktop.ViewModel
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
 
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
+
+            IObservable<bool> canOpenInstancePage = this.WhenAnyValue(t => t.SelectedInstance,si=>!string.IsNullOrEmpty(si?.ViewData));
+            OpenPage=ReactiveCommand.Create<string>(OpenPageInBrowser, canOpenInstancePage);
+
+            IObservable<bool> canOpenCurrentTaskView = this.WhenAnyValue(t => t.SelectedTask, si => !string.IsNullOrEmpty(si?.ViewTemplate));
+            OpenCurrentTaskView=ReactiveCommand.Create<int>(param =>  OpenPageInBrowser(GetHtmlPageByTaskId(param)), canOpenCurrentTaskView);
 
             this.ObservableForProperty(s =>
                     s.SelectedTaskCompact) //ObservableForProperty ignores initial nulls,whenanyvalue not?
@@ -55,7 +66,10 @@ namespace ReportServer.Desktop.ViewModel
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value != null)
-                .Subscribe(x => LoadSelectedInstanceById(x.Value.Id));
+                .Subscribe(x =>
+                {
+                    LoadSelectedInstanceById(x.Value.Id);
+                });
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value == null)
@@ -118,6 +132,22 @@ namespace ReportServer.Desktop.ViewModel
         public void LoadSelectedInstanceById(int id)
         {
             SelectedInstance = _mapper.Map<ViewModelInstance>(_reportService.GetInstanceById(id));
+        }
+
+        public void OpenPageInBrowser(string htmlPage)
+        {
+            var path= $"{System.AppDomain.CurrentDomain.BaseDirectory}\\testreport.html";
+            using (FileStream fstr = new FileStream(path, FileMode.Create))
+            {
+                byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
+                fstr.Write(bytePage, 0, bytePage.Length);
+            }
+            System.Diagnostics.Process.Start(path);
+        }
+
+        public string GetHtmlPageByTaskId(int taskId)
+        {
+            return _reportService.GetCurrentTaskViewById(taskId);
         }
 
         public void LoadInstanceCompactsByTaskId(int taskId)
