@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
@@ -46,10 +47,11 @@ namespace ReportServer.Desktop.ViewModel
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
 
             IObservable<bool> canOpenInstancePage = this.WhenAnyValue(t => t.SelectedInstance,si=>!string.IsNullOrEmpty(si?.ViewData));
-            OpenPage=ReactiveCommand.Create<string>(OpenPageInBrowser, canOpenInstancePage);
+            OpenPage=ReactiveCommand.CreateFromObservable<string,Unit>(OpenPageInBrowser, canOpenInstancePage);
 
             IObservable<bool> canOpenCurrentTaskView = this.WhenAnyValue(t => t.SelectedTask, si => !string.IsNullOrEmpty(si?.ViewTemplate));
-            OpenCurrentTaskView=ReactiveCommand.Create<int>(param =>  OpenPageInBrowser(GetHtmlPageByTaskId(param)), canOpenCurrentTaskView);
+            OpenCurrentTaskView=ReactiveCommand.Create<int>(async param => await GetHtmlPageByTaskId(param)
+            , canOpenCurrentTaskView);
 
             this.ObservableForProperty(s =>
                     s.SelectedTaskCompact) //ObservableForProperty ignores initial nulls,whenanyvalue not?
@@ -134,20 +136,35 @@ namespace ReportServer.Desktop.ViewModel
             SelectedInstance = _mapper.Map<ViewModelInstance>(_reportService.GetInstanceById(id));
         }
 
-        public void OpenPageInBrowser(string htmlPage)
+        public IObservable<Unit> OpenPageInBrowser(string htmlPage)
         {
-            var path= $"{System.AppDomain.CurrentDomain.BaseDirectory}\\testreport.html";
-            using (FileStream fstr = new FileStream(path, FileMode.Create))
+            return Observable.Start(() =>
             {
-                byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
-                fstr.Write(bytePage, 0, bytePage.Length);
-            }
-            System.Diagnostics.Process.Start(path);
+                var path = $"{System.AppDomain.CurrentDomain.BaseDirectory}\\testreport.html";
+                using (FileStream fstr = new FileStream(path, FileMode.Create))
+                {
+                    byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
+                    fstr.Write(bytePage, 0, bytePage.Length);
+                }
+
+                System.Diagnostics.Process.Start(path);
+            });
         }
 
-        public string GetHtmlPageByTaskId(int taskId)
+        public Task GetHtmlPageByTaskId(int taskId)
         {
-            return _reportService.GetCurrentTaskViewById(taskId);
+            return  Task.Factory.StartNew(()=>
+            {
+                var str= _reportService.GetCurrentTaskViewById(taskId);
+                var path = $"{System.AppDomain.CurrentDomain.BaseDirectory}\\testreport.html";
+                using (FileStream fstr = new FileStream(path, FileMode.Create))
+                {
+                    byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(str);
+                    fstr.Write(bytePage, 0, bytePage.Length);
+                }
+
+                System.Diagnostics.Process.Start(path);
+            });
         }
 
         public void LoadInstanceCompactsByTaskId(int taskId)
