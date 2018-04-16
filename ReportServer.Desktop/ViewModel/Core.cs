@@ -46,12 +46,16 @@ namespace ReportServer.Desktop.ViewModel
 
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
 
-            IObservable<bool> canOpenInstancePage = this.WhenAnyValue(t => t.SelectedInstance,si=>!string.IsNullOrEmpty(si?.ViewData));
-            OpenPage=ReactiveCommand.CreateFromObservable<string,Unit>(OpenPageInBrowser, canOpenInstancePage);
+            IObservable<bool> canOpenInstancePage =
+                this.WhenAnyValue(t => t.SelectedInstance, si => !string.IsNullOrEmpty(si?.ViewData));
+            OpenPage = ReactiveCommand.CreateFromObservable<string, Unit>(OpenPageInBrowser, canOpenInstancePage);
 
-            IObservable<bool> canOpenCurrentTaskView = this.WhenAnyValue(t => t.SelectedTask, si => !string.IsNullOrEmpty(si?.ViewTemplate));
-            OpenCurrentTaskView=ReactiveCommand.Create<int>(async param => await GetHtmlPageByTaskId(param)
-            , canOpenCurrentTaskView);
+            var canOpenCurrentTaskView = this.WhenAnyValue(t => t.SelectedTask,
+                st => !string.IsNullOrEmpty(st?.ViewTemplate));
+
+            OpenCurrentTaskView=ReactiveCommand.CreateFromObservable<int,Unit>(GetHtmlPageByTaskId, canOpenCurrentTaskView);
+            //OpenCurrentTaskView = ReactiveCommand.Create<int>(async param => await GetHtmlPageByTaskId(param)
+            //    , canOpenCurrentTaskView);
 
             this.ObservableForProperty(s =>
                     s.SelectedTaskCompact) //ObservableForProperty ignores initial nulls,whenanyvalue not?
@@ -68,10 +72,7 @@ namespace ReportServer.Desktop.ViewModel
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value != null)
-                .Subscribe(x =>
-                {
-                    LoadSelectedInstanceById(x.Value.Id);
-                });
+                .Subscribe(x => { LoadSelectedInstanceById(x.Value.Id); });
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value == null)
@@ -151,19 +152,12 @@ namespace ReportServer.Desktop.ViewModel
             });
         }
 
-        public Task GetHtmlPageByTaskId(int taskId)
+        public IObservable<Unit> GetHtmlPageByTaskId(int taskId)
         {
-            return  Task.Factory.StartNew(()=>
+            return Observable.Start(() =>
             {
-                var str= _reportService.GetCurrentTaskViewById(taskId);
-                var path = $"{System.AppDomain.CurrentDomain.BaseDirectory}\\testreport.html";
-                using (FileStream fstr = new FileStream(path, FileMode.Create))
-                {
-                    byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(str);
-                    fstr.Write(bytePage, 0, bytePage.Length);
-                }
-
-                System.Diagnostics.Process.Start(path);
+                var str = _reportService.GetCurrentTaskViewById(taskId);
+                OpenPageInBrowser(str);
             });
         }
 

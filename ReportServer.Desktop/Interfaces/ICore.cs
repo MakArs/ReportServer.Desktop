@@ -73,6 +73,6 @@ namespace ReportServer.Desktop.Interfaces
         void LoadInstanceCompactsByTaskId(int taskId);
         void OnStart();
         IObservable<Unit> OpenPageInBrowser(string htmlPage);
-        Task GetHtmlPageByTaskId(int taskId);
+        IObservable<Unit> GetHtmlPageByTaskId(int taskId);
     }
 }
