@@ -54,8 +54,8 @@
 
         <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal">
             <Button Content="Добавить"></Button>
-            <Button Content="Удалить" ></Button>
-            <Button Content="Изменить" ></Button>
+            <Button Content="Удалить" Command="{Binding DeleteCommand}"></Button>
+            <Button Content="Изменить" Command="{Binding ChangeTaskCommand}"></Button>
         </StackPanel>
         <!--buttons-->
 

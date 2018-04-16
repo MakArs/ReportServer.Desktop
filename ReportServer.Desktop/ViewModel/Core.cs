@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using AutoMapper;
 using ReactiveUI;
@@ -33,6 +34,8 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand RefreshTasksCommand { get; set; }
         public ReactiveCommand OpenPage { get; set; }
         public ReactiveCommand OpenCurrentTaskView { get; set; }
+        public ReactiveCommand DeleteCommand { get; set; }
+        public ReactiveCommand ChangeTaskCommand { get; set; }
 
         public Core(IReportService reportService, IMapper mapper)
         {
@@ -46,16 +49,26 @@ namespace ReportServer.Desktop.ViewModel
 
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
 
-            IObservable<bool> canOpenInstancePage =
-                this.WhenAnyValue(t => t.SelectedInstance, si => !string.IsNullOrEmpty(si?.ViewData));
+            IObservable<bool> canOpenInstancePage = this
+                .WhenAnyValue(t => t.SelectedInstance,
+                    si => !string.IsNullOrEmpty(si?.ViewData));
             OpenPage = ReactiveCommand.CreateFromObservable<string, Unit>(OpenPageInBrowser, canOpenInstancePage);
 
-            var canOpenCurrentTaskView = this.WhenAnyValue(t => t.SelectedTask,
-                st => !string.IsNullOrEmpty(st?.ViewTemplate));
+            IObservable<bool> canOpenCurrentTaskView = this
+                .WhenAnyValue(t => t.SelectedTask,
+                    st => !string.IsNullOrEmpty(st?.ViewTemplate));
+            OpenCurrentTaskView =
+                ReactiveCommand.CreateFromObservable<int, Unit>(GetHtmlPageByTaskId, canOpenCurrentTaskView);
 
-            OpenCurrentTaskView=ReactiveCommand.CreateFromObservable<int,Unit>(GetHtmlPageByTaskId, canOpenCurrentTaskView);
-            //OpenCurrentTaskView = ReactiveCommand.Create<int>(async param => await GetHtmlPageByTaskId(param)
-            //    , canOpenCurrentTaskView);
+            IObservable<bool> canDelete = this
+                .WhenAnyValue(t => t.SelectedTask,t=>t.SelectedInstance,(st,si)=>
+                    st!=null||si!=null);
+            DeleteCommand = ReactiveCommand.Create(DeleteEntity, canDelete);
+
+            IObservable<bool> canChangeTask = this
+                .WhenAnyValue(t => t.SelectedTask, (st) =>
+                    !string.IsNullOrWhiteSpace(st?.ViewTemplate) && !string.IsNullOrWhiteSpace(st.Query));
+            ChangeTaskCommand = ReactiveCommand.Create<int>(ChangeTaskById, canChangeTask);
 
             this.ObservableForProperty(s =>
                     s.SelectedTaskCompact) //ObservableForProperty ignores initial nulls,whenanyvalue not?
@@ -132,9 +145,49 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTask = selTask;
         }
 
+        public void ChangeTaskById(int id)
+        {
+            var result = MessageBox.Show("Вы действительно хотите изменить эту задачу?", "Warning",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                var apiTask = _mapper.Map<ApiTask>(SelectedTask);
+                apiTask.RecepientGroupId = RecepientGroups
+                    .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
+                apiTask.ScheduleId = Schedules
+                    .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
+                _reportService.UpdateTask(apiTask);
+                LoadTaskCompacts();
+            }
+        }
+
         public void LoadSelectedInstanceById(int id)
         {
             SelectedInstance = _mapper.Map<ViewModelInstance>(_reportService.GetInstanceById(id));
+        }
+
+        public void DeleteEntity()
+        {
+            var result = MessageBox.Show("Вы действительно хотите удалить данную запись?", "Warning",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                if (SelectedInstance != null)
+                {
+                    _reportService.DeleteInstance(SelectedInstance.Id);
+                    LoadInstanceCompactsByTaskId(SelectedTask.Id);
+                }
+                else
+                {
+                    if (SelectedTask != null)
+                    {
+                        _reportService.DeleteTask(SelectedTask.Id);
+                        LoadTaskCompacts();
+                    }
+                }
+            }
         }
 
         public IObservable<Unit> OpenPageInBrowser(string htmlPage)
@@ -169,6 +222,8 @@ namespace ReportServer.Desktop.ViewModel
             foreach (var instance in instanceList)
                 SelectedTaskInstanceCompacts.Add(_mapper.Map<ViewModelInstanceCompact>(instance));
         }
+
+
 
         public void OnStart()
         {

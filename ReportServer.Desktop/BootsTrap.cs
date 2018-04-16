@@ -74,6 +74,9 @@ namespace ReportServer.Desktop
             CreateMap<ApiTask, ViewModelTask>()
                 .ForMember("TaskType", opt => opt.MapFrom(s => (TaskType) s.TaskType));
 
+            CreateMap<ViewModelTask, ApiTask>()
+                .ForMember("TaskType", opt => opt.MapFrom(s => (int)s.TaskType));
+
             CreateMap<ApiInstanceCompact, ViewModelInstanceCompact>()
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
 

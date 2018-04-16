@@ -72,6 +72,8 @@ namespace ReportServer.Desktop.Interfaces
         void LoadSelectedInstanceById(int id);
         void LoadInstanceCompactsByTaskId(int taskId);
         void OnStart();
+        void DeleteEntity();
+        void ChangeTaskById(int id);
         IObservable<Unit> OpenPageInBrowser(string htmlPage);
         IObservable<Unit> GetHtmlPageByTaskId(int taskId);
     }
