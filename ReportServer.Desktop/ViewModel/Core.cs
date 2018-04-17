@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Threading;
 using AutoMapper;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -30,15 +29,16 @@ namespace ReportServer.Desktop.ViewModel
         [Reactive] public ViewModelTask SelectedTask { get; set; }
         [Reactive] public ViewModelInstance SelectedInstance { get; set; }
 
-
         public ReactiveCommand RefreshTasksCommand { get; set; }
         public ReactiveCommand OpenPage { get; set; }
         public ReactiveCommand OpenCurrentTaskView { get; set; }
         public ReactiveCommand DeleteCommand { get; set; }
-        public ReactiveCommand ChangeTaskCommand { get; set; }
+        public ReactiveCommand SaveTaskCommand { get; set; }
+        public ReactiveCommand CreateTaskCommand { get; set; }
 
         public Core(IReportService reportService, IMapper mapper)
         {
+            var tds = ImmediateScheduler.Instance;
             _reportService = reportService;
             _mapper = mapper;
 
@@ -46,7 +46,6 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTaskInstanceCompacts = new ReactiveList<ViewModelInstanceCompact>();
             Schedules = new ReactiveList<ApiSchedule>();
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
-
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
 
             IObservable<bool> canOpenInstancePage = this
@@ -61,14 +60,16 @@ namespace ReportServer.Desktop.ViewModel
                 ReactiveCommand.CreateFromObservable<int, Unit>(GetHtmlPageByTaskId, canOpenCurrentTaskView);
 
             IObservable<bool> canDelete = this
-                .WhenAnyValue(t => t.SelectedTask,t=>t.SelectedInstance,(st,si)=>
-                    st!=null||si!=null);
+                .WhenAnyValue(t => t.SelectedTask, t => t.SelectedInstance, (st, si) =>
+                    (st != null && st.Id > 0) || si != null);
             DeleteCommand = ReactiveCommand.Create(DeleteEntity, canDelete);
 
-            IObservable<bool> canChangeTask = this
-                .WhenAnyValue(t => t.SelectedTask, (st) =>
-                    !string.IsNullOrWhiteSpace(st?.ViewTemplate) && !string.IsNullOrWhiteSpace(st.Query));
-            ChangeTaskCommand = ReactiveCommand.Create<int>(ChangeTaskById, canChangeTask);
+            IObservable<bool> canSaveTask = this
+                .WhenAnyValue(t => t.SelectedTask.ViewTemplate, t => t.SelectedTask.Query, (stv, stq) =>
+                    !string.IsNullOrWhiteSpace(stv) && !string.IsNullOrWhiteSpace(stq));
+            SaveTaskCommand = ReactiveCommand.Create(SaveTask, canSaveTask);
+
+            CreateTaskCommand = ReactiveCommand.Create(CreateTask);
 
             this.ObservableForProperty(s =>
                     s.SelectedTaskCompact) //ObservableForProperty ignores initial nulls,whenanyvalue not?
@@ -90,6 +91,8 @@ namespace ReportServer.Desktop.ViewModel
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value == null)
                 .Subscribe(_ => SelectedInstance = null);
+
+            this.WhenAnyValue(x => x.SelectedTask.ViewTemplate);
 
             OnStart();
         }
@@ -145,21 +148,55 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTask = selTask;
         }
 
-        public void ChangeTaskById(int id)
+        public void
+            SaveTask() //todo: null value for recgroup/schedule,lists for query/viewtemplate(when tasktype is custom),validation for numerical fields
         {
-            var result = MessageBox.Show("Вы действительно хотите изменить эту задачу?", "Warning",
+            var result = MessageBox.Show(
+                SelectedTask.Id > 0
+                    ? "Вы действительно хотите изменить эту задачу?"
+                    : "Вы действительно хотите создать эту задачу?", "Warning",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (result == MessageBoxResult.Yes)
+            if (result == MessageBoxResult.Yes && SelectedTask.Id > 0)
             {
                 var apiTask = _mapper.Map<ApiTask>(SelectedTask);
                 apiTask.RecepientGroupId = RecepientGroups
                     .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
                 apiTask.ScheduleId = Schedules
                     .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
+
                 _reportService.UpdateTask(apiTask);
                 LoadTaskCompacts();
             }
+
+            if (result == MessageBoxResult.Yes && SelectedTask.Id == 0)
+            {
+                var apiTask = _mapper.Map<ApiTask>(SelectedTask);
+                apiTask.RecepientGroupId = RecepientGroups
+                    .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
+                apiTask.ScheduleId = Schedules
+                    .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
+
+                _reportService.CreateTask(apiTask);
+                LoadTaskCompacts();
+            }
+        }
+
+        public void CreateTask()
+        {
+            SelectedTaskCompact = null;
+            SelectedTaskInstanceCompacts.Clear();
+            SelectedInstance = null;
+            SelectedTask = null;
+            SelectedTask = new ViewModelTask()
+            {
+                Id = 0,
+                TryCount = 1,
+                RecepientGroup = RecepientGroups.First().Name,
+                Schedule = Schedules.First().Name,
+                QueryTimeOut = 60,
+                TaskType = TaskType.Common
+            };
         }
 
         public void LoadSelectedInstanceById(int id)
@@ -181,7 +218,7 @@ namespace ReportServer.Desktop.ViewModel
                 }
                 else
                 {
-                    if (SelectedTask != null)
+                    if (SelectedTask != null && SelectedTask.Id > 0)
                     {
                         _reportService.DeleteTask(SelectedTask.Id);
                         LoadTaskCompacts();
@@ -194,7 +231,7 @@ namespace ReportServer.Desktop.ViewModel
         {
             return Observable.Start(() =>
             {
-                var path = $"{System.AppDomain.CurrentDomain.BaseDirectory}\\testreport.html";
+                var path = $"{AppDomain.CurrentDomain.BaseDirectory}\\testreport.html";
                 using (FileStream fstr = new FileStream(path, FileMode.Create))
                 {
                     byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);

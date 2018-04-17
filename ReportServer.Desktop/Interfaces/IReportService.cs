@@ -73,6 +73,7 @@ namespace ReportServer.Desktop.Interfaces
         List<ApiSchedule> GetSchedules();
         List<ApiRecepientGroup> GetRecepientGroups();
         string GetCurrentTaskViewById(int taskId);
+        int CreateSchedule(ApiSchedule schedule);
 
         void DeleteTask(int id);
         void DeleteInstance(int id);

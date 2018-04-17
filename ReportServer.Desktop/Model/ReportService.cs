@@ -58,6 +58,11 @@ namespace ReportServer.Desktop.Model
             return task.Result.Result.Body;
         }
 
+        public int CreateSchedule(ApiSchedule schedule)
+        {
+            return _client.Post("/schedules", schedule);
+        }
+
         public List<ApiInstanceCompact> GetInstanceCompactsByTaskId(int taskId)
         {
             return _client.Get<List<ApiInstanceCompact>>($"/api/v1/reports/{taskId}/instances");

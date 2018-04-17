@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReportServer.Desktop"
         xmlns:converters="clr-namespace:ReportServer.Desktop.Converters"
+        xmlns:interfaces="clr-namespace:ReportServer.Desktop.Interfaces"
         mc:Ignorable="d"
         Title="ReportRedactor" MinHeight="800" MinWidth="1200">
     <Window.Resources>
@@ -53,9 +54,9 @@
 
 
         <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal">
-            <Button Content="Добавить"></Button>
+            <Button Content="Добавить задачу" Command="{Binding CreateTaskCommand}"></Button>
+            <Button Content="Сохранить задачу" Command="{Binding SaveTaskCommand}"></Button>
             <Button Content="Удалить" Command="{Binding DeleteCommand}"></Button>
-            <Button Content="Изменить" Command="{Binding ChangeTaskCommand}"></Button>
         </StackPanel>
         <!--buttons-->
 
@@ -74,7 +75,7 @@
         <!--tasks-->
         <GridSplitter Grid.Column="1" Grid.Row="1" Width="2.5" VerticalAlignment="Stretch" HorizontalAlignment="Center" ShowsPreview="False"></GridSplitter>
 
-        <Grid Grid.Row="1" Grid.Column="2">
+        <Grid Grid.Row="1" Grid.Column="2" >
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
@@ -92,7 +93,7 @@
             </ListView>
 
             <GridSplitter  Grid.Row="1" Height="2.5" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="False"></GridSplitter>
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="2" Visibility="{Binding SelectedTask,Converter={converters:NullToVisiblityConverter} }">
 
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -121,7 +122,7 @@
                 <Rectangle Grid.ColumnSpan="2" Grid.Row="8"/>
                 <Rectangle Grid.Row="1" Grid.RowSpan="8" />
 
-                <Grid Grid.ColumnSpan="2">
+                <Grid Grid.ColumnSpan="2" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
@@ -136,16 +137,16 @@
                 <Label Grid.Row="5"  Content="RecepientGroup"/>
                 <Label Grid.Row="6"  Content="TryCount"/>
                 <Label Grid.Row="7"  Content="QueryTimeOut"/>
-                <Label Grid.Row="8"  Content="QueryTimeOut"/>
+                <Label Grid.Row="8"  Content="TaskType"/>
 
                 <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.Schedule}"/>
                 <TextBox Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ConnectionString}"/>
-                <TextBox Grid.Column="1" Grid.Row="3"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ViewTemplate}"/>
+                <TextBox Grid.Column="1" Grid.Row="3"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ViewTemplate}" />
                 <TextBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.Query}"/>
                 <ComboBox Grid.Column="1" Grid.Row="5"  HorizontalAlignment="Stretch"   ItemsSource="{Binding RecepientGroups}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.RecepientGroup}"/>
                 <TextBox Grid.Column="1" Grid.Row="6"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.TryCount}"/>
                 <TextBox Grid.Column="1" Grid.Row="7"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.QueryTimeOut}"/>
-                <TextBox Grid.Column="1" Grid.Row="8"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.TaskType}"/>
+                <ComboBox Grid.Column="1" Grid.Row="8"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Source={converters:EnumBindingSource {x:Type interfaces:TaskType}}}" SelectedValue="{Binding SelectedTask.TaskType}"/>
             </Grid>
         </Grid>
 
