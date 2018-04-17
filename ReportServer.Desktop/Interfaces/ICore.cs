@@ -17,14 +17,14 @@ namespace ReportServer.Desktop.Interfaces
         public TaskType TaskType { get; set; }
     }
 
-    public class ViewModelTask : ReactiveObject
+    public class ViewModelTask 
     {
         public int Id { get; set; }
         public string Schedule { get; set; }
         public string ConnectionString { get; set; }
         public string RecepientGroup { get; set; }
-        [Reactive] public string ViewTemplate { get; set; }
-        [Reactive] public string Query { get; set; }
+        public string ViewTemplate { get; set; }
+        public string Query { get; set; }
         public int TryCount { get; set; }
         public int QueryTimeOut { get; set; }
         public TaskType TaskType { get; set; }

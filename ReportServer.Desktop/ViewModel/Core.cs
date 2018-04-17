@@ -23,6 +23,8 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveList<ViewModelInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
+        public ReactiveList<string> ViewTemplates { get; set; }
+        public ReactiveList<string> QueryTemplates { get; set; }
 
         [Reactive] public ViewModelTaskCompact SelectedTaskCompact { get; set; }
         [Reactive] public ViewModelInstanceCompact SelectedInstanceCompact { get; set; }
@@ -38,7 +40,6 @@ namespace ReportServer.Desktop.ViewModel
 
         public Core(IReportService reportService, IMapper mapper)
         {
-            var tds = ImmediateScheduler.Instance;
             _reportService = reportService;
             _mapper = mapper;
 
@@ -47,6 +48,8 @@ namespace ReportServer.Desktop.ViewModel
             Schedules = new ReactiveList<ApiSchedule>();
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
+            ViewTemplates = new ReactiveList<string> {"weeklyreport_ve", "dailyreport_ve"};
+            QueryTemplates = new ReactiveList<string> {"weeklyreport_de", "dailyreport_de"};
 
             IObservable<bool> canOpenInstancePage = this
                 .WhenAnyValue(t => t.SelectedInstance,
@@ -65,8 +68,8 @@ namespace ReportServer.Desktop.ViewModel
             DeleteCommand = ReactiveCommand.Create(DeleteEntity, canDelete);
 
             IObservable<bool> canSaveTask = this
-                .WhenAnyValue(t => t.SelectedTask.ViewTemplate, t => t.SelectedTask.Query, (stv, stq) =>
-                    !string.IsNullOrWhiteSpace(stv) && !string.IsNullOrWhiteSpace(stq));
+                .WhenAnyValue(t => t.SelectedTask.ViewTemplate, st =>
+                    !string.IsNullOrWhiteSpace(st));
             SaveTaskCommand = ReactiveCommand.Create(SaveTask, canSaveTask);
 
             CreateTaskCommand = ReactiveCommand.Create(CreateTask);
@@ -91,8 +94,6 @@ namespace ReportServer.Desktop.ViewModel
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value == null)
                 .Subscribe(_ => SelectedInstance = null);
-
-            this.WhenAnyValue(x => x.SelectedTask.ViewTemplate);
 
             OnStart();
         }
@@ -148,8 +149,7 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTask = selTask;
         }
 
-        public void
-            SaveTask() //todo: null value for recgroup/schedule,lists for query/viewtemplate(when tasktype is custom),validation for numerical fields
+        public void SaveTask() //todo: null value for recgroup/schedule,lists for query/viewtemplate(when tasktype is custom),validation for numerical fields
         {
             var result = MessageBox.Show(
                 SelectedTask.Id > 0
@@ -193,6 +193,8 @@ namespace ReportServer.Desktop.ViewModel
                 Id = 0,
                 TryCount = 1,
                 RecepientGroup = RecepientGroups.First().Name,
+                ViewTemplate = "dailyreport_ve",
+                Query = "dailyreport_de",
                 Schedule = Schedules.First().Name,
                 QueryTimeOut = 60,
                 TaskType = TaskType.Common

@@ -153,6 +153,7 @@
     <Compile Include="BootsTrap.cs" />
     <Compile Include="Converters\BaseConverter.cs" />
     <Compile Include="Converters\IntMsToMinsConverter.cs" />
+    <Compile Include="Converters\StringToBoolConverter.cs" />
     <Compile Include="Converters\NullToVisiblityConverter.cs" />
     <Compile Include="Interfaces\ICore.cs" />
     <Compile Include="Interfaces\IMonik.cs" />

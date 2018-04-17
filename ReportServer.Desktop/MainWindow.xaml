@@ -141,8 +141,8 @@
 
                 <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.Schedule}"/>
                 <TextBox Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ConnectionString}"/>
-                <TextBox Grid.Column="1" Grid.Row="3"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ViewTemplate}" />
-                <TextBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.Query}"/>
+                <ComboBox Grid.Column="1" Grid.Row="3" IsEditable="{Binding SelectedTask.TaskType,Converter={converters:StringToBoolConverter}}" HorizontalAlignment="Stretch" ItemsSource="{Binding ViewTemplates}" SelectedValue="{Binding SelectedTask.ViewTemplate}" />
+                <ComboBox Grid.Column="1" Grid.Row="4"  IsEditable="{Binding SelectedTask.TaskType,Converter={converters:StringToBoolConverter}}" HorizontalAlignment="Stretch"  ItemsSource="{Binding QueryTemplates}" SelectedValue="{Binding SelectedTask.Query}"/>
                 <ComboBox Grid.Column="1" Grid.Row="5"  HorizontalAlignment="Stretch"   ItemsSource="{Binding RecepientGroups}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.RecepientGroup}"/>
                 <TextBox Grid.Column="1" Grid.Row="6"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.TryCount}"/>
                 <TextBox Grid.Column="1" Grid.Row="7"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.QueryTimeOut}"/>
