@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:ReportServer.Desktop"
         xmlns:converters="clr-namespace:ReportServer.Desktop.Converters"
         xmlns:interfaces="clr-namespace:ReportServer.Desktop.Interfaces"
+        xmlns:behaviors="clr-namespace:ReportServer.Desktop.Behaviors"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Title="ReportRedactor" MinHeight="800" MinWidth="1200">
     <Window.Resources>
@@ -36,6 +39,7 @@
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="TextWrapping" Value="Wrap"></Setter>
         </Style>
+
     </Window.Resources>
 
     <Grid>
@@ -139,13 +143,21 @@
                 <Label Grid.Row="7"  Content="QueryTimeOut"/>
                 <Label Grid.Row="8"  Content="TaskType"/>
 
-                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.Schedule}"/>
+                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" SelectedValuePath="Name"   DisplayMemberPath="Name" SelectedValue="{Binding SelectedTask.Schedule}"/>
                 <TextBox Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ConnectionString}"/>
-                <ComboBox Grid.Column="1" Grid.Row="3" IsEditable="{Binding SelectedTask.TaskType,Converter={converters:StringToBoolConverter}}" HorizontalAlignment="Stretch" ItemsSource="{Binding ViewTemplates}" SelectedValue="{Binding SelectedTask.ViewTemplate}" />
-                <ComboBox Grid.Column="1" Grid.Row="4"  IsEditable="{Binding SelectedTask.TaskType,Converter={converters:StringToBoolConverter}}" HorizontalAlignment="Stretch"  ItemsSource="{Binding QueryTemplates}" SelectedValue="{Binding SelectedTask.Query}"/>
+                <local:ViewTemplateControl Grid.Column="1" Grid.Row="3"></local:ViewTemplateControl>
+                <ComboBox Grid.Column="1" Grid.Row="4" IsEditable="{Binding SelectedTask.TaskType,Converter={converters:TaskTypeToBoolConverter}}" HorizontalAlignment="Stretch"  ItemsSource="{Binding QueryTemplates}" SelectedValue="{Binding SelectedTask.Query}"/>
                 <ComboBox Grid.Column="1" Grid.Row="5"  HorizontalAlignment="Stretch"   ItemsSource="{Binding RecepientGroups}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.RecepientGroup}"/>
-                <TextBox Grid.Column="1" Grid.Row="6"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.TryCount}"/>
-                <TextBox Grid.Column="1" Grid.Row="7"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.QueryTimeOut}"/>
+                <TextBox Grid.Column="1" Grid.Row="6"  HorizontalAlignment="Stretch"   Text="{Binding SelectedTask.TryCount }">
+                    <i:Interaction.Behaviors>
+                        <behaviors:TextBoxInputBehavior InputMode="DigitInput"/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+                <TextBox Grid.Column="1" Grid.Row="7"  HorizontalAlignment="Stretch" Text="{Binding SelectedTask.QueryTimeOut}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:TextBoxInputBehavior InputMode="DigitInput"/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
                 <ComboBox Grid.Column="1" Grid.Row="8"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Source={converters:EnumBindingSource {x:Type interfaces:TaskType}}}" SelectedValue="{Binding SelectedTask.TaskType}"/>
             </Grid>
         </Grid>

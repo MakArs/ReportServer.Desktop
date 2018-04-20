@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -14,7 +16,7 @@ using ReportServer.Desktop.Interfaces;
 
 namespace ReportServer.Desktop.ViewModel
 {
-    public class Core : ReactiveObject, ICore
+    public class Core : ReactiveObject, ICore,IDataErrorInfo
     {
         private readonly IReportService _reportService;
         private readonly IMapper _mapper;
@@ -38,18 +40,20 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand SaveTaskCommand { get; set; }
         public ReactiveCommand CreateTaskCommand { get; set; }
 
+        [Reactive] public string TimeOut { get; set; }
+
         public Core(IReportService reportService, IMapper mapper)
         {
             _reportService = reportService;
             _mapper = mapper;
 
-            TaskCompacts = new ReactiveList<ViewModelTaskCompact>();
+            TaskCompacts = new ReactiveList<ViewModelTaskCompact>(); //{ChangeTrackingEnabled = true};
             SelectedTaskInstanceCompacts = new ReactiveList<ViewModelInstanceCompact>();
             Schedules = new ReactiveList<ApiSchedule>();
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
-            ViewTemplates = new ReactiveList<string> {"weeklyreport_ve", "dailyreport_ve"};
-            QueryTemplates = new ReactiveList<string> {"weeklyreport_de", "dailyreport_de"};
+            ViewTemplates = new ReactiveList<string> { "weeklyreport_ve", "dailyreport_ve" };
+            QueryTemplates = new ReactiveList<string> { "weeklyreport_de", "dailyreport_de" };
 
             IObservable<bool> canOpenInstancePage = this
                 .WhenAnyValue(t => t.SelectedInstance,
@@ -74,8 +78,16 @@ namespace ReportServer.Desktop.ViewModel
 
             CreateTaskCommand = ReactiveCommand.Create(CreateTask);
 
+            this.WhenAnyObservable(s =>
+                    s.TaskCompacts.Changed) //ObservableForProperty ignores initial nulls,whenanyvalue not?
+                .Subscribe(x =>
+                {
+                    SelectedTaskInstanceCompacts.Clear();
+                    SelectedTaskCompact = null;
+                });
+
             this.ObservableForProperty(s =>
-                    s.SelectedTaskCompact) //ObservableForProperty ignores initial nulls,whenanyvalue not?
+                    s.SelectedTaskCompact)
                 .Where(x => x.Value != null)
                 .Subscribe(x =>
                 {
@@ -85,7 +97,7 @@ namespace ReportServer.Desktop.ViewModel
 
             this.ObservableForProperty(s => s.SelectedTaskCompact)
                 .Where(x => x.Value == null)
-                .Subscribe(_ => SelectedTask = null);
+                .Subscribe(_ => { SelectedTask = null; });
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value != null)
@@ -149,35 +161,39 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTask = selTask;
         }
 
-        public void SaveTask() //todo: null value for recgroup/schedule,lists for query/viewtemplate(when tasktype is custom),validation for numerical fields
+        public void SaveTask() // todo:validation for numerical fields
         {
             var result = MessageBox.Show(
                 SelectedTask.Id > 0
                     ? "Вы действительно хотите изменить эту задачу?"
                     : "Вы действительно хотите создать эту задачу?", "Warning",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes && SelectedTask.Id > 0)
+            if (result == MessageBoxResult.Yes)
             {
-                var apiTask = _mapper.Map<ApiTask>(SelectedTask);
-                apiTask.RecepientGroupId = RecepientGroups
-                    .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
-                apiTask.ScheduleId = Schedules
-                    .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
+                if (SelectedTask.Id > 0)
 
-                _reportService.UpdateTask(apiTask);
-                LoadTaskCompacts();
-            }
+                {
+                    var apiTask = _mapper.Map<ApiTask>(SelectedTask);
+                    apiTask.RecepientGroupId = RecepientGroups
+                        .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
+                    apiTask.ScheduleId = Schedules
+                        .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
 
-            if (result == MessageBoxResult.Yes && SelectedTask.Id == 0)
-            {
-                var apiTask = _mapper.Map<ApiTask>(SelectedTask);
-                apiTask.RecepientGroupId = RecepientGroups
-                    .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
-                apiTask.ScheduleId = Schedules
-                    .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
+                    _reportService.UpdateTask(apiTask);
+                    //LoadTaskCompacts(); // why it breaks reactive while other methods no and why not breaks when use method later?
+                }
 
-                _reportService.CreateTask(apiTask);
+                if (SelectedTask.Id == 0)
+                {
+                    var apiTask = _mapper.Map<ApiTask>(SelectedTask);
+                    apiTask.RecepientGroupId = RecepientGroups
+                        .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
+                    apiTask.ScheduleId = Schedules
+                        .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
+
+                    _reportService.CreateTask(apiTask);
+                }
+
                 LoadTaskCompacts();
             }
         }
@@ -270,5 +286,25 @@ namespace ReportServer.Desktop.ViewModel
             LoadRecepientGroups();
             LoadTaskCompacts();
         }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                switch (columnName)
+                {
+                    case "TimeOut":
+                        int t;
+                        if (!Int32.TryParse(SelectedTask.QueryTimeOut.ToString(), out t))
+                            return "Enter int value for timeout";
+                        break;
+                }
+
+                return string.Empty;
+            }
+        }
+
+        public string Error => this["TimeOut"];
     }
 }
+
