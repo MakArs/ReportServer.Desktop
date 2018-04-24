@@ -13,6 +13,7 @@ using AutoMapper;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Interfaces;
+using WindowState = Xceed.Wpf.Toolkit.WindowState;
 
 namespace ReportServer.Desktop.ViewModel
 {
@@ -32,6 +33,8 @@ namespace ReportServer.Desktop.ViewModel
         [Reactive] public ViewModelInstanceCompact SelectedInstanceCompact { get; set; }
         [Reactive] public ViewModelTask SelectedTask { get; set; }
         [Reactive] public ViewModelInstance SelectedInstance { get; set; }
+        [Reactive] public WindowState ViewTemplateChildWindowState { get; set; } = WindowState.Closed;
+        [Reactive] public WindowState QueryTemplateChildWindowState { get; set; } = WindowState.Closed;
 
         public ReactiveCommand RefreshTasksCommand { get; set; }
         public ReactiveCommand OpenPage { get; set; }
@@ -39,8 +42,12 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand DeleteCommand { get; set; }
         public ReactiveCommand SaveTaskCommand { get; set; }
         public ReactiveCommand CreateTaskCommand { get; set; }
-
-        [Reactive] public string TimeOut { get; set; }
+        public ReactiveCommand OpenViewTemplateWindowCommand { get; set; }
+        public ReactiveCommand SaveViewTemplateCommand { get; set; }
+        public ReactiveCommand CancelViewTemplateCommand { get; set; }
+        public ReactiveCommand OpenQueryTemplateWindowCommand { get; set; }
+        public ReactiveCommand SaveQueryTemplateCommand { get; set; }
+        public ReactiveCommand CancelQueryTemplateCommand { get; set; }
 
         public Core(IReportService reportService, IMapper mapper)
         {
@@ -72,11 +79,32 @@ namespace ReportServer.Desktop.ViewModel
             DeleteCommand = ReactiveCommand.Create(DeleteEntity, canDelete);
 
             IObservable<bool> canSaveTask = this
-                .WhenAnyValue(t => t.SelectedTask.ViewTemplate, st =>
-                    !string.IsNullOrWhiteSpace(st));
+                .WhenAnyValue(t => t.SelectedTask.ViewTemplate,t=>t.SelectedTask, (st,vt) =>
+                   vt!=null &&!string.IsNullOrWhiteSpace(st));
             SaveTaskCommand = ReactiveCommand.Create(SaveTask, canSaveTask);
 
             CreateTaskCommand = ReactiveCommand.Create(CreateTask);
+
+            IObservable<bool> openTWindow = this
+                .WhenAnyValue(t => t.SelectedTask.TaskType, st =>
+                    st==TaskType.Common);
+            OpenViewTemplateWindowCommand = ReactiveCommand.Create(() => ViewTemplateChildWindowState = WindowState.Open, openTWindow);
+            OpenQueryTemplateWindowCommand = ReactiveCommand.Create(() => QueryTemplateChildWindowState = WindowState.Open, openTWindow);
+
+
+            SaveViewTemplateCommand=ReactiveCommand.Create<string>(templ =>
+            {
+                SelectedTask.ViewTemplate = templ;
+                ViewTemplateChildWindowState = WindowState.Closed;
+            });
+            CancelViewTemplateCommand = ReactiveCommand.Create(() =>ViewTemplateChildWindowState = WindowState.Closed);
+
+            SaveQueryTemplateCommand = ReactiveCommand.Create<string>(templ =>
+            {
+                SelectedTask.Query = templ;
+                QueryTemplateChildWindowState = WindowState.Closed;
+            });
+            CancelQueryTemplateCommand = ReactiveCommand.Create(() => QueryTemplateChildWindowState = WindowState.Closed);
 
             this.WhenAnyObservable(s =>
                     s.TaskCompacts.Changed) //ObservableForProperty ignores initial nulls,whenanyvalue not?
@@ -195,6 +223,7 @@ namespace ReportServer.Desktop.ViewModel
                 }
 
                 LoadTaskCompacts();
+                SelectedTask = null;
             }
         }
 

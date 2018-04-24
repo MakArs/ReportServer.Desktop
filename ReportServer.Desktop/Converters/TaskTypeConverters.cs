@@ -12,12 +12,22 @@ namespace ReportServer.Desktop.Converters
             return value.ToString() == "Custom" ? "False" : "True";
         }
     }
+
     class TaskTypeToVisiblity : BaseConverter
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return Visibility.Collapsed;
             return value.ToString() == "Custom" ? Visibility.Collapsed : Visibility.Visible;
+        }
+    }
+
+    class AntiTaskTypeToVisiblity : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return Visibility.Collapsed;
+            return value.ToString() == "Custom" ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

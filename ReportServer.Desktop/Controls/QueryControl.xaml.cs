@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ReportServer.Desktop
+namespace ReportServer.Desktop.Controls
 {
     /// <summary>
-    /// Interaction logic for ViewTemplateControl.xaml
+    /// Interaction logic for QueryControl.xaml
     /// </summary>
-    public partial class ViewTemplateControl : UserControl
+    public partial class QueryControl : UserControl
     {
-        public ViewTemplateControl()
+        public QueryControl()
         {
             InitializeComponent();
         }

@@ -9,6 +9,8 @@
         xmlns:behaviors="clr-namespace:ReportServer.Desktop.Behaviors"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:controls="clr-namespace:ReportServer.Desktop.Controls"
         mc:Ignorable="d"
         Title="ReportRedactor" MinHeight="800" MinWidth="1200">
     <Window.Resources>
@@ -37,14 +39,20 @@
         </Style>
         <Style TargetType="TextBlock">
             <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="TextWrapping" Value="Wrap"></Setter>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="AcceptsReturn" Value="True"/>
         </Style>
 
     </Window.Resources>
 
     <Grid>
+
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="45"/>
             <RowDefinition Height="3.5*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -56,11 +64,48 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
+        <xctk:WindowContainer ZIndex="1" Grid.ColumnSpan="3" Grid.RowSpan="4">
+            <xctk:ChildWindow WindowBackground="AliceBlue" Background="AliceBlue" Height="350" Width="350" Caption="ViewTemplateEditor" IsModal="True" CloseButtonVisibility="Collapsed" DesignerWindowState="Open"
+                          WindowStartupLocation="Center"  WindowState="{Binding ViewTemplateChildWindowState}" Margin="0,-1,0,1" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="45"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.ColumnSpan="2" Name="ViewTemplate" Text="" />
+                    <Button Grid.Row="1" Command="{Binding SaveViewTemplateCommand}" CommandParameter="{Binding Text,ElementName=ViewTemplate}">OK</Button>
+                    <Button Grid.Row="1" Grid.Column="1" Command="{Binding CancelViewTemplateCommand}">Cancel</Button>
+                </Grid>
+            </xctk:ChildWindow>
+
+            <xctk:ChildWindow WindowBackground="AliceBlue" Background="AliceBlue" Height="350" Width="350" Caption="QueryTemplateEditor"  IsModal="True" CloseButtonVisibility="Collapsed" DesignerWindowState="Open"
+                          WindowStartupLocation="Center"  WindowState="{Binding QueryTemplateChildWindowState}" Margin="0,-1,0,1" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="45"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.ColumnSpan="2" Name="Query" Text="" />
+                    <Button Grid.Row="1" Command="{Binding SaveQueryTemplateCommand}" CommandParameter="{Binding Text,ElementName=Query}">OK</Button>
+                    <Button Grid.Row="1" Grid.Column="1" Command="{Binding CancelQueryTemplateCommand}">Cancel</Button>
+                </Grid>
+            </xctk:ChildWindow>
+        </xctk:WindowContainer>
 
         <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal">
-            <Button Content="Добавить задачу" Command="{Binding CreateTaskCommand}"></Button>
-            <Button Content="Сохранить задачу" Command="{Binding SaveTaskCommand}"></Button>
-            <Button Content="Удалить" Command="{Binding DeleteCommand}"></Button>
+            <Button Content="Добавить задачу" Command="{Binding CreateTaskCommand}"/>
+            <Button Content="Сохранить задачу" Command="{Binding SaveTaskCommand}"/>
+            <Button Content="Удалить" Command="{Binding DeleteCommand}"/>
         </StackPanel>
         <!--buttons-->
 
@@ -145,8 +190,8 @@
 
                 <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" SelectedValuePath="Name"   DisplayMemberPath="Name" SelectedValue="{Binding SelectedTask.Schedule}"/>
                 <TextBox Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ConnectionString}"/>
-                <local:ViewTemplateControl Grid.Column="1" Grid.Row="3"></local:ViewTemplateControl>
-                <ComboBox Grid.Column="1" Grid.Row="4" IsEditable="{Binding SelectedTask.TaskType,Converter={converters:TaskTypeToBoolConverter}}" HorizontalAlignment="Stretch"  ItemsSource="{Binding QueryTemplates}" SelectedValue="{Binding SelectedTask.Query}"/>
+                <controls:ViewTemplateControl Grid.Column="1" Grid.Row="3"/>
+                <controls:QueryControl Grid.Column="1" Grid.Row="4"/>
                 <ComboBox Grid.Column="1" Grid.Row="5"  HorizontalAlignment="Stretch"   ItemsSource="{Binding RecepientGroups}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.RecepientGroup}"/>
                 <TextBox Grid.Column="1" Grid.Row="6"  HorizontalAlignment="Stretch"   Text="{Binding SelectedTask.TryCount }">
                     <i:Interaction.Behaviors>

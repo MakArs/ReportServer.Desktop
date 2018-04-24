@@ -152,7 +152,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Controls\QueryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -162,24 +166,27 @@
     </Compile>
     <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
     <Compile Include="BootsTrap.cs" />
+    <Compile Include="Controls\QueryControl.xaml.cs">
+      <DependentUpon>QueryControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\BaseConverter.cs" />
     <Compile Include="Converters\IntMsToMinsConverter.cs" />
-    <Compile Include="Converters\TaskTypeToBoolConverter.cs" />
-    <Compile Include="Converters\NullToVisiblityConverter.cs" />
+    <Compile Include="Converters\TaskTypeConverters.cs" />
+    <Compile Include="Converters\VisiblityConverters.cs" />
     <Compile Include="Interfaces\ICore.cs" />
     <Compile Include="Interfaces\IMonik.cs" />
     <Compile Include="Interfaces\IReportService.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ViewTemplateControl.xaml">
+    <Page Include="Controls\ViewTemplateControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ViewTemplateControl.xaml.cs">
+    <Compile Include="Controls\ViewTemplateControl.xaml.cs">
       <DependentUpon>ViewTemplateControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Core.cs" />
@@ -208,7 +215,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml">

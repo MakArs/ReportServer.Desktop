@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="ReportServer.Desktop.Controls.ViewTemplateControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ReportServer.Desktop"
+             xmlns:converters="clr-namespace:ReportServer.Desktop.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid>
+            <Button Panel.ZIndex="1" Width="40" Margin="0" Command="{Binding OpenViewTemplateWindowCommand}" HorizontalAlignment="Right" Visibility="{Binding SelectedTask.TaskType,Converter={converters:TaskTypeToVisiblity}}">...</Button>
+            <TextBox Visibility="{Binding SelectedTask.TaskType,Converter={converters:TaskTypeToVisiblity}}" Text="{Binding SelectedTask.ViewTemplate}"/>
+            <ComboBox Visibility="{Binding SelectedTask.TaskType,Converter={converters:AntiTaskTypeToVisiblity}}" HorizontalAlignment="Stretch" ItemsSource="{Binding ViewTemplates}" SelectedValue="{Binding SelectedTask.ViewTemplate}" />
+        </Grid>
+    </Grid>
+</UserControl>
