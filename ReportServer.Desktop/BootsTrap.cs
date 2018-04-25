@@ -69,13 +69,13 @@ namespace ReportServer.Desktop
         public MapperProfile()
         {
             CreateMap<ApiTaskCompact, ViewModelTaskCompact>()
-                .ForMember("TaskType", opt => opt.MapFrom(s => (TaskType) s.TaskType));
+                .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
 
             CreateMap<ApiTask, ViewModelTask>()
-                .ForMember("TaskType", opt => opt.MapFrom(s => (TaskType) s.TaskType));
+                .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
 
             CreateMap<ViewModelTask, ApiTask>()
-                .ForMember("TaskType", opt => opt.MapFrom(s => (int)s.TaskType));
+                .ForMember("ReportType", opt => opt.MapFrom(s => (int)s.ReportType));
 
             CreateMap<ApiInstanceCompact, ViewModelInstanceCompact>()
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));

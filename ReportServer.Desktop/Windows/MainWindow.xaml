@@ -117,7 +117,7 @@
                     <GridViewColumn Header="RecepientGroup" DisplayMemberBinding="{Binding RecepientGroup}"/>
                     <GridViewColumn Header="TryCount" DisplayMemberBinding="{Binding TryCount}"/>
                     <GridViewColumn Header="QueryTimeOut" DisplayMemberBinding="{Binding QueryTimeOut}"/>
-                    <GridViewColumn Header="TaskType" DisplayMemberBinding="{Binding TaskType}"/>
+                    <GridViewColumn Header="ReportType" DisplayMemberBinding="{Binding ReportType}"/>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -186,7 +186,7 @@
                 <Label Grid.Row="5"  Content="RecepientGroup"/>
                 <Label Grid.Row="6"  Content="TryCount"/>
                 <Label Grid.Row="7"  Content="QueryTimeOut"/>
-                <Label Grid.Row="8"  Content="TaskType"/>
+                <Label Grid.Row="8"  Content="ReportType"/>
 
                 <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" SelectedValuePath="Name"   DisplayMemberPath="Name" SelectedValue="{Binding SelectedTask.Schedule}"/>
                 <TextBox Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ConnectionString}"/>
@@ -203,7 +203,7 @@
                         <behaviors:TextBoxInputBehavior InputMode="DigitInput"/>
                     </i:Interaction.Behaviors>
                 </TextBox>
-                <ComboBox Grid.Column="1" Grid.Row="8"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Source={converters:EnumBindingSource {x:Type interfaces:TaskType}}}" SelectedValue="{Binding SelectedTask.TaskType}"/>
+                <ComboBox Grid.Column="1" Grid.Row="8"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Source={converters:EnumBindingSource {x:Type interfaces:ReportType}}}" SelectedValue="{Binding SelectedTask.ReportType}"/>
             </Grid>
         </Grid>
 

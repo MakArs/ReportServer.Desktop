@@ -171,7 +171,7 @@
     </Compile>
     <Compile Include="Converters\BaseConverter.cs" />
     <Compile Include="Converters\IntMsToMinsConverter.cs" />
-    <Compile Include="Converters\TaskTypeConverters.cs" />
+    <Compile Include="Converters\ReportTypeConverters.cs" />
     <Compile Include="Converters\VisiblityConverters.cs" />
     <Compile Include="Interfaces\ICore.cs" />
     <Compile Include="Interfaces\IMonik.cs" />

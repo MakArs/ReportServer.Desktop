@@ -13,7 +13,7 @@ namespace ReportServer.Desktop.Interfaces
         public int? RecepientGroupId { get; set; }
         public int TryCount { get; set; }
         public int QueryTimeOut { get; set; }
-        public int TaskType { get; set; }
+        public int ReportType { get; set; }
     }
 
     public class ApiTaskCompact 
@@ -24,7 +24,7 @@ namespace ReportServer.Desktop.Interfaces
         public int RecepientGroupId { get; set; }
         public int TryCount { get; set; }
         public int QueryTimeOut { get; set; }
-        public int TaskType { get; set; }
+        public int ReportType { get; set; }
     }
 
     public class ApiInstance

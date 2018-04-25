@@ -14,7 +14,7 @@ namespace ReportServer.Desktop.Interfaces
         public string RecepientGroup { get; set; }
         public int TryCount { get; set; }
         public int QueryTimeOut { get; set; }
-        public TaskType TaskType { get; set; }
+        public ReportType ReportType { get; set; }
     }
 
     public class ViewModelTask :ReactiveObject
@@ -27,10 +27,10 @@ namespace ReportServer.Desktop.Interfaces
         [Reactive] public string Query { get; set; }
         public int TryCount { get; set; }
         public int QueryTimeOut { get; set; }
-        [Reactive] public TaskType TaskType { get; set; }
+        [Reactive] public ReportType ReportType { get; set; }
     }
 
-    public enum TaskType : byte
+    public enum ReportType : byte
     {
         Common = 1,
         Custom = 2

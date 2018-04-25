@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace ReportServer.Desktop.Converters
 {
-    class TaskTypeToBoolConverter : BaseConverter
+    class ReportTypeToBoolConverter : BaseConverter
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -13,7 +13,7 @@ namespace ReportServer.Desktop.Converters
         }
     }
 
-    class TaskTypeToVisiblity : BaseConverter
+    class ReportTypeToVisiblity : BaseConverter
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -22,7 +22,7 @@ namespace ReportServer.Desktop.Converters
         }
     }
 
-    class AntiTaskTypeToVisiblity : BaseConverter
+    class AntiReportTypeToVisiblity : BaseConverter
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

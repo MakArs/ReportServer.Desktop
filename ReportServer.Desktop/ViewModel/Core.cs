@@ -3,12 +3,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 using AutoMapper;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -86,8 +82,8 @@ namespace ReportServer.Desktop.ViewModel
             CreateTaskCommand = ReactiveCommand.Create(CreateTask);
 
             IObservable<bool> openTWindow = this
-                .WhenAnyValue(t => t.SelectedTask.TaskType, st =>
-                    st==TaskType.Common);
+                .WhenAnyValue(t => t.SelectedTask.ReportType, st =>
+                    st==ReportType.Common);
             OpenViewTemplateWindowCommand = ReactiveCommand.Create(() => ViewTemplateChildWindowState = WindowState.Open, openTWindow);
             OpenQueryTemplateWindowCommand = ReactiveCommand.Create(() => QueryTemplateChildWindowState = WindowState.Open, openTWindow);
 
@@ -242,7 +238,7 @@ namespace ReportServer.Desktop.ViewModel
                 Query = "dailyreport_de",
                 Schedule = Schedules.First().Name,
                 QueryTimeOut = 60,
-                TaskType = TaskType.Common
+                ReportType = ReportType.Common
             };
         }
 

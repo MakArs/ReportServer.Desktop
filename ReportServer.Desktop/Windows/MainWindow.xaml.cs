@@ -27,7 +27,7 @@ namespace ReportServer.Desktop
                 ViewTemplate = "om-hom-hom",
                 RecepientGroupId = 1,
                 TryCount = 15,
-                TaskType = 1
+                ReportType = 1
             };
             //t.UpdateTask(newtask);
             DataContext = new Core(r,m);
