@@ -12,18 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Autofac.Core;
-using ReportServer.Desktop.Interfaces;
-using ReportServer.Desktop.ViewModel;
 
-namespace ReportServer.Desktop.Controls
+namespace ReportServer.Desktop.Views
 {
     /// <summary>
-    /// Interaction logic for TaskCompactsControl.xaml
+    /// Interaction logic for SelectedTaskInstancesView.xaml
     /// </summary>
-    public partial class TaskCompactsControl : UserControl
+    public partial class SelectedTaskInstancesView : UserControl
     {
-        public TaskCompactsControl()
+        public SelectedTaskInstancesView()
         {
             InitializeComponent();
         }

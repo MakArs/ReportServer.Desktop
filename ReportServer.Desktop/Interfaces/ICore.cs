@@ -18,10 +18,10 @@ namespace ReportServer.Desktop.Interfaces
         public ReportType ReportType { get; set; }
     }
 
-    public class ViewModelFullTask :ReactiveObject
+    public class ViewModelFullTask : ReactiveObject
     {
         public int Id { get; set; }
-        public int ReportId { get; set; }
+        [Reactive] public int ReportId { get; set; }
         public string Schedule { get; set; }
         public string ConnectionString { get; set; }
         public string RecepientGroup { get; set; }

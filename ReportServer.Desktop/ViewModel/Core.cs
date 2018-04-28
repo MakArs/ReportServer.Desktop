@@ -136,6 +136,16 @@ namespace ReportServer.Desktop.ViewModel
                 .Where(x => x.Value == null)
                 .Subscribe(_ => SelectedInstance = null);
 
+            this.ObservableForProperty(s => s.SelectedTask.ReportId)
+                .Subscribe(rId =>
+                {
+                    var rep = Reports.First(r => r.Id == rId.Value);
+                    SelectedTask.ConnectionString = rep.ConnectionString;
+                    SelectedTask.Query = rep.Query;
+                    SelectedTask.QueryTimeOut = rep.QueryTimeOut;
+                    SelectedTask.ViewTemplate = rep.ViewTemplate;
+                });
+
             OnStart();
         }
 

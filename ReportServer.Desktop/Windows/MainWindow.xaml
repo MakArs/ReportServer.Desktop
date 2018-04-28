@@ -10,7 +10,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        xmlns:controls="clr-namespace:ReportServer.Desktop.Controls"
+        xmlns:controls="clr-namespace:ReportServer.Desktop.Views"
         mc:Ignorable="d"
         Title="ReportRedactor" MinHeight="800" MinWidth="1200">
     <Window.Resources>
@@ -108,20 +108,8 @@
             <Button Content="Удалить" Command="{Binding DeleteCommand}"/>
         </StackPanel>
         <!--buttons-->
-        <controls:TaskCompactsControl Grid.Row="1"/>
-        <!--<ListView  HorizontalContentAlignment="Stretch" ItemsSource="{Binding TaskCompacts}"  Grid.Row="1" SelectedItem="{Binding SelectedTaskCompact}">
-            <ListView.View >
-                <GridView >
-                    <GridViewColumn Header="Schedule" DisplayMemberBinding="{Binding Schedule}"/>
-                    <GridViewColumn Header="Report" DisplayMemberBinding="{Binding ReportName}"/>
-                    <GridViewColumn Header="RecepientGroup" DisplayMemberBinding="{Binding RecepientGroup}"/>
-                    <GridViewColumn Header="TryCount" DisplayMemberBinding="{Binding TryCount}"/>
-                    <GridViewColumn Header="QueryTimeOut" DisplayMemberBinding="{Binding QueryTimeOut}"/>
-                    <GridViewColumn Header="ReportType" DisplayMemberBinding="{Binding ReportType}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>-->
-        <!--tasks-->
+        <controls:TaskListView Grid.Row="1"/>
+       
         <GridSplitter Grid.Column="1" Grid.Row="1" Width="2.5" VerticalAlignment="Stretch" HorizontalAlignment="Center" ShowsPreview="False"></GridSplitter>
 
         <Grid Grid.Row="1" Grid.Column="2" >
@@ -278,7 +266,6 @@
             <xcad:LayoutRoot>
                 <xcad:LayoutPanel>
                     <xcad:LayoutAnchorablePane DockWidth="250">
-
                         <xcad:LayoutAnchorable Title="Tasks" CanHide="False" CanClose="False">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -313,11 +300,8 @@
                                 <Button Grid.Row="2"  Command="{Binding StartCommand}" Padding="150 0 0 0">Обновить данные</Button>
                             </Grid>
                         </xcad:LayoutAnchorable>
-
                     </xcad:LayoutAnchorablePane>
                 </xcad:LayoutPanel>
             </xcad:LayoutRoot>
         </xcad:DockingManager>-->
-
-
 

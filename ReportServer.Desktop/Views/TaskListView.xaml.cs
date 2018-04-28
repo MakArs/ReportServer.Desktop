@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ReportServer.Desktop.Controls
+namespace ReportServer.Desktop.Views
 {
     /// <summary>
-    /// Interaction logic for QueryControl.xaml
+    /// Interaction logic for TaskListView.xaml
     /// </summary>
-    public partial class QueryControl : UserControl
+    public partial class TaskListView : UserControl
     {
-        public QueryControl()
+        public TaskListView()
         {
             InitializeComponent();
         }

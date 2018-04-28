@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ReportServer.Desktop.Controls
+namespace ReportServer.Desktop.Views
 {
     /// <summary>
     /// Interaction logic for ViewTemplateControl.xaml

@@ -1,0 +1,48 @@
+﻿<mah:MetroWindow x:Class="ReportServer.Desktop.Views.StartupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReportServer.Desktop.Views"
+        xmlns:converters="clr-namespace:ReportServer.Desktop.Converters"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+       Title="ReportRedactor" MinHeight="800" MinWidth="1200">
+    <Grid  Grid.Row="1" Grid.Column="2" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45"/>
+            <RowDefinition Height="3.5*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal">
+            <Button Content="Добавить задачу" Command="{Binding CreateTaskCommand}"/>
+            <Button Content="Сохранить задачу" Command="{Binding SaveTaskCommand}"/>
+            <Button Content="Удалить" Command="{Binding DeleteCommand}"/>
+        </StackPanel>
+
+        <local:TaskListView Grid.Row="1"/>
+
+        <GridSplitter Grid.Column="1" Grid.Row="1" Width="2.5" VerticalAlignment="Stretch" HorizontalAlignment="Center" ShowsPreview="False"></GridSplitter>
+
+        <Grid Grid.Row="1" Grid.Column="2" >
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <local:SelectedTaskInstancesView/>
+            <GridSplitter  Grid.Row="1" Height="2.5" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="False"/>
+            <local:SelectedFullTaskView Grid.Row="2"  Visibility="{Binding SelectedTask,Converter={converters:NullToVisiblityConverter} }"/>
+        </Grid>
+
+        <GridSplitter  Grid.Row="2" Height="2.5" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="False"></GridSplitter>
+    </Grid>
+</mah:MetroWindow>
