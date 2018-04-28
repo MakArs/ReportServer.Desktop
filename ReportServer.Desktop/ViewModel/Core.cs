@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -13,21 +12,23 @@ using WindowState = Xceed.Wpf.Toolkit.WindowState;
 
 namespace ReportServer.Desktop.ViewModel
 {
-    public class Core : ReactiveObject, ICore,IDataErrorInfo
+    public class Core : ReactiveObject, ICore
     {
-        private readonly IReportService _reportService;
-        private readonly IMapper _mapper;
+        private readonly IReportService _reportService;//
+        private readonly IMapper _mapper;//
 
-        public ReactiveList<ViewModelTaskCompact> TaskCompacts { get; set; }
+        public ReactiveList<ViewModelTask> TaskCompacts { get; set; }//
         public ReactiveList<ViewModelInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
-        public ReactiveList<ApiSchedule> Schedules { get; set; }
-        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
+        public ReactiveList<ApiSchedule> Schedules { get; set; }//
+        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }//
+        public ReactiveList<ApiReport> Reports { get; set; }//
         public ReactiveList<string> ViewTemplates { get; set; }
         public ReactiveList<string> QueryTemplates { get; set; }
 
-        [Reactive] public ViewModelTaskCompact SelectedTaskCompact { get; set; }
+
+        [Reactive] public ViewModelTask SelectedTaskCompact { get; set; }//
         [Reactive] public ViewModelInstanceCompact SelectedInstanceCompact { get; set; }
-        [Reactive] public ViewModelTask SelectedTask { get; set; }
+        [Reactive] public ViewModelFullTask SelectedTask { get; set; }
         [Reactive] public ViewModelInstance SelectedInstance { get; set; }
         [Reactive] public WindowState ViewTemplateChildWindowState { get; set; } = WindowState.Closed;
         [Reactive] public WindowState QueryTemplateChildWindowState { get; set; } = WindowState.Closed;
@@ -50,13 +51,14 @@ namespace ReportServer.Desktop.ViewModel
             _reportService = reportService;
             _mapper = mapper;
 
-            TaskCompacts = new ReactiveList<ViewModelTaskCompact>(); //{ChangeTrackingEnabled = true};
+            TaskCompacts = new ReactiveList<ViewModelTask>(); //  //{ChangeTrackingEnabled = true};
             SelectedTaskInstanceCompacts = new ReactiveList<ViewModelInstanceCompact>();
             Schedules = new ReactiveList<ApiSchedule>();
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
+            Reports=new ReactiveList<ApiReport>();
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
-            ViewTemplates = new ReactiveList<string> { "weeklyreport_ve", "dailyreport_ve" };
-            QueryTemplates = new ReactiveList<string> { "weeklyreport_de", "dailyreport_de" };
+            ViewTemplates = new ReactiveList<string> {"weeklyreport_ve", "dailyreport_ve"};
+            QueryTemplates = new ReactiveList<string> {"weeklyreport_de", "dailyreport_de"};
 
             IObservable<bool> canOpenInstancePage = this
                 .WhenAnyValue(t => t.SelectedInstance,
@@ -75,34 +77,37 @@ namespace ReportServer.Desktop.ViewModel
             DeleteCommand = ReactiveCommand.Create(DeleteEntity, canDelete);
 
             IObservable<bool> canSaveTask = this
-                .WhenAnyValue(t => t.SelectedTask.ViewTemplate,t=>t.SelectedTask, (st,vt) =>
-                   vt!=null &&!string.IsNullOrWhiteSpace(st));
+                .WhenAnyValue(t => t.SelectedTask.ViewTemplate, t => t.SelectedTask, (st, vt) =>
+                    vt != null && !string.IsNullOrWhiteSpace(st));
             SaveTaskCommand = ReactiveCommand.Create(SaveTask, canSaveTask);
 
             CreateTaskCommand = ReactiveCommand.Create(CreateTask);
 
             IObservable<bool> openTWindow = this
                 .WhenAnyValue(t => t.SelectedTask.ReportType, st =>
-                    st==ReportType.Common);
-            OpenViewTemplateWindowCommand = ReactiveCommand.Create(() => ViewTemplateChildWindowState = WindowState.Open, openTWindow);
-            OpenQueryTemplateWindowCommand = ReactiveCommand.Create(() => QueryTemplateChildWindowState = WindowState.Open, openTWindow);
+                    st == ReportType.Common);
+            OpenViewTemplateWindowCommand =
+                ReactiveCommand.Create(() => ViewTemplateChildWindowState = WindowState.Open, openTWindow);
+            OpenQueryTemplateWindowCommand =
+                ReactiveCommand.Create(() => QueryTemplateChildWindowState = WindowState.Open, openTWindow);
 
 
-            SaveViewTemplateCommand=ReactiveCommand.Create<string>(templ =>
+            SaveViewTemplateCommand = ReactiveCommand.Create<string>(templ =>
             {
                 SelectedTask.ViewTemplate = templ;
                 ViewTemplateChildWindowState = WindowState.Closed;
             });
-            CancelViewTemplateCommand = ReactiveCommand.Create(() =>ViewTemplateChildWindowState = WindowState.Closed);
+            CancelViewTemplateCommand = ReactiveCommand.Create(() => ViewTemplateChildWindowState = WindowState.Closed);
 
             SaveQueryTemplateCommand = ReactiveCommand.Create<string>(templ =>
             {
                 SelectedTask.Query = templ;
                 QueryTemplateChildWindowState = WindowState.Closed;
             });
-            CancelQueryTemplateCommand = ReactiveCommand.Create(() => QueryTemplateChildWindowState = WindowState.Closed);
+            CancelQueryTemplateCommand =
+                ReactiveCommand.Create(() => QueryTemplateChildWindowState = WindowState.Closed);
 
-            this.WhenAnyObservable(s =>
+            this.WhenAnyObservable(s => //
                     s.TaskCompacts.Changed) //ObservableForProperty ignores initial nulls,whenanyvalue not?
                 .Subscribe(x =>
                 {
@@ -134,20 +139,22 @@ namespace ReportServer.Desktop.ViewModel
             OnStart();
         }
 
-        public void LoadTaskCompacts()
+        public void LoadTaskCompacts()//
         {
-            var taskList = _reportService.GetAllTaskCompacts();
+            var taskList = _reportService.GetAllTasks();
             TaskCompacts.Clear();
 
             foreach (var task in taskList)
             {
-                var vtask = _mapper.Map<ViewModelTaskCompact>(task);
+                var vtask = _mapper.Map<ViewModelTask>(task);
 
                 vtask.Schedule = Schedules
                     .FirstOrDefault(s => s.Id == task.ScheduleId)?.Name;
 
                 vtask.RecepientGroup = RecepientGroups
                     .FirstOrDefault(r => r.Id == task.RecepientGroupId)?.Name;
+
+                vtask.ReportName = Reports.FirstOrDefault(r => r.Id == task.ReportId)?.Name;
 
                 TaskCompacts.Add(vtask);
             }
@@ -171,10 +178,19 @@ namespace ReportServer.Desktop.ViewModel
                 RecepientGroups.Add(group);
         }
 
+        public void LoadReports()
+        {
+            var reportsList = _reportService.GetReports();
+            Reports.Clear();
+
+            foreach (var rep in reportsList)
+                Reports.Add(rep);
+        }
+
         public void LoadSelectedTaskById(int id)
         {
-            var apitask = _reportService.GetTaskById(id);
-            var selTask = _mapper.Map<ViewModelTask>(apitask);
+            var apitask = _reportService.GetFullTaskById(id);
+            var selTask = _mapper.Map<ViewModelFullTask>(apitask);
 
             selTask.Schedule = Schedules
                 .FirstOrDefault(s => s.Id == apitask.ScheduleId)?.Name;
@@ -197,7 +213,7 @@ namespace ReportServer.Desktop.ViewModel
                 if (SelectedTask.Id > 0)
 
                 {
-                    var apiTask = _mapper.Map<ApiTask>(SelectedTask);
+                    var apiTask = _mapper.Map<ApiFullTask>(SelectedTask);
                     apiTask.RecepientGroupId = RecepientGroups
                         .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
                     apiTask.ScheduleId = Schedules
@@ -209,7 +225,7 @@ namespace ReportServer.Desktop.ViewModel
 
                 if (SelectedTask.Id == 0)
                 {
-                    var apiTask = _mapper.Map<ApiTask>(SelectedTask);
+                    var apiTask = _mapper.Map<ApiFullTask>(SelectedTask);
                     apiTask.RecepientGroupId = RecepientGroups
                         .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
                     apiTask.ScheduleId = Schedules
@@ -229,7 +245,7 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTaskInstanceCompacts.Clear();
             SelectedInstance = null;
             SelectedTask = null;
-            SelectedTask = new ViewModelTask()
+            SelectedTask = new ViewModelFullTask()
             {
                 Id = 0,
                 TryCount = 1,
@@ -244,7 +260,7 @@ namespace ReportServer.Desktop.ViewModel
 
         public void LoadSelectedInstanceById(int id)
         {
-            SelectedInstance = _mapper.Map<ViewModelInstance>(_reportService.GetInstanceById(id));
+            SelectedInstance = _mapper.Map<ViewModelInstance>(_reportService.GetFullInstanceById(id));
         }
 
         public void DeleteEntity()
@@ -296,7 +312,7 @@ namespace ReportServer.Desktop.ViewModel
 
         public void LoadInstanceCompactsByTaskId(int taskId)
         {
-            var instanceList = _reportService.GetInstanceCompactsByTaskId(taskId);
+            var instanceList = _reportService.GetInstancesByTaskId(taskId);
             SelectedTaskInstanceCompacts.Clear();
 
             foreach (var instance in instanceList)
@@ -309,27 +325,9 @@ namespace ReportServer.Desktop.ViewModel
         {
             LoadSchedules();
             LoadRecepientGroups();
+            LoadReports();
             LoadTaskCompacts();
         }
-
-        public string this[string columnName]
-        {
-            get
-            {
-                switch (columnName)
-                {
-                    case "TimeOut":
-                        int t;
-                        if (!Int32.TryParse(SelectedTask.QueryTimeOut.ToString(), out t))
-                            return "Enter int value for timeout";
-                        break;
-                }
-
-                return string.Empty;
-            }
-        }
-
-        public string Error => this["TimeOut"];
     }
 }
 

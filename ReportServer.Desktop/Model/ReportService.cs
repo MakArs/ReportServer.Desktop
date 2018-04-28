@@ -19,24 +19,39 @@ namespace ReportServer.Desktop.Model
             _client = JsonHttpClient.Create("http://localhost:12345/");
         }
 
-        public List<ApiTaskCompact> GetAllTaskCompacts()
+        public List<ApiTask> GetAllTasks()
         {
-            return _client.Get<List<ApiTaskCompact>>("/api/v1/reports");
+            return _client.Get<List<ApiTask>>("/api/v1/tasks");
         }
 
-        public ApiTask GetTaskById(int id)
+        public ApiFullTask GetFullTaskById(int id)
         {
-            return _client.Get<ApiTask>($"/api/v1/reports/{id}");
+            return _client.Get<ApiFullTask>($"/api/v1/tasks/{id}");
         }
 
-        public ApiInstance GetInstanceById(int id)
+        public List<ApiInstance> GetInstancesByTaskId(int taskId)
         {
-            return _client.Get<ApiInstance>($"/api/v1/instances/{id}");
+            return _client.Get<List<ApiInstance>>($"/api/v1/tasks/{taskId}/instances");
+        }
+
+        public List<ApiInstance> GetInstanceCompacts()
+        {
+            return _client.Get<List<ApiInstance>>("/api/v1/instances");
+        }
+
+        public ApiFullInstance GetFullInstanceById(int id)
+        {
+            return _client.Get<ApiFullInstance>($"/api/v1/instances/{id}");
         }
 
         public List<ApiSchedule> GetSchedules()
         {
             return _client.Get<List<ApiSchedule>>("/api/v1/schedules/");
+        }
+
+        public List<ApiReport> GetReports()
+        {
+            return _client.Get<List<ApiReport>>("/api/v1/reports/");
         }
 
         public List<ApiRecepientGroup> GetRecepientGroups()
@@ -47,7 +62,7 @@ namespace ReportServer.Desktop.Model
         public string GetCurrentTaskViewById(int taskId)
         {
 
-            var task = Task.Factory.StartNew(() => _client.Send<string>(HttpMethod.Get, $"/api/v1/reports/{taskId}/currentviews"));
+            var task = Task.Factory.StartNew(() => _client.Send<string>(HttpMethod.Get, $"/api/v1/tasks/{taskId}/currentviews"));
             task.Wait();
 
             var responseCode = task.Result.Result.Response.StatusCode;
@@ -63,19 +78,9 @@ namespace ReportServer.Desktop.Model
             return _client.Post("/schedules", schedule);
         }
 
-        public List<ApiInstanceCompact> GetInstanceCompactsByTaskId(int taskId)
-        {
-            return _client.Get<List<ApiInstanceCompact>>($"/api/v1/reports/{taskId}/instances");
-        }
-
-        public List<ApiInstanceCompact> GetInstanceCompacts()
-        {
-            return _client.Get<List<ApiInstanceCompact>>("/api/v1/instances");
-        }
-
         public void DeleteTask(int id)
         {
-            _client.Delete($"/api/v1/reports/{id}");
+            _client.Delete($"/api/v1/tasks/{id}");
         }
 
         public void DeleteInstance(int id)
@@ -83,14 +88,14 @@ namespace ReportServer.Desktop.Model
             _client.Delete($"/api/v1/instances/{id}");
         }
 
-        public int CreateTask(ApiTask task)
+        public int CreateTask(ApiFullTask fullTask)
         {
-            return _client.Post("/api/v1/reports/", task);
+            return _client.Post("/api/v1/tasks/", fullTask);
         }
 
-        public void UpdateTask(ApiTask task)
+        public void UpdateTask(ApiFullTask fullTask)
         {
-            _client.Put($"/api/v1/reports/{task.Id}", task);
+            _client.Put($"/api/v1/tasks/{fullTask.Id}", fullTask);
         }
     }
 

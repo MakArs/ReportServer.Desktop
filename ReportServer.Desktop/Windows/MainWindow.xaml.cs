@@ -1,10 +1,11 @@
 ﻿using System.Windows;
 using Autofac;
 using AutoMapper;
+using ReportServer.Desktop.Controls;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.ViewModel;
 
-namespace ReportServer.Desktop
+namespace ReportServer.Desktop.Windows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -17,19 +18,7 @@ namespace ReportServer.Desktop
             BootsTrap.Init();
             var r = BootsTrap.Container.Resolve<IReportService>();
             var m= BootsTrap.Container.Resolve<IMapper>();
-            var newtask = new ApiTask()
-            {
-                ConnectionString = null,
-                Id = 24,
-                ScheduleId = 3,
-                Query = "hom-hom-om",
-                QueryTimeOut = 62,
-                ViewTemplate = "om-hom-hom",
-                RecepientGroupId = 1,
-                TryCount = 15,
-                ReportType = 1
-            };
-            //t.UpdateTask(newtask);
+            //var reps=r.GetReports();
             DataContext = new Core(r,m);
         }
     }
