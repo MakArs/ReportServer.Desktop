@@ -6,12 +6,61 @@
         xmlns:local="clr-namespace:ReportServer.Desktop.Views"
         xmlns:converters="clr-namespace:ReportServer.Desktop.Converters"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:docker="http://schemas.xceed.com/wpf/xaml/avalondock"
         mc:Ignorable="d"
        Title="ReportRedactor" MinHeight="800" MinWidth="1200" BorderThickness="1.5"
        BorderBrush="{DynamicResource AccentColorBrush}" GlowBrush="{DynamicResource AccentColorBrush}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" CanVerticallyScroll="True">
+            <Button Content="Добавить задачу" Command="{Binding CreateTaskCommand}"/>
+            <Button Content="Сохранить задачу" Command="{Binding SaveTaskCommand}"/>
+            <Button Content="Удалить" Command="{Binding DeleteCommand}"/>
+        </StackPanel>
+        <docker:DockingManager Grid.Row="1">
+            <docker:LayoutRoot>
+
+                <docker:LayoutPanel Orientation="Vertical">
+                    <docker:LayoutPanel>
+                        <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
+                            <docker:LayoutDocument Title="Tasks" CanClose="False">
+                                <local:TaskListView/>
+                            </docker:LayoutDocument>
+                        </docker:LayoutDocumentPane>
+
+                        <docker:LayoutPanel Orientation="Vertical">
+                            <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
+                                <docker:LayoutDocument Title="TaskInstances"  CanClose="False">
+                                    <local:SelectedTaskInstancesView/>
+                                </docker:LayoutDocument>
+                            </docker:LayoutDocumentPane>
+
+                            <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
+                                <docker:LayoutDocument Title="SelectedTask"  CanClose="False">
+                                    <local:SelectedTaskFullView/>
+                                </docker:LayoutDocument>
+                            </docker:LayoutDocumentPane>
+                        </docker:LayoutPanel>
+
+                    </docker:LayoutPanel>
+
+                    <docker:LayoutAnchorablePane DockWidth="Auto" DockHeight="Auto">
+                        <docker:LayoutAnchorable Title="SelectedInstance" CanClose="False" CanHide="False" CanAutoHide="False">
+                            <local:SelectedInstanceFullView/>
+                        </docker:LayoutAnchorable>
+                    </docker:LayoutAnchorablePane>
+                </docker:LayoutPanel>
+            </docker:LayoutRoot>
+        </docker:DockingManager>
+    </Grid>
+</mah:MetroWindow>
+
+<!--<Grid Grid.Row="1">
+        <Grid.RowDefinitions>
+            
             <RowDefinition Height="3.5*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -22,11 +71,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal">
-            <Button Content="Добавить задачу" Command="{Binding CreateTaskCommand}"/>
-            <Button Content="Сохранить задачу" Command="{Binding SaveTaskCommand}"/>
-            <Button Content="Удалить" Command="{Binding DeleteCommand}"/>
-        </StackPanel>
+        
 
         <local:TaskListView Grid.Row="1"/>
 
@@ -49,5 +94,4 @@
         <GridSplitter  Grid.Row="2" Height="2.5" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="False"></GridSplitter>
 
         <local:SelectedInstanceFullView Grid.Row="3" Grid.ColumnSpan="3" Visibility="{Binding SelectedInstance,Converter={converters:NullToVisiblityConverter} }"/>
-    </Grid>
-</mah:MetroWindow>
+    </Grid>-->
