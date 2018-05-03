@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 
 namespace ReportServer.Desktop.Converters
@@ -17,7 +19,7 @@ namespace ReportServer.Desktop.Converters
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return Visibility.Hidden;
-            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+            return (bool)value ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }

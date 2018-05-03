@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ReportServer.Desktop.Views
 {
     /// <summary>
-    /// Interaction logic for SelectedFullTaskView.xaml
+    /// Interaction logic for SelectedTaskFullView.xaml
     /// </summary>
-    public partial class SelectedFullTaskView : UserControl
+    public partial class SelectedTaskFullView : UserControl
     {
-        public SelectedFullTaskView()
+        public SelectedTaskFullView()
         {
             InitializeComponent();
         }

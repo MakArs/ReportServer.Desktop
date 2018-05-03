@@ -22,13 +22,13 @@ namespace ReportServer.Desktop.Interfaces
     {
         public int Id { get; set; }
         [Reactive] public int ReportId { get; set; }
-        public string Schedule { get; set; }
-        public string ConnectionString { get; set; }
-        public string RecepientGroup { get; set; }
+        [Reactive] public string Schedule { get; set; }
+        [Reactive] public string ConnectionString { get; set; }
+        [Reactive] public string RecepientGroup { get; set; }
         [Reactive] public string ViewTemplate { get; set; }
         [Reactive] public string Query { get; set; }
-        public int TryCount { get; set; }
-        public int QueryTimeOut { get; set; }
+        [Reactive] public int TryCount { get; set; }
+        [Reactive] public int QueryTimeOut { get; set; }
         [Reactive] public ReportType ReportType { get; set; }
     }
 

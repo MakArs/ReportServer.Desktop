@@ -7,8 +7,9 @@
         xmlns:converters="clr-namespace:ReportServer.Desktop.Converters"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-       Title="ReportRedactor" MinHeight="800" MinWidth="1200">
-    <Grid  Grid.Row="1" Grid.Column="2" >
+       Title="ReportRedactor" MinHeight="800" MinWidth="1200" BorderThickness="1.5"
+       BorderBrush="{DynamicResource AccentColorBrush}" GlowBrush="{DynamicResource AccentColorBrush}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
             <RowDefinition Height="3.5*"/>
@@ -38,11 +39,15 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <local:SelectedTaskInstancesView/>
+            <local:SelectedTaskInstancesView Visibility="{Binding SelectedTaskInstanceCompacts[0],Converter={converters:NullToVisiblityConverter}}"/>
+
             <GridSplitter  Grid.Row="1" Height="2.5" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="False"/>
-            <local:SelectedFullTaskView Grid.Row="2"  Visibility="{Binding SelectedTask,Converter={converters:NullToVisiblityConverter} }"/>
+            
+            <local:SelectedTaskFullView Grid.Row="2"  Visibility="{Binding SelectedTask,Converter={converters:NullToVisiblityConverter} }"/>
         </Grid>
 
         <GridSplitter  Grid.Row="2" Height="2.5" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="False"></GridSplitter>
+
+        <local:SelectedInstanceFullView Grid.Row="3" Grid.ColumnSpan="3" Visibility="{Binding SelectedInstance,Converter={converters:NullToVisiblityConverter} }"/>
     </Grid>
 </mah:MetroWindow>

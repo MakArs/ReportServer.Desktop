@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ReportServer.Desktop.Views.SelectedFullTaskView"
+﻿<UserControl x:Class="ReportServer.Desktop.Views.SelectedTaskFullView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -56,28 +56,28 @@
             <Button Grid.Column="1" Margin="0" Command="{Binding OpenCurrentTaskView}" CommandParameter="{Binding SelectedTaskCompact.Id}">Сформировать отчёт</Button>
         </Grid>
         <Label Grid.Row="1"  Content="Schedule"/>
-        <Label Grid.Row="2"  Content="ConnectionString"/>
-        <Label Grid.Row="3"  Content="ViewTemplate"/>
-        <Label Grid.Row="4"  Content="Query"/>
-        <Label Grid.Row="5"  Content="RecepientGroup"/>
-        <Label Grid.Row="6"  Content="TryCount"/>
+        <Label Grid.Row="2"  Content="RecepientGroup"/>
+        <Label Grid.Row="3"  Content="TryCount"/>
+        <Label Grid.Row="4"  Content="Report"/>
+        <Label Grid.Row="5"  Content="ConnectionString"/>
+        <Label Grid.Row="6"  Content="ViewTemplate"/>
         <Label Grid.Row="7"  Content="QueryTimeOut"/>
         <Label Grid.Row="8"  Content="ReportType"/>
-        <Label Grid.Row="9"  Content="Report"/>
+        <Label Grid.Row="9"  Content="Query"/>
 
         <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" SelectedValuePath="Name"   DisplayMemberPath="Name" SelectedValue="{Binding SelectedTask.Schedule}"/>
-        <TextBlock Grid.Column="1" Grid.Row="2"  Text="{Binding SelectedTask.ConnectionString}"/>
-        <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding SelectedTask.ViewTemplate}"/>
-        <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding SelectedTask.Query}"/>
-        <ComboBox Grid.Column="1" Grid.Row="5"  HorizontalAlignment="Stretch"   ItemsSource="{Binding RecepientGroups}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.RecepientGroup}"/>
-        <TextBox Grid.Column="1" Grid.Row="6"  HorizontalAlignment="Stretch"   Text="{Binding SelectedTask.TryCount }">
+        <ComboBox Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"   ItemsSource="{Binding RecepientGroups}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.RecepientGroup}"/>
+        <TextBox Grid.Column="1" Grid.Row="3"  HorizontalAlignment="Stretch"   Text="{Binding SelectedTask.TryCount }">
             <i:Interaction.Behaviors>
                 <behaviors:TextBoxInputBehavior InputMode="DigitInput"/>
             </i:Interaction.Behaviors>
         </TextBox>
+        <ComboBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Reports}" SelectedValuePath="Id"  DisplayMemberPath="Id" SelectedValue="{Binding SelectedTask.ReportId}"/>
+        <TextBlock Grid.Column="1" Grid.Row="5"  Text="{Binding SelectedTask.ConnectionString}"/>
+        <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding SelectedTask.ViewTemplate}"/>
         <TextBlock Grid.Column="1" Grid.Row="7"  Text="{Binding SelectedTask.QueryTimeOut}"/>
         <TextBlock Grid.Column="1" Grid.Row="8"  Text="{Binding SelectedTask.ReportType}"/>
-        <ComboBox Grid.Column="1" Grid.Row="9"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Reports}" SelectedValuePath="Id"  DisplayMemberPath="Id" SelectedValue="{Binding SelectedTask.ReportId}"/>
+        <TextBlock Grid.Column="1" Grid.Row="9" Text="{Binding SelectedTask.Query}"/>
     </Grid>
 </UserControl>
 

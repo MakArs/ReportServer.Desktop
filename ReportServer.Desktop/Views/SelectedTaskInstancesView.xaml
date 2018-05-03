@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <ListView HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedTaskInstanceCompacts}" SelectedItem="{Binding SelectedInstanceCompact}">
+        <ListView HorizontalAlignment="Stretch" Visibility="{Binding SelectedTaskInstanceCompacts[0],Converter={converters:NullToVisiblityConverter}}" ItemsSource="{Binding SelectedTaskInstanceCompacts}" SelectedItem="{Binding SelectedInstanceCompact}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="StartTime"  DisplayMemberBinding="{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" />

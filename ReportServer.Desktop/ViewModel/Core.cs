@@ -144,6 +144,7 @@ namespace ReportServer.Desktop.ViewModel
                     SelectedTask.Query = rep.Query;
                     SelectedTask.QueryTimeOut = rep.QueryTimeOut;
                     SelectedTask.ViewTemplate = rep.ViewTemplate;
+                    SelectedTask.ReportType = (ReportType)rep.ReportType;
                 });
 
             OnStart();
@@ -258,13 +259,10 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTask = new ViewModelFullTask()
             {
                 Id = 0,
+                ReportId = Reports.First().Id,
                 TryCount = 1,
-                RecepientGroup = RecepientGroups.First().Name,
-                ViewTemplate = "dailyreport_ve",
-                Query = "dailyreport_de",
                 Schedule = Schedules.First().Name,
-                QueryTimeOut = 60,
-                ReportType = ReportType.Common
+                RecepientGroup = RecepientGroups.First().Name,
             };
         }
 

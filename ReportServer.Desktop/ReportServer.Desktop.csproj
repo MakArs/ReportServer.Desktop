@@ -161,11 +161,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Resources\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\IconsNonShared.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\QueryControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SelectedFullTaskView.xaml">
+    <Page Include="Views\SelectedTaskFullView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SelectedInstanceFullView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -203,8 +215,11 @@
     <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="Interfaces\ITaskCompactsViewModel.cs" />
     <Compile Include="ViewModel\TaskCompactsViewModel.cs" />
-    <Compile Include="Views\SelectedFullTaskView.xaml.cs">
-      <DependentUpon>SelectedFullTaskView.xaml</DependentUpon>
+    <Compile Include="Views\SelectedTaskFullView.xaml.cs">
+      <DependentUpon>SelectedTaskFullView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectedInstanceFullView.xaml.cs">
+      <DependentUpon>SelectedInstanceFullView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SelectedTaskInstancesView.xaml.cs">
       <DependentUpon>SelectedTaskInstancesView.xaml</DependentUpon>
@@ -252,6 +267,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -263,7 +279,12 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\WindowsIcons-license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Entypo-license.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.2.4.1\build\Fody.targets" Condition="Exists('..\packages\Fody.2.4.1\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

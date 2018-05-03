@@ -64,7 +64,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <xctk:WindowContainer ZIndex="1" Grid.ColumnSpan="3" Grid.RowSpan="4">
+        <!--<xctk:WindowContainer ZIndex="1" Grid.ColumnSpan="3" Grid.RowSpan="4">
             <xctk:ChildWindow WindowBackground="AliceBlue" Background="AliceBlue" Height="350" Width="350" Caption="ViewTemplateEditor" IsModal="True" CloseButtonVisibility="Collapsed" DesignerWindowState="Open"
                           WindowStartupLocation="Center"  WindowState="{Binding ViewTemplateChildWindowState}" Margin="0,-1,0,1" >
                 <Grid>
@@ -100,7 +100,7 @@
                     <Button Grid.Row="1" Grid.Column="1" Command="{Binding CancelQueryTemplateCommand}">Cancel</Button>
                 </Grid>
             </xctk:ChildWindow>
-        </xctk:WindowContainer>
+        </xctk:WindowContainer>-->
 
         <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal">
             <Button Content="Добавить задачу" Command="{Binding CreateTaskCommand}"/>

@@ -13,11 +13,10 @@
                 <!-- accent resource -->
                 <!-- change "Cobalt" to the accent color you want -->
 
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Cobalt.xaml" />
-
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/olive.xaml" />
                 <!-- theme resource -->
                 <!-- change "BaseLight" to the theme you want -->
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/amber.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="Button">
                 <Setter Property="Margin" Value="5"/>
@@ -25,13 +24,13 @@
             </Style>
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="Padding" Value="20 5 20 5"/>
-                <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
-                <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
-                <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
             <Style TargetType="ListViewItem">
-                <Setter Property="BorderBrush" Value="Black"></Setter>
-                <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
             </Style>
             <!--<Style TargetType="Rectangle">
                 <Setter Property="Stroke" Value="Black"></Setter>
