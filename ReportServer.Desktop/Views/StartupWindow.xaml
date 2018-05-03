@@ -8,6 +8,8 @@
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:docker="http://schemas.xceed.com/wpf/xaml/avalondock"
         mc:Ignorable="d"
+        xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+       dialog:DialogParticipation.Register="{Binding}"
        Title="ReportRedactor" MinHeight="800" MinWidth="1200" BorderThickness="1.5"
        BorderBrush="{DynamicResource AccentColorBrush}" GlowBrush="{DynamicResource AccentColorBrush}">
     <Grid>

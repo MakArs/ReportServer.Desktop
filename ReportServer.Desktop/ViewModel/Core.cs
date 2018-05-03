@@ -1,13 +1,19 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using AutoMapper;
+using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Interfaces;
+using MessageBox = System.Windows.MessageBox;
 using WindowState = Xceed.Wpf.Toolkit.WindowState;
 
 namespace ReportServer.Desktop.ViewModel
@@ -16,6 +22,7 @@ namespace ReportServer.Desktop.ViewModel
     {
         private readonly IReportService _reportService;//
         private readonly IMapper _mapper;//
+        private readonly IDialogCoordinator _dialogCoordinator=DialogCoordinator.Instance;
 
         public ReactiveList<ViewModelTask> TaskCompacts { get; set; }//
         public ReactiveList<ViewModelInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
@@ -79,7 +86,7 @@ namespace ReportServer.Desktop.ViewModel
             IObservable<bool> canSaveTask = this
                 .WhenAnyValue(t => t.SelectedTask.ViewTemplate, t => t.SelectedTask, (st, vt) =>
                     vt != null && !string.IsNullOrWhiteSpace(st));
-            SaveTaskCommand = ReactiveCommand.Create(SaveTask, canSaveTask);
+            SaveTaskCommand = ReactiveCommand.Create(() => SaveTask(), canSaveTask);
 
             CreateTaskCommand = ReactiveCommand.Create(CreateTask);
 
@@ -212,14 +219,21 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTask = selTask;
         }
 
-        public void SaveTask() // todo:validation for numerical fields
+        public async Task SaveTask() 
         {
-            var result = MessageBox.Show(
+            var ts = _dialogCoordinator.ShowMessageAsync(this, "Warning",
                 SelectedTask.Id > 0
                     ? "Вы действительно хотите изменить эту задачу?"
-                    : "Вы действительно хотите создать эту задачу?", "Warning",
-                MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
+                    : "Вы действительно хотите создать эту задачу?"
+                ,MessageDialogStyle.AffirmativeAndNegative).ConfigureAwait(continueOnCapturedContext: false);
+            
+            var result = await  ts;
+            //var result = MessageBox.Show(
+            //    SelectedTask.Id > 0
+            //        ? "Вы действительно хотите изменить эту задачу?"
+            //        : "Вы действительно хотите создать эту задачу?", "Warning",
+            //    MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageDialogResult.Affirmative)
             {
                 if (SelectedTask.Id > 0)
 
