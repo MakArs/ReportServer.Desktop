@@ -1,20 +1,16 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Forms;
+using System.Windows.Media;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Interfaces;
-using MessageBox = System.Windows.MessageBox;
-using WindowState = Xceed.Wpf.Toolkit.WindowState;
+using ReportServer.Desktop.Views;
 
 namespace ReportServer.Desktop.ViewModel
 {
@@ -28,17 +24,16 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveList<ViewModelInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
         public ReactiveList<ApiSchedule> Schedules { get; set; }//
         public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }//
-        public ReactiveList<ApiReport> Reports { get; set; }//
+        public ReactiveList<ViewModelReport> Reports { get; set; }//
         public ReactiveList<string> ViewTemplates { get; set; }
         public ReactiveList<string> QueryTemplates { get; set; }
 
-
+        [Reactive] public object SelectTab { get; set; }
         [Reactive] public ViewModelTask SelectedTaskCompact { get; set; }//
         [Reactive] public ViewModelInstanceCompact SelectedInstanceCompact { get; set; }
         [Reactive] public ViewModelFullTask SelectedTask { get; set; }
         [Reactive] public ViewModelInstance SelectedInstance { get; set; }
-        [Reactive] public WindowState ViewTemplateChildWindowState { get; set; } = WindowState.Closed;
-        [Reactive] public WindowState QueryTemplateChildWindowState { get; set; } = WindowState.Closed;
+        [Reactive] public ViewModelReport SelectedReport { get; set; }
 
         public ReactiveCommand RefreshTasksCommand { get; set; }
         public ReactiveCommand OpenPage { get; set; }
@@ -47,11 +42,8 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand SaveTaskCommand { get; set; }
         public ReactiveCommand CreateTaskCommand { get; set; }
         public ReactiveCommand OpenViewTemplateWindowCommand { get; set; }
-        public ReactiveCommand SaveViewTemplateCommand { get; set; }
-        public ReactiveCommand CancelViewTemplateCommand { get; set; }
         public ReactiveCommand OpenQueryTemplateWindowCommand { get; set; }
-        public ReactiveCommand SaveQueryTemplateCommand { get; set; }
-        public ReactiveCommand CancelQueryTemplateCommand { get; set; }
+        public ReactiveCommand CreateReportCommand { get; set; }
 
         public Core(IReportService reportService, IMapper mapper)
         {
@@ -62,57 +54,50 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTaskInstanceCompacts = new ReactiveList<ViewModelInstanceCompact>();
             Schedules = new ReactiveList<ApiSchedule>();
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
-            Reports=new ReactiveList<ApiReport>();
+            Reports=new ReactiveList<ViewModelReport>();
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
             ViewTemplates = new ReactiveList<string> {"weeklyreport_ve", "dailyreport_ve"};
             QueryTemplates = new ReactiveList<string> {"weeklyreport_de", "dailyreport_de"};
 
             IObservable<bool> canOpenInstancePage = this
                 .WhenAnyValue(t => t.SelectedInstance,
-                    si => !string.IsNullOrEmpty(si?.ViewData));
-            OpenPage = ReactiveCommand.CreateFromObservable<string, Unit>(OpenPageInBrowser, canOpenInstancePage);
+                    si => !string.IsNullOrEmpty(si?.ViewData)); 
+            OpenPage = ReactiveCommand.Create<string>(OpenPageInBrowser, canOpenInstancePage);
 
             IObservable<bool> canOpenCurrentTaskView = this
                 .WhenAnyValue(t => t.SelectedTask,
-                    st => !string.IsNullOrEmpty(st?.ViewTemplate));
+                    st => !string.IsNullOrEmpty(st?.ViewTemplate));//why don't work while create task?...
             OpenCurrentTaskView =
                 ReactiveCommand.CreateFromObservable<int, Unit>(GetHtmlPageByTaskId, canOpenCurrentTaskView);
 
             IObservable<bool> canDelete = this
-                .WhenAnyValue(t => t.SelectedTask, t => t.SelectedInstance, (st, si) =>
-                    (st != null && st.Id > 0) || si != null);
+                .WhenAnyValue(t => t.SelectTab,
+                    t=>t.SelectedTask,
+                    t=>t.SelectedReport,
+                    s=>s.SelectedInstanceCompact,
+                    (stb,stc,srp,sic) =>
+                    stb != null &&
+                    ((stb.GetType() == typeof(TaskListView)&& stc!=null)||
+                    //(stb.GetType() == typeof(ReportListView)&& srp != null) ||
+                    (stb.GetType() == typeof(SelectedTaskInstancesView)&& sic != null)
+                ));
             DeleteCommand = ReactiveCommand.Create(DeleteEntity, canDelete);
 
             IObservable<bool> canSaveTask = this
                 .WhenAnyValue(t => t.SelectedTask.ViewTemplate, t => t.SelectedTask, (st, vt) =>
                     vt != null && !string.IsNullOrWhiteSpace(st));
-            SaveTaskCommand = ReactiveCommand.Create(() => SaveTask(), canSaveTask);
+            SaveTaskCommand = ReactiveCommand.Create(SaveTask, canSaveTask);
 
             CreateTaskCommand = ReactiveCommand.Create(CreateTask);
+            CreateReportCommand=ReactiveCommand.Create(CreateReport);
 
-            IObservable<bool> openTWindow = this
-                .WhenAnyValue(t => t.SelectedTask.ReportType, st =>
-                    st == ReportType.Common);
+            IObservable<bool> canOpenReportModal = this
+                .WhenAnyValue(t => t.SelectedReport.ReportType, sr =>
+                    sr == ReportType.Common);
             OpenViewTemplateWindowCommand =
-                ReactiveCommand.Create(() => ViewTemplateChildWindowState = WindowState.Open, openTWindow);
+                ReactiveCommand.CreateFromTask(async() => SelectedReport.ViewTemplate= await DataRedacting(), canOpenReportModal);
             OpenQueryTemplateWindowCommand =
-                ReactiveCommand.Create(() => QueryTemplateChildWindowState = WindowState.Open, openTWindow);
-
-
-            SaveViewTemplateCommand = ReactiveCommand.Create<string>(templ =>
-            {
-                SelectedTask.ViewTemplate = templ;
-                ViewTemplateChildWindowState = WindowState.Closed;
-            });
-            CancelViewTemplateCommand = ReactiveCommand.Create(() => ViewTemplateChildWindowState = WindowState.Closed);
-
-            SaveQueryTemplateCommand = ReactiveCommand.Create<string>(templ =>
-            {
-                SelectedTask.Query = templ;
-                QueryTemplateChildWindowState = WindowState.Closed;
-            });
-            CancelQueryTemplateCommand =
-                ReactiveCommand.Create(() => QueryTemplateChildWindowState = WindowState.Closed);
+                ReactiveCommand.CreateFromTask(async () => SelectedReport.Query = await DataRedacting(), canOpenReportModal);
 
             this.WhenAnyObservable(s => //
                     s.TaskCompacts.Changed) //ObservableForProperty ignores initial nulls,whenanyvalue not?
@@ -144,6 +129,7 @@ namespace ReportServer.Desktop.ViewModel
                 .Subscribe(_ => SelectedInstance = null);
 
             this.ObservableForProperty(s => s.SelectedTask.ReportId)
+                .Where(rId=>rId.Value!=0)
                 .Subscribe(rId =>
                 {
                     var rep = Reports.First(r => r.Id == rId.Value);
@@ -151,7 +137,7 @@ namespace ReportServer.Desktop.ViewModel
                     SelectedTask.Query = rep.Query;
                     SelectedTask.QueryTimeOut = rep.QueryTimeOut;
                     SelectedTask.ViewTemplate = rep.ViewTemplate;
-                    SelectedTask.ReportType = (ReportType)rep.ReportType;
+                    SelectedTask.ReportType = rep.ReportType;
                 });
 
             OnStart();
@@ -202,7 +188,7 @@ namespace ReportServer.Desktop.ViewModel
             Reports.Clear();
 
             foreach (var rep in reportsList)
-                Reports.Add(rep);
+                Reports.Add(_mapper.Map<ViewModelReport>(rep));
         }
 
         public void LoadSelectedTaskById(int id)
@@ -219,20 +205,23 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTask = selTask;
         }
 
-        public async Task SaveTask() 
+        public async Task<string> DataRedacting()
         {
+            var data = _dialogCoordinator.ShowInputAsync(this, "Hello", "Enter data for this field");
+            var result = await data;
+            return result;
+        }
+
+        public async Task SaveTask()
+        {
+            var b = SelectTab.GetType();
             var ts = _dialogCoordinator.ShowMessageAsync(this, "Warning",
                 SelectedTask.Id > 0
                     ? "Вы действительно хотите изменить эту задачу?"
                     : "Вы действительно хотите создать эту задачу?"
-                ,MessageDialogStyle.AffirmativeAndNegative).ConfigureAwait(continueOnCapturedContext: false);
-            
+                ,MessageDialogStyle.AffirmativeAndNegative); //.ConfigureAwait(continueOnCapturedContext: false);
             var result = await  ts;
-            //var result = MessageBox.Show(
-            //    SelectedTask.Id > 0
-            //        ? "Вы действительно хотите изменить эту задачу?"
-            //        : "Вы действительно хотите создать эту задачу?", "Warning",
-            //    MessageBoxButton.YesNo, MessageBoxImage.Question);
+
             if (result == MessageDialogResult.Affirmative)
             {
                 if (SelectedTask.Id > 0)
@@ -273,10 +262,21 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTask = new ViewModelFullTask()
             {
                 Id = 0,
-                ReportId = Reports.First().Id,
                 TryCount = 1,
                 Schedule = Schedules.First().Name,
-                RecepientGroup = RecepientGroups.First().Name,
+                RecepientGroup = RecepientGroups.First().Name
+            };
+            SelectedTask.ReportId = Reports.First().Id;
+            SelectedTask = SelectedTask;
+        }
+
+        public void CreateReport()
+        {
+            SelectedReport = null;
+            SelectedReport = new ViewModelReport()
+            {
+                Id = 0,
+                QueryTimeOut = 60
             };
         }
 
@@ -285,42 +285,47 @@ namespace ReportServer.Desktop.ViewModel
             SelectedInstance = _mapper.Map<ViewModelInstance>(_reportService.GetFullInstanceById(id));
         }
 
-        public void DeleteEntity()
+        public async Task DeleteEntity()
         {
-            var result = MessageBox.Show("Вы действительно хотите удалить данную запись?", "Warning",
-                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var ts = _dialogCoordinator.ShowMessageAsync(this, "Warning",
+                "Вы действительно хотите удалить данную запись?"
+                , MessageDialogStyle.AffirmativeAndNegative);
+            var result = await ts;
 
-            if (result == MessageBoxResult.Yes)
+            if (result == MessageDialogResult.Affirmative)
             {
-                if (SelectedInstance != null)
+                switch (SelectTab)
                 {
-                    _reportService.DeleteInstance(SelectedInstance.Id);
-                    LoadInstanceCompactsByTaskId(SelectedTask.Id);
-                }
-                else
-                {
-                    if (SelectedTask != null && SelectedTask.Id > 0)
+                    case TaskListView _:
                     {
                         _reportService.DeleteTask(SelectedTask.Id);
                         LoadTaskCompacts();
+                        break;
+                    }
+                    //case ReportListView _:
+                    //{
+                    //    break;
+                    //}
+                    case SelectedTaskInstancesView _:
+                    {
+                        _reportService.DeleteInstance(SelectedInstance.Id);
+                        LoadInstanceCompactsByTaskId(SelectedTask.Id);
+                        break;
                     }
                 }
             }
         }
 
-        public IObservable<Unit> OpenPageInBrowser(string htmlPage)
+        public void OpenPageInBrowser(string htmlPage)
         {
-            return Observable.Start(() =>
-            {
-                var path = $"{AppDomain.CurrentDomain.BaseDirectory}\\testreport.html";
-                using (FileStream fstr = new FileStream(path, FileMode.Create))
-                {
-                    byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
-                    fstr.Write(bytePage, 0, bytePage.Length);
-                }
 
-                System.Diagnostics.Process.Start(path);
-            });
+            var path = $"{AppDomain.CurrentDomain.BaseDirectory}\\testreport.html";
+            using (FileStream fstr = new FileStream(path, FileMode.Create))
+            {
+                byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
+                fstr.Write(bytePage, 0, bytePage.Length);
+            }
+            System.Diagnostics.Process.Start(path);
         }
 
         public IObservable<Unit> GetHtmlPageByTaskId(int taskId)
@@ -349,6 +354,7 @@ namespace ReportServer.Desktop.ViewModel
             LoadRecepientGroups();
             LoadReports();
             LoadTaskCompacts();
+            SelectTab = null;
         }
     }
 }

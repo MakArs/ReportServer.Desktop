@@ -23,10 +23,11 @@
                 <Setter Property="Padding" Value="5"/>
             </Style>
             <Style TargetType="GridViewColumnHeader">
-                <Setter Property="Padding" Value="20 5 20 5"/>
+                <Setter Property="Padding" Value="5"/>
                 <Setter Property="HorizontalAlignment" Value="Stretch"/>
                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="MinWidth" Value="25"/>
             </Style>
             <Style TargetType="ListViewItem">
                 <Setter Property="BorderBrush" Value="Black"/>

@@ -19,41 +19,62 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" CanVerticallyScroll="True">
             <Button Content="Добавить задачу" Command="{Binding CreateTaskCommand}"/>
+            <Button Content="Добавить отчёт" Command="{Binding CreateReportCommand}"/>
             <Button Content="Сохранить задачу" Command="{Binding SaveTaskCommand}"/>
             <Button Content="Удалить" Command="{Binding DeleteCommand}"/>
         </StackPanel>
-        <docker:DockingManager Grid.Row="1">
+        <docker:DockingManager Grid.Row="1" ActiveContent="{Binding SelectTab,Mode=TwoWay}">
+
             <docker:LayoutRoot>
 
                 <docker:LayoutPanel Orientation="Vertical">
+
                     <docker:LayoutPanel>
-                        <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
-                            <docker:LayoutDocument Title="Tasks" CanClose="False">
-                                <local:TaskListView/>
-                            </docker:LayoutDocument>
-                        </docker:LayoutDocumentPane>
+
+                        <docker:LayoutPanel Orientation="Vertical" DockWidth="Auto">
+                            <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
+                                <docker:LayoutDocument Title="Tasks" CanClose="False">
+                                    <local:TaskListView/>
+                                </docker:LayoutDocument>
+                            </docker:LayoutDocumentPane>
+                            
+                            <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
+                                <docker:LayoutDocument Title="Reports" CanClose="False">
+                                    <local:ReportListView/>
+                                </docker:LayoutDocument>
+                            </docker:LayoutDocumentPane>
+                        </docker:LayoutPanel>
 
                         <docker:LayoutPanel Orientation="Vertical">
                             <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
-                                <docker:LayoutDocument Title="TaskInstances"  CanClose="False">
-                                    <local:SelectedTaskInstancesView/>
+                                <docker:LayoutDocument Title="SelectedTask"  CanClose="False">
+                                    <local:SelectedTaskFullView/>
                                 </docker:LayoutDocument>
                             </docker:LayoutDocumentPane>
 
                             <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
-                                <docker:LayoutDocument Title="SelectedTask"  CanClose="False">
-                                    <local:SelectedTaskFullView/>
+                                <docker:LayoutDocument Title="SelectedReport"  CanClose="False">
+                                    <local:SelectedReportFullView/>
                                 </docker:LayoutDocument>
                             </docker:LayoutDocumentPane>
                         </docker:LayoutPanel>
 
                     </docker:LayoutPanel>
 
-                    <docker:LayoutAnchorablePane DockWidth="Auto" DockHeight="Auto">
-                        <docker:LayoutAnchorable Title="SelectedInstance" CanClose="False" CanHide="False" CanAutoHide="False">
-                            <local:SelectedInstanceFullView/>
-                        </docker:LayoutAnchorable>
-                    </docker:LayoutAnchorablePane>
+                    <docker:LayoutPanel DockWidth="Auto" DockHeight="200">
+
+                        <docker:LayoutAnchorablePane DockWidth="Auto" >
+                            <docker:LayoutAnchorable Title="TaskInstances" CanHide="False" CanAutoHide="False" CanClose="False">
+                                <local:SelectedTaskInstancesView/>
+                            </docker:LayoutAnchorable>
+                        </docker:LayoutAnchorablePane>
+
+                        <docker:LayoutAnchorablePane DockWidth="Auto" >
+                            <docker:LayoutAnchorable Title="SelectedInstance" CanClose="False" CanHide="False" CanAutoHide="False">
+                                <local:SelectedInstanceFullView/>
+                            </docker:LayoutAnchorable>
+                        </docker:LayoutAnchorablePane>
+                    </docker:LayoutPanel>
                 </docker:LayoutPanel>
             </docker:LayoutRoot>
         </docker:DockingManager>

@@ -173,6 +173,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ReportListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SelectedReportFullView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SelectedTaskFullView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -215,6 +223,12 @@
     <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="Interfaces\ITaskCompactsViewModel.cs" />
     <Compile Include="ViewModel\TaskCompactsViewModel.cs" />
+    <Compile Include="Views\ReportListView.xaml.cs">
+      <DependentUpon>ReportListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectedReportFullView.xaml.cs">
+      <DependentUpon>SelectedReportFullView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SelectedTaskFullView.xaml.cs">
       <DependentUpon>SelectedTaskFullView.xaml</DependentUpon>
     </Compile>

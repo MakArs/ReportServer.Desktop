@@ -32,12 +32,6 @@ namespace ReportServer.Desktop.Interfaces
         [Reactive] public ReportType ReportType { get; set; }
     }
 
-    public enum ReportType : byte
-    {
-        Common = 1,
-        Custom = 2
-    }
-
     public class ViewModelInstanceCompact
     {
         public int Id { get; set; }
@@ -60,6 +54,23 @@ namespace ReportServer.Desktop.Interfaces
         public int TryNumber { get; set; }
     }
 
+    public class ViewModelReport : ReactiveObject
+    {
+        public int Id { get; set; }
+        [Reactive] public string Name { get; set; }
+        [Reactive] public string ConnectionString { get; set; }
+        [Reactive] public string ViewTemplate { get; set; }
+        [Reactive] public string Query { get; set; }
+        [Reactive] public ReportType ReportType { get; set; }
+        [Reactive] public int QueryTimeOut { get; set; } //seconds
+    }
+
+    public enum ReportType : byte
+    {
+        Common = 1,
+        Custom = 2
+    }
+
     public enum InstanceState
     {
         InProcess = 1,
@@ -76,10 +87,10 @@ namespace ReportServer.Desktop.Interfaces
         void LoadSelectedInstanceById(int id);
         void LoadInstanceCompactsByTaskId(int taskId);
         void OnStart();
-        void DeleteEntity();
+        Task DeleteEntity();
         Task SaveTask();
         void CreateTask();
-        IObservable<Unit> OpenPageInBrowser(string htmlPage);
+        void OpenPageInBrowser(string htmlPage);
         IObservable<Unit> GetHtmlPageByTaskId(int taskId);
     }
 }
