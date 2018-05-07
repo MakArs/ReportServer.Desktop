@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
@@ -16,20 +15,20 @@ namespace ReportServer.Desktop.ViewModel
 {
     public class Core : ReactiveObject, ICore
     {
-        private readonly IReportService _reportService;//
-        private readonly IMapper _mapper;//
-        private readonly IDialogCoordinator _dialogCoordinator=DialogCoordinator.Instance;
+        private readonly IReportService _reportService; //
+        private readonly IMapper _mapper; //
+        private readonly IDialogCoordinator _dialogCoordinator = DialogCoordinator.Instance;
 
-        public ReactiveList<ViewModelTask> TaskCompacts { get; set; }//
+        public ReactiveList<ViewModelTask> TaskCompacts { get; set; } //
         public ReactiveList<ViewModelInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
-        public ReactiveList<ApiSchedule> Schedules { get; set; }//
-        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }//
-        public ReactiveList<ViewModelReport> Reports { get; set; }//
+        public ReactiveList<ApiSchedule> Schedules { get; set; } //
+        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; } //
+        public ReactiveList<ViewModelReport> Reports { get; set; } //
         public ReactiveList<string> ViewTemplates { get; set; }
         public ReactiveList<string> QueryTemplates { get; set; }
 
         [Reactive] public object SelectTab { get; set; }
-        [Reactive] public ViewModelTask SelectedTaskCompact { get; set; }//
+        [Reactive] public ViewModelTask SelectedTaskCompact { get; set; } //
         [Reactive] public ViewModelInstanceCompact SelectedInstanceCompact { get; set; }
         [Reactive] public ViewModelFullTask SelectedTask { get; set; }
         [Reactive] public ViewModelInstance SelectedInstance { get; set; }
@@ -39,7 +38,7 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand OpenPage { get; set; }
         public ReactiveCommand OpenCurrentTaskView { get; set; }
         public ReactiveCommand DeleteCommand { get; set; }
-        public ReactiveCommand SaveTaskCommand { get; set; }
+        public ReactiveCommand SaveEntityCommand { get; set; }
         public ReactiveCommand CreateTaskCommand { get; set; }
         public ReactiveCommand OpenViewTemplateWindowCommand { get; set; }
         public ReactiveCommand OpenQueryTemplateWindowCommand { get; set; }
@@ -54,50 +53,64 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTaskInstanceCompacts = new ReactiveList<ViewModelInstanceCompact>();
             Schedules = new ReactiveList<ApiSchedule>();
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
-            Reports=new ReactiveList<ViewModelReport>();
+            Reports = new ReactiveList<ViewModelReport>();
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
             ViewTemplates = new ReactiveList<string> {"weeklyreport_ve", "dailyreport_ve"};
             QueryTemplates = new ReactiveList<string> {"weeklyreport_de", "dailyreport_de"};
 
             IObservable<bool> canOpenInstancePage = this
                 .WhenAnyValue(t => t.SelectedInstance,
-                    si => !string.IsNullOrEmpty(si?.ViewData)); 
-            OpenPage = ReactiveCommand.Create<string>(OpenPageInBrowser, canOpenInstancePage);
+                    si => !string.IsNullOrEmpty(si?.ViewData));
+            OpenPage = ReactiveCommand.Create<string>
+                (OpenPageInBrowser, canOpenInstancePage);
 
             IObservable<bool> canOpenCurrentTaskView = this
                 .WhenAnyValue(t => t.SelectedTask,
-                    st => !string.IsNullOrEmpty(st?.ViewTemplate));//why don't work while create task?...
+                    st => st?.Id > 0); //why don't work while create task?...
             OpenCurrentTaskView =
-                ReactiveCommand.CreateFromObservable<int, Unit>(GetHtmlPageByTaskId, canOpenCurrentTaskView);
+                ReactiveCommand.CreateFromObservable<int, Unit>
+                    (GetHtmlPageByTaskId, canOpenCurrentTaskView);
 
             IObservable<bool> canDelete = this
                 .WhenAnyValue(t => t.SelectTab,
-                    t=>t.SelectedTask,
-                    t=>t.SelectedReport,
-                    s=>s.SelectedInstanceCompact,
-                    (stb,stc,srp,sic) =>
-                    stb != null &&
-                    ((stb.GetType() == typeof(TaskListView)&& stc!=null)||
-                    //(stb.GetType() == typeof(ReportListView)&& srp != null) ||
-                    (stb.GetType() == typeof(SelectedTaskInstancesView)&& sic != null)
-                ));
+                    t => t.SelectedTask,
+                    t => t.SelectedReport,
+                    s => s.SelectedInstanceCompact,
+                    (stb, stc, srp, sic) =>
+                        stb != null &&
+                        ((stb.GetType() == typeof(TaskListView) && stc != null) ||
+                         //(stb.GetType() == typeof(ReportListView)&& srp != null) ||
+                         (stb.GetType() == typeof(SelectedTaskInstancesView) && sic != null)
+                        ));
             DeleteCommand = ReactiveCommand.Create(DeleteEntity, canDelete);
 
-            IObservable<bool> canSaveTask = this
-                .WhenAnyValue(t => t.SelectedTask.ViewTemplate, t => t.SelectedTask, (st, vt) =>
-                    vt != null && !string.IsNullOrWhiteSpace(st));
-            SaveTaskCommand = ReactiveCommand.Create(SaveTask, canSaveTask);
+            IObservable<bool> canSave = this
+                .WhenAnyValue(t => t.SelectTab, 
+                    t => t.SelectedTask,
+                    t => t.SelectedReport,
+                    (stb,st, sr) =>
+                        (stb?.GetType() == typeof(SelectedTaskFullView) && 
+                         st?.ReportId > 0) ||
+                        (stb?.GetType() == typeof(SelectedReportFullView)&&
+                         !string.IsNullOrEmpty(sr?.Name) &&
+                         !string.IsNullOrEmpty(sr.Query) &&
+                         !string.IsNullOrEmpty(sr.ViewTemplate) &&
+                         sr.QueryTimeOut > 0)
+                );
+            SaveEntityCommand = ReactiveCommand.Create(SaveEntity, canSave);
 
             CreateTaskCommand = ReactiveCommand.Create(CreateTask);
-            CreateReportCommand=ReactiveCommand.Create(CreateReport);
+            CreateReportCommand = ReactiveCommand.Create(CreateReport);
 
             IObservable<bool> canOpenReportModal = this
                 .WhenAnyValue(t => t.SelectedReport.ReportType, sr =>
                     sr == ReportType.Common);
             OpenViewTemplateWindowCommand =
-                ReactiveCommand.CreateFromTask(async() => SelectedReport.ViewTemplate= await DataRedacting(), canOpenReportModal);
+                ReactiveCommand.CreateFromTask(async () => SelectedReport.ViewTemplate = await DataRedacting(),
+                    canOpenReportModal);
             OpenQueryTemplateWindowCommand =
-                ReactiveCommand.CreateFromTask(async () => SelectedReport.Query = await DataRedacting(), canOpenReportModal);
+                ReactiveCommand.CreateFromTask(async () => SelectedReport.Query = await DataRedacting(),
+                    canOpenReportModal);
 
             this.WhenAnyObservable(s => //
                     s.TaskCompacts.Changed) //ObservableForProperty ignores initial nulls,whenanyvalue not?
@@ -129,7 +142,7 @@ namespace ReportServer.Desktop.ViewModel
                 .Subscribe(_ => SelectedInstance = null);
 
             this.ObservableForProperty(s => s.SelectedTask.ReportId)
-                .Where(rId=>rId.Value!=0)
+                .Where(rId => rId.Value != 0)
                 .Subscribe(rId =>
                 {
                     var rep = Reports.First(r => r.Id == rId.Value);
@@ -143,7 +156,7 @@ namespace ReportServer.Desktop.ViewModel
             OnStart();
         }
 
-        public void LoadTaskCompacts()//
+        public void LoadTaskCompacts() //
         {
             var taskList = _reportService.GetAllTasks();
             TaskCompacts.Clear();
@@ -212,44 +225,79 @@ namespace ReportServer.Desktop.ViewModel
             return result;
         }
 
-        public async Task SaveTask()
+        public async Task SaveEntity()
         {
-            var b = SelectTab.GetType();
-            var ts = _dialogCoordinator.ShowMessageAsync(this, "Warning",
-                SelectedTask.Id > 0
-                    ? "Вы действительно хотите изменить эту задачу?"
-                    : "Вы действительно хотите создать эту задачу?"
-                ,MessageDialogStyle.AffirmativeAndNegative); //.ConfigureAwait(continueOnCapturedContext: false);
-            var result = await  ts;
-
-            if (result == MessageDialogResult.Affirmative)
+            switch (SelectTab)
             {
-                if (SelectedTask.Id > 0)
-
+                case SelectedTaskFullView _:
                 {
-                    var apiTask = _mapper.Map<ApiFullTask>(SelectedTask);
-                    apiTask.RecepientGroupId = RecepientGroups
-                        .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
-                    apiTask.ScheduleId = Schedules
-                        .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
+                    var ts = _dialogCoordinator.ShowMessageAsync(this, "Warning",
+                        SelectedTask.Id > 0
+                            ? "Вы действительно хотите изменить эту задачу?"
+                            : "Вы действительно хотите создать эту задачу?"
+                        , MessageDialogStyle.AffirmativeAndNegative); //.ConfigureAwait(continueOnCapturedContext: false);
 
-                    _reportService.UpdateTask(apiTask);
-                    //LoadTaskCompacts(); // why it breaks reactive while other methods no and why not breaks when use method later?
-                }
+                    var result = await ts;
 
-                if (SelectedTask.Id == 0)
+                    if (result == MessageDialogResult.Affirmative)
+                    {
+                        if (SelectedTask.Id > 0)
+
+                        {
+                            var apiTask = _mapper.Map<ApiFullTask>(SelectedTask);
+                            apiTask.RecepientGroupId = RecepientGroups
+                                .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
+                            apiTask.ScheduleId = Schedules
+                                .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
+
+                            _reportService.UpdateTask(apiTask);
+                            //LoadTaskCompacts(); // why it breaks reactive while other methods no and why not breaks when use method later?
+                        }
+
+                        if (SelectedTask.Id == 0)
+                        {
+                            var apiTask = _mapper.Map<ApiFullTask>(SelectedTask);
+                            apiTask.RecepientGroupId = RecepientGroups
+                                .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
+                            apiTask.ScheduleId = Schedules
+                                .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
+
+                            _reportService.CreateTask(apiTask);
+                        }
+                        OnStart();
+                        //LoadTaskCompacts();
+                        //SelectedTask = null;
+                    }
+                    break;
+                    }//case
+
+                case SelectedReportFullView _:
                 {
-                    var apiTask = _mapper.Map<ApiFullTask>(SelectedTask);
-                    apiTask.RecepientGroupId = RecepientGroups
-                        .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
-                    apiTask.ScheduleId = Schedules
-                        .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
+                    var ts = _dialogCoordinator.ShowMessageAsync(this, "Warning",
+                        SelectedReport.Id > 0
+                            ? "Вы действительно хотите изменить этот отчёт?"
+                            : "Вы действительно хотите создать этот отчёт?"
+                        , MessageDialogStyle.AffirmativeAndNegative);
+                    var result = await ts;
 
-                    _reportService.CreateTask(apiTask);
-                }
+                    if (result == MessageDialogResult.Affirmative)
+                    {
+                        if (SelectedReport.Id > 0)
 
-                LoadTaskCompacts();
-                SelectedTask = null;
+                        {
+                            var apiRep = _mapper.Map<ApiReport>(SelectedReport);
+                           _reportService.UpdateReport(apiRep);
+                        }
+
+                        if (SelectedReport.Id == 0)
+                        {
+                            var apiRep = _mapper.Map<ApiReport>(SelectedReport);
+                            _reportService.CreateReport(apiRep);
+                        }
+                        OnStart();
+                    }
+                        break;
+                } //case
             }
         }
 
@@ -325,6 +373,7 @@ namespace ReportServer.Desktop.ViewModel
                 byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
                 fstr.Write(bytePage, 0, bytePage.Length);
             }
+
             System.Diagnostics.Process.Start(path);
         }
 

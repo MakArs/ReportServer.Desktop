@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <ListView HorizontalContentAlignment = "Stretch" ItemsSource="{Binding Reports}"   SelectedItem="{Binding SelectedReport}">
+        <ListView HorizontalContentAlignment = "Stretch" ItemsSource="{Binding Reports}"   SelectedItem="{Binding SelectedReport,Mode=OneWayToSource}">
             <ListView.View >
                 <GridView >
                     <GridViewColumn Header = "Id" Width="Auto" DisplayMemberBinding="{Binding Id}"/>

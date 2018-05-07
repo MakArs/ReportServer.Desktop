@@ -20,7 +20,7 @@
         <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" CanVerticallyScroll="True">
             <Button Content="Добавить задачу" Command="{Binding CreateTaskCommand}"/>
             <Button Content="Добавить отчёт" Command="{Binding CreateReportCommand}"/>
-            <Button Content="Сохранить задачу" Command="{Binding SaveTaskCommand}"/>
+            <Button Content="Сохранить" Command="{Binding SaveEntityCommand}"/>
             <Button Content="Удалить" Command="{Binding DeleteCommand}"/>
         </StackPanel>
         <docker:DockingManager Grid.Row="1" ActiveContent="{Binding SelectTab,Mode=TwoWay}">

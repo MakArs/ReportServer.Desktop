@@ -91,7 +91,11 @@ namespace ReportServer.Desktop.Interfaces
 
         void DeleteTask(int id);
         void DeleteInstance(int id);
+
         int CreateTask(ApiFullTask fullTask);
         void UpdateTask(ApiFullTask fullTask);
+
+        int CreateReport(ApiReport report);
+        void UpdateReport(ApiReport report);
     }
 }

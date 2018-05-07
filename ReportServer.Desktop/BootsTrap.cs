@@ -85,6 +85,8 @@ namespace ReportServer.Desktop
 
             CreateMap<ApiReport, ViewModelReport>()
                 .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
+            CreateMap<ViewModelReport,ApiReport>()
+                .ForMember("ReportType", opt => opt.MapFrom(s => (int)s.ReportType));
         }
     }
 }

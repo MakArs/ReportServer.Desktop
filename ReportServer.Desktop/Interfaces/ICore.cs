@@ -88,7 +88,7 @@ namespace ReportServer.Desktop.Interfaces
         void LoadInstanceCompactsByTaskId(int taskId);
         void OnStart();
         Task DeleteEntity();
-        Task SaveTask();
+        Task SaveEntity();
         void CreateTask();
         void OpenPageInBrowser(string htmlPage);
         IObservable<Unit> GetHtmlPageByTaskId(int taskId);

@@ -97,6 +97,16 @@ namespace ReportServer.Desktop.Model
         {
             _client.Put($"/api/v1/tasks/{fullTask.Id}", fullTask);
         }
+
+        public int CreateReport(ApiReport report)
+        {
+            return _client.Post("/api/v1/reports/", report);
+        }
+
+        public void UpdateReport(ApiReport report)
+        {
+            _client.Put($"/api/v1/reports/{report.Id}", report);
+        }
     }
 
     public static class JsonHttpClientTimeExtension

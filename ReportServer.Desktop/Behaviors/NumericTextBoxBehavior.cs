@@ -109,7 +109,7 @@ namespace ReportServer.Desktop.Behaviors
                 case TextBoxInputMode.None:
                     return true;
                 case TextBoxInputMode.DigitInput:
-                    return CheckIsDigit(input);
+                    return CheckIsDigit(input)&&(Convert.ToInt32(input)>0);
 
                 case TextBoxInputMode.DecimalInput:
                     decimal d;
@@ -117,12 +117,10 @@ namespace ReportServer.Desktop.Behaviors
                     if (input.ToCharArray().Count(x => x == '.') > 1)
                         return false;
 
-
                     if (input.Contains("-"))
                     {
                         if (JustPositivDecimalInput)
                             return false;
-
 
                         if (input.IndexOf("-", StringComparison.Ordinal) > 0)
                             return false;
