@@ -55,10 +55,10 @@
         <Label Grid.Row="5"  Content="ViewTemplate"/>
         <Label Grid.Row="6"  Content="Query"/>
 
-        <TextBox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"  Text="{Binding SelectedReport.Name}"/>
-        <TextBox Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch"  Text="{Binding SelectedReport.ConnectionString}"/>
-        <TextBox Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch"  Text="{Binding SelectedReport.QueryTimeOut}"/>
-        <ComboBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Source={converters:EnumBindingSource {x:Type interfaces:ReportType}}}" SelectedValue="{Binding SelectedReport.ReportType}"/>
+        <TextBox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"  Text="{Binding RedactedReport.Name}"/>
+        <TextBox Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch"  Text="{Binding RedactedReport.ConnectionString}"/>
+        <TextBox Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch"  Text="{Binding RedactedReport.QueryTimeOut}"/>
+        <ComboBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Source={converters:EnumBindingSource {x:Type interfaces:ReportType}}}" SelectedValue="{Binding RedactedReport.ReportType}"/>
         <local:ViewTemplateControl Grid.Column="1" Grid.Row="5"/>
         <local:QueryControl Grid.Column="1" Grid.Row="6"/>
     </Grid>

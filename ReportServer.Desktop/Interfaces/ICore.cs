@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Reactive;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReportServer.Desktop.Model;
 
 namespace ReportServer.Desktop.Interfaces
 {
@@ -54,15 +57,21 @@ namespace ReportServer.Desktop.Interfaces
         public int TryNumber { get; set; }
     }
 
+    [DataContract]
     public class ViewModelReport : ReactiveObject
     {
-        public int Id { get; set; }
-        [Reactive] public string Name { get; set; }
-        [Reactive] public string ConnectionString { get; set; }
-        [Reactive] public string ViewTemplate { get; set; }
-        [Reactive] public string Query { get; set; }
-        [Reactive] public ReportType ReportType { get; set; }
-        [Reactive] public int QueryTimeOut { get; set; } //seconds
+        [DataMember] public int Id { get; set; }
+        [Reactive] [DataMember] public string Name { get; set; }
+        [Reactive] [DataMember] public string ConnectionString { get; set; }
+        [Reactive] [DataMember] public string ViewTemplate { get; set; }
+        [Reactive] [DataMember] public string Query { get; set; }
+        [Reactive] [DataMember] public ReportType ReportType { get; set; }
+        [Reactive] [DataMember] public int QueryTimeOut { get; set; } //seconds
+
+        //public ViewModelReport Copy()
+        //{
+        //    return (ViewModelReport) MemberwiseClone(); //json serialize object doesn't work on reactiveobjects
+        //}
     }
 
     public enum ReportType : byte

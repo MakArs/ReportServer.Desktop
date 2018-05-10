@@ -6,7 +6,7 @@ using ReactiveUI.Fody.Helpers;
 
 namespace ReportServer.Desktop.Converters
 {
-   public abstract class BaseConverter : MarkupExtension, IValueConverter
+    public abstract class BaseConverter : MarkupExtension, IValueConverter
     {
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
@@ -14,7 +14,7 @@ namespace ReportServer.Desktop.Converters
         }
 
         public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
-        
+
 
         public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -24,8 +24,8 @@ namespace ReportServer.Desktop.Converters
 
     public class EnumBindingSourceExtension : MarkupExtension
     {
-        [Reactive]public Type EnumType { get; set; }
-       
+        [Reactive] public Type EnumType { get; set; }
+
 
         public EnumBindingSourceExtension(Type enumType)
         {
@@ -34,7 +34,7 @@ namespace ReportServer.Desktop.Converters
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            if (EnumType==null)
+            if (EnumType == null)
                 throw new InvalidOperationException("The EnumType must be specified.");
 
             Type actualEnumType = Nullable.GetUnderlyingType(EnumType) ?? EnumType;

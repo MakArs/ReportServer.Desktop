@@ -7,8 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Button Panel.ZIndex="1" Width="40" Margin="0" Command="{Binding OpenQueryTemplateWindowCommand}" HorizontalAlignment="Right" Visibility="{Binding SelectedReport.ReportType,Converter={converters:ReportTypeToVisiblity}}">...</Button>
-        <TextBox Visibility="{Binding SelectedReport.ReportType,Converter={converters:ReportTypeToVisiblity}}" Text="{Binding SelectedReport.Query}"/>
-        <ComboBox Visibility="{Binding SelectedReport.ReportType,Converter={converters:AntiReportTypeToVisiblity}}" HorizontalAlignment="Stretch" ItemsSource="{Binding QueryTemplates}" SelectedValue="{Binding SelectedReport.Query}" />
+        <Button Panel.ZIndex="1" Width="40" Margin="0" Command="{Binding OpenQueryTemplateWindowCommand}" HorizontalAlignment="Right" Visibility="{Binding RedactedReport.ReportType,Converter={converters:ReportTypeToVisiblity}}">...</Button>
+        <TextBox Visibility="{Binding RedactedReport.ReportType,Converter={converters:ReportTypeToVisiblity}}" Text="{Binding RedactedReport.Query}"/>
+        <ComboBox Visibility="{Binding RedactedReport.ReportType,Converter={converters:AntiReportTypeToVisiblity}}" HorizontalAlignment="Stretch" ItemsSource="{Binding QueryTemplates}" SelectedValue="{Binding RedactedReport.Query}" />
     </Grid>
 </UserControl>

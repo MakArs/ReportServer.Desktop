@@ -158,5 +158,12 @@ namespace ReportServer.Desktop.Model
             if (responseCode != HttpStatusCode.OK)
                 throw new Exception($"Http return error {responseCode.ToString()}");
         }
+
+        public static T CreateClone<T>(this T someObj)
+        {
+            string tem = JsonConvert.SerializeObject(someObj);
+            return JsonConvert.DeserializeObject<T>(tem);
+        }
+
     }
 }

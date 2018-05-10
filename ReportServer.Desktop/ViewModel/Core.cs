@@ -9,6 +9,7 @@ using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Interfaces;
+using ReportServer.Desktop.Model;
 using ReportServer.Desktop.Views;
 
 namespace ReportServer.Desktop.ViewModel
@@ -33,6 +34,7 @@ namespace ReportServer.Desktop.ViewModel
         [Reactive] public ViewModelFullTask SelectedTask { get; set; }
         [Reactive] public ViewModelInstance SelectedInstance { get; set; }
         [Reactive] public ViewModelReport SelectedReport { get; set; }
+        [Reactive] public ViewModelReport RedactedReport { get; set; }
 
         public ReactiveCommand RefreshTasksCommand { get; set; }
         public ReactiveCommand OpenPage { get; set; }
@@ -53,7 +55,7 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTaskInstanceCompacts = new ReactiveList<ViewModelInstanceCompact>();
             Schedules = new ReactiveList<ApiSchedule>();
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
-            Reports = new ReactiveList<ViewModelReport>();
+            Reports = new ReactiveList<ViewModelReport>() {ChangeTrackingEnabled = false};
             RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
             ViewTemplates = new ReactiveList<string> {"weeklyreport_ve", "dailyreport_ve"};
             QueryTemplates = new ReactiveList<string> {"weeklyreport_de", "dailyreport_de"};
@@ -85,13 +87,13 @@ namespace ReportServer.Desktop.ViewModel
             DeleteCommand = ReactiveCommand.Create(DeleteEntity, canDelete);
 
             IObservable<bool> canSave = this
-                .WhenAnyValue(t => t.SelectTab, 
+                .WhenAnyValue(t => t.SelectTab,
                     t => t.SelectedTask,
-                    t => t.SelectedReport,
-                    (stb,st, sr) =>
-                        (stb?.GetType() == typeof(SelectedTaskFullView) && 
+                    t => t.RedactedReport,
+                    (stb, st, sr) =>
+                        (stb?.GetType() == typeof(SelectedTaskFullView) &&
                          st?.ReportId > 0) ||
-                        (stb?.GetType() == typeof(SelectedReportFullView)&&
+                        (stb?.GetType() == typeof(SelectedReportFullView) &&
                          !string.IsNullOrEmpty(sr?.Name) &&
                          !string.IsNullOrEmpty(sr.Query) &&
                          !string.IsNullOrEmpty(sr.ViewTemplate) &&
@@ -103,13 +105,13 @@ namespace ReportServer.Desktop.ViewModel
             CreateReportCommand = ReactiveCommand.Create(CreateReport);
 
             IObservable<bool> canOpenReportModal = this
-                .WhenAnyValue(t => t.SelectedReport.ReportType, sr =>
+                .WhenAnyValue(t => t.RedactedReport.ReportType, sr =>
                     sr == ReportType.Common);
             OpenViewTemplateWindowCommand =
-                ReactiveCommand.CreateFromTask(async () => SelectedReport.ViewTemplate = await DataRedacting(),
+                ReactiveCommand.CreateFromTask(async () => RedactedReport.ViewTemplate = await DataRedacting(),
                     canOpenReportModal);
             OpenQueryTemplateWindowCommand =
-                ReactiveCommand.CreateFromTask(async () => SelectedReport.Query = await DataRedacting(),
+                ReactiveCommand.CreateFromTask(async () => RedactedReport.Query = await DataRedacting(),
                     canOpenReportModal);
 
             this.WhenAnyObservable(s => //
@@ -129,13 +131,24 @@ namespace ReportServer.Desktop.ViewModel
                     LoadSelectedTaskById(x.Value.Id);
                 });
 
+            this.ObservableForProperty(s => s.SelectedReport)
+                .Where(x => x.Value != null)
+                .Subscribe(x => RedactedReport = x.Value.CreateClone());
+
+            this.ObservableForProperty(s => s.RedactedReport.ReportType)
+                .Subscribe(_ =>
+                {
+                    RedactedReport.Query = null;
+                    RedactedReport.ViewTemplate = null;
+                });
+
             this.ObservableForProperty(s => s.SelectedTaskCompact)
                 .Where(x => x.Value == null)
                 .Subscribe(_ => { SelectedTask = null; });
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value != null)
-                .Subscribe(x => { LoadSelectedInstanceById(x.Value.Id); });
+                .Subscribe(x =>  LoadSelectedInstanceById(x.Value.Id));
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value == null)
@@ -274,7 +287,7 @@ namespace ReportServer.Desktop.ViewModel
                 case SelectedReportFullView _:
                 {
                     var ts = _dialogCoordinator.ShowMessageAsync(this, "Warning",
-                        SelectedReport.Id > 0
+                        RedactedReport.Id > 0
                             ? "Вы действительно хотите изменить этот отчёт?"
                             : "Вы действительно хотите создать этот отчёт?"
                         , MessageDialogStyle.AffirmativeAndNegative);
@@ -282,16 +295,16 @@ namespace ReportServer.Desktop.ViewModel
 
                     if (result == MessageDialogResult.Affirmative)
                     {
-                        if (SelectedReport.Id > 0)
+                        if (RedactedReport.Id > 0)
 
                         {
-                            var apiRep = _mapper.Map<ApiReport>(SelectedReport);
+                            var apiRep = _mapper.Map<ApiReport>(RedactedReport);
                            _reportService.UpdateReport(apiRep);
                         }
 
-                        if (SelectedReport.Id == 0)
+                        if (RedactedReport.Id == 0)
                         {
-                            var apiRep = _mapper.Map<ApiReport>(SelectedReport);
+                            var apiRep = _mapper.Map<ApiReport>(RedactedReport);
                             _reportService.CreateReport(apiRep);
                         }
                         OnStart();
@@ -320,8 +333,8 @@ namespace ReportServer.Desktop.ViewModel
 
         public void CreateReport()
         {
-            SelectedReport = null;
-            SelectedReport = new ViewModelReport()
+            RedactedReport = null;
+            RedactedReport = new ViewModelReport()
             {
                 Id = 0,
                 QueryTimeOut = 60
@@ -367,7 +380,7 @@ namespace ReportServer.Desktop.ViewModel
         public void OpenPageInBrowser(string htmlPage)
         {
 
-            var path = $"{AppDomain.CurrentDomain.BaseDirectory}\\testreport.html";
+            var path = $"{AppDomain.CurrentDomain.BaseDirectory}testreport.html";
             using (FileStream fstr = new FileStream(path, FileMode.Create))
             {
                 byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
