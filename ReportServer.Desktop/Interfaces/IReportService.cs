@@ -40,6 +40,8 @@ namespace ReportServer.Desktop.Interfaces
         public string Query { get; set; }
         public int QueryTimeOut { get; set; }
         public int ReportType { get; set; }
+        public bool HasHtmlBody { get; set; }
+        public bool HasJsonAttachment { get; set; }
     }
 
   public class ApiTask
@@ -51,6 +53,8 @@ namespace ReportServer.Desktop.Interfaces
         public int TryCount { get; set; }
         public int QueryTimeOut { get; set; }
         public int ReportType { get; set; }
+        public bool HasHtmlBody { get; set; }
+        public bool HasJsonAttachment { get; set; }
     }
 
     public class ApiFullInstance

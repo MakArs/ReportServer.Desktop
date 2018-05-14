@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -35,7 +37,8 @@ namespace ReportServer.Desktop.ViewModel
         [Reactive] public ViewModelInstance SelectedInstance { get; set; }
         [Reactive] public ViewModelReport SelectedReport { get; set; }
         [Reactive] public ViewModelReport RedactedReport { get; set; }
-
+       // [Reactive] public bool CanSaveTask { get; set; }
+      //  [Reactive] public bool CanSaveReport { get; set; }
         public ReactiveCommand RefreshTasksCommand { get; set; }
         public ReactiveCommand OpenPage { get; set; }
         public ReactiveCommand OpenCurrentTaskView { get; set; }
@@ -99,6 +102,48 @@ namespace ReportServer.Desktop.ViewModel
                          !string.IsNullOrEmpty(sr.ViewTemplate) &&
                          sr.QueryTimeOut > 0)
                 );
+
+
+
+            //this.ObservableForProperty(t => t.SelectTab)
+            //    .Where(stb =>
+            //       stb.Value?.GetType() == typeof(SelectedTaskFullView) || stb.Value?.GetType() == typeof(SelectedReportFullView))
+            //    .Subscribe(_ =>
+            //    {
+            //        if(SelectTab.GetType() == typeof(SelectedTaskFullView))
+            //        {
+            //            if (SelectedTask?.ReportId > 0) canSaveTask = true;
+            //        }
+            //        else
+            //        {
+            //            if (!string.IsNullOrEmpty(SelectedReport?.Name) &&
+            //            !string.IsNullOrEmpty(SelectedReport.Query) &&
+            //            !string.IsNullOrEmpty(SelectedReport.ViewTemplate) &&
+            //            SelectedReport.QueryTimeOut > 0) canSaveReport = true;
+            //        }
+            //    });
+
+            //IObservable<bool> canSave = this.WhenAnyValue(t => t.canSaveReport, t => t.canSaveTask,
+            //    (csr, cst) => csr || cst);
+
+            //IObservable<bool> canSaveTask = this.WhenAnyValue(t => t.SelectTab,
+            //    t => t.SelectedTask.ReportId,
+            //    (stb, r) =>
+            //        stb?.GetType() == typeof(SelectedTaskFullView) &&
+            //        r > 0);
+            //IObservable<bool> canSaveReport = this.WhenAnyValue(t => t.SelectTab,
+            //    t => t.RedactedReport.Name,
+            //    t => t.RedactedReport.Query,
+            //    t => t.RedactedReport.ViewTemplate,
+            //    (stb, n, q, v) =>
+            //        stb?.GetType() == typeof(SelectedReportFullView) &&
+            //        !string.IsNullOrEmpty(n) &&
+            //        !string.IsNullOrEmpty(q) &&
+            //        !string.IsNullOrEmpty(v));
+
+            //IObservable<bool> canSave=canSaveReport.Merge(canSaveTask); //works on last observable, not on any
+
+
             SaveEntityCommand = ReactiveCommand.Create(SaveEntity, canSave);
 
             CreateTaskCommand = ReactiveCommand.Create(CreateTask);
@@ -133,7 +178,11 @@ namespace ReportServer.Desktop.ViewModel
 
             this.ObservableForProperty(s => s.SelectedReport)
                 .Where(x => x.Value != null)
-                .Subscribe(x => RedactedReport = x.Value.CreateClone());
+                .Subscribe(x =>
+                {
+                    RedactedReport = x.Value.CreateClone();
+                    RedactedReport = x.Value.CreateClone();
+                });
 
             this.ObservableForProperty(s => s.RedactedReport.ReportType)
                 .Subscribe(_ =>

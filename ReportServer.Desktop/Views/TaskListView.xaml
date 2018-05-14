@@ -15,8 +15,8 @@
                     <GridViewColumn Header = "TryCount" DisplayMemberBinding="{Binding TryCount}"/>
                     <GridViewColumn Header = "QueryTimeOut" DisplayMemberBinding="{Binding QueryTimeOut}"/>
                     <GridViewColumn Header = "ReportType" DisplayMemberBinding="{Binding ReportType}"/>
-                    <GridViewColumn Header = "ReportType" DisplayMemberBinding="{Binding ReportType}"/>
-                    <GridViewColumn Header = "ReportType" DisplayMemberBinding="{Binding ReportType}"/>
+                    <GridViewColumn Header = "HtmlBody" DisplayMemberBinding="{Binding HasHtmlBody}"/>
+                    <GridViewColumn Header = "JsonAttachment" DisplayMemberBinding="{Binding HasJsonAttachment}"/>
                 </GridView>
             </ListView.View>
         </ListView>

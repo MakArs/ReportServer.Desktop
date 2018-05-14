@@ -26,7 +26,6 @@ namespace ReportServer.Desktop.Converters
     {
         [Reactive] public Type EnumType { get; set; }
 
-
         public EnumBindingSourceExtension(Type enumType)
         {
             EnumType = enumType;

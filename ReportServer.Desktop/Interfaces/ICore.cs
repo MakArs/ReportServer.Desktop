@@ -19,6 +19,8 @@ namespace ReportServer.Desktop.Interfaces
         public int TryCount { get; set; }
         public int QueryTimeOut { get; set; }
         public ReportType ReportType { get; set; }
+        public bool HasHtmlBody { get; set; }
+        public bool HasJsonAttachment { get; set; }
     }
 
     public class ViewModelFullTask : ReactiveObject
@@ -33,6 +35,8 @@ namespace ReportServer.Desktop.Interfaces
         [Reactive] public int TryCount { get; set; }
         [Reactive] public int QueryTimeOut { get; set; }
         [Reactive] public ReportType ReportType { get; set; }
+        [Reactive] public bool HasHtmlBody { get; set; }
+        [Reactive] public bool HasJsonAttachment { get; set; }
     }
 
     public class ViewModelInstanceCompact
@@ -67,11 +71,6 @@ namespace ReportServer.Desktop.Interfaces
         [Reactive] [DataMember] public string Query { get; set; }
         [Reactive] [DataMember] public ReportType ReportType { get; set; }
         [Reactive] [DataMember] public int QueryTimeOut { get; set; } //seconds
-
-        //public ViewModelReport Copy()
-        //{
-        //    return (ViewModelReport) MemberwiseClone(); //json serialize object doesn't work on reactiveobjects
-        //}
     }
 
     public enum ReportType : byte
