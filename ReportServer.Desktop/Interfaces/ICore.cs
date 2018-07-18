@@ -21,6 +21,7 @@ namespace ReportServer.Desktop.Interfaces
         public ReportType ReportType { get; set; }
         public bool HasHtmlBody { get; set; }
         public bool HasJsonAttachment { get; set; }
+        public bool HasXlsxAttachment { get; set; }
     }
 
     public class ViewModelFullTask : ReactiveObject
@@ -37,6 +38,7 @@ namespace ReportServer.Desktop.Interfaces
         [Reactive] public ReportType ReportType { get; set; }
         [Reactive] public bool HasHtmlBody { get; set; }
         [Reactive] public bool HasJsonAttachment { get; set; }
+        [Reactive] public bool HasXlsxAttachment { get; set; }
     }
 
     public class ViewModelInstanceCompact

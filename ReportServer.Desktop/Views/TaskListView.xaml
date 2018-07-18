@@ -17,6 +17,7 @@
                     <GridViewColumn Header = "ReportType" DisplayMemberBinding="{Binding ReportType}"/>
                     <GridViewColumn Header = "HtmlBody" DisplayMemberBinding="{Binding HasHtmlBody}"/>
                     <GridViewColumn Header = "JsonAttachment" DisplayMemberBinding="{Binding HasJsonAttachment}"/>
+                    <GridViewColumn Header = "XlsxAttachment" DisplayMemberBinding="{Binding HasXlsxAttachment}"/>
                 </GridView>
             </ListView.View>
         </ListView>
