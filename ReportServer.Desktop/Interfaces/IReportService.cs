@@ -8,6 +8,7 @@ namespace ReportServer.Desktop.Interfaces
         public int Id { get; set; }
         public string Name { get; set; }
         public string Addresses { get; set; }
+        public string AddressesBcc { get; set; }
     }
 
     public class ApiSchedule
@@ -42,6 +43,7 @@ namespace ReportServer.Desktop.Interfaces
         public int ReportType { get; set; }
         public bool HasHtmlBody { get; set; }
         public bool HasJsonAttachment { get; set; }
+        public bool HasXlsxAttachment { get; set; }
     }
 
   public class ApiTask
@@ -55,6 +57,7 @@ namespace ReportServer.Desktop.Interfaces
         public int ReportType { get; set; }
         public bool HasHtmlBody { get; set; }
         public bool HasJsonAttachment { get; set; }
+        public bool HasXlsxAttachment { get; set; }
     }
 
     public class ApiFullInstance

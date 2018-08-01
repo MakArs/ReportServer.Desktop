@@ -39,10 +39,10 @@
         <Rectangle Grid.ColumnSpan="4" Grid.Row="2"/>
         <Rectangle Grid.ColumnSpan="4" Grid.Row="3"/>
         <Rectangle Grid.ColumnSpan="4" Grid.Row="4"/>
-        <Rectangle Grid.ColumnSpan="4" Grid.Row="5"/>
-        <Rectangle Grid.ColumnSpan="4" Grid.Row="6"/>
-        <Rectangle Grid.Row="1" Grid.RowSpan="6" />
-        <Rectangle Grid.Row="1" Grid.Column="1" Grid.RowSpan="6" />
+        <Rectangle Grid.ColumnSpan="2" Grid.Row="5" Grid.Column="2"/>
+        <Rectangle Grid.ColumnSpan="2" Grid.Row="6" Grid.Column="2"/>
+        <Rectangle Grid.Row="1" Grid.RowSpan="4" />
+        <Rectangle Grid.Row="1" Grid.Column="1" Grid.RowSpan="4" />
         <Rectangle Grid.Row="1" Grid.Column="2" Grid.RowSpan="6" />
         <Rectangle Grid.Row="1" Grid.Column="3" Grid.RowSpan="6" />
 
@@ -58,8 +58,6 @@
         <Label Grid.Row="2"  Content="RecepientGroup"/>
         <Label Grid.Row="3"  Content="TryCount"/>
         <Label Grid.Row="4"  Content="Report"/>
-        <Label Grid.Row="5"  Content="HasHtmlBody"/>
-        <Label Grid.Row="6"  Content="HasJsonAttachment"/>
         <Label Grid.Row="1" Grid.Column="2" Content="NeedsArchiving (Future feature)"/>
         <Label Grid.Row="2" Grid.Column="2"  Content="ReportType"/>
         <Label Grid.Row="3" Grid.Column="2" Content="Query"/>
@@ -75,13 +73,35 @@
             </i:Interaction.Behaviors>
         </TextBox>
         <ComboBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Reports}" SelectedValuePath="Id"  DisplayMemberPath="Id" SelectedValue="{Binding SelectedTask.ReportId}"/>
-        <CheckBox Grid.Column="1" Grid.Row="5" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasHtmlBody}"/>
-        <CheckBox Grid.Column="1" Grid.Row="6" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasJsonAttachment}"/>
         <TextBlock Grid.Column="3" Grid.Row="2"  Text="{Binding SelectedTask.ReportType}"/>
         <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding SelectedTask.Query}"/>
         <TextBlock Grid.Column="3" Grid.Row="4"  Text="{Binding SelectedTask.ConnectionString}"/>
         <TextBlock Grid.Column="3" Grid.Row="5" Text="{Binding SelectedTask.ViewTemplate}"/>
         <TextBlock Grid.Column="3" Grid.Row="6"  Text="{Binding SelectedTask.QueryTimeOut}"/>
+
+        <Grid Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="5" >
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" />
+            <Rectangle Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" />
+
+            <Label Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Content="Html body"/>
+            <Label Grid.Column="2" Grid.Row="0" Content="Attach *.json"/>
+            <Label Grid.Column="2" Grid.Row="1" Content="Attach *.xlsx"/>
+            <CheckBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasHtmlBody}"/>
+            <CheckBox Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasJsonAttachment}"/>
+            <CheckBox Grid.Column="3" Grid.Row="1" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasXlsxAttachment}"/>
+        </Grid>
     </Grid>
 </UserControl>
 
