@@ -7,15 +7,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <Style TargetType="Rectangle">
-            <Setter Property="Stroke" Value="Black"></Setter>
-            <Setter Property="Fill" Value="Transparent"></Setter>
-            <Setter Property="StrokeThickness" Value="0.5"></Setter>
-        </Style>
+        <ResourceDictionary Source="TemplatesDictionary.xaml"/>
     </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
+            <RowDefinition Height="40"/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
@@ -51,14 +48,21 @@
         <Label Grid.Row="2"  Content="Duration"/>
         <Label Grid.Row="3"  Content="State"/>
         <Label Grid.Row="4"  Content="TryNumber"/>
-        <Label Grid.Column="2" Grid.RowSpan="3"  Content="Data"/>
+        <Label Grid.Column="2" Grid.Row="1" Grid.RowSpan="2"  Content="Data"/>
         <Label Grid.Column="2" Grid.Row="3" Grid.RowSpan="2"  Content="ViewData"/>
 
-        <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"  Text="{Binding StringFormat=dd.MM.yy HH:mm, Path= SelectedInstance.StartTime}"/>
-        <TextBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>
-        <TextBlock Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.State}"/>
-        <TextBlock Grid.Column="1" Grid.Row="4" HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.TryNumber}"/>
-        <TextBlock Grid.Column="3" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.Data}"/>
-        <TextBlock Grid.Column="3" Grid.Row="3" Grid.RowSpan="2" HorizontalAlignment="Stretch"  Text="{Binding SelectedInstance.ViewData}"/>
+        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding StringFormat=dd.MM.yy HH:mm, Path= SelectedInstance.StartTime}"/>
+        <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding SelectedInstance.Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>
+        <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding SelectedInstance.State}"/>
+        <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding SelectedInstance.TryNumber}"/>
+        
+        <ScrollViewer Grid.Column="3" Grid.Row="1" Grid.RowSpan="2">
+        <TextBlock  HorizontalAlignment="Stretch" Text="{Binding SelectedInstance.Data}"/>
+        </ScrollViewer>
+
+        <ScrollViewer Grid.Column="3" Grid.Row="3" Grid.RowSpan="2">
+            <TextBlock Text="{Binding SelectedInstance.ViewData}"/>
+        </ScrollViewer>
+
     </Grid>
 </UserControl>

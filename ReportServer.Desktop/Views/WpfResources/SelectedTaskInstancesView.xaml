@@ -7,12 +7,16 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
+    <UserControl.Resources>
+        <ResourceDictionary Source="TemplatesDictionary.xaml"/>
+    </UserControl.Resources>
+
     <Grid>
-        <DataGrid ColumnWidth="*" ColumnHeaderHeight="45" AutoGenerateColumns="False"
-                  GridLinesVisibility="All"
-                  HorizontalGridLinesBrush="Black"
-                  VerticalGridLinesBrush="Black"
-                      Visibility="{Binding SelectedTaskInstanceCompacts[0],Converter={wpfResources:NullToVisiblityConverter}}" ItemsSource="{Binding SelectedTaskInstanceCompacts}" SelectedItem="{Binding SelectedInstanceCompact}">
+        <DataGrid ColumnWidth="*"
+                  Visibility="{Binding SelectedTaskInstanceCompacts[0],
+                  Converter={wpfResources:NullToVisiblityConverter}}"
+                  ItemsSource="{Binding SelectedTaskInstanceCompacts}"
+                  SelectedItem="{Binding SelectedInstanceCompact}">
             <DataGrid.Columns>
                 <DataGridTextColumn  Header="StartTime"    Binding="{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" />
                 <DataGridTextColumn  Header="Duration"  Binding="{Binding Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>

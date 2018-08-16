@@ -5,21 +5,28 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="TemplatesDictionary.xaml"/>
+    </UserControl.Resources>
+
     <Grid>
-        <ListView HorizontalContentAlignment = "Stretch" ItemsSource="{Binding TaskCompacts}" SelectedItem="{Binding SelectedTaskCompact}">
-            <ListView.View >
-                <GridView >
-                    <GridViewColumn Header = "Schedule" DisplayMemberBinding="{Binding Schedule}"/>
-                    <GridViewColumn Header = "Report" DisplayMemberBinding="{Binding ReportName}"/>
-                    <GridViewColumn Header = "RecepientGroup" DisplayMemberBinding="{Binding RecepientGroup}"/>
-                    <GridViewColumn Header = "TryCount" DisplayMemberBinding="{Binding TryCount}"/>
-                    <GridViewColumn Header = "QueryTimeOut" DisplayMemberBinding="{Binding QueryTimeOut}"/>
-                    <GridViewColumn Header = "ReportType" DisplayMemberBinding="{Binding ReportType}"/>
-                    <GridViewColumn Header = "HtmlBody" DisplayMemberBinding="{Binding HasHtmlBody}"/>
-                    <GridViewColumn Header = "JsonAttachment" DisplayMemberBinding="{Binding HasJsonAttachment}"/>
-                    <GridViewColumn Header = "XlsxAttachment" DisplayMemberBinding="{Binding HasXlsxAttachment}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <DataGrid
+                  ColumnWidth="*"
+                  HorizontalContentAlignment = "Stretch"
+                  ItemsSource="{Binding TaskCompacts}" 
+                  SelectedItem="{Binding SelectedTaskCompact}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header = "Schedule" Binding="{Binding Schedule}"/>
+                <DataGridTextColumn Header = "Report" Binding="{Binding ReportName}"/>
+                <DataGridTextColumn Header = "RecepientGroup" Binding="{Binding RecepientGroup}"/>
+                <DataGridTextColumn Header = "TryCount" Binding="{Binding TryCount}"/>
+                <DataGridTextColumn Header = "QueryTimeOut" Binding="{Binding QueryTimeOut}"/>
+                <DataGridTextColumn Header = "ReportType" Binding="{Binding ReportType}"/>
+                <DataGridTextColumn Header = "HtmlBody" Binding="{Binding HasHtmlBody}"/>
+                <DataGridTextColumn Header = "JsonAttachment" Binding="{Binding HasJsonAttachment}"/>
+                <DataGridTextColumn Header = "XlsxAttachment" Binding="{Binding HasXlsxAttachment}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>
