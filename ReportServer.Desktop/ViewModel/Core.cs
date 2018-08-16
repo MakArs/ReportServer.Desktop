@@ -17,49 +17,49 @@ namespace ReportServer.Desktop.ViewModel
 {
     public class Core : ReactiveObject, ICore
     {
-        private readonly IReportService     reportService; 
-        private readonly IMapper            mapper;        
+        private readonly IReportService reportService;
+        private readonly IMapper mapper;
         private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
 
-        public ReactiveList<DesktopTask>            TaskCompacts                 { get; set; } //
-        public ReactiveList<DesktopInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
-        public ReactiveList<ApiSchedule>              Schedules                    { get; set; } //
-        public ReactiveList<ApiRecepientGroup>        RecepientGroups              { get; set; } //
-        public ReactiveList<DesktopReport>          Reports                      { get; set; } //
-        public ReactiveList<string>                   ViewTemplates                { get; set; }
-        public ReactiveList<string>                   QueryTemplates               { get; set; }
+        public ReactiveList<DesktopTask> TaskCompacts { get; set; } //
+       public ReactiveList<DesktopInstanceCompact> SelectedTaskInstanceCompacts { get; set; }//
+        public ReactiveList<ApiSchedule> Schedules { get; set; } 
+        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; } 
+        public ReactiveList<DesktopReport> Reports { get; set; } 
+        public ReactiveList<string> ViewTemplates { get; set; }
+        public ReactiveList<string> QueryTemplates { get; set; }
 
         [Reactive] public object SelectTab { get; set; }
         [Reactive] public DesktopTask SelectedTaskCompact { get; set; } //
-        [Reactive] public DesktopInstanceCompact SelectedInstanceCompact { get; set; }
-        [Reactive] public DesktopFullTask SelectedTask { get; set; }
+        [Reactive] public DesktopInstanceCompact SelectedInstanceCompact { get; set; }//
+        [Reactive] public DesktopFullTask SelectedTask { get; set; }//
         [Reactive] public DesktopInstance SelectedInstance { get; set; }
         [Reactive] public DesktopReport SelectedReport { get; set; }
         [Reactive] public DesktopReport RedactedReport { get; set; }
 
         // [Reactive] public bool CanSaveTask { get; set; }
         // [Reactive] public bool CanSaveReport { get; set; }
-        public ReactiveCommand RefreshTasksCommand            { get; set; }
-        public ReactiveCommand OpenPage                       { get; set; }
-        public ReactiveCommand OpenCurrentTaskView            { get; set; }
-        public ReactiveCommand DeleteCommand                  { get; set; }
-        public ReactiveCommand SaveEntityCommand              { get; set; }
-        public ReactiveCommand CreateTaskCommand              { get; set; }
-        public ReactiveCommand OpenViewTemplateWindowCommand  { get; set; }
+        public ReactiveCommand RefreshTasksCommand { get; set; }
+        public ReactiveCommand OpenPage { get; set; }//
+        public ReactiveCommand OpenCurrentTaskView { get; set; }
+        public ReactiveCommand DeleteCommand { get; set; }
+        public ReactiveCommand SaveEntityCommand { get; set; }
+        public ReactiveCommand CreateTaskCommand { get; set; }
+        public ReactiveCommand OpenViewTemplateWindowCommand { get; set; }
         public ReactiveCommand OpenQueryTemplateWindowCommand { get; set; }
-        public ReactiveCommand CreateReportCommand            { get; set; }
-        
-        public Core(IReportService reportService, IMapper mapper)
-        { 
-            this.reportService = reportService;
-            this.mapper        = mapper;
+        public ReactiveCommand CreateReportCommand { get; set; }
 
-            TaskCompacts                 = new ReactiveList<DesktopTask>(); //  //{ChangeTrackingEnabled = true};
+        public Core(IReportService reportService, IMapper mapper)
+        {
+            this.reportService = reportService;
+            this.mapper = mapper;
+
+            TaskCompacts = new ReactiveList<DesktopTask>(); //  //{ChangeTrackingEnabled = true};
             SelectedTaskInstanceCompacts = new ReactiveList<DesktopInstanceCompact>();
-            Schedules                    = new ReactiveList<ApiSchedule>();
-            RecepientGroups              = new ReactiveList<ApiRecepientGroup>();
-            Reports                      = new ReactiveList<DesktopReport>() {ChangeTrackingEnabled = false};
-            RefreshTasksCommand          = ReactiveCommand.Create(LoadTaskCompacts);
+            Schedules = new ReactiveList<ApiSchedule>();
+            RecepientGroups = new ReactiveList<ApiRecepientGroup>();
+            Reports = new ReactiveList<DesktopReport>() {ChangeTrackingEnabled = false};
+            RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
             ViewTemplates =
                 new ReactiveList<string>
                 {
@@ -102,9 +102,9 @@ namespace ReportServer.Desktop.ViewModel
                         (stb?.GetType() == typeof(TaskEditorView) &&
                          st?.ReportId   > 0) ||
                         (stb?.GetType() == typeof(ReportEditorView) &&
-                         !string.IsNullOrEmpty(sr?.Name)                  &&
-                         !string.IsNullOrEmpty(sr.Query)                  &&
-                         !string.IsNullOrEmpty(sr.ViewTemplate)           &&
+                         !string.IsNullOrEmpty(sr?.Name)            &&
+                         !string.IsNullOrEmpty(sr.Query)            &&
+                         !string.IsNullOrEmpty(sr.ViewTemplate)     &&
                          sr.QueryTimeOut > 0)
                 );
 
@@ -151,22 +151,25 @@ namespace ReportServer.Desktop.ViewModel
 
             SaveEntityCommand = ReactiveCommand.Create(SaveEntity, canSave);
 
-            CreateTaskCommand   = ReactiveCommand.Create(CreateTask);
+            CreateTaskCommand = ReactiveCommand.Create(CreateTask);
             CreateReportCommand = ReactiveCommand.Create(CreateReport);
 
             IObservable<bool> canOpenReportModal = this
                 .WhenAnyValue(t => t.RedactedReport.ReportType, sr =>
-                    sr == ReportType.Common); 
+                    sr == ReportType.Common);
             OpenViewTemplateWindowCommand =
-                ReactiveCommand.CreateFromTask(async () => RedactedReport.ViewTemplate = await DataRedacting(),
+                ReactiveCommand.CreateFromTask(
+                    async () => RedactedReport.ViewTemplate = await DataRedacting(),
                     canOpenReportModal);
             OpenQueryTemplateWindowCommand =
-                ReactiveCommand.CreateFromTask(async () => RedactedReport.Query = await DataRedacting(),
+                ReactiveCommand.CreateFromTask(
+                    async () => RedactedReport.Query = await DataRedacting(),
                     canOpenReportModal);
 
 
-            this.WhenAnyObservable(s =>     //
-                    s.TaskCompacts.Changed) //ObservableForProperty ignores initial nulls,whenanyvalue not?
+            this.WhenAnyObservable(s => //
+                    s.TaskCompacts
+                        .Changed) //ObservableForProperty ignores initial nulls,whenanyvalue not?
                 .Subscribe(x =>
                 {
                     SelectedTaskInstanceCompacts.Clear();
@@ -193,7 +196,7 @@ namespace ReportServer.Desktop.ViewModel
             this.ObservableForProperty(s => s.RedactedReport.ReportType)
                 .Subscribe(_ =>
                 {
-                    RedactedReport.Query        = null;
+                    RedactedReport.Query = null;
                     RedactedReport.ViewTemplate = null;
                 });
 
@@ -215,10 +218,10 @@ namespace ReportServer.Desktop.ViewModel
                 {
                     var rep = Reports.First(r => r.Id == rId.Value);
                     SelectedTask.ConnectionString = rep.ConnectionString;
-                    SelectedTask.Query            = rep.Query;
-                    SelectedTask.QueryTimeOut     = rep.QueryTimeOut;
-                    SelectedTask.ViewTemplate     = rep.ViewTemplate;
-                    SelectedTask.ReportType       = rep.ReportType;
+                    SelectedTask.Query = rep.Query;
+                    SelectedTask.QueryTimeOut = rep.QueryTimeOut;
+                    SelectedTask.ViewTemplate = rep.ViewTemplate;
+                    SelectedTask.ReportType = rep.ReportType;
                 });
 
             OnStart();
@@ -288,7 +291,7 @@ namespace ReportServer.Desktop.ViewModel
 
         public async Task<string> DataRedacting()
         {
-            var data   = dialogCoordinator.ShowInputAsync(this, "Hello", "Enter data for this field");
+            var data = dialogCoordinator.ShowInputAsync(this, "Hello", "Enter data for this field");
             var result = await data;
             return result;
         }
@@ -387,16 +390,16 @@ namespace ReportServer.Desktop.ViewModel
             SelectedTaskCompact = null;
             SelectedTaskInstanceCompacts.Clear();
             SelectedInstance = null;
-            SelectedTask     = null;
+            SelectedTask = null;
             SelectedTask = new DesktopFullTask()
             {
-                Id             = 0,
-                TryCount       = 1,
-                Schedule       = Schedules.First().Name,
+                Id = 0,
+                TryCount = 1,
+                Schedule = Schedules.First().Name,
                 RecepientGroup = RecepientGroups.First().Name
             };
             SelectedTask.ReportId = Reports.First().Id;
-            SelectedTask          = SelectedTask;
+            SelectedTask = SelectedTask;
         }
 
         public void CreateReport()
@@ -404,7 +407,7 @@ namespace ReportServer.Desktop.ViewModel
             RedactedReport = null;
             RedactedReport = new DesktopReport()
             {
-                Id           = 0,
+                Id = 0,
                 QueryTimeOut = 60
             };
         }

@@ -7,21 +7,18 @@ using ReportServer.Desktop.Model;
 using ReportServer.Desktop.ViewModel;
 using ReportServer.Desktop.Views;
 using Ui.Wpf.Common;
+using Ui.Wpf.Common.ViewModels;
 using MainWindow = ReportServer.Desktop.Views.MainWindow;
 
 namespace ReportServer.Desktop
 {
-    public class BootsTrap:IBootstraper
+    public class BootsTrap : IBootstraper
     {
         public static IContainer InitContainer()
         {
             var builder = new ContainerBuilder();
-            builder
-                .RegisterType<Core>()
-                .As<ICore>()
-                .SingleInstance();
 
-            builder.RegisterType<Shell>()
+            builder.RegisterType<DistinctShell>()
                 .As<IShell>()
                 .SingleInstance();
 
@@ -34,15 +31,23 @@ namespace ReportServer.Desktop
                 .As<IReportService>()
                 .SingleInstance();
 
-            //monik
-            var logSender = new AzureSender(
-                ConfigurationManager.AppSettings["monikendpoint"],
-                "incoming");
+            ConfigureView<TaskManagerViewModel, TaskManagerView>(builder);
 
-            builder.RegisterType<TaskManagerView>();
             builder.RegisterType<ReportManagerView>();
             builder.RegisterType<TaskEditorView>();
             builder.RegisterType<ReportEditorView>();
+
+
+            //builder
+            //    .RegisterType<Core>()
+            //    .As<ICore>()
+            //    .SingleInstance();
+
+            #region monik
+
+            var logSender = new AzureSender(
+                ConfigurationManager.AppSettings["monikendpoint"],
+                "incoming");
 
             builder.RegisterInstance(logSender)
                 .As<IClientSender>();
@@ -62,8 +67,12 @@ namespace ReportServer.Desktop
                 .As<IClientControl>()
                 .SingleInstance();
 
-            //mapper
-            var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile(typeof(MapperProfile)));
+            #endregion
+
+            #region mapper
+
+            var mapperConfig =
+                new MapperConfiguration(cfg => cfg.AddProfile(typeof(MapperProfile)));
 
             builder.RegisterInstance(mapperConfig)
                 .As<MapperConfiguration>()
@@ -74,16 +83,26 @@ namespace ReportServer.Desktop
                 .As<IMapper>()
                 .SingleInstance();
 
-           var container = builder.Build();
+            #endregion
+
+            var container = builder.Build();
             return container;
         }
 
-        IShell IBootstraper.Init()
+        public IShell Init()
         {
             var container = InitContainer();
             var shell = container.Resolve<IShell>();
             shell.Container = container;
             return shell;
+        }
+
+        private static void ConfigureView<TViewModel, TView>(ContainerBuilder builder)
+            where TViewModel : IViewModel
+            where TView : IView
+        {
+            builder.RegisterType<TViewModel>();
+            builder.RegisterType<TView>();
         }
     }
 
@@ -98,7 +117,7 @@ namespace ReportServer.Desktop
                 .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
 
             CreateMap<DesktopFullTask, ApiFullTask>()
-                .ForMember("ReportType", opt => opt.MapFrom(s => (int)s.ReportType));
+                .ForMember("ReportType", opt => opt.MapFrom(s => (int) s.ReportType));
 
             CreateMap<ApiInstance, DesktopInstanceCompact>()
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
@@ -108,8 +127,8 @@ namespace ReportServer.Desktop
 
             CreateMap<ApiReport, DesktopReport>()
                 .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
-            CreateMap<DesktopReport,ApiReport>()
-                .ForMember("ReportType", opt => opt.MapFrom(s => (int)s.ReportType));
+            CreateMap<DesktopReport, ApiReport>()
+                .ForMember("ReportType", opt => opt.MapFrom(s => (int) s.ReportType));
         }
     }
 }
