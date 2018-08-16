@@ -4,10 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:behaviors="clr-namespace:ReportServer.Desktop.Behaviors"
-             xmlns:converters="clr-namespace:ReportServer.Desktop.Converters"
              xmlns:interfaces="clr-namespace:ReportServer.Desktop.Interfaces"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -69,7 +68,7 @@
         <ComboBox Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"   ItemsSource="{Binding RecepientGroups}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.RecepientGroup}"/>
         <TextBox Grid.Column="1" Grid.Row="3"  HorizontalAlignment="Stretch"   Text="{Binding SelectedTask.TryCount }">
             <i:Interaction.Behaviors>
-                <behaviors:TextBoxInputBehavior InputMode="DigitInput"/>
+                <wpfResources:TextBoxInputBehavior InputMode="DigitInput"/>
             </i:Interaction.Behaviors>
         </TextBox>
         <ComboBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Reports}" SelectedValuePath="Id"  DisplayMemberPath="Id" SelectedValue="{Binding SelectedTask.ReportId}"/>

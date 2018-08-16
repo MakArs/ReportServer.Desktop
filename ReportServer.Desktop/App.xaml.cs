@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using ReportServer.Desktop.Views;
+using Ui.Wpf.Common;
+using Ui.Wpf.Common.ShowOptions;
 
 namespace ReportServer.Desktop
 {
@@ -16,7 +13,15 @@ namespace ReportServer.Desktop
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            BootsTrap.Init();
+                //BootsTrap.Init();
+            var shell = UiStarter.Start<IDockWindow>(
+                new BootsTrap(),
+                new UiShowStartWindowOptions
+                {
+                    Title = "ReportServer.Desktop",
+                    ToolPaneWidth = 100
+                });
+            shell.ShowView<StartupWindow>(options: new UiShowOptions { Title = "Start Page", CanClose = false });
         }
     }
 }

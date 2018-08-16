@@ -6,18 +6,19 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
-namespace ReportServer.Desktop.Behaviors
+namespace ReportServer.Desktop.Views.WpfResources
 {
     public class TextBoxInputBehavior : Behavior<TextBox>
     {
         const NumberStyles ValidNumberStyles = NumberStyles.AllowDecimalPoint |
-                                                   //NumberStyles.AllowThousands |
-                                                   NumberStyles.AllowLeadingSign;
+                                               //NumberStyles.AllowThousands |
+                                               NumberStyles.AllowLeadingSign;
+
         public TextBoxInputMode InputMode { get; set; }
 
         public TextBoxInputBehavior()
         {
-            InputMode = TextBoxInputMode.None;
+            InputMode               = TextBoxInputMode.None;
             JustPositivDecimalInput = false;
         }
 
@@ -25,7 +26,7 @@ namespace ReportServer.Desktop.Behaviors
         {
             base.OnAttached();
             AssociatedObject.PreviewTextInput += AssociatedObjectPreviewTextInput;
-            AssociatedObject.PreviewKeyDown += AssociatedObjectPreviewKeyDown;
+            AssociatedObject.PreviewKeyDown   += AssociatedObjectPreviewKeyDown;
 
             DataObject.AddPastingHandler(AssociatedObject, Pasting);
 
@@ -35,18 +36,18 @@ namespace ReportServer.Desktop.Behaviors
         {
             base.OnDetaching();
             AssociatedObject.PreviewTextInput -= AssociatedObjectPreviewTextInput;
-            AssociatedObject.PreviewKeyDown -= AssociatedObjectPreviewKeyDown;
+            AssociatedObject.PreviewKeyDown   -= AssociatedObjectPreviewKeyDown;
 
             DataObject.RemovePastingHandler(AssociatedObject, Pasting);
         }
 
         public static readonly DependencyProperty JustPositivDecimalInputProperty =
-         DependencyProperty.Register("JustPositivDecimalInput", typeof(bool),
-         typeof(TextBoxInputBehavior), new FrameworkPropertyMetadata(false));
+            DependencyProperty.Register("JustPositivDecimalInput", typeof(bool),
+                typeof(TextBoxInputBehavior), new FrameworkPropertyMetadata(false));
 
         public bool JustPositivDecimalInput
         {
-            get => (bool)GetValue(JustPositivDecimalInputProperty);
+            get => (bool) GetValue(JustPositivDecimalInputProperty);
             set => SetValue(JustPositivDecimalInputProperty, value);
         }
 
@@ -54,7 +55,7 @@ namespace ReportServer.Desktop.Behaviors
         {
             if (e.DataObject.GetDataPresent(typeof(string)))
             {
-                var pastedText = (string)e.DataObject.GetData(typeof(string));
+                var pastedText = (string) e.DataObject.GetData(typeof(string));
 
                 if (IsValidInput(GetText(pastedText))) return;
                 e.CancelCommand();
@@ -68,7 +69,7 @@ namespace ReportServer.Desktop.Behaviors
         private void AssociatedObjectPreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Space) return;
-                e.Handled = true;
+            e.Handled = true;
         }
 
         private void AssociatedObjectPreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -109,7 +110,7 @@ namespace ReportServer.Desktop.Behaviors
                 case TextBoxInputMode.None:
                     return true;
                 case TextBoxInputMode.DigitInput:
-                    return CheckIsDigit(input)&&(Convert.ToInt32(input)>0);
+                    return CheckIsDigit(input) && (Convert.ToInt32(input) > 0);
 
                 case TextBoxInputMode.DecimalInput:
                     decimal d;
@@ -155,7 +156,7 @@ namespace ReportServer.Desktop.Behaviors
         DigitInput
     }
 }
-    //public class NumericTextBoxBehavior: Behavior<TextBox>
+//public class NumericTextBoxBehavior: Behavior<TextBox>
     //{
     //    protected override void OnAttached()
     //    {

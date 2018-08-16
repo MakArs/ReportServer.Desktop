@@ -1,120 +1,46 @@
-﻿<mah:MetroWindow x:Class="ReportServer.Desktop.Views.StartupWindow"
+﻿<UserControl x:Class="ReportServer.Desktop.Views.StartupWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReportServer.Desktop.Views"
-        xmlns:converters="clr-namespace:ReportServer.Desktop.Converters"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:docker="http://schemas.xceed.com/wpf/xaml/avalondock"
         mc:Ignorable="d"
         xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-       dialog:DialogParticipation.Register="{Binding}"
-       Title="ReportRedactor" MinHeight="800" MinWidth="1200" BorderThickness="1.5"
-       BorderBrush="{DynamicResource AccentColorBrush}" GlowBrush="{DynamicResource AccentColorBrush}">
+        xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources"
+        dialog:DialogParticipation.Register="{Binding}"
+        MinHeight="800" MinWidth="1200" BorderThickness="1.5"
+       BorderBrush="{DynamicResource AccentColorBrush}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
+
         <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" CanVerticallyScroll="True">
             <Button Content="Добавить задачу" Command="{Binding CreateTaskCommand}"/>
             <Button Content="Добавить отчёт" Command="{Binding CreateReportCommand}"/>
             <Button Content="Сохранить" Command="{Binding SaveEntityCommand}"/>
             <Button Content="Удалить" Command="{Binding DeleteCommand}"/>
         </StackPanel>
-        <docker:DockingManager Grid.Row="1" ActiveContent="{Binding SelectTab,Mode=TwoWay}">
 
-            <docker:LayoutRoot>
+        <wpfResources:TaskListView Grid.Row="1" BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Height="3" 
+              ShowsPreview="False" VerticalAlignment="Center"/>
 
-                <docker:LayoutPanel Orientation="Vertical">
-
-                    <docker:LayoutPanel>
-
-                        <docker:LayoutPanel Orientation="Vertical" DockWidth="Auto">
-                            <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
-                                <docker:LayoutDocument Title="Tasks" CanClose="False">
-                                    <local:TaskListView/>
-                                </docker:LayoutDocument>
-                            </docker:LayoutDocumentPane>
-                            
-                            <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
-                                <docker:LayoutDocument Title="Reports" CanClose="False">
-                                    <local:ReportListView/>
-                                </docker:LayoutDocument>
-                            </docker:LayoutDocumentPane>
-                        </docker:LayoutPanel>
-
-                        <docker:LayoutPanel Orientation="Vertical">
-                            <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
-                                <docker:LayoutDocument Title="SelectedTask"  CanClose="False">
-                                    <local:SelectedTaskFullView/>
-                                </docker:LayoutDocument>
-                            </docker:LayoutDocumentPane>
-
-                            <docker:LayoutDocumentPane DockWidth="Auto" DockHeight="Auto">
-                                <docker:LayoutDocument Title="SelectedReport"  CanClose="False">
-                                    <local:SelectedReportFullView/>
-                                </docker:LayoutDocument>
-                            </docker:LayoutDocumentPane>
-                        </docker:LayoutPanel>
-
-                    </docker:LayoutPanel>
-
-                    <docker:LayoutPanel DockWidth="Auto" DockHeight="200">
-
-                        <docker:LayoutAnchorablePane DockWidth="Auto" >
-                            <docker:LayoutAnchorable Title="TaskInstances" CanHide="False" CanAutoHide="False" CanClose="False">
-                                <local:SelectedTaskInstancesView/>
-                            </docker:LayoutAnchorable>
-                        </docker:LayoutAnchorablePane>
-
-                        <docker:LayoutAnchorablePane DockWidth="Auto" >
-                            <docker:LayoutAnchorable Title="SelectedInstance" CanClose="False" CanHide="False" CanAutoHide="False">
-                                <local:SelectedInstanceFullView/>
-                            </docker:LayoutAnchorable>
-                        </docker:LayoutAnchorablePane>
-                    </docker:LayoutPanel>
-                </docker:LayoutPanel>
-            </docker:LayoutRoot>
-        </docker:DockingManager>
-    </Grid>
-</mah:MetroWindow>
-
-<!--<Grid Grid.Row="1">
-        <Grid.RowDefinitions>
-            
-            <RowDefinition Height="3.5*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-
-        
-
-        <local:TaskListView Grid.Row="1"/>
-
-        <GridSplitter Grid.Column="1" Grid.Row="1" Width="2.5" VerticalAlignment="Stretch" HorizontalAlignment="Center" ShowsPreview="False"></GridSplitter>
-
-        <Grid Grid.Row="1" Grid.Column="2" >
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-
-            <local:SelectedTaskInstancesView Visibility="{Binding SelectedTaskInstanceCompacts[0],Converter={converters:NullToVisiblityConverter}}"/>
-
-            <GridSplitter  Grid.Row="1" Height="2.5" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="False"/>
-            
-            <local:SelectedTaskFullView Grid.Row="2"  Visibility="{Binding SelectedTask,Converter={converters:NullToVisiblityConverter} }"/>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <wpfResources:SelectedTaskInstancesView   BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Center" Width="3" 
+                          ShowsPreview="False" VerticalAlignment="Stretch"/>
+            <wpfResources:SelectedInstanceFullView Grid.Column="2"  BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
         </Grid>
-
-        <GridSplitter  Grid.Row="2" Height="2.5" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="False"></GridSplitter>
-
-        <local:SelectedInstanceFullView Grid.Row="3" Grid.ColumnSpan="3" Visibility="{Binding SelectedInstance,Converter={converters:NullToVisiblityConverter} }"/>
-    </Grid>-->
+    </Grid>
+</UserControl>

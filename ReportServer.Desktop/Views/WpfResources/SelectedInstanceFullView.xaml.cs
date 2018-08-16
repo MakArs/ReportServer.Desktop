@@ -1,11 +1,9 @@
-﻿using System.Windows.Controls;
-
-namespace ReportServer.Desktop.Views
+﻿namespace ReportServer.Desktop.Views.WpfResources
 {
     /// <summary>
     /// Interaction logic for SelectedInstanceFullView.xaml
     /// </summary>
-    public partial class SelectedInstanceFullView : UserControl
+    public partial class SelectedInstanceFullView
     {
         public SelectedInstanceFullView()
         {

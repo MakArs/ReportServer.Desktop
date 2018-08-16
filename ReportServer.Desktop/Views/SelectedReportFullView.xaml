@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ReportServer.Desktop.Views"
-             xmlns:converters="clr-namespace:ReportServer.Desktop.Converters"
              xmlns:interfaces="clr-namespace:ReportServer.Desktop.Interfaces"
+             xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -58,7 +58,7 @@
         <TextBox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"  Text="{Binding RedactedReport.Name}"/>
         <TextBox Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch"  Text="{Binding RedactedReport.ConnectionString}"/>
         <TextBox Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch"  Text="{Binding RedactedReport.QueryTimeOut}"/>
-        <ComboBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Source={converters:EnumBindingSource {x:Type interfaces:ReportType}}}" SelectedValue="{Binding RedactedReport.ReportType}"/>
+        <ComboBox Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Source={wpfResources:EnumBindingSource {x:Type interfaces:ReportType}}}" SelectedValue="{Binding RedactedReport.ReportType}"/>
         <local:ViewTemplateControl Grid.Column="1" Grid.Row="5"/>
         <local:QueryControl Grid.Column="1" Grid.Row="6"/>
     </Grid>

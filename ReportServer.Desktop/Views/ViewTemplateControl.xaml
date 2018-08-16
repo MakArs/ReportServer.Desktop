@@ -4,14 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ReportServer.Desktop"
-             xmlns:converters="clr-namespace:ReportServer.Desktop.Converters"
+             xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid>
-            <Button Panel.ZIndex="1" Width="40" Margin="0" Command="{Binding OpenViewTemplateWindowCommand}" HorizontalAlignment="Right" Visibility="{Binding RedactedReport.ReportType,Converter={converters:ReportTypeToVisiblity}}">...</Button>
-            <TextBox Visibility="{Binding RedactedReport.ReportType,Converter={converters:ReportTypeToVisiblity}}" Text="{Binding RedactedReport.ViewTemplate}"/>
-            <ComboBox Visibility="{Binding RedactedReport.ReportType,Converter={converters:AntiReportTypeToVisiblity}}" HorizontalAlignment="Stretch" ItemsSource="{Binding ViewTemplates}" SelectedValue="{Binding RedactedReport.ViewTemplate}" />
+            <Button Panel.ZIndex="1" Width="40" Margin="0" Command="{Binding OpenViewTemplateWindowCommand}" HorizontalAlignment="Right" Visibility="{Binding RedactedReport.ReportType,Converter={wpfResources:ReportTypeToVisiblity}}">...</Button>
+            <TextBox Visibility="{Binding RedactedReport.ReportType,Converter={wpfResources:ReportTypeToVisiblity}}" Text="{Binding RedactedReport.ViewTemplate}"/>
+            <ComboBox Visibility="{Binding RedactedReport.ReportType,Converter={wpfResources:AntiReportTypeToVisiblity}}" HorizontalAlignment="Stretch" ItemsSource="{Binding ViewTemplates}" SelectedValue="{Binding RedactedReport.ViewTemplate}" />
         </Grid>
     </Grid>
 </UserControl>

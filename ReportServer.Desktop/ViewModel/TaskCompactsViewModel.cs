@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AutoMapper;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -12,21 +9,23 @@ namespace ReportServer.Desktop.ViewModel
 {
     public class TaskCompactsViewModel : ReactiveObject
     {
-        private readonly IReportService _reportService;
-        private readonly IMapper _mapper;
+        private readonly IReportService reportService;
+        private readonly IMapper mapper;
 
-        public ReactiveList<ViewModelTask> TaskCompacts { get; set; }
-        public ReactiveList<ApiSchedule> Schedules { get; set; }
-        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
-        public ReactiveList<ApiReport> Reports { get; set; }
+        public ReactiveList<DesktopTask> TaskCompacts { get; set; }
+        public ReactiveList<ApiSchedule> Schedules { get;  }
+        public ReactiveList<ApiRecepientGroup> RecepientGroups { get;  }
+        public ReactiveList<ApiReport> Reports { get;  }
 
-        [Reactive] public ViewModelTask SelectedTaskCompact { get; set; }
+        [Reactive] public DesktopTask SelectedTaskCompact { get; set; }
 
-        public TaskCompactsViewModel(IReportService reportService, IMapper mapper)
+        public TaskCompactsViewModel(IReportService reportService, IMapper mapper, ReactiveList<ApiSchedule> schedules, ReactiveList<ApiRecepientGroup> recepientGroups, ReactiveList<ApiReport> reports)
         {
-            _reportService = reportService;
-            _mapper = mapper;
-
+            this.reportService = reportService;
+            this.mapper = mapper;
+            Schedules = schedules;
+            RecepientGroups = recepientGroups;
+            Reports = reports;
 
             this.WhenAnyObservable(s =>
                     s.TaskCompacts.Changed) 
@@ -35,12 +34,12 @@ namespace ReportServer.Desktop.ViewModel
 
         public void LoadTaskCompacts()
         {
-            var taskList = _reportService.GetAllTasks();
+            var taskList = reportService.GetAllTasks();
             TaskCompacts.Clear();
 
             foreach (var task in taskList)
             {
-                var vtask = _mapper.Map<ViewModelTask>(task);
+                var vtask = mapper.Map<DesktopTask>(task);
 
                 vtask.Schedule = Schedules
                     .FirstOrDefault(s => s.Id == task.ScheduleId)?.Name;

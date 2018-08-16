@@ -12,57 +12,58 @@ namespace ReportServer.Desktop.Model
 {
     public class ReportService : IReportService
     {
-        private readonly ISimpleHttpClient _client;
+        private readonly ISimpleHttpClient client;
 
         public ReportService()
         {
-            _client = JsonHttpClient.Create("http://localhost:12345/");
+            client = JsonHttpClient.Create("http://localhost:12345/");
         }
 
         public List<ApiTask> GetAllTasks()
         {
-            return _client.Get<List<ApiTask>>("/api/v1/tasks");
+            return client.Get<List<ApiTask>>("/api/v1/tasks");
         }
 
         public ApiFullTask GetFullTaskById(int id)
         {
-            return _client.Get<ApiFullTask>($"/api/v1/tasks/{id}");
+            return client.Get<ApiFullTask>($"/api/v1/tasks/{id}");
         }
 
         public List<ApiInstance> GetInstancesByTaskId(int taskId)
         {
-            return _client.Get<List<ApiInstance>>($"/api/v1/tasks/{taskId}/instances");
+            return client.Get<List<ApiInstance>>($"/api/v1/tasks/{taskId}/instances");
         }
 
         public List<ApiInstance> GetInstanceCompacts()
         {
-            return _client.Get<List<ApiInstance>>("/api/v1/instances");
+            return client.Get<List<ApiInstance>>("/api/v1/instances");
         }
 
         public ApiFullInstance GetFullInstanceById(int id)
         {
-            return _client.Get<ApiFullInstance>($"/api/v1/instances/{id}");
+            return client.Get<ApiFullInstance>($"/api/v1/instances/{id}");
         }
 
         public List<ApiSchedule> GetSchedules()
         {
-            return _client.Get<List<ApiSchedule>>("/api/v1/schedules/");
+            return client.Get<List<ApiSchedule>>("/api/v1/schedules/");
         }
 
         public List<ApiReport> GetReports()
         {
-            return _client.Get<List<ApiReport>>("/api/v1/reports/");
+            return client.Get<List<ApiReport>>("/api/v1/reports/");
         }
 
         public List<ApiRecepientGroup> GetRecepientGroups()
         {
-            return _client.Get<List<ApiRecepientGroup>>("/api/v1/recepientgroups/");
+            return client.Get<List<ApiRecepientGroup>>("/api/v1/recepientgroups/");
         }
 
         public string GetCurrentTaskViewById(int taskId)
         {
 
-            var task = Task.Factory.StartNew(() => _client.Send<string>(HttpMethod.Get, $"/api/v1/tasks/{taskId}/currentviews"));
+            var task = Task.Factory.StartNew(() =>
+                client.Send<string>(HttpMethod.Get, $"/api/v1/tasks/{taskId}/currentviews"));
             task.Wait();
 
             var responseCode = task.Result.Result.Response.StatusCode;
@@ -75,37 +76,37 @@ namespace ReportServer.Desktop.Model
 
         public int CreateSchedule(ApiSchedule schedule)
         {
-            return _client.Post("/schedules", schedule);
+            return client.Post("/schedules", schedule);
         }
 
         public void DeleteTask(int id)
         {
-            _client.Delete($"/api/v1/tasks/{id}");
+            client.Delete($"/api/v1/tasks/{id}");
         }
 
         public void DeleteInstance(int id)
         {
-            _client.Delete($"/api/v1/instances/{id}");
+            client.Delete($"/api/v1/instances/{id}");
         }
 
         public int CreateTask(ApiFullTask fullTask)
         {
-            return _client.Post("/api/v1/tasks/", fullTask);
+            return client.Post("/api/v1/tasks/", fullTask);
         }
 
         public void UpdateTask(ApiFullTask fullTask)
         {
-            _client.Put($"/api/v1/tasks/{fullTask.Id}", fullTask);
+            client.Put($"/api/v1/tasks/{fullTask.Id}", fullTask);
         }
 
         public int CreateReport(ApiReport report)
         {
-            return _client.Post("/api/v1/reports/", report);
+            return client.Post("/api/v1/reports/", report);
         }
 
         public void UpdateReport(ApiReport report)
         {
-            _client.Put($"/api/v1/reports/{report.Id}", report);
+            client.Put($"/api/v1/reports/{report.Id}", report);
         }
     }
 

@@ -2,14 +2,13 @@
 using System.Reactive;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using ReportServer.Desktop.Model;
+using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.Interfaces
 {
-    public class ViewModelTask
+    public class DesktopTask
     {
         public int Id { get; set; }
         public string ReportName { get; set; }
@@ -24,7 +23,7 @@ namespace ReportServer.Desktop.Interfaces
         public bool HasXlsxAttachment { get; set; }
     }
 
-    public class ViewModelFullTask : ReactiveObject
+    public class DesktopFullTask : ReactiveObject
     {
         public int Id { get; set; }
         [Reactive] public int ReportId { get; set; }
@@ -41,7 +40,7 @@ namespace ReportServer.Desktop.Interfaces
         [Reactive] public bool HasXlsxAttachment { get; set; }
     }
 
-    public class ViewModelInstanceCompact
+    public class DesktopInstanceCompact
     {
         public int Id { get; set; }
         public int TaskId { get; set; }
@@ -51,7 +50,7 @@ namespace ReportServer.Desktop.Interfaces
         public int TryNumber { get; set; }
     }
 
-    public class ViewModelInstance
+    public class DesktopInstance
     {
         public int Id { get; set; }
         public string Data { get; set; } = "";
@@ -64,7 +63,7 @@ namespace ReportServer.Desktop.Interfaces
     }
 
     [DataContract]
-    public class ViewModelReport : ReactiveObject
+    public class DesktopReport : ReactiveObject
     {
         [DataMember] public int Id { get; set; }
         [Reactive] [DataMember] public string Name { get; set; }
@@ -88,7 +87,7 @@ namespace ReportServer.Desktop.Interfaces
         Failed = 3
     }
 
-    public interface ICore
+    public interface ICore: IViewModel
     {
         void LoadTaskCompacts();
         void LoadSchedules();

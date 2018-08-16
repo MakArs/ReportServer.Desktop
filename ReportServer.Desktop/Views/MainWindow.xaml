@@ -1,0 +1,60 @@
+﻿<mah:MetroWindow x:Class="ReportServer.Desktop.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:dock="http://schemas.xceed.com/wpf/xaml/avalondock"
+        mc:Ignorable="d"
+        d:DataContext="Shell"
+        Title="{Binding Title}"
+        WindowState="Maximized">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <mah:DropDownButton 
+                Content="File"
+                Height="auto" 
+                ItemsSource="{Binding Entities}"
+                Margin="5"
+                BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}">
+                <mah:DropDownButton.ItemContainerStyle>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Command" 
+                                Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=DataContext.AddNewElementCommand}"/>
+                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                    </Style>
+                </mah:DropDownButton.ItemContainerStyle>
+            </mah:DropDownButton>
+            <mah:DropDownButton 
+                Content="Edit"
+                Height="auto" 
+                ItemsSource="{Binding Entities}"
+                Margin="5"
+                BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}">
+                <mah:DropDownButton.ItemContainerStyle>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Command" 
+                                Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=DataContext.AddNewElementCommand}"/>
+                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                    </Style>
+                </mah:DropDownButton.ItemContainerStyle>
+            </mah:DropDownButton>
+        </StackPanel>
+        <dock:DockingManager 
+        Grid.Row="1"
+        Name="DockingManager"
+        ActiveContentChanged="ActiveContentChanged">
+        </dock:DockingManager>
+    </Grid>
+</mah:MetroWindow>
+
+
+
+
+
+
+

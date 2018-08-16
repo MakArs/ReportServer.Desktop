@@ -5,20 +5,29 @@ using Monik.Client;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Model;
 using ReportServer.Desktop.ViewModel;
+using ReportServer.Desktop.Views;
+using Ui.Wpf.Common;
+using MainWindow = ReportServer.Desktop.Views.MainWindow;
 
 namespace ReportServer.Desktop
 {
-    public class BootsTrap
+    public class BootsTrap:IBootstraper
     {
-        public static IContainer Container { get; set; }
-
-        public static void Init()
+        public static IContainer InitContainer()
         {
             var builder = new ContainerBuilder();
             builder
                 .RegisterType<Core>()
                 .As<ICore>()
                 .SingleInstance();
+
+            builder.RegisterType<Shell>()
+                .As<IShell>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<MainWindow>()
+                .As<IDockWindow>();
 
             builder
                 .RegisterType<ReportService>()
@@ -29,6 +38,8 @@ namespace ReportServer.Desktop
             var logSender = new AzureSender(
                 ConfigurationManager.AppSettings["monikendpoint"],
                 "incoming");
+
+            builder.RegisterType<StartupWindow>();
 
             builder.RegisterInstance(logSender)
                 .As<IClientSender>();
@@ -60,7 +71,16 @@ namespace ReportServer.Desktop
                 .As<IMapper>()
                 .SingleInstance();
 
-            Container = builder.Build();
+           var container = builder.Build();
+            return container;
+        }
+
+        IShell IBootstraper.Init()
+        {
+            var container = InitContainer();
+            var shell = container.Resolve<IShell>();
+            shell.Container = container;
+            return shell;
         }
     }
 
@@ -68,24 +88,24 @@ namespace ReportServer.Desktop
     {
         public MapperProfile()
         {
-            CreateMap<ApiTask, ViewModelTask>()
+            CreateMap<ApiTask, DesktopTask>()
                 .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
 
-            CreateMap<ApiFullTask, ViewModelFullTask>()
+            CreateMap<ApiFullTask, DesktopFullTask>()
                 .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
 
-            CreateMap<ViewModelFullTask, ApiFullTask>()
+            CreateMap<DesktopFullTask, ApiFullTask>()
                 .ForMember("ReportType", opt => opt.MapFrom(s => (int)s.ReportType));
 
-            CreateMap<ApiInstance, ViewModelInstanceCompact>()
+            CreateMap<ApiInstance, DesktopInstanceCompact>()
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
 
-            CreateMap<ApiFullInstance, ViewModelInstance>()
+            CreateMap<ApiFullInstance, DesktopInstance>()
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
 
-            CreateMap<ApiReport, ViewModelReport>()
+            CreateMap<ApiReport, DesktopReport>()
                 .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
-            CreateMap<ViewModelReport,ApiReport>()
+            CreateMap<DesktopReport,ApiReport>()
                 .ForMember("ReportType", opt => opt.MapFrom(s => (int)s.ReportType));
         }
     }

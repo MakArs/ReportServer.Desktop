@@ -1,11 +1,9 @@
-﻿using System.Windows.Controls;
-
-namespace ReportServer.Desktop.Views
+﻿namespace ReportServer.Desktop.Views.WpfResources
 {
     /// <summary>
     /// Interaction logic for SelectedTaskInstancesView.xaml
     /// </summary>
-    public partial class SelectedTaskInstancesView : UserControl
+    public partial class SelectedTaskInstancesView
     {
         public SelectedTaskInstancesView()
         {

@@ -1,8 +1,7 @@
 ﻿<Application x:Class="ReportServer.Desktop.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ReportServer.Desktop"
-             StartupUri="Views/StartupWindow.xaml">
+             xmlns:local="clr-namespace:ReportServer.Desktop">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

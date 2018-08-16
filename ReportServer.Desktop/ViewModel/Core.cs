@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Specialized;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -13,54 +11,61 @@ using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Model;
 using ReportServer.Desktop.Views;
+using ReportServer.Desktop.Views.WpfResources;
 
 namespace ReportServer.Desktop.ViewModel
 {
     public class Core : ReactiveObject, ICore
     {
-        private readonly IReportService _reportService; //
-        private readonly IMapper _mapper; //
-        private readonly IDialogCoordinator _dialogCoordinator = DialogCoordinator.Instance;
+        private readonly IReportService     reportService; //
+        private readonly IMapper            mapper;        //
+        private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
 
-        public ReactiveList<ViewModelTask> TaskCompacts { get; set; } //
-        public ReactiveList<ViewModelInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
-        public ReactiveList<ApiSchedule> Schedules { get; set; } //
-        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; } //
-        public ReactiveList<ViewModelReport> Reports { get; set; } //
-        public ReactiveList<string> ViewTemplates { get; set; }
-        public ReactiveList<string> QueryTemplates { get; set; }
+        public ReactiveList<DesktopTask>            TaskCompacts                 { get; set; } //
+        public ReactiveList<DesktopInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
+        public ReactiveList<ApiSchedule>              Schedules                    { get; set; } //
+        public ReactiveList<ApiRecepientGroup>        RecepientGroups              { get; set; } //
+        public ReactiveList<DesktopReport>          Reports                      { get; set; } //
+        public ReactiveList<string>                   ViewTemplates                { get; set; }
+        public ReactiveList<string>                   QueryTemplates               { get; set; }
 
         [Reactive] public object SelectTab { get; set; }
-        [Reactive] public ViewModelTask SelectedTaskCompact { get; set; } //
-        [Reactive] public ViewModelInstanceCompact SelectedInstanceCompact { get; set; }
-        [Reactive] public ViewModelFullTask SelectedTask { get; set; }
-        [Reactive] public ViewModelInstance SelectedInstance { get; set; }
-        [Reactive] public ViewModelReport SelectedReport { get; set; }
-        [Reactive] public ViewModelReport RedactedReport { get; set; }
-       // [Reactive] public bool CanSaveTask { get; set; }
-      //  [Reactive] public bool CanSaveReport { get; set; }
-        public ReactiveCommand RefreshTasksCommand { get; set; }
-        public ReactiveCommand OpenPage { get; set; }
-        public ReactiveCommand OpenCurrentTaskView { get; set; }
-        public ReactiveCommand DeleteCommand { get; set; }
-        public ReactiveCommand SaveEntityCommand { get; set; }
-        public ReactiveCommand CreateTaskCommand { get; set; }
-        public ReactiveCommand OpenViewTemplateWindowCommand { get; set; }
+        [Reactive] public DesktopTask SelectedTaskCompact { get; set; } //
+        [Reactive] public DesktopInstanceCompact SelectedInstanceCompact { get; set; }
+        [Reactive] public DesktopFullTask SelectedTask { get; set; }
+        [Reactive] public DesktopInstance SelectedInstance { get; set; }
+        [Reactive] public DesktopReport SelectedReport { get; set; }
+        [Reactive] public DesktopReport RedactedReport { get; set; }
+
+        // [Reactive] public bool CanSaveTask { get; set; }
+        // [Reactive] public bool CanSaveReport { get; set; }
+        public ReactiveCommand RefreshTasksCommand            { get; set; }
+        public ReactiveCommand OpenPage                       { get; set; }
+        public ReactiveCommand OpenCurrentTaskView            { get; set; }
+        public ReactiveCommand DeleteCommand                  { get; set; }
+        public ReactiveCommand SaveEntityCommand              { get; set; }
+        public ReactiveCommand CreateTaskCommand              { get; set; }
+        public ReactiveCommand OpenViewTemplateWindowCommand  { get; set; }
         public ReactiveCommand OpenQueryTemplateWindowCommand { get; set; }
-        public ReactiveCommand CreateReportCommand { get; set; }
-
+        public ReactiveCommand CreateReportCommand            { get; set; }
+        
         public Core(IReportService reportService, IMapper mapper)
-        {
-            _reportService = reportService;
-            _mapper = mapper;
+        { 
+            this.reportService = reportService;
+            this.mapper        = mapper;
 
-            TaskCompacts = new ReactiveList<ViewModelTask>(); //  //{ChangeTrackingEnabled = true};
-            SelectedTaskInstanceCompacts = new ReactiveList<ViewModelInstanceCompact>();
-            Schedules = new ReactiveList<ApiSchedule>();
-            RecepientGroups = new ReactiveList<ApiRecepientGroup>();
-            Reports = new ReactiveList<ViewModelReport>() {ChangeTrackingEnabled = false};
-            RefreshTasksCommand = ReactiveCommand.Create(LoadTaskCompacts);
-            ViewTemplates = new ReactiveList<string> {"weeklyreport_ve", "dailyreport_ve"};
+            TaskCompacts                 = new ReactiveList<DesktopTask>(); //  //{ChangeTrackingEnabled = true};
+            SelectedTaskInstanceCompacts = new ReactiveList<DesktopInstanceCompact>();
+            Schedules                    = new ReactiveList<ApiSchedule>();
+            RecepientGroups              = new ReactiveList<ApiRecepientGroup>();
+            Reports                      = new ReactiveList<DesktopReport>() {ChangeTrackingEnabled = false};
+            RefreshTasksCommand          = ReactiveCommand.Create(LoadTaskCompacts);
+            ViewTemplates =
+                new ReactiveList<string>
+                {
+                    "weeklyreport_ve",
+                    "dailyreport_ve"
+                }; //todo: auto adding named registrations names when using private bootstrapper at reportservice
             QueryTemplates = new ReactiveList<string> {"weeklyreport_de", "dailyreport_de"};
 
             IObservable<bool> canOpenInstancePage = this
@@ -95,11 +100,11 @@ namespace ReportServer.Desktop.ViewModel
                     t => t.RedactedReport,
                     (stb, st, sr) =>
                         (stb?.GetType() == typeof(SelectedTaskFullView) &&
-                         st?.ReportId > 0) ||
+                         st?.ReportId   > 0) ||
                         (stb?.GetType() == typeof(SelectedReportFullView) &&
-                         !string.IsNullOrEmpty(sr?.Name) &&
-                         !string.IsNullOrEmpty(sr.Query) &&
-                         !string.IsNullOrEmpty(sr.ViewTemplate) &&
+                         !string.IsNullOrEmpty(sr?.Name)                  &&
+                         !string.IsNullOrEmpty(sr.Query)                  &&
+                         !string.IsNullOrEmpty(sr.ViewTemplate)           &&
                          sr.QueryTimeOut > 0)
                 );
 
@@ -146,12 +151,12 @@ namespace ReportServer.Desktop.ViewModel
 
             SaveEntityCommand = ReactiveCommand.Create(SaveEntity, canSave);
 
-            CreateTaskCommand = ReactiveCommand.Create(CreateTask);
+            CreateTaskCommand   = ReactiveCommand.Create(CreateTask);
             CreateReportCommand = ReactiveCommand.Create(CreateReport);
 
             IObservable<bool> canOpenReportModal = this
                 .WhenAnyValue(t => t.RedactedReport.ReportType, sr =>
-                    sr == ReportType.Common);
+                    sr == ReportType.Common); 
             OpenViewTemplateWindowCommand =
                 ReactiveCommand.CreateFromTask(async () => RedactedReport.ViewTemplate = await DataRedacting(),
                     canOpenReportModal);
@@ -159,7 +164,8 @@ namespace ReportServer.Desktop.ViewModel
                 ReactiveCommand.CreateFromTask(async () => RedactedReport.Query = await DataRedacting(),
                     canOpenReportModal);
 
-            this.WhenAnyObservable(s => //
+
+            this.WhenAnyObservable(s =>     //
                     s.TaskCompacts.Changed) //ObservableForProperty ignores initial nulls,whenanyvalue not?
                 .Subscribe(x =>
                 {
@@ -187,7 +193,7 @@ namespace ReportServer.Desktop.ViewModel
             this.ObservableForProperty(s => s.RedactedReport.ReportType)
                 .Subscribe(_ =>
                 {
-                    RedactedReport.Query = null;
+                    RedactedReport.Query        = null;
                     RedactedReport.ViewTemplate = null;
                 });
 
@@ -197,7 +203,7 @@ namespace ReportServer.Desktop.ViewModel
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value != null)
-                .Subscribe(x =>  LoadSelectedInstanceById(x.Value.Id));
+                .Subscribe(x => LoadSelectedInstanceById(x.Value.Id));
 
             this.ObservableForProperty(s => s.SelectedInstanceCompact)
                 .Where(x => x.Value == null)
@@ -209,10 +215,10 @@ namespace ReportServer.Desktop.ViewModel
                 {
                     var rep = Reports.First(r => r.Id == rId.Value);
                     SelectedTask.ConnectionString = rep.ConnectionString;
-                    SelectedTask.Query = rep.Query;
-                    SelectedTask.QueryTimeOut = rep.QueryTimeOut;
-                    SelectedTask.ViewTemplate = rep.ViewTemplate;
-                    SelectedTask.ReportType = rep.ReportType;
+                    SelectedTask.Query            = rep.Query;
+                    SelectedTask.QueryTimeOut     = rep.QueryTimeOut;
+                    SelectedTask.ViewTemplate     = rep.ViewTemplate;
+                    SelectedTask.ReportType       = rep.ReportType;
                 });
 
             OnStart();
@@ -220,12 +226,12 @@ namespace ReportServer.Desktop.ViewModel
 
         public void LoadTaskCompacts() //
         {
-            var taskList = _reportService.GetAllTasks();
+            var taskList = reportService.GetAllTasks();
             TaskCompacts.Clear();
 
             foreach (var task in taskList)
             {
-                var vtask = _mapper.Map<ViewModelTask>(task);
+                var vtask = mapper.Map<DesktopTask>(task);
 
                 vtask.Schedule = Schedules
                     .FirstOrDefault(s => s.Id == task.ScheduleId)?.Name;
@@ -241,7 +247,7 @@ namespace ReportServer.Desktop.ViewModel
 
         public void LoadSchedules()
         {
-            var scheduleList = _reportService.GetSchedules();
+            var scheduleList = reportService.GetSchedules();
             Schedules.Clear();
 
             foreach (var schedule in scheduleList)
@@ -250,7 +256,7 @@ namespace ReportServer.Desktop.ViewModel
 
         public void LoadRecepientGroups()
         {
-            var recepientGroupList = _reportService.GetRecepientGroups();
+            var recepientGroupList = reportService.GetRecepientGroups();
             RecepientGroups.Clear();
 
             foreach (var group in recepientGroupList)
@@ -259,17 +265,17 @@ namespace ReportServer.Desktop.ViewModel
 
         public void LoadReports()
         {
-            var reportsList = _reportService.GetReports();
+            var reportsList = reportService.GetReports();
             Reports.Clear();
 
             foreach (var rep in reportsList)
-                Reports.Add(_mapper.Map<ViewModelReport>(rep));
+                Reports.Add(mapper.Map<DesktopReport>(rep));
         }
 
         public void LoadSelectedTaskById(int id)
         {
-            var apitask = _reportService.GetFullTaskById(id);
-            var selTask = _mapper.Map<ViewModelFullTask>(apitask);
+            var apitask = reportService.GetFullTaskById(id);
+            var selTask = mapper.Map<DesktopFullTask>(apitask);
 
             selTask.Schedule = Schedules
                 .FirstOrDefault(s => s.Id == apitask.ScheduleId)?.Name;
@@ -282,7 +288,7 @@ namespace ReportServer.Desktop.ViewModel
 
         public async Task<string> DataRedacting()
         {
-            var data = _dialogCoordinator.ShowInputAsync(this, "Hello", "Enter data for this field");
+            var data   = dialogCoordinator.ShowInputAsync(this, "Hello", "Enter data for this field");
             var result = await data;
             return result;
         }
@@ -293,7 +299,7 @@ namespace ReportServer.Desktop.ViewModel
             {
                 case SelectedTaskFullView _:
                 {
-                    var ts = _dialogCoordinator.ShowMessageAsync(this, "Warning",
+                    var ts = dialogCoordinator.ShowMessageAsync(this, "Warning",
                         SelectedTask.Id > 0
                             ? "Вы действительно хотите изменить эту задачу?"
                             : "Вы действительно хотите создать эту задачу?"
@@ -306,36 +312,38 @@ namespace ReportServer.Desktop.ViewModel
                         if (SelectedTask.Id > 0)
 
                         {
-                            var apiTask = _mapper.Map<ApiFullTask>(SelectedTask);
+                            var apiTask = mapper.Map<ApiFullTask>(SelectedTask);
                             apiTask.RecepientGroupId = RecepientGroups
                                 .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
                             apiTask.ScheduleId = Schedules
                                 .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
 
-                            _reportService.UpdateTask(apiTask);
+                            reportService.UpdateTask(apiTask);
                             //LoadTaskCompacts(); // why it breaks reactive while other methods no and why not breaks when use method later?
                         }
 
                         if (SelectedTask.Id == 0)
                         {
-                            var apiTask = _mapper.Map<ApiFullTask>(SelectedTask);
+                            var apiTask = mapper.Map<ApiFullTask>(SelectedTask);
                             apiTask.RecepientGroupId = RecepientGroups
                                 .FirstOrDefault(r => r.Name == SelectedTask.RecepientGroup)?.Id;
                             apiTask.ScheduleId = Schedules
                                 .FirstOrDefault(s => s.Name == SelectedTask.Schedule)?.Id;
 
-                            _reportService.CreateTask(apiTask);
+                            reportService.CreateTask(apiTask);
                         }
+
                         OnStart();
                         //LoadTaskCompacts();
                         //SelectedTask = null;
                     }
+
                     break;
-                    }//case
+                } //case
 
                 case SelectedReportFullView _:
                 {
-                    var ts = _dialogCoordinator.ShowMessageAsync(this, "Warning",
+                    var ts = dialogCoordinator.ShowMessageAsync(this, "Warning",
                         RedactedReport.Id > 0
                             ? "Вы действительно хотите изменить этот отчёт?"
                             : "Вы действительно хотите создать этот отчёт?"
@@ -347,57 +355,68 @@ namespace ReportServer.Desktop.ViewModel
                         if (RedactedReport.Id > 0)
 
                         {
-                            var apiRep = _mapper.Map<ApiReport>(RedactedReport);
-                           _reportService.UpdateReport(apiRep);
+                            var apiRep = mapper.Map<ApiReport>(RedactedReport);
+                            reportService.UpdateReport(apiRep);
                         }
 
                         if (RedactedReport.Id == 0)
                         {
-                            var apiRep = _mapper.Map<ApiReport>(RedactedReport);
-                            _reportService.CreateReport(apiRep);
+                            var apiRep = mapper.Map<ApiReport>(RedactedReport);
+                            reportService.CreateReport(apiRep);
                         }
+
                         OnStart();
                     }
-                        break;
+
+                    break;
                 } //case
             }
         }
 
         public void CreateTask()
         {
+            //var saveDialog = new SaveFileDialog()
+            //{
+            //    Filter = "SQLite DataBase | *.db",
+            //    Title = "Создание базы"
+            //};
+            //var t = "";
+            //saveDialog.ShowDialog();
+            //if (!string.IsNullOrEmpty(saveDialog.FileName))
+            //    t= $"Data Source = {saveDialog.FileName}";
             SelectedTaskCompact = null;
             SelectedTaskInstanceCompacts.Clear();
             SelectedInstance = null;
-            SelectedTask = null;
-            SelectedTask = new ViewModelFullTask()
+            SelectedTask     = null;
+            SelectedTask = new DesktopFullTask()
             {
-                Id = 0,
-                TryCount = 1,
-                Schedule = Schedules.First().Name,
+                Id             = 0,
+                TryCount       = 1,
+                Schedule       = Schedules.First().Name,
                 RecepientGroup = RecepientGroups.First().Name
             };
             SelectedTask.ReportId = Reports.First().Id;
-            SelectedTask = SelectedTask;
+            SelectedTask          = SelectedTask;
         }
 
         public void CreateReport()
         {
             RedactedReport = null;
-            RedactedReport = new ViewModelReport()
+            RedactedReport = new DesktopReport()
             {
-                Id = 0,
+                Id           = 0,
                 QueryTimeOut = 60
             };
         }
 
         public void LoadSelectedInstanceById(int id)
         {
-            SelectedInstance = _mapper.Map<ViewModelInstance>(_reportService.GetFullInstanceById(id));
+            SelectedInstance = mapper.Map<DesktopInstance>(reportService.GetFullInstanceById(id));
         }
 
         public async Task DeleteEntity()
         {
-            var ts = _dialogCoordinator.ShowMessageAsync(this, "Warning",
+            var ts = dialogCoordinator.ShowMessageAsync(this, "Warning",
                 "Вы действительно хотите удалить данную запись?"
                 , MessageDialogStyle.AffirmativeAndNegative);
             var result = await ts;
@@ -408,7 +427,7 @@ namespace ReportServer.Desktop.ViewModel
                 {
                     case TaskListView _:
                     {
-                        _reportService.DeleteTask(SelectedTask.Id);
+                        reportService.DeleteTask(SelectedTask.Id);
                         LoadTaskCompacts();
                         break;
                     }
@@ -418,7 +437,7 @@ namespace ReportServer.Desktop.ViewModel
                     //}
                     case SelectedTaskInstancesView _:
                     {
-                        _reportService.DeleteInstance(SelectedInstance.Id);
+                        reportService.DeleteInstance(SelectedInstance.Id);
                         LoadInstanceCompactsByTaskId(SelectedTask.Id);
                         break;
                     }
@@ -443,18 +462,18 @@ namespace ReportServer.Desktop.ViewModel
         {
             return Observable.Start(() =>
             {
-                var str = _reportService.GetCurrentTaskViewById(taskId);
+                var str = reportService.GetCurrentTaskViewById(taskId);
                 OpenPageInBrowser(str);
             });
         }
 
         public void LoadInstanceCompactsByTaskId(int taskId)
         {
-            var instanceList = _reportService.GetInstancesByTaskId(taskId);
+            var instanceList = reportService.GetInstancesByTaskId(taskId);
             SelectedTaskInstanceCompacts.Clear();
 
             foreach (var instance in instanceList)
-                SelectedTaskInstanceCompacts.Add(_mapper.Map<ViewModelInstanceCompact>(instance));
+                SelectedTaskInstanceCompacts.Add(mapper.Map<DesktopInstanceCompact>(instance));
         }
 
 
@@ -467,6 +486,8 @@ namespace ReportServer.Desktop.ViewModel
             LoadTaskCompacts();
             SelectTab = null;
         }
+
+        public string Title { get; set; }
+        public string FullTitle { get; set; }
     }
 }
-

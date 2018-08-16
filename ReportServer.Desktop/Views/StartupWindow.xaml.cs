@@ -16,22 +16,35 @@ using AutoMapper;
 using MahApps.Metro.Controls;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.ViewModel;
+using Ui.Wpf.Common;
+using Ui.Wpf.Common.ShowOptions;
+using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.Views
 {
     /// <summary>
     /// Interaction logic for StartupWindow.xaml
     /// </summary>
-    public partial class StartupWindow : MetroWindow
+    public partial class StartupWindow : IView
     {
-        public StartupWindow()
+        public StartupWindow(ICore viewModel)
         {
             InitializeComponent();
-            BootsTrap.Init();
-            var r = BootsTrap.Container.Resolve<IReportService>();
-            var m = BootsTrap.Container.Resolve<IMapper>();
+            ViewModel = viewModel;
+            DataContext = ViewModel;
+            //BootsTrap.Init();
+            // var r = BootsTrap.Container.Resolve<IReportService>();
+            // var m = BootsTrap.Container.Resolve<IMapper>();
             //var reps=r.GetReports();
-            DataContext = new Core(r, m);
+            // DataContext = new Core(r, m);
         }
+
+        public void Configure(UiShowOptions options)
+        {
+            ViewModel.Title = options.Title;
+        }
+
+        public IViewModel ViewModel { get; set; }
+
     }
 }
