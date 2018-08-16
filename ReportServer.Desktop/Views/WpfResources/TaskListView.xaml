@@ -13,7 +13,6 @@
     <Grid>
         <DataGrid
                   ColumnWidth="*"
-                  HorizontalContentAlignment = "Stretch"
                   ItemsSource="{Binding TaskCompacts}" 
                   SelectedItem="{Binding SelectedTaskCompact}">
             <DataGrid.Columns>

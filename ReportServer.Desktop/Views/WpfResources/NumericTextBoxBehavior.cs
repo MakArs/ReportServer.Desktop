@@ -110,7 +110,7 @@ namespace ReportServer.Desktop.Views.WpfResources
                 case TextBoxInputMode.None:
                     return true;
                 case TextBoxInputMode.DigitInput:
-                    return CheckIsDigit(input) && (Convert.ToInt32(input) > 0);
+                    return CheckIsDigit(input) && input.Length<7 && (Convert.ToInt32(input) > 0);
 
                 case TextBoxInputMode.DecimalInput:
                     decimal d;

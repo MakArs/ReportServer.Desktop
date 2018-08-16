@@ -169,19 +169,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\QueryControl.xaml">
+    <Page Include="Views\WpfResources\QueryControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ReportListView.xaml">
+    <Page Include="Views\ReportManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SelectedReportFullView.xaml">
+    <Page Include="Views\ReportEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SelectedTaskFullView.xaml">
+    <Page Include="Views\TaskEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -193,7 +193,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\StartupWindow.xaml">
+    <Page Include="Views\TaskManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -210,7 +210,7 @@
     </Compile>
     <Compile Include="Views\WpfResources\NumericTextBoxBehavior.cs" />
     <Compile Include="BootsTrap.cs" />
-    <Compile Include="Views\QueryControl.xaml.cs">
+    <Compile Include="Views\WpfResources\QueryControl.xaml.cs">
       <DependentUpon>QueryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WpfResources\Converters.cs" />
@@ -218,14 +218,14 @@
     <Compile Include="Interfaces\IMonik.cs" />
     <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="ViewModel\TaskCompactsViewModel.cs" />
-    <Compile Include="Views\ReportListView.xaml.cs">
-      <DependentUpon>ReportListView.xaml</DependentUpon>
+    <Compile Include="Views\ReportManagerView.xaml.cs">
+      <DependentUpon>ReportManagerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SelectedReportFullView.xaml.cs">
-      <DependentUpon>SelectedReportFullView.xaml</DependentUpon>
+    <Compile Include="Views\ReportEditorView.xaml.cs">
+      <DependentUpon>ReportEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SelectedTaskFullView.xaml.cs">
-      <DependentUpon>SelectedTaskFullView.xaml</DependentUpon>
+    <Compile Include="Views\TaskEditorView.xaml.cs">
+      <DependentUpon>TaskEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WpfResources\SelectedInstanceFullView.xaml.cs">
       <DependentUpon>SelectedInstanceFullView.xaml</DependentUpon>
@@ -233,13 +233,13 @@
     <Compile Include="Views\WpfResources\SelectedTaskInstancesView.xaml.cs">
       <DependentUpon>SelectedTaskInstancesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\StartupWindow.xaml.cs">
-      <DependentUpon>StartupWindow.xaml</DependentUpon>
+    <Compile Include="Views\TaskManagerView.xaml.cs">
+      <DependentUpon>TaskManagerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WpfResources\TaskListView.xaml.cs">
       <DependentUpon>TaskListView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\ViewTemplateControl.xaml">
+    <Page Include="Views\WpfResources\ViewTemplateControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -249,7 +249,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Views\ViewTemplateControl.xaml.cs">
+    <Compile Include="Views\WpfResources\ViewTemplateControl.xaml.cs">
       <DependentUpon>ViewTemplateControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Core.cs" />

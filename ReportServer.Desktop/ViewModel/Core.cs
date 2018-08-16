@@ -17,8 +17,8 @@ namespace ReportServer.Desktop.ViewModel
 {
     public class Core : ReactiveObject, ICore
     {
-        private readonly IReportService     reportService; //
-        private readonly IMapper            mapper;        //
+        private readonly IReportService     reportService; 
+        private readonly IMapper            mapper;        
         private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
 
         public ReactiveList<DesktopTask>            TaskCompacts                 { get; set; } //
@@ -99,9 +99,9 @@ namespace ReportServer.Desktop.ViewModel
                     t => t.SelectedTask,
                     t => t.RedactedReport,
                     (stb, st, sr) =>
-                        (stb?.GetType() == typeof(SelectedTaskFullView) &&
+                        (stb?.GetType() == typeof(TaskEditorView) &&
                          st?.ReportId   > 0) ||
-                        (stb?.GetType() == typeof(SelectedReportFullView) &&
+                        (stb?.GetType() == typeof(ReportEditorView) &&
                          !string.IsNullOrEmpty(sr?.Name)                  &&
                          !string.IsNullOrEmpty(sr.Query)                  &&
                          !string.IsNullOrEmpty(sr.ViewTemplate)           &&
@@ -297,7 +297,7 @@ namespace ReportServer.Desktop.ViewModel
         {
             switch (SelectTab)
             {
-                case SelectedTaskFullView _:
+                case TaskEditorView _:
                 {
                     var ts = dialogCoordinator.ShowMessageAsync(this, "Warning",
                         SelectedTask.Id > 0
@@ -341,7 +341,7 @@ namespace ReportServer.Desktop.ViewModel
                     break;
                 } //case
 
-                case SelectedReportFullView _:
+                case ReportEditorView _:
                 {
                     var ts = dialogCoordinator.ShowMessageAsync(this, "Warning",
                         RedactedReport.Id > 0

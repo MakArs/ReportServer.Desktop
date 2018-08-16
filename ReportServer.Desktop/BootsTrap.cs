@@ -39,7 +39,10 @@ namespace ReportServer.Desktop
                 ConfigurationManager.AppSettings["monikendpoint"],
                 "incoming");
 
-            builder.RegisterType<StartupWindow>();
+            builder.RegisterType<TaskManagerView>();
+            builder.RegisterType<ReportManagerView>();
+            builder.RegisterType<TaskEditorView>();
+            builder.RegisterType<ReportEditorView>();
 
             builder.RegisterInstance(logSender)
                 .As<IClientSender>();
