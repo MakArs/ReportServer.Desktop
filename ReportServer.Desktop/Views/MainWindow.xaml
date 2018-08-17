@@ -15,6 +15,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
+
             <mah:DropDownButton 
                 Content="File"
                 Height="auto" 
@@ -29,6 +30,7 @@
                     </Style>
                 </mah:DropDownButton.ItemContainerStyle>
             </mah:DropDownButton>
+
             <mah:DropDownButton 
                 Content="Edit"
                 Height="auto" 
@@ -44,6 +46,7 @@
                 </mah:DropDownButton.ItemContainerStyle>
             </mah:DropDownButton>
         </StackPanel>
+
         <dock:DockingManager 
         Grid.Row="1"
         Name="DockingManager"

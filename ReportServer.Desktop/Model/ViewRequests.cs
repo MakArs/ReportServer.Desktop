@@ -1,9 +1,10 @@
-﻿using Ui.Wpf.Common;
+﻿using ReportServer.Desktop.Interfaces;
+using Ui.Wpf.Common;
 
 namespace ReportServer.Desktop.Model
 {
-    public class TaskEditor : ViewRequest
+    public class TaskEditorRequest : ViewRequest
     {
-        public int TaskId { get; set; }
+        public DesktopFullTask Task { get; set; }
     }
 }

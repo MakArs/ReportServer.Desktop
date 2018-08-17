@@ -220,7 +220,6 @@
     </Compile>
     <Compile Include="Views\WpfResources\Converters.cs" />
     <Compile Include="Interfaces\ICore.cs" />
-    <Compile Include="Interfaces\IMonik.cs" />
     <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="Views\ReportManagerView.xaml.cs">
       <DependentUpon>ReportManagerView.xaml</DependentUpon>

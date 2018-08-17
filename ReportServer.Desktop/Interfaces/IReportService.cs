@@ -51,9 +51,9 @@ namespace ReportServer.Desktop.Interfaces
     {
         public int Id { get; set; }
         public int ReportId { get; set; }
-        public int ScheduleId { get; set; } //
-        public int RecepientGroupId { get; set; } //
-        public int TelegramChannelId { get; set; } //
+        public int? ScheduleId { get; set; } //
+        public int? RecepientGroupId { get; set; } //
+        public int? TelegramChannelId { get; set; } //
         public int TryCount { get; set; }
         public bool HasHtmlBody { get; set; }
         public bool HasJsonAttachment { get; set; }
@@ -89,7 +89,6 @@ namespace ReportServer.Desktop.Interfaces
         ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
         ReactiveList<DesktopFullTask> Tasks { get; set; }
 
-        ApiFullTask GetFullTaskById(int id);
         List<ApiInstance> GetInstanceCompacts();
         List<ApiInstance> GetInstancesByTaskId(int taskId);
         ApiFullInstance GetFullInstanceById(int id);
@@ -104,8 +103,8 @@ namespace ReportServer.Desktop.Interfaces
         void DeleteTask(int id);
         void DeleteInstance(int id);
 
-        int CreateTask(ApiFullTask fullTask);
-        void UpdateTask(ApiFullTask fullTask);
+        int CreateTask(ApiTask fullTask);
+        void UpdateTask(ApiTask fullTask);
 
         int CreateReport(ApiReport report);
         void UpdateReport(ApiReport report);

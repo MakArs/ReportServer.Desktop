@@ -35,7 +35,8 @@ namespace ReportServer.Desktop
 
             ConfigureView<ReportManagerViewModel, ReportManagerView>(builder);
 
-            builder.RegisterType<TaskEditorView>();
+            ConfigureView<TaskEditorViewModel, TaskEditorView>(builder);
+
             builder.RegisterType<ReportEditorView>();
 
             #region monik
@@ -111,8 +112,7 @@ namespace ReportServer.Desktop
                 .ForMember("ReportName", opt => opt.MapFrom(s => s.Name))
                 .ForMember("Id", opt => opt.Ignore());
 
-            CreateMap<DesktopFullTask, ApiFullTask>()
-                .ForMember("ReportType", opt => opt.MapFrom(s => (int) s.ReportType));
+            CreateMap<DesktopFullTask, ApiTask>();
 
             CreateMap<ApiInstance, DesktopInstanceCompact>()
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
@@ -124,6 +124,16 @@ namespace ReportServer.Desktop
                 .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
             CreateMap<DesktopReport, ApiReport>()
                 .ForMember("ReportType", opt => opt.MapFrom(s => (int) s.ReportType));
+
+            CreateMap<TaskEditorViewModel, ApiTask>()
+                .ForMember("TelegramChannelId", opt =>
+                    opt.MapFrom(s => s.TelegramChannelId > 0 ? s.TelegramChannelId : null))
+                .ForMember("ScheduleId", opt =>
+                    opt.MapFrom(s => s.ScheduleId > 0 ? s.ScheduleId : null))
+                .ForMember("RecepientGroupId", opt =>
+                    opt.MapFrom(s => s.RecepientGroupId > 0 ? s.RecepientGroupId : null));
+
+            CreateMap<DesktopFullTask, TaskEditorViewModel>();
         }
     }
 }

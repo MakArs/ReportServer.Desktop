@@ -17,6 +17,7 @@ namespace ReportServer.Desktop.Views
         public void Configure(UiShowOptions options)
         {
             ViewModel.Title = options.Title;
+            ViewModel.FullTitle = options.Title;
         }
 
         public IViewModel ViewModel { get; set; }

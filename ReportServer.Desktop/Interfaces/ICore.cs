@@ -11,6 +11,7 @@ namespace ReportServer.Desktop.Interfaces
     public class DesktopFullTask : ReactiveObject
     {
         public int Id { get; set; }
+        public int TelegramChannelId { get; set; }
         [Reactive] public int ReportId { get; set; }
         [Reactive] public string ReportName { get; set; }
         [Reactive] public int ScheduleId { get; set; }
@@ -77,17 +78,10 @@ namespace ReportServer.Desktop.Interfaces
 
     public interface ICore: IViewModel
     {
-        void LoadTaskCompacts();
-        void LoadSchedules();
-        void LoadRecepientGroups();
         void LoadSelectedTaskById(int id);
-        void LoadSelectedInstanceById(int id);
-        void LoadInstanceCompactsByTaskId(int taskId);
-        void OnStart();
         Task DeleteEntity();
         Task SaveEntity();
         void CreateTask();
-        void OpenPageInBrowser(string htmlPage);
         IObservable<Unit> GetHtmlPageByTaskId(int taskId);
     }
 }

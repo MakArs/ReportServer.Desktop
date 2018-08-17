@@ -15,6 +15,11 @@
                   ColumnWidth="*"
                   ItemsSource="{Binding Tasks}" 
                   SelectedItem="{Binding SelectedTask}">
+            <DataGrid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick" 
+                              Command="{Binding EditTaskCommand}" 
+                              CommandParameter="{Binding SelectedTask}"/>
+            </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Schedule" Binding="{Binding Schedule}"/>
                 <DataGridTextColumn Header = "Report" Binding="{Binding ReportName}"/>

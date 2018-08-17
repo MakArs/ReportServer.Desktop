@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ReportServer.Desktop.Interfaces;
@@ -86,11 +85,6 @@ namespace ReportServer.Desktop.Model
 
         #endregion
 
-        public ApiFullTask GetFullTaskById(int id)
-        {
-            return client.Get<ApiFullTask>($"/api/v1/tasks/{id}");
-        }
-
         public List<ApiInstance> GetInstancesByTaskId(int taskId)
         {
             return client.Get<List<ApiInstance>>($"/api/v1/tasks/{taskId}/instances");
@@ -136,14 +130,14 @@ namespace ReportServer.Desktop.Model
             client.Delete($"/api/v1/instances/{id}");
         }
 
-        public int CreateTask(ApiFullTask fullTask)
+        public int CreateTask(ApiTask task)
         {
-            return client.Post("/api/v1/tasks/", fullTask);
+            return client.Post("/api/v1/tasks/", task);
         }
 
-        public void UpdateTask(ApiFullTask fullTask)
+        public void UpdateTask(ApiTask task)
         {
-            client.Put($"/api/v1/tasks/{fullTask.Id}", fullTask);
+            client.Put($"/api/v1/tasks/{task.Id}", task);
         }
 
         public int CreateReport(ApiReport report)

@@ -1,23 +1,24 @@
 ﻿using System;
 using System.IO;
+using System.Reactive;
 using System.Reactive.Linq;
 using AutoMapper;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Interfaces;
+using ReportServer.Desktop.Model;
+using ReportServer.Desktop.Views;
 using Ui.Wpf.Common;
+using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModel
 {
-    public class TaskManagerViewModel : ReactiveObject, IViewModel, IInitializableViewModel
+    public class TaskManagerViewModel : ViewModelBase, IInitializableViewModel
     {
         private readonly IReportService reportService;
         private readonly IMapper mapper;
         private readonly IDistinctShell shell;
-
-        public string Title { get; set; }
-        public string FullTitle { get; set; }
 
         public ReactiveList<DesktopFullTask> Tasks { get; set; }
         public ReactiveList<DesktopInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
@@ -30,6 +31,7 @@ namespace ReportServer.Desktop.ViewModel
         [Reactive] public DesktopInstance SelectedInstance { get; set; }
 
         public ReactiveCommand OpenPage { get; set; }
+        public ReactiveCommand<DesktopFullTask, Unit> EditTaskCommand { get; set; }
 
         public TaskManagerViewModel(IReportService reportService, IMapper mapper, IShell shell)
         {
@@ -44,6 +46,14 @@ namespace ReportServer.Desktop.ViewModel
 
             OpenPage = ReactiveCommand.Create<string>
                 (OpenPageInBrowser, canOpenInstancePage);
+
+            EditTaskCommand = ReactiveCommand.Create<DesktopFullTask>(task =>
+            {
+                var name = $"Task {task.Id} editor";
+                this.shell.ShowDistinctView<TaskEditorView>(name,
+                    new TaskEditorRequest {Task = task},
+                    new UiShowOptions {Title = name});
+            });
 
             this.WhenAnyObservable(s => s.Tasks.Changed) // todo: add and test when element changed
                 .Subscribe(x =>
@@ -66,7 +76,7 @@ namespace ReportServer.Desktop.ViewModel
                 });
         }
 
-        public void LoadInstanceCompactsByTaskId(int taskId)
+        private void LoadInstanceCompactsByTaskId(int taskId)
         {
             var instanceList = reportService.GetInstancesByTaskId(taskId);
             SelectedTaskInstanceCompacts.Clear();
@@ -75,13 +85,13 @@ namespace ReportServer.Desktop.ViewModel
                 SelectedTaskInstanceCompacts.Add(mapper.Map<DesktopInstanceCompact>(instance));
         }
 
-        public void LoadSelectedInstanceById(int id)
+        private void LoadSelectedInstanceById(int id)
         {
             SelectedInstance = mapper
                 .Map<DesktopInstance>(reportService.GetFullInstanceById(id));
         }
 
-        public void OpenPageInBrowser(string htmlPage)
+        private void OpenPageInBrowser(string htmlPage)
         {
 
             var path = $"{AppDomain.CurrentDomain.BaseDirectory}testreport.html";
@@ -101,6 +111,5 @@ namespace ReportServer.Desktop.ViewModel
             Reports = reportService.Reports;
             Tasks = reportService.Tasks;
         }
-
     }
 }

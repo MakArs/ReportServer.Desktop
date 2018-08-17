@@ -24,6 +24,7 @@
         <Setter Property="RowHeaderWidth" Value="0"/>
         <Setter Property="CanUserAddRows" Value="False"/>
         <Setter Property="CanUserDeleteRows" Value="False"/>
+        <Setter Property="SelectionMode" Value="Single"/>
         <Setter Property="IsReadOnly" Value="True"/>
         <Setter Property="HorizontalGridLinesBrush" Value="Black"/>
         <Setter Property="VerticalGridLinesBrush" Value="Black"/>
