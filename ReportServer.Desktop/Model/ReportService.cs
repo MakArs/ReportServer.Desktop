@@ -1,28 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using ReportServer.Desktop.Interfaces;
 using Gerakul.HttpUtils.Core;
 using Gerakul.HttpUtils.Json;
 using Newtonsoft.Json;
+using ReactiveUI;
+using Ui.Wpf.Common;
 
 namespace ReportServer.Desktop.Model
 {
     public class ReportService : IReportService
     {
         private readonly ISimpleHttpClient client;
+        private readonly IMapper mapper;
 
-        public ReportService()
+        public ReactiveList<DesktopReport> Reports { get; set; }
+        public ReactiveList<ApiSchedule> Schedules { get; set; }
+        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
+        public ReactiveList<DesktopFullTask> Tasks { get; set; }
+
+        public ReportService(IMapper mapper)
         {
             client = JsonHttpClient.Create("http://localhost:12345/");
+            this.mapper = mapper;
+
+            Reports = new ReactiveList<DesktopReport>();
+            Schedules = new ReactiveList<ApiSchedule>();
+            RecepientGroups = new ReactiveList<ApiRecepientGroup>();
+            Tasks = new ReactiveList<DesktopFullTask>();
+            RefreshData();
         }
 
-        public List<ApiTask> GetAllTasks()
+        #region RefreshLogics
+
+        public void RefreshSchedules()
         {
-            return client.Get<List<ApiTask>>("/api/v1/tasks");
+            Schedules.PublishCollection(client.Get<List<ApiSchedule>>("/api/v1/schedules/"));
         }
+
+        public void RefreshReports()
+        {
+            Reports.PublishCollection(client.Get<List<ApiReport>>("/api/v1/reports/")
+                .Select(rep=>mapper.Map<DesktopReport>(rep)));
+        }
+
+        public void RefreshRecepientGroups()
+        {
+            RecepientGroups.PublishCollection(client.Get<List<ApiRecepientGroup>>("/api/v1/recepientgroups/"));
+        }
+
+        public void RefreshTasks()
+        {
+            var deskTasks = client.Get<List<ApiTask>>("/api/v1/tasks")
+                .Select(apiTask => mapper.Map<DesktopFullTask>(apiTask)).ToList();
+
+            deskTasks= deskTasks.Select(deskTask => mapper.Map(Reports
+                    .FirstOrDefault(rep => rep.Id == deskTask.ReportId),deskTask))
+                .ToList();
+
+            foreach (var deskTask in deskTasks)
+            {
+                deskTask.Schedule = Schedules.FirstOrDefault(sch => sch.Id == deskTask.ScheduleId)
+                    ?.Schedule;
+                deskTask.RecepientGroup = RecepientGroups
+                    .FirstOrDefault(rcg => rcg.Id == deskTask.RecepientGroupId)
+                    ?.Name;
+            }
+
+            Tasks.PublishCollection(deskTasks);
+        }
+
+        public void RefreshData()
+        {
+            RefreshReports();
+            RefreshRecepientGroups();
+            RefreshSchedules();
+            RefreshTasks();
+        }
+
+        #endregion
 
         public ApiFullTask GetFullTaskById(int id)
         {
@@ -44,34 +106,19 @@ namespace ReportServer.Desktop.Model
             return client.Get<ApiFullInstance>($"/api/v1/instances/{id}");
         }
 
-        public List<ApiSchedule> GetSchedules()
-        {
-            return client.Get<List<ApiSchedule>>("/api/v1/schedules/");
-        }
 
-        public List<ApiReport> GetReports()
-        {
-            return client.Get<List<ApiReport>>("/api/v1/reports/");
-        }
-
-        public List<ApiRecepientGroup> GetRecepientGroups()
-        {
-            return client.Get<List<ApiRecepientGroup>>("/api/v1/recepientgroups/");
-        }
-
-        public string GetCurrentTaskViewById(int taskId)
+        public async Task<string> GetCurrentTaskViewById(int taskId)
         {
 
-            var task = Task.Factory.StartNew(() =>
-                client.Send<string>(HttpMethod.Get, $"/api/v1/tasks/{taskId}/currentviews"));
-            task.Wait();
+            var apiAnswer = await client
+                .Send<string>(HttpMethod.Get, $"/api/v1/tasks/{taskId}/currentviews");
 
-            var responseCode = task.Result.Result.Response.StatusCode;
+            var responseCode = apiAnswer.Response.StatusCode;
 
             if (responseCode != HttpStatusCode.OK)
-                throw new Exception($"Http return error {responseCode.ToString()}");
+                return $"Http return error {responseCode.ToString()}";
 
-            return task.Result.Result.Body;
+            return apiAnswer.Body;
         }
 
         public int CreateSchedule(ApiSchedule schedule)

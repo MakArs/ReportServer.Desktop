@@ -13,8 +13,8 @@
     <Grid>
         <DataGrid
                   ColumnWidth="*"
-                  ItemsSource="{Binding TaskCompacts}" 
-                  SelectedItem="{Binding SelectedTaskCompact}">
+                  ItemsSource="{Binding Tasks}" 
+                  SelectedItem="{Binding SelectedTask}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Schedule" Binding="{Binding Schedule}"/>
                 <DataGridTextColumn Header = "Report" Binding="{Binding ReportName}"/>

@@ -23,7 +23,7 @@ namespace ReportServer.Desktop
                 });
 
             shell.ShowView<TaskManagerView>(options: new UiShowOptions { Title = "Task Manager", CanClose = false });
-          //  shell.ShowView<ReportManagerView>(options: new UiShowOptions { Title = "Report Manager", CanClose = false });
+           shell.ShowView<ReportManagerView>(options: new UiShowOptions { Title = "Report Manager", CanClose = false });
            // shell.ShowView<TaskEditorView>(options: new UiShowOptions { Title = "Task Editor"});
            // shell.ShowView<ReportEditorView>(options: new UiShowOptions { Title = "Report Editor" });
         }

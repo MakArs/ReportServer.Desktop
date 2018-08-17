@@ -15,68 +15,68 @@
     <Border Height="700" Width="1000" VerticalAlignment="Top" 
             BorderThickness="1" 
             BorderBrush="{DynamicResource AccentBaseColorBrush}">
-    <Grid Height="700" Width="1000" VerticalAlignment="Top">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-
-        <Rectangle Grid.ColumnSpan="4"/>
-        <Rectangle Grid.ColumnSpan="4" Grid.Row="1"/>
-        <Rectangle Grid.ColumnSpan="4" Grid.Row="2"/>
-        <Rectangle Grid.ColumnSpan="4" Grid.Row="3"/>
-        <Rectangle Grid.ColumnSpan="4" Grid.Row="4"/>
-        <Rectangle Grid.ColumnSpan="2" Grid.Row="5" Grid.Column="2"/>
-        <Rectangle Grid.ColumnSpan="2" Grid.Row="6" Grid.Column="2"/>
-        <Rectangle Grid.Row="1" Grid.RowSpan="4" />
-        <Rectangle Grid.Row="1" Grid.Column="1" Grid.RowSpan="4" />
-        <Rectangle Grid.Row="1" Grid.Column="2" Grid.RowSpan="6" />
-            <Rectangle Grid.Row="1" Grid.Column="3" Grid.RowSpan="6" />
-
-        <Grid Grid.ColumnSpan="4" >
+        <Grid Height="700" Width="1000" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Label  Content="Информация о задаче"/>
-            <Button Grid.Column="1" Margin="0" Command="{Binding OpenCurrentTaskView}" CommandParameter="{Binding SelectedTaskCompact.Id}">Сформировать отчёт</Button>
-        </Grid>
-        <Label Grid.Row="1"  Content="Schedule"/>
-        <Label Grid.Row="2"  Content="RecepientGroup"/>
-        <Label Grid.Row="3"  Content="TryCount"/>
-        <Label Grid.Row="4"  Content="Report"/>
-        <Label Grid.Row="1" Grid.Column="2" Content="NeedsArchiving (Future feature)"/>
-        <Label Grid.Row="2" Grid.Column="2"  Content="ReportType"/>
-        <Label Grid.Row="3" Grid.Column="2" Content="Query"/>
-        <Label Grid.Row="4" Grid.Column="2"  Content="ConnectionString"/>
-        <Label Grid.Row="5" Grid.Column="2"  Content="ViewTemplate"/>
-        <Label Grid.Row="6" Grid.Column="2"  Content="QueryTimeOut"/>
 
-        <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" 
+            <Rectangle Grid.ColumnSpan="4"/>
+            <Rectangle Grid.ColumnSpan="4" Grid.Row="1"/>
+            <Rectangle Grid.ColumnSpan="4" Grid.Row="2"/>
+            <Rectangle Grid.ColumnSpan="4" Grid.Row="3"/>
+            <Rectangle Grid.ColumnSpan="4" Grid.Row="4"/>
+            <Rectangle Grid.ColumnSpan="2" Grid.Row="5" Grid.Column="2"/>
+            <Rectangle Grid.ColumnSpan="2" Grid.Row="6" Grid.Column="2"/>
+            <Rectangle Grid.Row="1" Grid.RowSpan="4" />
+            <Rectangle Grid.Row="1" Grid.Column="1" Grid.RowSpan="4" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Grid.RowSpan="6" />
+            <Rectangle Grid.Row="1" Grid.Column="3" Grid.RowSpan="6" />
+
+            <Grid Grid.ColumnSpan="4" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label  Content="Информация о задаче"/>
+                <Button Grid.Column="1" Margin="0" Command="{Binding OpenCurrentTaskView}" CommandParameter="{Binding SelectedTaskCompact.Id}">Сформировать отчёт</Button>
+            </Grid>
+            <Label Grid.Row="1"  Content="Schedule"/>
+            <Label Grid.Row="2"  Content="RecepientGroup"/>
+            <Label Grid.Row="3"  Content="TryCount"/>
+            <Label Grid.Row="4"  Content="Report"/>
+            <Label Grid.Row="1" Grid.Column="2" Content="NeedsArchiving (Future feature)"/>
+            <Label Grid.Row="2" Grid.Column="2"  Content="ReportType"/>
+            <Label Grid.Row="3" Grid.Column="2" Content="Query"/>
+            <Label Grid.Row="4" Grid.Column="2"  Content="ConnectionString"/>
+            <Label Grid.Row="5" Grid.Column="2"  Content="ViewTemplate"/>
+            <Label Grid.Row="6" Grid.Column="2"  Content="QueryTimeOut"/>
+
+            <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" 
                   SelectedValuePath="Name"   DisplayMemberPath="Name" 
                   SelectedValue="{Binding SelectedTask.Schedule}"/>
 
-        <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding RecepientGroups}"
+            <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding RecepientGroups}"
                   DisplayMemberPath="Name" SelectedValuePath="Name" 
                   SelectedValue="{Binding SelectedTask.RecepientGroup}"/>
 
-        <TextBox Grid.Column="1" Grid.Row="3"  Text="{Binding SelectedTask.TryCount }">
-            <i:Interaction.Behaviors>
-                <wpfResources:TextBoxInputBehavior InputMode="DigitInput"/>
-            </i:Interaction.Behaviors>
-        </TextBox>
-        <ComboBox Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Reports}" 
+            <TextBox Grid.Column="1" Grid.Row="3"  Text="{Binding SelectedTask.TryCount }">
+                <i:Interaction.Behaviors>
+                    <wpfResources:TextBoxInputBehavior InputMode="DigitInput"/>
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <ComboBox Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Reports}" 
                   SelectedValuePath="Id"  DisplayMemberPath="Name" 
                   SelectedValue="{Binding SelectedTask.ReportId}"/>
             <TextBlock Grid.Column="3" Grid.Row="2"   Text="{Binding SelectedTask.ReportType}"/>
@@ -85,92 +85,29 @@
             <TextBlock Grid.Column="3" Grid.Row="5"  Text="{Binding SelectedTask.ViewTemplate}"/>
             <TextBlock Grid.Column="3" Grid.Row="6"  Text="{Binding SelectedTask.QueryTimeOut}"/>
 
-        <Grid Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="5" >
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+            <Grid Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="5" >
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-            <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" />
-            <Rectangle Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" />
-            <Rectangle Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" />
+                <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" />
+                <Rectangle Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" />
+                <Rectangle Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" />
 
-            <Label Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Content="Html body"/>
-            <Label Grid.Column="2" Grid.Row="0" Content="Attach *.json"/>
-            <Label Grid.Column="2" Grid.Row="1" Content="Attach *.xlsx"/>
-            <CheckBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasHtmlBody}"/>
-            <CheckBox Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasJsonAttachment}"/>
-            <CheckBox Grid.Column="3" Grid.Row="1" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasXlsxAttachment}"/>
+                <Label Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Content="Html body"/>
+                <Label Grid.Column="2" Grid.Row="0" Content="Attach *.json"/>
+                <Label Grid.Column="2" Grid.Row="1" Content="Attach *.xlsx"/>
+                <CheckBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasHtmlBody}"/>
+                <CheckBox Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasJsonAttachment}"/>
+                <CheckBox Grid.Column="3" Grid.Row="1" HorizontalAlignment="Center" IsChecked="{Binding SelectedTask.HasXlsxAttachment}"/>
+            </Grid>
         </Grid>
-    </Grid>
     </Border>
 </UserControl>
-
-<!--<Grid>
-    <Grid.RowDefinitions>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition/>
-    </Grid.ColumnDefinitions>
-
-    <Rectangle Grid.ColumnSpan="2"/>
-    <Rectangle Grid.ColumnSpan="2" Grid.Row="1"/>
-    <Rectangle Grid.ColumnSpan="2" Grid.Row="2"/>
-    <Rectangle Grid.ColumnSpan="2" Grid.Row="3"/>
-    <Rectangle Grid.ColumnSpan="2" Grid.Row="4"/>
-    <Rectangle Grid.ColumnSpan="2" Grid.Row="5"/>
-    <Rectangle Grid.ColumnSpan="2" Grid.Row="6"/>
-    <Rectangle Grid.ColumnSpan="2" Grid.Row="7"/>
-    <Rectangle Grid.ColumnSpan="2" Grid.Row="8"/>
-    <Rectangle Grid.Row="1" Grid.RowSpan="8" />
-
-    <Grid Grid.ColumnSpan="2" >
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <Label  Content="Информация о задаче"/>
-        <Button Grid.Column="1" Margin="0" Command="{Binding OpenCurrentTaskView}" CommandParameter="{Binding SelectedTaskCompact.Id}">Сформировать отчёт</Button>
-    </Grid>
-    <Label Grid.Row="1"  Content="Schedule"/>
-    <Label Grid.Row="2"  Content="ConnectionString"/>
-    <Label Grid.Row="3"  Content="ViewTemplate"/>
-    <Label Grid.Row="4"  Content="Query"/>
-    <Label Grid.Row="5"  Content="RecepientGroup"/>
-    <Label Grid.Row="6"  Content="TryCount"/>
-    <Label Grid.Row="7"  Content="QueryTimeOut"/>
-    <Label Grid.Row="8"  Content="ReportType"/>
-
-    <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" SelectedValuePath="Name"   DisplayMemberPath="Name" SelectedValue="{Binding SelectedTask.Schedule}"/>
-    <TextBox Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Stretch"  Text="{Binding SelectedTask.ConnectionString}"/>
-    <local:ViewTemplateControl Grid.Column="1" Grid.Row="3"/>
-    <local:QueryControl Grid.Column="1" Grid.Row="4"/>
-    <ComboBox Grid.Column="1" Grid.Row="5"  HorizontalAlignment="Stretch"   ItemsSource="{Binding RecepientGroups}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding SelectedTask.RecepientGroup}"/>
-    <TextBox Grid.Column="1" Grid.Row="6"  HorizontalAlignment="Stretch"   Text="{Binding SelectedTask.TryCount }">
-        <i:Interaction.Behaviors>
-            <behaviors:TextBoxInputBehavior InputMode="DigitInput"/>
-        </i:Interaction.Behaviors>
-    </TextBox>
-    <TextBox Grid.Column="1" Grid.Row="7"  HorizontalAlignment="Stretch" Text="{Binding SelectedTask.QueryTimeOut}">
-        <i:Interaction.Behaviors>
-            <behaviors:TextBoxInputBehavior InputMode="DigitInput"/>
-        </i:Interaction.Behaviors>
-    </TextBox>
-    <ComboBox Grid.Column="1" Grid.Row="8"  HorizontalAlignment="Stretch"  ItemsSource="{Binding Source={converters:BindingSource {x:Type interfaces:ReportType}}}" SelectedValue="{Binding SelectedTask.ReportType}"/>
-</Grid>-->

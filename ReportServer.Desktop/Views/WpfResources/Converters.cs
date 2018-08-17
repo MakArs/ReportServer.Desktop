@@ -88,14 +88,6 @@ namespace ReportServer.Desktop.Views.WpfResources
         }
     }
 
-    public class NullToVisiblityConverter : BaseConverter
-    {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value == null ? Visibility.Hidden : Visibility.Visible;
-        }
-    }
-
     public class BoolToVisiblityConverter : BaseConverter
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)

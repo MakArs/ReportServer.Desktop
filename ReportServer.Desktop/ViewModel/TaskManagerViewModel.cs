@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reactive.Linq;
 using AutoMapper;
 using ReactiveUI;
@@ -20,13 +19,13 @@ namespace ReportServer.Desktop.ViewModel
         public string Title { get; set; }
         public string FullTitle { get; set; }
 
-        public ReactiveList<DesktopTask> TaskCompacts { get; set; }
+        public ReactiveList<DesktopFullTask> Tasks { get; set; }
         public ReactiveList<DesktopInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
         public ReactiveList<DesktopReport> Reports { get; set; }
 
-        [Reactive] public DesktopTask SelectedTaskCompact { get; set; }
+        [Reactive] public DesktopFullTask SelectedTask { get; set; }
         [Reactive] public DesktopInstanceCompact SelectedInstanceCompact { get; set; }
         [Reactive] public DesktopInstance SelectedInstance { get; set; }
 
@@ -37,11 +36,7 @@ namespace ReportServer.Desktop.ViewModel
             this.reportService = reportService;
             this.mapper = mapper;
             this.shell = shell as IDistinctShell;
-            TaskCompacts = new ReactiveList<DesktopTask>();
             SelectedTaskInstanceCompacts = new ReactiveList<DesktopInstanceCompact>();
-            Schedules = new ReactiveList<ApiSchedule>();
-            RecepientGroups = new ReactiveList<ApiRecepientGroup>();
-            Reports = new ReactiveList<DesktopReport>();
 
             IObservable<bool> canOpenInstancePage = this
                 .WhenAnyValue(t => t.SelectedInstance,
@@ -50,24 +45,24 @@ namespace ReportServer.Desktop.ViewModel
             OpenPage = ReactiveCommand.Create<string>
                 (OpenPageInBrowser, canOpenInstancePage);
 
-            this.WhenAnyObservable(s => s.TaskCompacts.Changed)
+            this.WhenAnyObservable(s => s.Tasks.Changed) // todo: add and test when element changed
                 .Subscribe(x =>
                 {
                     SelectedTaskInstanceCompacts.Clear();
-                    SelectedTaskCompact = null;
+                    SelectedTask = null;
                 });
 
-            this.ObservableForProperty(s => s.SelectedTaskCompact)
-                .Where(x => x.Value != null)
-                .Subscribe(x => LoadInstanceCompactsByTaskId(x.Value.Id));
+            this.WhenAnyValue(s => s.SelectedTask)
+                .Where(x => x != null)
+                .Subscribe(x => LoadInstanceCompactsByTaskId(x.Id));
 
-            this.ObservableForProperty(s => s.SelectedInstanceCompact)
+            this.WhenAnyValue(s => s.SelectedInstanceCompact)
                 .Subscribe(x =>
                 {
-                    if (x.Value == null)
+                    if (x == null)
                         SelectedInstance = null;
                     else
-                        LoadSelectedInstanceById(x.Value.Id);
+                        LoadSelectedInstanceById(x.Id);
                 });
         }
 
@@ -101,53 +96,11 @@ namespace ReportServer.Desktop.ViewModel
 
         public void Initialize(ViewRequest viewRequest)
         {
-            LoadSchedules();
-            LoadRecepientGroups();
-            LoadReports();
-            LoadTaskCompacts();
+            Schedules = reportService.Schedules;
+            RecepientGroups = reportService.RecepientGroups;
+            Reports = reportService.Reports;
+            Tasks = reportService.Tasks;
         }
 
-        public void LoadSchedules()
-        {
-            var scheduleList = reportService.GetSchedules();
-
-            Schedules.PublishCollection(scheduleList);
-        }
-
-        public void LoadRecepientGroups()
-        {
-            var recepientGroupList = reportService.GetRecepientGroups();
-
-            RecepientGroups.PublishCollection(recepientGroupList);
-        }
-
-        public void LoadReports()
-        {
-            var reportsList = reportService.GetReports()
-                .Select(rep => mapper.Map<DesktopReport>(rep));
-
-            Reports.PublishCollection(reportsList);
-        }
-
-        public void LoadTaskCompacts() //
-        {
-            var taskList = reportService.GetAllTasks();
-            TaskCompacts.Clear();
-
-            foreach (var task in taskList)
-            {
-                var vtask = mapper.Map<DesktopTask>(task);
-
-                vtask.Schedule = Schedules
-                    .FirstOrDefault(s => s.Id == task.ScheduleId)?.Name;
-
-                vtask.RecepientGroup = RecepientGroups
-                    .FirstOrDefault(r => r.Id == task.RecepientGroupId)?.Name;
-
-                vtask.ReportName = Reports.FirstOrDefault(r => r.Id == task.ReportId)?.Name;
-
-                TaskCompacts.Add(vtask);
-            }
-        }
     }
 }

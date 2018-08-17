@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ReactiveUI;
 
 namespace ReportServer.Desktop.Interfaces
 {
@@ -46,15 +47,14 @@ namespace ReportServer.Desktop.Interfaces
         public bool HasXlsxAttachment { get; set; }
     }
 
-  public class ApiTask
+    public class ApiTask
     {
         public int Id { get; set; }
         public int ReportId { get; set; }
-        public int ScheduleId { get; set; }
-        public int RecepientGroupId { get; set; }
+        public int ScheduleId { get; set; } //
+        public int RecepientGroupId { get; set; } //
+        public int TelegramChannelId { get; set; } //
         public int TryCount { get; set; }
-        public int QueryTimeOut { get; set; }
-        public int ReportType { get; set; }
         public bool HasHtmlBody { get; set; }
         public bool HasJsonAttachment { get; set; }
         public bool HasXlsxAttachment { get; set; }
@@ -84,16 +84,21 @@ namespace ReportServer.Desktop.Interfaces
 
     public interface IReportService
     {
-        List<ApiTask> GetAllTasks();
+        ReactiveList<DesktopReport> Reports { get; set; }
+        ReactiveList<ApiSchedule> Schedules { get; set; }
+        ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
+        ReactiveList<DesktopFullTask> Tasks { get; set; }
+
         ApiFullTask GetFullTaskById(int id);
         List<ApiInstance> GetInstanceCompacts();
         List<ApiInstance> GetInstancesByTaskId(int taskId);
         ApiFullInstance GetFullInstanceById(int id);
-        List<ApiSchedule> GetSchedules();
-        List<ApiRecepientGroup> GetRecepientGroups();
-        List<ApiReport> GetReports();
 
-        string GetCurrentTaskViewById(int taskId);
+        void RefreshSchedules();
+        void RefreshRecepientGroups();
+        void RefreshReports();
+        void RefreshData();
+
         int CreateSchedule(ApiSchedule schedule);
 
         void DeleteTask(int id);

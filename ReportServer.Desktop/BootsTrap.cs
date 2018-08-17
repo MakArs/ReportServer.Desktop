@@ -33,15 +33,10 @@ namespace ReportServer.Desktop
 
             ConfigureView<TaskManagerViewModel, TaskManagerView>(builder);
 
-            builder.RegisterType<ReportManagerView>();
+            ConfigureView<ReportManagerViewModel, ReportManagerView>(builder);
+
             builder.RegisterType<TaskEditorView>();
             builder.RegisterType<ReportEditorView>();
-
-
-            //builder
-            //    .RegisterType<Core>()
-            //    .As<ICore>()
-            //    .SingleInstance();
 
             #region monik
 
@@ -110,11 +105,11 @@ namespace ReportServer.Desktop
     {
         public MapperProfile()
         {
-            CreateMap<ApiTask, DesktopTask>()
-                .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
+            CreateMap<ApiTask, DesktopFullTask>();
 
-            CreateMap<ApiFullTask, DesktopFullTask>()
-                .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
+            CreateMap<DesktopReport, DesktopFullTask>()
+                .ForMember("ReportName", opt => opt.MapFrom(s => s.Name))
+                .ForMember("Id", opt => opt.Ignore());
 
             CreateMap<DesktopFullTask, ApiFullTask>()
                 .ForMember("ReportType", opt => opt.MapFrom(s => (int) s.ReportType));

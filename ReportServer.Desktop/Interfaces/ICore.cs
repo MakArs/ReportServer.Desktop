@@ -8,25 +8,13 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.Interfaces
 {
-    public class DesktopTask
-    {
-        public int Id { get; set; }
-        public string ReportName { get; set; }
-        public string Schedule { get; set; }
-        public string ConnectionString { get; set; }
-        public string RecepientGroup { get; set; }
-        public int TryCount { get; set; }
-        public int QueryTimeOut { get; set; }
-        public ReportType ReportType { get; set; }
-        public bool HasHtmlBody { get; set; }
-        public bool HasJsonAttachment { get; set; }
-        public bool HasXlsxAttachment { get; set; }
-    }
-
     public class DesktopFullTask : ReactiveObject
     {
         public int Id { get; set; }
         [Reactive] public int ReportId { get; set; }
+        [Reactive] public string ReportName { get; set; }
+        [Reactive] public int ScheduleId { get; set; }
+        [Reactive] public int RecepientGroupId { get; set; }
         [Reactive] public string Schedule { get; set; }
         [Reactive] public string ConnectionString { get; set; }
         [Reactive] public string RecepientGroup { get; set; }

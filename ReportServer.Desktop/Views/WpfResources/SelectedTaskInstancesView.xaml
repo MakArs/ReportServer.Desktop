@@ -13,8 +13,6 @@
 
     <Grid>
         <DataGrid ColumnWidth="*"
-                  Visibility="{Binding SelectedTaskInstanceCompacts[0],
-                  Converter={wpfResources:NullToVisiblityConverter}}"
                   ItemsSource="{Binding SelectedTaskInstanceCompacts}"
                   SelectedItem="{Binding SelectedInstanceCompact}">
             <DataGrid.Columns>
