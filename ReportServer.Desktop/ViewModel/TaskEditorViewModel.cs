@@ -1,11 +1,12 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
+using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Model;
+using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
@@ -13,6 +14,7 @@ namespace ReportServer.Desktop.ViewModel
 {
     public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel
     {
+        private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
         private readonly IReportService reportService;
         private readonly IMapper mapper;
 
@@ -33,21 +35,45 @@ namespace ReportServer.Desktop.ViewModel
         [Reactive] public bool IsDirty { get; set; }
 
         public ReactiveCommand SaveChangesCommand { get; set; }
+        public ReactiveCommand CancelCommand { get; set; }
 
         public TaskEditorViewModel(IReportService reportService, IMapper mapper)
         {
             this.reportService = reportService;
             this.mapper = mapper;
+            validator=new TaskEditorValidator();
 
             var cansave = this.WhenAnyValue(tvm => tvm.IsDirty, isd => isd == true);
 
-            SaveChangesCommand = ReactiveCommand.Create(() =>
+            SaveChangesCommand = ReactiveCommand.CreateFromTask(async () =>
             {
+                var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
+                    Id > 0
+                        ? "Вы действительно хотите изменить эту задачу?"
+                        : "Вы действительно хотите создать задачу?"
+                    , MessageDialogStyle.AffirmativeAndNegative);
+
+                if (dialogResult != MessageDialogResult.Affirmative) return;
+
                 var editedTask = new ApiTask();
                 mapper.Map(this, editedTask);
                 reportService.UpdateTask(editedTask);
                 Close();
             }, cansave);
+
+            CancelCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (IsDirty)
+                {
+                    var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
+                        "Все несохранённые изменения пропадут. Действительно закрыть окно редактирования?"
+                        , MessageDialogStyle.AffirmativeAndNegative);
+
+                    if (dialogResult != MessageDialogResult.Affirmative)
+                        return;
+                }
+                Close();
+            });
         }
 
         public void Initialize(ViewRequest viewRequest)
@@ -66,7 +92,7 @@ namespace ReportServer.Desktop.ViewModel
 
             void Changed(object sender, PropertyChangedEventArgs e)
             {
-                IsDirty = true;
+                IsDirty = !AllErrors.Any();
             }
 
             PropertyChanged += Changed;
