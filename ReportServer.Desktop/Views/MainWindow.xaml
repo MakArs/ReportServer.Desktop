@@ -19,16 +19,12 @@
             <mah:DropDownButton 
                 Content="File"
                 Height="auto" 
-                ItemsSource="{Binding Entities}"
                 Margin="5"
                 BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}">
-                <mah:DropDownButton.ItemContainerStyle>
-                    <Style TargetType="MenuItem">
-                        <Setter Property="Command" 
-                                Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=DataContext.AddNewElementCommand}"/>
-                        <Setter Property="CommandParameter" Value="{Binding}"/>
-                    </Style>
-                </mah:DropDownButton.ItemContainerStyle>
+                <mah:DropDownButton.Items>
+                    <Button Command="{Binding SaveCommand}">Save</Button>
+                    <Button Command="{Binding RefreshCommand}">Refresh</Button>
+                </mah:DropDownButton.Items>
             </mah:DropDownButton>
 
             <mah:DropDownButton 
@@ -37,13 +33,10 @@
                 ItemsSource="{Binding Entities}"
                 Margin="5"
                 BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}">
-                <mah:DropDownButton.ItemContainerStyle>
-                    <Style TargetType="MenuItem">
-                        <Setter Property="Command" 
-                                Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=DataContext.AddNewElementCommand}"/>
-                        <Setter Property="CommandParameter" Value="{Binding}"/>
-                    </Style>
-                </mah:DropDownButton.ItemContainerStyle>
+                <mah:DropDownButton.Items>
+                    <Button Command="{Binding CreateTaskCommand}">Add Task</Button>
+                    <Button Command="{Binding CreateReportCommand}">Add Report</Button>
+                </mah:DropDownButton.Items>
             </mah:DropDownButton>
         </StackPanel>
 

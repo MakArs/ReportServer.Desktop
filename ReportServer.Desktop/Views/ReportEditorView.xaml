@@ -83,28 +83,34 @@
                     <Button Command="{Binding CancelCommand}" Width="100">Cancel</Button>
                 </StackPanel>
 
-            <mah:Flyout Header="Query redactor"
-                        BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"
-                        Position="Top"
-                        Width="auto"
-
-                        IsOpen="{Binding QueryRedactorOpened}"
-                        Theme="Light"
-                        IsModal="True"
-                >
-                    <TextBox>Kill me</TextBox>
-                </mah:Flyout>
-
                 <mah:Flyout Header="ViewTemplate redactor"
                             BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"
                             Position="Top"
+                            Grid.RowSpan="8"
+                            Height="700"
+                            Grid.ColumnSpan="2"
+                            
                             CloseButtonVisibility="Hidden"
-                            Width="auto"
                             IsOpen="{Binding ViewTemplateRedactorOpened}"
                             Theme="Light"
                             IsModal="True"
                 >
                     <TextBox Text="{Binding ViewTemplate,Mode=OneWay}"/>
+                </mah:Flyout>
+
+            <mah:Flyout Header="Query redactor"
+                        BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"
+                        Position="Top"
+                        Width="auto"
+                        Height="700"
+                        CloseButtonVisibility="Hidden"
+                        Grid.RowSpan="8"
+                        Grid.ColumnSpan="2"
+                        IsOpen="{Binding QueryRedactorOpened}"
+                        Theme="Light"
+                        IsModal="True"
+                >
+                    <TextBox>Kill me</TextBox>
                 </mah:Flyout>
         </Grid>
         </Border>

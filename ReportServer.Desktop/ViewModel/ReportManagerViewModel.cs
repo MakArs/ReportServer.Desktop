@@ -13,7 +13,7 @@ namespace ReportServer.Desktop.ViewModel
     public class ReportManagerViewModel : ViewModelBase, IInitializableViewModel
     {
         private readonly IReportService reportService;
-        private readonly IDistinctShell shell;
+        private readonly DistinctShell shell;
 
         public ReactiveList<DesktopReport> Reports { get; set; }
         [Reactive] public DesktopReport SelectedReport { get; set; }
@@ -23,7 +23,7 @@ namespace ReportServer.Desktop.ViewModel
         public ReportManagerViewModel(IReportService reportService, IShell shell)
         {
             this.reportService = reportService;
-            this.shell = shell as IDistinctShell;
+            this.shell = shell as DistinctShell;
 
 
 

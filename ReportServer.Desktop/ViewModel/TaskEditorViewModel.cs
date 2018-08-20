@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
@@ -14,7 +15,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModel
 {
-    public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel
+    public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
         private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
         private readonly IReportService reportService;
@@ -27,7 +28,7 @@ namespace ReportServer.Desktop.ViewModel
         [Reactive] public DesktopReport SelectedReport { get; set; }
         public int Id { get; set; }
         public int? TelegramChannelId { get; set; }
-        [Reactive] public int ReportId { get; set; }
+        [Reactive] public int? ReportId { get; set; }
         [Reactive] public int? ScheduleId { get; set; }
         [Reactive] public int? RecepientGroupId { get; set; }
         [Reactive] public int TryCount { get; set; }
@@ -58,22 +59,8 @@ namespace ReportServer.Desktop.ViewModel
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
                 isd => isd == true);
 
-            SaveChangesCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                    Id > 0
-                        ? "Вы действительно хотите изменить эту задачу?"
-                        : "Вы действительно хотите создать задачу?"
-                    , MessageDialogStyle.AffirmativeAndNegative);
-
-                if (dialogResult != MessageDialogResult.Affirmative) return;
-
-                var editedTask = new ApiTask();
-                mapper.Map(this, editedTask);
-                reportService.UpdateTask(editedTask);
-                Close();
-                reportService.RefreshData();
-            }, canSave);
+            SaveChangesCommand = ReactiveCommand.CreateFromTask(async () => await Save(),
+                canSave);
 
             CancelCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -118,7 +105,15 @@ namespace ReportServer.Desktop.ViewModel
                 mapper.Map(request.Task, this);
             }
 
-            SelectedReport = Reports.First(rep => rep.Id == ReportId);
+            if (Id == 0)
+            {
+                SelectedReport = Reports.FirstOrDefault();
+                ReportId = Reports.FirstOrDefault()?.Id;
+                RecepientGroupId = RecepientGroups.First()?.Id;
+                ScheduleId = Schedules.First()?.Id;
+            }
+            else
+                SelectedReport = Reports.First(rep => rep.Id == ReportId);
 
             PropertyChanged += Changed;
 
@@ -131,6 +126,25 @@ namespace ReportServer.Desktop.ViewModel
                     Title += '*';
             }
 
+        }
+
+        public async Task Save()
+        {
+            var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
+                Id > 0
+                    ? "Вы действительно хотите изменить эту задачу?"
+                    : "Вы действительно хотите создать задачу?"
+                , MessageDialogStyle.AffirmativeAndNegative);
+
+            if (dialogResult != MessageDialogResult.Affirmative) return;
+
+            var editedTask = new ApiTask();
+            mapper.Map(this, editedTask);
+
+            reportService.CreateOrUpdateTask(editedTask);
+
+            Close();
+            reportService.RefreshData();
         }
     }
 }

@@ -3,9 +3,6 @@ using Ui.Wpf.Common;
 
 namespace ReportServer.Desktop.Views
 {
-    /// <summary>
-    /// codebehind for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : IDockWindow
     {
         public MainWindow(IShell shell)

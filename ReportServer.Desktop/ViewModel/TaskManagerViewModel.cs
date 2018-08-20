@@ -18,7 +18,7 @@ namespace ReportServer.Desktop.ViewModel
     {
         private readonly IReportService reportService;
         private readonly IMapper mapper;
-        private readonly IDistinctShell shell;
+        private readonly DistinctShell shell;
 
         public ReactiveList<DesktopFullTask> Tasks { get; set; }
         public ReactiveList<DesktopInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
@@ -37,7 +37,7 @@ namespace ReportServer.Desktop.ViewModel
         {
             this.reportService = reportService;
             this.mapper = mapper;
-            this.shell = shell as IDistinctShell;
+            this.shell = shell as DistinctShell;
             SelectedTaskInstanceCompacts = new ReactiveList<DesktopInstanceCompact>();
 
             IObservable<bool> canOpenInstancePage = this

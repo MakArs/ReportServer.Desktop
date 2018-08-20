@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
@@ -13,7 +14,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModel
 {
-    public class ReportEditorViewModel : ViewModelBase, IInitializableViewModel
+    public class ReportEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
         private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
         private readonly IReportService reportService;
@@ -47,28 +48,14 @@ namespace ReportServer.Desktop.ViewModel
             OpenQueryTemplateWindowCommand = ReactiveCommand.Create(() =>
                 QueryRedactorOpened = true);
 
-            OpenViewTemplateWindowCommand=ReactiveCommand.Create(()=> 
-                ViewTemplateRedactorOpened=true);
+            OpenViewTemplateWindowCommand = ReactiveCommand.Create(() =>
+                ViewTemplateRedactorOpened = true);
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
                 isd => isd == true);
 
-            SaveChangesCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                    Id > 0
-                        ? "Вы действительно хотите изменить этот отчёт?"
-                        : "Вы действительно хотите создать отчёт?"
-                    , MessageDialogStyle.AffirmativeAndNegative);
-
-                if (dialogResult != MessageDialogResult.Affirmative) return;
-
-                var editedReport = new ApiReport();
-                mapper.Map(this, editedReport);
-                reportService.UpdateReport(editedReport);
-                Close();
-                reportService.RefreshData();
-            }, canSave);
+            SaveChangesCommand = ReactiveCommand.CreateFromTask(async () => await Save(),
+                canSave);
 
             CancelCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -108,6 +95,23 @@ namespace ReportServer.Desktop.ViewModel
 
             IsDirty = false;
 
+        }
+
+        public async Task Save()
+        {
+            var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
+                Id > 0
+                    ? "Вы действительно хотите изменить этот отчёт?"
+                    : "Вы действительно хотите создать отчёт?"
+                , MessageDialogStyle.AffirmativeAndNegative);
+
+            if (dialogResult != MessageDialogResult.Affirmative) return;
+
+            var editedReport = new ApiReport();
+            mapper.Map(this, editedReport);
+            reportService.CreateOrUpdateReport(editedReport);
+            Close();
+            reportService.RefreshData();
         }
     }
 }

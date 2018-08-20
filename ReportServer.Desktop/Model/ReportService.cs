@@ -130,25 +130,24 @@ namespace ReportServer.Desktop.Model
             client.Delete($"/api/v1/instances/{id}");
         }
 
-        public int CreateTask(ApiTask task)
+        public int CreateOrUpdateTask(ApiTask task)
         {
+            if(task.Id==0)
             return client.Post("/api/v1/tasks/", task);
-        }
 
-        public void UpdateTask(ApiTask task)
-        {
             client.Put($"/api/v1/tasks/{task.Id}", task);
+            return task.Id;
         }
 
-        public int CreateReport(ApiReport report)
+        public int CreateOrUpdateReport(ApiReport report)
         {
+            if(report.Id==0)
             return client.Post("/api/v1/reports/", report);
+
+            client.Put($"/api/v1/reports/{report.Id}", report);
+            return report.Id;
         }
 
-        public void UpdateReport(ApiReport report)
-        {
-            client.Put($"/api/v1/reports/{report.Id}", report);
-        }
     }
 
     public static class JsonHttpClientTimeExtension

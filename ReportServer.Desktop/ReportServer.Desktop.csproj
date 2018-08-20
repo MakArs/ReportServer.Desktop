@@ -220,6 +220,7 @@
     </Compile>
     <Compile Include="Model\ViewRequests.cs" />
     <Compile Include="ViewModel\DistinctShell.cs" />
+    <Compile Include="ViewModel\ISaveableViewModel.cs" />
     <Compile Include="ViewModel\ReportEditorViewModel.cs" />
     <Compile Include="ViewModel\ReportManagerViewModel.cs" />
     <Compile Include="ViewModel\TaskEditorViewModel.cs" />
