@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
 namespace ReportServer.Desktop.Views.WpfResources
@@ -14,10 +16,12 @@ namespace ReportServer.Desktop.Views.WpfResources
             return this;
         }
 
-        public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
+        public abstract object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture);
 
 
-        public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public virtual object ConvertBack(object value, Type targetType, object parameter,
+                                          CultureInfo culture)
         {
             throw new NotImplementedException();
         }
@@ -37,8 +41,8 @@ namespace ReportServer.Desktop.Views.WpfResources
             if (EnumType == null)
                 throw new InvalidOperationException("The EnumType must be specified.");
 
-            Type  actualEnumType = Nullable.GetUnderlyingType(EnumType) ?? EnumType;
-            Array enumValues     = Enum.GetValues(actualEnumType);
+            Type actualEnumType = Nullable.GetUnderlyingType(EnumType) ?? EnumType;
+            Array enumValues = Enum.GetValues(actualEnumType);
 
             if (actualEnumType == EnumType)
                 return enumValues;
@@ -51,9 +55,10 @@ namespace ReportServer.Desktop.Views.WpfResources
 
     public class IntMsToMinsConverter : BaseConverter
     {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
         {
-            var milliseconds = (int?)value ?? 0;
+            var milliseconds = (int?) value ?? 0;
 
             if (milliseconds == 0) return null;
 
@@ -63,25 +68,49 @@ namespace ReportServer.Desktop.Views.WpfResources
 
     public class ReportTypeToBoolConverter : BaseConverter
     {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
         {
             if (value == null) return "True";
             return value.ToString() == "Custom" ? "False" : "True";
         }
     }
 
+
     public class ReportTypeToVisiblity : BaseConverter
     {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
         {
             if (value == null) return Visibility.Collapsed;
             return value.ToString() == "Custom" ? Visibility.Collapsed : Visibility.Visible;
         }
     }
 
+    public class IntToVisiblity : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
+        {
+            if (value == null) return Visibility.Collapsed;
+            return (int?) value >0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+    }
+
+    public class ReportTypeToBool : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
+        {
+            if (value == null) return true;
+            return value.ToString() != "Custom";
+        }
+    }
+
     public class AntiReportTypeToVisiblity : BaseConverter
     {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
         {
             if (value == null) return Visibility.Collapsed;
             return value.ToString() == "Custom" ? Visibility.Visible : Visibility.Collapsed;
@@ -90,10 +119,11 @@ namespace ReportServer.Desktop.Views.WpfResources
 
     public class BoolToVisiblityConverter : BaseConverter
     {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
         {
             if (value == null) return Visibility.Hidden;
-            return (bool)value ? Visibility.Visible : Visibility.Hidden;
+            return (bool) value ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }

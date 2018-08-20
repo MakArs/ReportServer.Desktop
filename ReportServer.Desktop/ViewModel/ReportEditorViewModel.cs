@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
-using System;
-using System.IO;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
@@ -14,46 +13,42 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModel
 {
-    public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel
+    public class ReportEditorViewModel : ViewModelBase, IInitializableViewModel
     {
         private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
         private readonly IReportService reportService;
         private readonly IMapper mapper;
 
-        public ReactiveList<ApiSchedule> Schedules { get; set; }
-        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
-        public ReactiveList<DesktopReport> Reports { get; set; }
-
-        [Reactive] public DesktopReport SelectedReport { get; set; }
         public int Id { get; set; }
-        public int? TelegramChannelId { get; set; }
-        [Reactive] public int ReportId { get; set; }
-        [Reactive] public int? ScheduleId { get; set; }
-        [Reactive] public int? RecepientGroupId { get; set; }
-        [Reactive] public int TryCount { get; set; }
-        [Reactive] public bool HasHtmlBody { get; set; }
-        [Reactive] public bool HasJsonAttachment { get; set; }
-        [Reactive] public bool HasXlsxAttachment { get; set; }
+        [Reactive] public string Name { get; set; }
+        [Reactive] public string ConnectionString { get; set; }
+        [Reactive] public string ViewTemplate { get; set; }
+        [Reactive] public string Query { get; set; }
+        [Reactive] public ReportType ReportType { get; set; }
+        [Reactive] public int QueryTimeOut { get; set; } //seconds
+
         [Reactive] public bool IsDirty { get; set; }
         [Reactive] public bool IsValid { get; set; }
+        [Reactive] public bool QueryRedactorOpened { get; set; }
+        [Reactive] public bool ViewTemplateRedactorOpened { get; set; }
 
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
-        public ReactiveCommand OpenCurrentTaskViewCommand { get; set; }
+        public ReactiveCommand OpenQueryTemplateWindowCommand { get; set; }
+        public ReactiveCommand OpenViewTemplateWindowCommand { get; set; }
 
-        public TaskEditorViewModel(IReportService reportService, IMapper mapper)
+        public ReportEditorViewModel(IReportService reportService, IMapper mapper)
         {
             this.reportService = reportService;
             this.mapper = mapper;
-            validator = new TaskEditorValidator();
             IsValid = true;
+            validator = new ReportEditorValidator();
 
-            OpenCurrentTaskViewCommand = ReactiveCommand
-                .CreateFromTask(async () =>
-                {
-                    var str = await reportService.GetCurrentTaskViewById(Id);
-                    OpenPageInBrowser(str);
-                });
+            OpenQueryTemplateWindowCommand = ReactiveCommand.Create(() =>
+                QueryRedactorOpened = true);
+
+            OpenViewTemplateWindowCommand=ReactiveCommand.Create(()=> 
+                ViewTemplateRedactorOpened=true);
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
                 isd => isd == true);
@@ -62,15 +57,15 @@ namespace ReportServer.Desktop.ViewModel
             {
                 var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
                     Id > 0
-                        ? "Вы действительно хотите изменить эту задачу?"
-                        : "Вы действительно хотите создать задачу?"
+                        ? "Вы действительно хотите изменить этот отчёт?"
+                        : "Вы действительно хотите создать отчёт?"
                     , MessageDialogStyle.AffirmativeAndNegative);
 
                 if (dialogResult != MessageDialogResult.Affirmative) return;
 
-                var editedTask = new ApiTask();
-                mapper.Map(this, editedTask);
-                reportService.UpdateTask(editedTask);
+                var editedReport = new ApiReport();
+                mapper.Map(this, editedReport);
+                reportService.UpdateReport(editedReport);
                 Close();
                 reportService.RefreshData();
             }, canSave);
@@ -94,35 +89,13 @@ namespace ReportServer.Desktop.ViewModel
                 .Subscribe(_ => IsValid = !AllErrors.Any());
         }
 
-        private void OpenPageInBrowser(string htmlPage)
-        {
-
-            var path = $"{AppDomain.CurrentDomain.BaseDirectory}testreport.html";
-            using (FileStream fstr = new FileStream(path, FileMode.Create))
-            {
-                byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
-                fstr.Write(bytePage, 0, bytePage.Length);
-            }
-
-            System.Diagnostics.Process.Start(path);
-        }
-
         public void Initialize(ViewRequest viewRequest)
         {
-            Schedules = reportService.Schedules;
-            RecepientGroups = reportService.RecepientGroups;
-            Reports = reportService.Reports;
-
-            if (viewRequest is TaskEditorRequest request)
+            if (viewRequest is ReportEditorRequest request)
             {
-                mapper.Map(request.Task, this);
+                FullTitle = request.FullId;
+                mapper.Map(request.Report, this);
             }
-
-            SelectedReport = Reports.First(rep => rep.Id == ReportId);
-
-            PropertyChanged += Changed;
-
-            IsDirty = false;
 
             void Changed(object sender, PropertyChangedEventArgs e)
             {
@@ -130,6 +103,10 @@ namespace ReportServer.Desktop.ViewModel
                 if (Title.Last() != '*')
                     Title += '*';
             }
+
+            PropertyChanged += Changed;
+
+            IsDirty = false;
 
         }
     }

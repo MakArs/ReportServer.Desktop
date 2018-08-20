@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using ReactiveUI;
 
 namespace ReportServer.Desktop.Interfaces
@@ -108,5 +109,7 @@ namespace ReportServer.Desktop.Interfaces
 
         int CreateReport(ApiReport report);
         void UpdateReport(ApiReport report);
+
+        Task<string> GetCurrentTaskViewById(int taskId);
     }
 }

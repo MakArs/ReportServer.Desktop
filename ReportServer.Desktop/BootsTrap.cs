@@ -37,7 +37,7 @@ namespace ReportServer.Desktop
 
             ConfigureView<TaskEditorViewModel, TaskEditorView>(builder);
 
-            builder.RegisterType<ReportEditorView>();
+            ConfigureView<ReportEditorViewModel, ReportEditorView>(builder);
 
             #region monik
 
@@ -134,6 +134,10 @@ namespace ReportServer.Desktop
                     opt.MapFrom(s => s.RecepientGroupId > 0 ? s.RecepientGroupId : null));
 
             CreateMap<DesktopFullTask, TaskEditorViewModel>();
+
+            CreateMap<DesktopReport, ReportEditorViewModel>();
+            CreateMap<ReportEditorViewModel, ApiReport>()
+                .ForMember("ReportType", opt => opt.MapFrom(s => (int)s.ReportType));
         }
     }
 }

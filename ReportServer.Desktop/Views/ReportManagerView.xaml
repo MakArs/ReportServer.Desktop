@@ -14,6 +14,11 @@
         <DataGrid ColumnWidth="*"
                   ItemsSource="{Binding Reports}"  
                   SelectedItem="{Binding SelectedReport,Mode=OneWayToSource}">
+            <DataGrid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick" 
+                              Command="{Binding EditReportCommand}" 
+                              CommandParameter="{Binding SelectedReport}"/>
+            </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Id"  Binding="{Binding Id}"/>
                 <DataGridTextColumn Header = "Name"  Binding="{Binding Name}"/>

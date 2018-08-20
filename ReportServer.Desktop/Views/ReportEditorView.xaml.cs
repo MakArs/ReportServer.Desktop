@@ -1,17 +1,13 @@
-﻿using System.Windows.Controls;
-using ReportServer.Desktop.Interfaces;
+﻿using ReportServer.Desktop.ViewModel;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.Views
 {
-    /// <summary>
-    /// Interaction logic for SelectedReportFullView.xaml
-    /// </summary>
     public partial class ReportEditorView : IView
     {
-        public ReportEditorView(ICore viewModel)
+        public ReportEditorView(ReportEditorViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;
