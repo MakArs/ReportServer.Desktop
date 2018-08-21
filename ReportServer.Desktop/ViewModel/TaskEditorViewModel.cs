@@ -7,6 +7,7 @@ using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Model;
 using ReportServer.Desktop.Views.WpfResources;
@@ -18,7 +19,7 @@ namespace ReportServer.Desktop.ViewModel
     public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
         private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
-        private readonly IReportService reportService;
+        private readonly ICachedService cachedService;
         private readonly IMapper mapper;
 
         public ReactiveList<ApiSchedule> Schedules { get; set; }
@@ -42,9 +43,9 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand CancelCommand { get; set; }
         public ReactiveCommand OpenCurrentTaskViewCommand { get; set; }
 
-        public TaskEditorViewModel(IReportService reportService, IMapper mapper)
+        public TaskEditorViewModel(ICachedService cachedService, IMapper mapper)
         {
-            this.reportService = reportService;
+            this.cachedService = cachedService;
             this.mapper = mapper;
             validator = new TaskEditorValidator();
             IsValid = true;
@@ -52,7 +53,7 @@ namespace ReportServer.Desktop.ViewModel
             OpenCurrentTaskViewCommand = ReactiveCommand
                 .CreateFromTask(async () =>
                 {
-                    var str = await reportService.GetCurrentTaskViewById(Id);
+                    var str = await cachedService.GetCurrentTaskViewById(Id);
                     OpenPageInBrowser(str);
                 });
 
@@ -96,9 +97,9 @@ namespace ReportServer.Desktop.ViewModel
 
         public void Initialize(ViewRequest viewRequest)
         {
-            Schedules = reportService.Schedules;
-            RecepientGroups = reportService.RecepientGroups;
-            Reports = reportService.Reports;
+            Schedules = cachedService.Schedules;
+            RecepientGroups = cachedService.RecepientGroups;
+            Reports = cachedService.Reports;
 
             if (viewRequest is TaskEditorRequest request)
             {
@@ -130,6 +131,8 @@ namespace ReportServer.Desktop.ViewModel
 
         public async Task Save()
         {
+            if (!IsValid) return;
+
             var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
                 Id > 0
                     ? "Вы действительно хотите изменить эту задачу?"
@@ -141,10 +144,10 @@ namespace ReportServer.Desktop.ViewModel
             var editedTask = new ApiTask();
             mapper.Map(this, editedTask);
 
-            reportService.CreateOrUpdateTask(editedTask);
+            cachedService.CreateOrUpdateTask(editedTask);
 
             Close();
-            reportService.RefreshData();
+            cachedService.RefreshData();
         }
     }
 }

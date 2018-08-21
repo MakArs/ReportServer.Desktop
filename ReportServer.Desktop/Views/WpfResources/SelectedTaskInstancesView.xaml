@@ -15,6 +15,9 @@
         <DataGrid ColumnWidth="*"
                   ItemsSource="{Binding SelectedTaskInstanceCompacts}"
                   SelectedItem="{Binding SelectedInstanceCompact}">
+            <DataGrid.InputBindings>
+                <KeyBinding Key="Delete"  Command="ApplicationCommands.NotACommand" />
+            </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn  Header="StartTime"    Binding="{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" />
                 <DataGridTextColumn  Header="Duration"  Binding="{Binding Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>

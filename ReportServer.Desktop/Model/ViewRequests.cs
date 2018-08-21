@@ -1,4 +1,5 @@
-﻿using ReportServer.Desktop.Interfaces;
+﻿using ReportServer.Desktop.Entities;
+using ReportServer.Desktop.Interfaces;
 using Ui.Wpf.Common;
 
 namespace ReportServer.Desktop.Model

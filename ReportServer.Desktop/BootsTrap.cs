@@ -2,6 +2,7 @@
 using Autofac;
 using AutoMapper;
 using Monik.Client;
+using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Model;
 using ReportServer.Desktop.ViewModel;
@@ -27,8 +28,8 @@ namespace ReportServer.Desktop
                 .As<IDockWindow>();
 
             builder
-                .RegisterType<ReportService>()
-                .As<IReportService>()
+                .RegisterType<CachedService>()
+                .As<ICachedService>()
                 .SingleInstance();
 
             ConfigureView<TaskManagerViewModel, TaskManagerView>(builder);

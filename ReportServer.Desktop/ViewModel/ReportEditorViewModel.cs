@@ -6,6 +6,7 @@ using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Model;
 using ReportServer.Desktop.Views.WpfResources;
@@ -17,7 +18,7 @@ namespace ReportServer.Desktop.ViewModel
     public class ReportEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
         private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
-        private readonly IReportService reportService;
+        private readonly ICachedService cachedService;
         private readonly IMapper mapper;
 
         public int Id { get; set; }
@@ -38,9 +39,9 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand OpenQueryTemplateWindowCommand { get; set; }
         public ReactiveCommand OpenViewTemplateWindowCommand { get; set; }
 
-        public ReportEditorViewModel(IReportService reportService, IMapper mapper)
+        public ReportEditorViewModel(ICachedService cachedService, IMapper mapper)
         {
-            this.reportService = reportService;
+            this.cachedService = cachedService;
             this.mapper = mapper;
             IsValid = true;
             validator = new ReportEditorValidator();
@@ -99,6 +100,8 @@ namespace ReportServer.Desktop.ViewModel
 
         public async Task Save()
         {
+            if (!IsValid) return;
+
             var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
                 Id > 0
                     ? "Вы действительно хотите изменить этот отчёт?"
@@ -109,9 +112,9 @@ namespace ReportServer.Desktop.ViewModel
 
             var editedReport = new ApiReport();
             mapper.Map(this, editedReport);
-            reportService.CreateOrUpdateReport(editedReport);
+            cachedService.CreateOrUpdateReport(editedReport);
             Close();
-            reportService.RefreshData();
+            cachedService.RefreshData();
         }
     }
 }

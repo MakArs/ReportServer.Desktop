@@ -9,7 +9,16 @@
         d:DataContext="Shell"
         Title="{Binding Title}"
         WindowState="Maximized">
+
+    <mah:MetroWindow.InputBindings>
+        <KeyBinding Command="{Binding DeleteCommand}" Key="Delete"/>
+        <KeyBinding Command="{Binding SaveCommand}" Modifiers="Control" Key="S"/>
+        <KeyBinding Command="{Binding RefreshCommand}" Key="F5"/>
+    </mah:MetroWindow.InputBindings>
+
     <Grid>
+
+
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition/>
@@ -36,6 +45,7 @@
                 <mah:DropDownButton.Items>
                     <Button Command="{Binding CreateTaskCommand}">Add Task</Button>
                     <Button Command="{Binding CreateReportCommand}">Add Report</Button>
+                    <Button Command="{Binding DeleteCommand}">Delete</Button>
                 </mah:DropDownButton.Items>
             </mah:DropDownButton>
         </StackPanel>

@@ -67,15 +67,18 @@
         <Label Grid.Row="5" Grid.Column="2"  Content="ViewTemplate"/>
         <Label Grid.Row="6" Grid.Column="2"  Content="QueryTimeOut"/>
 
-        <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules}" 
+        <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Schedules,
+            UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
                   SelectedValuePath="Id"   DisplayMemberPath="Name" 
                   SelectedValue="{Binding ScheduleId, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding RecepientGroups}"
+        <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding RecepientGroups,
+            UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                   DisplayMemberPath="Name" SelectedValuePath="Id" 
                   SelectedValue="{Binding RecepientGroupId, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <ComboBox Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Reports}" 
+        <ComboBox Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Reports,
+            UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
                   SelectedValuePath="Name"  DisplayMemberPath="Name" 
                   SelectedItem="{Binding SelectedReport}"/>
 

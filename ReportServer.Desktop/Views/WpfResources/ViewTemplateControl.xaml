@@ -9,7 +9,8 @@
     <Grid>
         <Grid>
             <Button Panel.ZIndex="1" Width="40" Margin="0" Command="{Binding OpenViewTemplateWindowCommand}" HorizontalAlignment="Right" Visibility="{Binding ReportType,Converter={wpfResources:ReportTypeToVisiblity}}">...</Button>
-            <TextBox Visibility="{Binding ReportType,Converter={wpfResources:ReportTypeToVisiblity}}" Text="{Binding ViewTemplate}"/>
+            <TextBox Visibility="{Binding ReportType,Converter={wpfResources:ReportTypeToVisiblity}}" Text="{Binding ViewTemplate,UpdateSourceTrigger=PropertyChanged,
+            ValidatesOnDataErrors=True}"/>
             <ComboBox Visibility="{Binding ReportType,Converter={wpfResources:AntiReportTypeToVisiblity}}" HorizontalAlignment="Stretch" ItemsSource="{Binding ViewTemplates}" SelectedValue="{Binding ViewTemplate}" />
         </Grid>
     </Grid>

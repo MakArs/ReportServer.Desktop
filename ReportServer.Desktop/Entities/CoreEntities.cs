@@ -6,7 +6,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.Interfaces
+namespace ReportServer.Desktop.Entities
 {
     public class DesktopFullTask : ReactiveObject
     {
@@ -74,14 +74,5 @@ namespace ReportServer.Desktop.Interfaces
         InProcess = 1,
         Success = 2,
         Failed = 3
-    }
-
-    public interface ICore: IViewModel
-    {
-        void LoadSelectedTaskById(int id);
-        Task DeleteEntity();
-        Task SaveEntity();
-        void CreateTask();
-        IObservable<Unit> GetHtmlPageByTaskId(int taskId);
     }
 }

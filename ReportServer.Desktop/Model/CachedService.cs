@@ -10,11 +10,12 @@ using Gerakul.HttpUtils.Core;
 using Gerakul.HttpUtils.Json;
 using Newtonsoft.Json;
 using ReactiveUI;
+using ReportServer.Desktop.Entities;
 using Ui.Wpf.Common;
 
 namespace ReportServer.Desktop.Model
 {
-    public class ReportService : IReportService
+    public class CachedService : ICachedService
     {
         private readonly ISimpleHttpClient client;
         private readonly IMapper mapper;
@@ -24,7 +25,7 @@ namespace ReportServer.Desktop.Model
         public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
         public ReactiveList<DesktopFullTask> Tasks { get; set; }
 
-        public ReportService(IMapper mapper)
+        public CachedService(IMapper mapper)
         {
             client = JsonHttpClient.Create("http://localhost:12345/");
             this.mapper = mapper;
@@ -45,13 +46,15 @@ namespace ReportServer.Desktop.Model
 
         public void RefreshReports()
         {
+            Reports.Clear();
             Reports.PublishCollection(client.Get<List<ApiReport>>("/api/v1/reports/")
-                .Select(rep=>mapper.Map<DesktopReport>(rep)));
+                .Select(rep => mapper.Map<DesktopReport>(rep)));
         }
 
         public void RefreshRecepientGroups()
         {
-            RecepientGroups.PublishCollection(client.Get<List<ApiRecepientGroup>>("/api/v1/recepientgroups/"));
+            RecepientGroups.PublishCollection(
+                client.Get<List<ApiRecepientGroup>>("/api/v1/recepientgroups/"));
         }
 
         public void RefreshTasks()
@@ -59,8 +62,9 @@ namespace ReportServer.Desktop.Model
             var deskTasks = client.Get<List<ApiTask>>("/api/v1/tasks")
                 .Select(apiTask => mapper.Map<DesktopFullTask>(apiTask)).ToList();
 
-            deskTasks= deskTasks.Select(deskTask => mapper.Map(Reports
-                    .FirstOrDefault(rep => rep.Id == deskTask.ReportId),deskTask))
+            deskTasks = deskTasks.Select(deskTask => mapper.Map(Reports
+                    .FirstOrDefault(rep => rep.Id == deskTask.ReportId), deskTask))
+                .Where(t => t != null)
                 .ToList();
 
             foreach (var deskTask in deskTasks)
@@ -132,8 +136,8 @@ namespace ReportServer.Desktop.Model
 
         public int CreateOrUpdateTask(ApiTask task)
         {
-            if(task.Id==0)
-            return client.Post("/api/v1/tasks/", task);
+            if (task.Id == 0)
+                return client.Post("/api/v1/tasks/", task);
 
             client.Put($"/api/v1/tasks/{task.Id}", task);
             return task.Id;
@@ -141,8 +145,8 @@ namespace ReportServer.Desktop.Model
 
         public int CreateOrUpdateReport(ApiReport report)
         {
-            if(report.Id==0)
-            return client.Post("/api/v1/reports/", report);
+            if (report.Id == 0)
+                return client.Post("/api/v1/reports/", report);
 
             client.Put($"/api/v1/reports/{report.Id}", report);
             return report.Id;
@@ -178,7 +182,8 @@ namespace ReportServer.Desktop.Model
 
         public static int Post<T>(this ISimpleHttpClient client, string path, T postBody)
         {
-            var task = Task.Factory.StartNew(() => client.Send<string>(HttpMethod.Post, path, null, postBody));
+            var task = Task.Factory.StartNew(() =>
+                client.Send<string>(HttpMethod.Post, path, null, postBody));
             task.Wait();
 
             var responseCode = task.Result.Result.Response.StatusCode;
@@ -191,7 +196,8 @@ namespace ReportServer.Desktop.Model
 
         public static void Put<T>(this ISimpleHttpClient client, string path, T postBody)
         {
-            var task = Task.Factory.StartNew(() => client.Send<string>(HttpMethod.Put, path, null, postBody));
+            var task = Task.Factory.StartNew(() =>
+                client.Send<string>(HttpMethod.Put, path, null, postBody));
             task.Wait();
 
             var responseCode = task.Result.Result.Response.StatusCode;
@@ -208,3 +214,11 @@ namespace ReportServer.Desktop.Model
 
     }
 }
+
+//todo: working flyout
+//todo: query,view template collections through API
+//todo: delete hotkey logic changed?
+//todo: delete report?
+//todo: baseaddress?
+//todo: ui improvements?
+//todo: recepgroups,schedules,telegramchannels functional?

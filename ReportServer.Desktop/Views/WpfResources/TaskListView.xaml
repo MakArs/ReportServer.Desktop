@@ -12,6 +12,7 @@
 
     <Grid>
         <DataGrid
+
                   ColumnWidth="*"
                   ItemsSource="{Binding Tasks}" 
                   SelectedItem="{Binding SelectedTask}">
@@ -19,6 +20,7 @@
                 <MouseBinding MouseAction="LeftDoubleClick" 
                               Command="{Binding EditTaskCommand}" 
                               CommandParameter="{Binding SelectedTask}"/>
+                    <KeyBinding Key="Delete"  Command="ApplicationCommands.NotACommand" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Schedule" Binding="{Binding Schedule}"/>

@@ -9,6 +9,7 @@
              xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:entities="clr-namespace:ReportServer.Desktop.Entities"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -16,74 +17,74 @@
         <ResourceDictionary Source="WpfResources/TemplatesDictionary.xaml"/>
     </UserControl.Resources>
 
-        <Border Height="700" Width="1000" VerticalAlignment="Top" 
+    <Border Height="700" Width="1000" VerticalAlignment="Top" 
             BorderThickness="1" 
             BorderBrush="{DynamicResource AccentBaseColorBrush}">
-            <Grid Height="700" Width="1000" VerticalAlignment="Top">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="40"/>
-                </Grid.RowDefinitions>
+        <Grid Height="700" Width="1000" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Rectangle Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="1" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="2" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="3" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="4" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="5" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="6" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="7" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="1" Grid.RowSpan="7"/>
+            <Rectangle Grid.Column="1" Grid.Row="1" Grid.RowSpan="7" />
+
+            <Grid Grid.ColumnSpan="4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <Label  Content="Информация об отчёте"/>
+            </Grid>
 
-                <Rectangle Grid.ColumnSpan="2"/>
-                <Rectangle Grid.Row="1" Grid.ColumnSpan="2"/>
-                <Rectangle Grid.Row="2" Grid.ColumnSpan="2"/>
-                <Rectangle Grid.Row="3" Grid.ColumnSpan="2"/>
-                <Rectangle Grid.Row="4" Grid.ColumnSpan="2"/>
-                <Rectangle Grid.Row="5" Grid.ColumnSpan="2"/>
-                <Rectangle Grid.Row="6" Grid.ColumnSpan="2"/>
-                <Rectangle Grid.Row="7" Grid.ColumnSpan="2"/>
-                <Rectangle Grid.Row="1" Grid.RowSpan="7"/>
-                <Rectangle Grid.Column="1" Grid.Row="1" Grid.RowSpan="7" />
+            <Label Grid.Row="1"  Content="Name"/>
+            <Label Grid.Row="2"  Content="ConnectionString"/>
+            <Label Grid.Row="3"  Content="QueryTimeOut"/>
+            <Label Grid.Row="4"  Content="ReportType"/>
+            <Label Grid.Row="5"  Content="ViewTemplate"/>
+            <Label Grid.Row="6"  Content="Query"/>
 
-                <Grid Grid.ColumnSpan="4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Label  Content="Информация об отчёте"/>
-                </Grid>
-
-                <Label Grid.Row="1"  Content="Name"/>
-                <Label Grid.Row="2"  Content="ConnectionString"/>
-                <Label Grid.Row="3"  Content="QueryTimeOut"/>
-                <Label Grid.Row="4"  Content="ReportType"/>
-                <Label Grid.Row="5"  Content="ViewTemplate"/>
-                <Label Grid.Row="6"  Content="Query"/>
-
-                <TextBox Grid.Column="1" Grid.Row="1" 
-                     Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBox Grid.Column="1" Grid.Row="2" 
+            <TextBox Grid.Column="1" Grid.Row="1" 
+                     Text="{Binding Name,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+            <TextBox Grid.Column="1" Grid.Row="2" 
                      Text="{Binding ConnectionString,UpdateSourceTrigger=PropertyChanged}"
                      IsEnabled="{Binding ReportType,Converter={wpfResources:ReportTypeToBool}}"/>
-                <TextBox Grid.Column="1" Grid.Row="3"
+            <TextBox Grid.Column="1" Grid.Row="3"
                      Text="{Binding QueryTimeOut,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}">
-                    <i:Interaction.Behaviors>
-                        <wpfResources:TextBoxInputBehavior InputMode="DigitInput"/>
-                    </i:Interaction.Behaviors>
-                </TextBox>
-                <ComboBox Grid.Column="1" Grid.Row="4"  
-                      ItemsSource="{Binding Source={wpfResources:EnumBindingSource {x:Type interfaces:ReportType}}}"
+                <i:Interaction.Behaviors>
+                    <wpfResources:TextBoxInputBehavior InputMode="DigitInput"/>
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <ComboBox Grid.Column="1" Grid.Row="4"  
+                      ItemsSource="{Binding Source={wpfResources:EnumBindingSource {x:Type entities:ReportType}}}"
                       SelectedValue="{Binding ReportType}"/>
-                <wpfResources:ViewTemplateControl Grid.Column="1" Grid.Row="5"/>
-                <wpfResources:QueryControl Grid.Column="1" Grid.Row="6"/>
-                <StackPanel  Grid.Column="1" Grid.Row="7" Orientation="Horizontal">
-                    <Button Command="{Binding SaveChangesCommand}" 
+            <wpfResources:ViewTemplateControl Grid.Column="1" Grid.Row="5"/>
+            <wpfResources:QueryControl Grid.Column="1" Grid.Row="6"/>
+            <StackPanel  Grid.Column="1" Grid.Row="7" Orientation="Horizontal">
+                <Button Command="{Binding SaveChangesCommand}" 
                         IsEnabled="{Binding IsValid}" Width="100">Save</Button>
-                    <Button Command="{Binding CancelCommand}" Width="100">Cancel</Button>
-                </StackPanel>
+                <Button Command="{Binding CancelCommand}" Width="100">Cancel</Button>
+            </StackPanel>
 
-                <mah:Flyout Header="ViewTemplate redactor"
+            <mah:Flyout Header="ViewTemplate redactor"
                             BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"
                             Position="Top"
                             Grid.RowSpan="8"
@@ -95,8 +96,8 @@
                             Theme="Light"
                             IsModal="True"
                 >
-                    <TextBox Text="{Binding ViewTemplate,Mode=OneWay}"/>
-                </mah:Flyout>
+                <TextBox Text="{Binding ViewTemplate,Mode=OneWay}"/>
+            </mah:Flyout>
 
             <mah:Flyout Header="Query redactor"
                         BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"
@@ -110,8 +111,8 @@
                         Theme="Light"
                         IsModal="True"
                 >
-                    <TextBox>Kill me</TextBox>
-                </mah:Flyout>
+                <TextBox>Kill me</TextBox>
+            </mah:Flyout>
         </Grid>
-        </Border>
+    </Border>
 </UserControl>

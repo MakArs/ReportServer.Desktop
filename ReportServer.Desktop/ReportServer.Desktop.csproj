@@ -218,9 +218,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\CachedServiceEntities.cs" />
+    <Compile Include="Interfaces\IDeleteableViewModel.cs" />
     <Compile Include="Model\ViewRequests.cs" />
     <Compile Include="ViewModel\DistinctShell.cs" />
-    <Compile Include="ViewModel\ISaveableViewModel.cs" />
+    <Compile Include="Interfaces\ISaveableViewModel.cs" />
     <Compile Include="ViewModel\ReportEditorViewModel.cs" />
     <Compile Include="ViewModel\ReportManagerViewModel.cs" />
     <Compile Include="ViewModel\TaskEditorViewModel.cs" />
@@ -234,8 +236,8 @@
       <DependentUpon>QueryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WpfResources\Converters.cs" />
-    <Compile Include="Interfaces\ICore.cs" />
-    <Compile Include="Interfaces\IReportService.cs" />
+    <Compile Include="Entities\CoreEntities.cs" />
+    <Compile Include="Interfaces\ICachedService.cs" />
     <Compile Include="Views\ReportManagerView.xaml.cs">
       <DependentUpon>ReportManagerView.xaml</DependentUpon>
     </Compile>
@@ -272,7 +274,7 @@
       <DependentUpon>ViewTemplateControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Core.cs" />
-    <Compile Include="Model\ReportService.cs" />
+    <Compile Include="Model\CachedService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

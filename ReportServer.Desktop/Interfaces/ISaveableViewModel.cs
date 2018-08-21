@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ReportServer.Desktop.ViewModel
+namespace ReportServer.Desktop.Interfaces
 {
     public interface ISaveableViewModel
     {

@@ -1,6 +1,7 @@
 ﻿using System.Reactive;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Model;
 using ReportServer.Desktop.Views;
@@ -12,7 +13,7 @@ namespace ReportServer.Desktop.ViewModel
 {
     public class ReportManagerViewModel : ViewModelBase, IInitializableViewModel
     {
-        private readonly IReportService reportService;
+        private readonly ICachedService cachedService;
         private readonly DistinctShell shell;
 
         public ReactiveList<DesktopReport> Reports { get; set; }
@@ -20,12 +21,10 @@ namespace ReportServer.Desktop.ViewModel
 
         public ReactiveCommand<DesktopReport, Unit> EditReportCommand { get; set; }
 
-        public ReportManagerViewModel(IReportService reportService, IShell shell)
+        public ReportManagerViewModel(ICachedService cachedService, IShell shell)
         {
-            this.reportService = reportService;
+            this.cachedService = cachedService;
             this.shell = shell as DistinctShell;
-
-
 
             EditReportCommand = ReactiveCommand.Create<DesktopReport>(report =>
             {
@@ -41,8 +40,7 @@ namespace ReportServer.Desktop.ViewModel
 
         public void Initialize(ViewRequest viewRequest)
         {
-            Reports = reportService.Reports;
+            Reports = cachedService.Reports;
         }
-
     }
 }
