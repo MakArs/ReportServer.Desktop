@@ -44,12 +44,12 @@
             <Button Grid.Column="1" Margin="0" Command="{Binding OpenPage}" CommandParameter="{Binding SelectedInstance.ViewData}">Открыть отчёт</Button>
         </Grid>
 
-        <Label Grid.Row="1"  Content="StartTime"/>
+        <Label Grid.Row="1"  Content="Start time"/>
         <Label Grid.Row="2"  Content="Duration"/>
         <Label Grid.Row="3"  Content="State"/>
-        <Label Grid.Row="4"  Content="TryNumber"/>
+        <Label Grid.Row="4"  Content="Try number"/>
         <Label Grid.Column="2" Grid.Row="1" Grid.RowSpan="2"  Content="Data"/>
-        <Label Grid.Column="2" Grid.Row="3" Grid.RowSpan="2"  Content="ViewData"/>
+        <Label Grid.Column="2" Grid.Row="3" Grid.RowSpan="2"  Content="View data"/>
 
         <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding StringFormat=dd.MM.yy HH:mm, Path= SelectedInstance.StartTime}"/>
         <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding SelectedInstance.Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>

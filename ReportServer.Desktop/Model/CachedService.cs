@@ -24,6 +24,8 @@ namespace ReportServer.Desktop.Model
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
         public ReactiveList<DesktopFullTask> Tasks { get; set; }
+        public ReactiveList<string> DataExecutors { get; set; }
+        public ReactiveList<string> ViewExecutors { get; set; }
 
         public CachedService(IMapper mapper)
         {
@@ -34,6 +36,10 @@ namespace ReportServer.Desktop.Model
             Schedules = new ReactiveList<ApiSchedule>();
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
             Tasks = new ReactiveList<DesktopFullTask>();
+            DataExecutors = new ReactiveList<string>();
+            ViewExecutors = new ReactiveList<string>();
+
+            GetExecutors();
             RefreshData();
         }
 
@@ -104,6 +110,13 @@ namespace ReportServer.Desktop.Model
             return client.Get<ApiFullInstance>($"/api/v1/instances/{id}");
         }
 
+        private void GetExecutors()
+        {
+            DataExecutors.PublishCollection(client
+                .Get<List<string>>("/api/v1/reports/customdataexecutors/"));
+            ViewExecutors.PublishCollection(client
+                .Get<List<string>>("/api/v1/reports/customviewexecutors/"));
+        }
 
         public async Task<string> GetCurrentTaskViewById(int taskId)
         {
@@ -215,10 +228,8 @@ namespace ReportServer.Desktop.Model
     }
 }
 
-//todo: working flyout
-//todo: query,view template collections through API
 //todo: delete hotkey logic changed?
-//todo: delete report?
-//todo: baseaddress?
-//todo: ui improvements?
-//todo: recepgroups,schedules,telegramchannels functional?
+//todo: delete report
+//todo: baseaddress
+//todo: ui improvements
+//todo: recepgroups,schedules,telegramchannels functional

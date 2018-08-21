@@ -63,8 +63,8 @@ namespace ReportServer.Desktop.ViewModel
             this.WhenAnyObservable(s => s.Tasks.Changed) // todo: add and test when element changed
                 .Subscribe(x =>
                 {
-                    SelectedTaskInstanceCompacts.Clear();
                     SelectedTask = null;
+                    SelectedTaskInstanceCompacts.Clear();
                 });
 
             this.WhenAnyValue(s => s.SelectedTask)

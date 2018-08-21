@@ -17,102 +17,117 @@
         <ResourceDictionary Source="WpfResources/TemplatesDictionary.xaml"/>
     </UserControl.Resources>
 
-    <Border Height="700" Width="1000" VerticalAlignment="Top" 
-            BorderThickness="1" 
-            BorderBrush="{DynamicResource AccentBaseColorBrush}">
-        <Grid Height="700" Width="1000" VerticalAlignment="Top">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+    <Grid Width="1000" VerticalAlignment="Top" Height="700">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
 
-            <Rectangle Grid.ColumnSpan="2"/>
-            <Rectangle Grid.Row="1" Grid.ColumnSpan="2"/>
-            <Rectangle Grid.Row="2" Grid.ColumnSpan="2"/>
-            <Rectangle Grid.Row="3" Grid.ColumnSpan="2"/>
-            <Rectangle Grid.Row="4" Grid.ColumnSpan="2"/>
-            <Rectangle Grid.Row="5" Grid.ColumnSpan="2"/>
-            <Rectangle Grid.Row="6" Grid.ColumnSpan="2"/>
-            <Rectangle Grid.Row="7" Grid.ColumnSpan="2"/>
-            <Rectangle Grid.Row="1" Grid.RowSpan="7"/>
-            <Rectangle Grid.Column="1" Grid.Row="1" Grid.RowSpan="7" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
 
-            <Grid Grid.ColumnSpan="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Label  Content="Информация об отчёте"/>
-            </Grid>
+        <Border Grid.ColumnSpan="6">
+            <Label  Content="Параметры отчёта"/>
+        </Border>
 
-            <Label Grid.Row="1"  Content="Name"/>
-            <Label Grid.Row="2"  Content="ConnectionString"/>
-            <Label Grid.Row="3"  Content="QueryTimeOut"/>
-            <Label Grid.Row="4"  Content="ReportType"/>
-            <Label Grid.Row="5"  Content="ViewTemplate"/>
-            <Label Grid.Row="6"  Content="Query"/>
+        <Border Grid.Row="1">
+            <Label Content="Id"/>
+        </Border>
 
-            <TextBox Grid.Column="1" Grid.Row="1" 
-                     Text="{Binding Name,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
-            <TextBox Grid.Column="1" Grid.Row="2" 
-                     Text="{Binding ConnectionString,UpdateSourceTrigger=PropertyChanged}"
-                     IsEnabled="{Binding ReportType,Converter={wpfResources:ReportTypeToBool}}"/>
-            <TextBox Grid.Column="1" Grid.Row="3"
-                     Text="{Binding QueryTimeOut,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}">
+        <Border Grid.Row="1" Grid.Column="1">
+            <TextBlock Text="{Binding Id}"/>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="2">
+            <Label Content="Name"/>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="3">
+            <TextBox Text="{Binding Name,UpdateSourceTrigger=PropertyChanged,
+                ValidatesOnDataErrors=True}"
+                     TextWrapping="NoWrap"
+                     AcceptsReturn="False"/>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="4">
+            <Label Content="Query timeout"/>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="5">
+            <TextBox Text="{Binding QueryTimeOut,
+                UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}">
                 <i:Interaction.Behaviors>
                     <wpfResources:TextBoxInputBehavior InputMode="DigitInput"/>
                 </i:Interaction.Behaviors>
             </TextBox>
-            <ComboBox Grid.Column="1" Grid.Row="4"  
-                      ItemsSource="{Binding Source={wpfResources:EnumBindingSource {x:Type entities:ReportType}}}"
+        </Border>
+
+        <Border Grid.Row="2">
+            <Label Content="Connection string"/>
+        </Border>
+
+        <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3">
+            <TextBox Text="{Binding ConnectionString,
+                UpdateSourceTrigger=PropertyChanged}"
+                       IsEnabled="{Binding ReportType,
+                Converter={wpfResources:ReportTypeToBool}}"
+                     TextWrapping="NoWrap"
+                     AcceptsReturn="False"/>
+        </Border>
+
+        <Border Grid.Row="2" Grid.Column="4">
+            <Label Content="Report type"/>
+        </Border>
+
+        <ComboBox Grid.Row="2" Grid.Column="5"
+                  BorderThickness="1" BorderBrush="Black" Margin="0.5"
+                  ItemsSource="{Binding Source={wpfResources:EnumBindingSource
+                {x:Type entities:ReportType}}}"
                       SelectedValue="{Binding ReportType}"/>
-            <wpfResources:ViewTemplateControl Grid.Column="1" Grid.Row="5"/>
-            <wpfResources:QueryControl Grid.Column="1" Grid.Row="6"/>
-            <StackPanel  Grid.Column="1" Grid.Row="7" Orientation="Horizontal">
-                <Button Command="{Binding SaveChangesCommand}" 
-                        IsEnabled="{Binding IsValid}" Width="100">Save</Button>
-                <Button Command="{Binding CancelCommand}" Width="100">Cancel</Button>
-            </StackPanel>
+        <Grid Grid.Row="3" Grid.ColumnSpan="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
 
-            <mah:Flyout Header="ViewTemplate redactor"
-                            BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"
-                            Position="Top"
-                            Grid.RowSpan="8"
-                            Height="700"
-                            Grid.ColumnSpan="2"
-                            
-                            CloseButtonVisibility="Hidden"
-                            IsOpen="{Binding ViewTemplateRedactorOpened}"
-                            Theme="Light"
-                            IsModal="True"
-                >
-                <TextBox Text="{Binding ViewTemplate,Mode=OneWay}"/>
-            </mah:Flyout>
+            <Border>
+                <Label Content="View template"/>
+            </Border>
 
-            <mah:Flyout Header="Query redactor"
-                        BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"
-                        Position="Top"
-                        Width="auto"
-                        Height="700"
-                        CloseButtonVisibility="Hidden"
-                        Grid.RowSpan="8"
-                        Grid.ColumnSpan="2"
-                        IsOpen="{Binding QueryRedactorOpened}"
-                        Theme="Light"
-                        IsModal="True"
-                >
-                <TextBox>Kill me</TextBox>
-            </mah:Flyout>
+            <Border Grid.Column="1">
+                <Label Content="Query"/>
+            </Border>
         </Grid>
-    </Border>
+
+        <Grid Grid.Row="4" Grid.ColumnSpan="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Border>
+                <wpfResources:ViewTemplateControl/>
+            </Border>
+
+            <Border Grid.Column="1">
+                <wpfResources:QueryControl />
+            </Border>
+        </Grid>
+
+        <StackPanel  Grid.Column="5" Grid.Row="5" Orientation="Horizontal">
+            <Button Command="{Binding SaveChangesCommand}" 
+                        IsEnabled="{Binding IsValid}" Width="100">Save</Button>
+            <Button Command="{Binding CancelCommand}" Width="100">Cancel</Button>
+        </StackPanel>
+    </Grid>
 </UserControl>

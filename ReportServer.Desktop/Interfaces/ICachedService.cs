@@ -11,6 +11,8 @@ namespace ReportServer.Desktop.Interfaces
         ReactiveList<ApiSchedule> Schedules { get; set; }
         ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
         ReactiveList<DesktopFullTask> Tasks { get; set; }
+        ReactiveList<string> DataExecutors { get; set; }
+        ReactiveList<string> ViewExecutors { get; set; }
 
         List<ApiInstance> GetInstanceCompacts();
         List<ApiInstance> GetInstancesByTaskId(int taskId);

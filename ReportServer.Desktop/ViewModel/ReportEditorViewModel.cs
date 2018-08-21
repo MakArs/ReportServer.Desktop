@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
@@ -21,6 +22,9 @@ namespace ReportServer.Desktop.ViewModel
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
 
+        public ReactiveList<string> QueryTemplates { get; set; }
+        public ReactiveList<string> ViewTemplates { get; set; }
+
         public int Id { get; set; }
         [Reactive] public string Name { get; set; }
         [Reactive] public string ConnectionString { get; set; }
@@ -31,13 +35,9 @@ namespace ReportServer.Desktop.ViewModel
 
         [Reactive] public bool IsDirty { get; set; }
         [Reactive] public bool IsValid { get; set; }
-        [Reactive] public bool QueryRedactorOpened { get; set; }
-        [Reactive] public bool ViewTemplateRedactorOpened { get; set; }
 
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
-        public ReactiveCommand OpenQueryTemplateWindowCommand { get; set; }
-        public ReactiveCommand OpenViewTemplateWindowCommand { get; set; }
 
         public ReportEditorViewModel(ICachedService cachedService, IMapper mapper)
         {
@@ -45,12 +45,6 @@ namespace ReportServer.Desktop.ViewModel
             this.mapper = mapper;
             IsValid = true;
             validator = new ReportEditorValidator();
-
-            OpenQueryTemplateWindowCommand = ReactiveCommand.Create(() =>
-                QueryRedactorOpened = true);
-
-            OpenViewTemplateWindowCommand = ReactiveCommand.Create(() =>
-                ViewTemplateRedactorOpened = true);
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
                 isd => isd == true);
@@ -75,6 +69,20 @@ namespace ReportServer.Desktop.ViewModel
 
             this.WhenAnyObservable(s => s.AllErrors.Changed)
                 .Subscribe(_ => IsValid = !AllErrors.Any());
+
+            this.WhenAnyValue(s => s.ReportType)
+                .Skip(2)
+                .Subscribe(type =>
+                {
+                    Query = type == ReportType.Custom
+                        ? QueryTemplates.FirstOrDefault()
+                        : "";
+                    ViewTemplate = type == ReportType.Custom
+                        ? ViewTemplates.FirstOrDefault()
+                        : "";
+                });
+
+
         }
 
         public void Initialize(ViewRequest viewRequest)
@@ -91,6 +99,9 @@ namespace ReportServer.Desktop.ViewModel
                 if (Title.Last() != '*')
                     Title += '*';
             }
+
+            QueryTemplates = cachedService.DataExecutors;
+            ViewTemplates = cachedService.ViewExecutors;
 
             PropertyChanged += Changed;
 
@@ -111,6 +122,9 @@ namespace ReportServer.Desktop.ViewModel
             if (dialogResult != MessageDialogResult.Affirmative) return;
 
             var editedReport = new ApiReport();
+
+            if (ReportType == ReportType.Custom) ConnectionString = null;
+
             mapper.Map(this, editedReport);
             cachedService.CreateOrUpdateReport(editedReport);
             Close();

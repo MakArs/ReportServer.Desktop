@@ -22,6 +22,8 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Id"  Binding="{Binding Id}"/>
                 <DataGridTextColumn Header = "Name"  Binding="{Binding Name}"/>
+                <DataGridTextColumn Header = "Report type"  Binding="{Binding ReportType}"/>
+                <DataGridTextColumn Header = "Query timeout"  Binding="{Binding QueryTimeOut}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

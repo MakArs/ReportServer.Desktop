@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:dock="http://schemas.xceed.com/wpf/xaml/avalondock"
+                 xmlns:ext="wp"
         mc:Ignorable="d"
         d:DataContext="Shell"
         Title="{Binding Title}"
@@ -25,27 +26,27 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
 
-            <mah:DropDownButton 
+            <mah:DropDownButton Width="115"
                 Content="File"
                 Height="auto" 
                 Margin="5"
                 BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}">
                 <mah:DropDownButton.Items>
-                    <Button Command="{Binding SaveCommand}">Save</Button>
-                    <Button Command="{Binding RefreshCommand}">Refresh</Button>
+                    <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
+                    <MenuItem Header="Refresh"  Command="{Binding RefreshCommand}"/>
                 </mah:DropDownButton.Items>
             </mah:DropDownButton>
 
-            <mah:DropDownButton 
+            <mah:DropDownButton Width="115"
                 Content="Edit"
                 Height="auto" 
                 ItemsSource="{Binding Entities}"
                 Margin="5"
                 BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}">
                 <mah:DropDownButton.Items>
-                    <Button Command="{Binding CreateTaskCommand}">Add Task</Button>
-                    <Button Command="{Binding CreateReportCommand}">Add Report</Button>
-                    <Button Command="{Binding DeleteCommand}">Delete</Button>
+                    <MenuItem Header="Add Task" Command="{Binding CreateTaskCommand}"/>
+                    <MenuItem Header="Add Report" Command="{Binding CreateReportCommand}"/>
+                    <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
                 </mah:DropDownButton.Items>
             </mah:DropDownButton>
         </StackPanel>
@@ -57,7 +58,6 @@
         </dock:DockingManager>
     </Grid>
 </mah:MetroWindow>
-
 
 
 

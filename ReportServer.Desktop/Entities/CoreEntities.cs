@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Reactive;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.Entities
 {

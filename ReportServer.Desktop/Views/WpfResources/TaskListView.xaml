@@ -25,13 +25,13 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Schedule" Binding="{Binding Schedule}"/>
                 <DataGridTextColumn Header = "Report" Binding="{Binding ReportName}"/>
-                <DataGridTextColumn Header = "RecepientGroup" Binding="{Binding RecepientGroup}"/>
-                <DataGridTextColumn Header = "TryCount" Binding="{Binding TryCount}"/>
-                <DataGridTextColumn Header = "QueryTimeOut" Binding="{Binding QueryTimeOut}"/>
-                <DataGridTextColumn Header = "ReportType" Binding="{Binding ReportType}"/>
-                <DataGridTextColumn Header = "HtmlBody" Binding="{Binding HasHtmlBody}"/>
-                <DataGridTextColumn Header = "JsonAttachment" Binding="{Binding HasJsonAttachment}"/>
-                <DataGridTextColumn Header = "XlsxAttachment" Binding="{Binding HasXlsxAttachment}"/>
+                <DataGridTextColumn Header = "Recepient group" Binding="{Binding RecepientGroup}"/>
+                <DataGridTextColumn Header = "Try count" Binding="{Binding TryCount}"/>
+                <DataGridTextColumn Header = "Query timeout" Binding="{Binding QueryTimeOut}"/>
+                <DataGridTextColumn Header = "Report type" Binding="{Binding ReportType}"/>
+                <DataGridTextColumn Header = "Html body" Binding="{Binding HasHtmlBody}"/>
+                <DataGridTextColumn Header = "Json attachment" Binding="{Binding HasJsonAttachment}"/>
+                <DataGridTextColumn Header = "Xlsx attachment" Binding="{Binding HasXlsxAttachment}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

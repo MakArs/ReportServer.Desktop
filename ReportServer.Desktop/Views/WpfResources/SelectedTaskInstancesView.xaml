@@ -12,17 +12,24 @@
     </UserControl.Resources>
 
     <Grid>
-        <DataGrid ColumnWidth="*"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Label  Content="Результаты запусков задачи"/>
+
+        <DataGrid ColumnWidth="*" Grid.Row="1"
                   ItemsSource="{Binding SelectedTaskInstanceCompacts}"
                   SelectedItem="{Binding SelectedInstanceCompact}">
             <DataGrid.InputBindings>
                 <KeyBinding Key="Delete"  Command="ApplicationCommands.NotACommand" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
-                <DataGridTextColumn  Header="StartTime"    Binding="{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" />
+                <DataGridTextColumn  Header="Start time"    Binding="{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" />
                 <DataGridTextColumn  Header="Duration"  Binding="{Binding Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>
                 <DataGridTextColumn  Header="State  "  Binding="{Binding State}" />
-                <DataGridTextColumn  Header="TryNumber"  Binding="{Binding TryNumber}"/>
+                <DataGridTextColumn  Header="Try number"  Binding="{Binding TryNumber}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -9,7 +9,7 @@ namespace ReportServer.Desktop.Views.WpfResources
         {
             RuleFor(ted => ted.TryCount)
                 .Must(t => t < 101 && t > 0)
-                .WithMessage("You can set min 1 and max 100 tries for task");
+                .WithMessage("You should set min 1 and max 100 tries for task");
 
             RuleFor(ted => ted.SelectedReport)
                 .NotNull()
@@ -31,12 +31,12 @@ namespace ReportServer.Desktop.Views.WpfResources
         {
             RuleFor(ted => ted.QueryTimeOut)
                 .Must(t => t < 300 && t > 0)
-                .WithMessage("You can set min 1 and max 300 seconds timeout for query");
+                .WithMessage("You should set min 1 and max 300 seconds timeout for query");
 
             RuleFor(ted => ted.Name)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage("Name cannot be empty");
+                .WithMessage("This field cannot be empty");
 
             RuleFor(ted => ted.ViewTemplate)
                 .NotNull()
