@@ -19,7 +19,7 @@ namespace ReportServer.Desktop.Entities
 
     public class ApiReport
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Name { get; set; }
         public string ConnectionString { get; set; }
         public string ViewTemplate { get; set; }

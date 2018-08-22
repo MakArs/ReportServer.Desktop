@@ -25,7 +25,7 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveList<string> QueryTemplates { get; set; }
         public ReactiveList<string> ViewTemplates { get; set; }
 
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [Reactive] public string Name { get; set; }
         [Reactive] public string ConnectionString { get; set; }
         [Reactive] public string ViewTemplate { get; set; }
@@ -80,8 +80,8 @@ namespace ReportServer.Desktop.ViewModel
                     ViewTemplate = type == ReportType.Custom
                         ? ViewTemplates.FirstOrDefault()
                         : "";
+                    this.RaisePropertyChanged(nameof(ConnectionString));
                 });
-
 
         }
 
@@ -91,6 +91,7 @@ namespace ReportServer.Desktop.ViewModel
             {
                 FullTitle = request.FullId;
                 mapper.Map(request.Report, this);
+                if (Id == 0) Id = null;
             }
 
             void Changed(object sender, PropertyChangedEventArgs e)
@@ -126,6 +127,7 @@ namespace ReportServer.Desktop.ViewModel
             if (ReportType == ReportType.Custom) ConnectionString = null;
 
             mapper.Map(this, editedReport);
+            
             cachedService.CreateOrUpdateReport(editedReport);
             Close();
             cachedService.RefreshData();

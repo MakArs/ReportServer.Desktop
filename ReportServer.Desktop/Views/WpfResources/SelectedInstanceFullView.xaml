@@ -25,44 +25,65 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Rectangle Grid.ColumnSpan="4"/>
-        <Rectangle Grid.Row="1" Grid.ColumnSpan="2"/>
-        <Rectangle Grid.Row="2" Grid.ColumnSpan="2"/>
-        <Rectangle Grid.Row="3" Grid.ColumnSpan="2"/>
-        <Rectangle Grid.Row="4" Grid.ColumnSpan="2"/>
-        <Rectangle Grid.Row="1" Grid.RowSpan="4"/>
-        <Rectangle Grid.Column="2" Grid.Row="1" Grid.RowSpan="4" />
-        <Rectangle Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2"/>
-        <Rectangle Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Grid.RowSpan="2"/>
+        <Border Grid.ColumnSpan="4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label  Content="Информация об отчёте"/>
+                <Button Grid.Column="1" Margin="0" Command="{Binding OpenPage}" CommandParameter="{Binding SelectedInstance.ViewData}">Открыть отчёт</Button>
+            </Grid>
+        </Border>
 
-        <Grid Grid.ColumnSpan="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Label  Content="Информация об отчёте"/>
-            <Button Grid.Column="1" Margin="0" Command="{Binding OpenPage}" CommandParameter="{Binding SelectedInstance.ViewData}">Открыть отчёт</Button>
-        </Grid>
+        <Border Grid.Row="1" >
+            <Label  Content="Start time"/>
+        </Border>
+        <Border Grid.Row="2" >
+            <Label  Content="Duration"/>
+        </Border>
+        <Border Grid.Row="3" >
+            <Label  Content="State"/>
+        </Border>
+        <Border Grid.Row="4" >
+            <Label  Content="Try number"/>
+        </Border>
 
-        <Label Grid.Row="1"  Content="Start time"/>
-        <Label Grid.Row="2"  Content="Duration"/>
-        <Label Grid.Row="3"  Content="State"/>
-        <Label Grid.Row="4"  Content="Try number"/>
-        <Label Grid.Column="2" Grid.Row="1" Grid.RowSpan="2"  Content="Data"/>
-        <Label Grid.Column="2" Grid.Row="3" Grid.RowSpan="2"  Content="View data"/>
+        <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" >
+            <Label  Content="Data"/>
+        </Border>
 
-        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding StringFormat=dd.MM.yy HH:mm, Path= SelectedInstance.StartTime}"/>
-        <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding SelectedInstance.Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>
-        <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding SelectedInstance.State}"/>
-        <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding SelectedInstance.TryNumber}"/>
-        
-        <ScrollViewer Grid.Column="3" Grid.Row="1" Grid.RowSpan="2">
-        <TextBlock  HorizontalAlignment="Stretch" Text="{Binding SelectedInstance.Data}"/>
+        <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="2" >
+            <Label  Content="View data"/>
+        </Border>
+
+        <Border Grid.Column="1" Grid.Row="1">
+        <TextBlock  Text="{Binding StringFormat=dd.MM.yy HH:mm, Path= SelectedInstance.StartTime}"/>
+        </Border>
+
+        <Border Grid.Column="1" Grid.Row="2">
+            <TextBlock Text="{Binding SelectedInstance.Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>
+        </Border>
+
+        <Border Grid.Column="1" Grid.Row="3">
+            <TextBlock Text="{Binding SelectedInstance.State}"/>
+        </Border>
+
+        <Border Grid.Column="1" Grid.Row="4">
+            <TextBlock Text="{Binding SelectedInstance.TryNumber}"/>
+        </Border>
+
+        <Border Grid.Column="3" Grid.Row="1" Grid.RowSpan="2">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <TextBlock  HorizontalAlignment="Stretch" Text="{Binding SelectedInstance.Data}"/>
         </ScrollViewer>
+        </Border>
 
-        <ScrollViewer Grid.Column="3" Grid.Row="3" Grid.RowSpan="2">
-            <TextBlock Text="{Binding SelectedInstance.ViewData}"/>
-        </ScrollViewer>
+        <Border Grid.Column="3" Grid.Row="3" Grid.RowSpan="2">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding SelectedInstance.ViewData}"/>
+            </ScrollViewer>
+        </Border>
 
     </Grid>
 </UserControl>

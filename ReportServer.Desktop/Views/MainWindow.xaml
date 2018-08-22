@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:dock="http://schemas.xceed.com/wpf/xaml/avalondock"
-                 xmlns:ext="wp"
         mc:Ignorable="d"
         d:DataContext="Shell"
         Title="{Binding Title}"
@@ -16,40 +15,37 @@
         <KeyBinding Command="{Binding SaveCommand}" Modifiers="Control" Key="S"/>
         <KeyBinding Command="{Binding RefreshCommand}" Key="F5"/>
     </mah:MetroWindow.InputBindings>
-
     <Grid>
-
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Menu.xaml" />
+                </ResourceDictionary.MergedDictionaries>
+                <Style TargetType="MenuItem"
+                       BasedOn="{StaticResource StandardMenuItem}" />
+                <Style TargetType="Menu"
+                       BasedOn="{StaticResource StandardMenu}" />
+            </ResourceDictionary>
+        </Grid.Resources>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="30"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
 
-            <mah:DropDownButton Width="115"
-                Content="File"
-                Height="auto" 
-                Margin="5"
-                BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}">
-                <mah:DropDownButton.Items>
+        <Menu>
+                <MenuItem
+                Header="File">
                     <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
                     <MenuItem Header="Refresh"  Command="{Binding RefreshCommand}"/>
-                </mah:DropDownButton.Items>
-            </mah:DropDownButton>
-
-            <mah:DropDownButton Width="115"
-                Content="Edit"
-                Height="auto" 
-                ItemsSource="{Binding Entities}"
-                Margin="5"
-                BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}">
-                <mah:DropDownButton.Items>
+                </MenuItem>
+                <MenuItem
+                    Header="Edit">
                     <MenuItem Header="Add Task" Command="{Binding CreateTaskCommand}"/>
                     <MenuItem Header="Add Report" Command="{Binding CreateReportCommand}"/>
                     <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
-                </mah:DropDownButton.Items>
-            </mah:DropDownButton>
-        </StackPanel>
+                </MenuItem>
+            </Menu>
 
         <dock:DockingManager 
         Grid.Row="1"

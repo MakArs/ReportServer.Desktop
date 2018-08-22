@@ -9,6 +9,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Height" Value="40"/>
+        <Setter Property="Background" Value="#F5F5F5"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="BorderBrush" Value="Black"/>
         <Setter Property="BorderThickness" Value="0,1,1,1"/>
@@ -18,8 +19,10 @@
     <Style TargetType="DataGrid">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="RowBackground" Value="#F5F5F5"/>
         <Setter Property="Background" Value="White"/>
         <Setter Property="ColumnWidth" Value="*"/>
+        <Setter Property="RowHeight" Value="25"></Setter>
         <Setter Property="AutoGenerateColumns" Value="False"/>
         <Setter Property="GridLinesVisibility" Value="All"/>
         <Setter Property="RowHeaderWidth" Value="0"/>
@@ -43,6 +46,7 @@
         <Setter Property="VerticalContentAlignment"  Value="Center"/>
         <Setter Property="FontWeight" Value="DemiBold"/>
         <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Background" Value="#F5F5F5"/>
     </Style>
 
     <Style TargetType="Rectangle">
@@ -69,9 +73,10 @@
     </Style>
 
     <Style TargetType="Border">
+        <Setter Property="Background" Value="#F5F5F5"></Setter>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush"  Value="Black"/>
-        <Setter Property="Margin" Value="0.5"></Setter>
+        <Setter Property="Margin" Value="0.5"/>
     </Style>
 
     <!--<Style TargetType="ComboBoxItem">
@@ -80,6 +85,12 @@
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>-->
+
+    <Style TargetType="CheckBox">
+        <Setter Property="Margin" Value="15 0 0 0"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment"  Value="Center"/>
+    </Style>
 
     <Style TargetType="Popup">
         <Setter Property="HorizontalAlignment" Value="Right"/>

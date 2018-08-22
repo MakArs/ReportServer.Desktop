@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
@@ -33,6 +34,8 @@ namespace ReportServer.Desktop.ViewModel
         [Reactive] public int? ScheduleId { get; set; }
         [Reactive] public int? RecepientGroupId { get; set; }
         [Reactive] public int TryCount { get; set; }
+        [Reactive] public bool HasSchedule { get; set; }
+        [Reactive] public bool HasRecepients { get; set; }
         [Reactive] public bool HasHtmlBody { get; set; }
         [Reactive] public bool HasJsonAttachment { get; set; }
         [Reactive] public bool HasXlsxAttachment { get; set; }
@@ -80,6 +83,14 @@ namespace ReportServer.Desktop.ViewModel
 
             this.WhenAnyObservable(s => s.AllErrors.Changed)
                 .Subscribe(_ => IsValid = !AllErrors.Any());
+
+            this.WhenAnyValue(s => s.HasSchedule)
+                .Subscribe(hassch =>
+                    ScheduleId = hassch ? Schedules.FirstOrDefault()?.Id : null);
+
+            this.WhenAnyValue(s => s.HasRecepients)
+                .Subscribe(hasrec =>
+                    RecepientGroupId = hasrec ? RecepientGroups.FirstOrDefault()?.Id : null);
         }
 
         private void OpenPageInBrowser(string htmlPage)
@@ -104,14 +115,16 @@ namespace ReportServer.Desktop.ViewModel
             if (viewRequest is TaskEditorRequest request)
             {
                 mapper.Map(request.Task, this);
+                HasSchedule = ScheduleId>0 ;
+                HasRecepients = RecepientGroupId>0;
             }
 
             if (Id == 0)
             {
+                HasSchedule = true;
+                HasRecepients = true;
                 SelectedReport = Reports.FirstOrDefault();
                 ReportId = Reports.FirstOrDefault()?.Id;
-                RecepientGroupId = RecepientGroups.First()?.Id;
-                ScheduleId = Schedules.First()?.Id;
             }
             else
                 SelectedReport = Reports.First(rep => rep.Id == ReportId);

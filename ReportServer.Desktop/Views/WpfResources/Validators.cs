@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.ViewModel;
 
 namespace ReportServer.Desktop.Views.WpfResources
@@ -29,21 +30,26 @@ namespace ReportServer.Desktop.Views.WpfResources
     {
         public ReportEditorValidator()
         {
-            RuleFor(ted => ted.QueryTimeOut)
+            RuleFor(red => red.QueryTimeOut)
                 .Must(t => t < 300 && t > 0)
                 .WithMessage("You should set min 1 and max 300 seconds timeout for query");
 
-            RuleFor(ted => ted.Name)
+            RuleFor(red => red.Name)
                 .NotNull()
                 .NotEmpty()
                 .WithMessage("This field cannot be empty");
 
-            RuleFor(ted => ted.ViewTemplate)
+            RuleFor(red => red.ConnectionString)
+                .Must((red, connstr) => red.ReportType == ReportType.Custom ||
+                                        !string.IsNullOrEmpty(connstr))
+                .WithMessage("This field cannot be empty");
+
+            RuleFor(red => red.ViewTemplate)
                 .NotNull()
                 .NotEmpty()
                 .WithMessage("This field cannot be empty");
 
-            RuleFor(ted => ted.Query)
+            RuleFor(red => red.Query)
                 .NotNull()
                 .NotEmpty()
                 .WithMessage("This field cannot be empty");

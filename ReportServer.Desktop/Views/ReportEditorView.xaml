@@ -17,13 +17,13 @@
         <ResourceDictionary Source="WpfResources/TemplatesDictionary.xaml"/>
     </UserControl.Resources>
 
-    <Grid Width="1000" VerticalAlignment="Top" Height="700">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="40"/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
@@ -78,7 +78,7 @@
 
         <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3">
             <TextBox Text="{Binding ConnectionString,
-                UpdateSourceTrigger=PropertyChanged}"
+                UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                        IsEnabled="{Binding ReportType,
                 Converter={wpfResources:ReportTypeToBool}}"
                      TextWrapping="NoWrap"
@@ -116,15 +116,21 @@
             </Grid.ColumnDefinitions>
 
             <Border>
-                <wpfResources:ViewTemplateControl/>
+                <ScrollViewer MaxHeight="500" MinHeight="100" Height="auto" 
+                              VerticalScrollBarVisibility="Auto">
+                <wpfResources:ViewTemplateControl  Height="auto"/>
+            </ScrollViewer>
             </Border>
 
             <Border Grid.Column="1">
-                <wpfResources:QueryControl />
+                <ScrollViewer MaxHeight="500" MinHeight="100" Height="auto"
+                              VerticalScrollBarVisibility="Auto">
+                <wpfResources:QueryControl Height="auto"/>
+                </ScrollViewer>
             </Border>
         </Grid>
 
-        <StackPanel  Grid.Column="5" Grid.Row="5" Orientation="Horizontal">
+        <StackPanel  Grid.Column="4" Grid.ColumnSpan="2" Grid.Row="5" Orientation="Horizontal">
             <Button Command="{Binding SaveChangesCommand}" 
                         IsEnabled="{Binding IsValid}" Width="100">Save</Button>
             <Button Command="{Binding CancelCommand}" Width="100">Cancel</Button>
