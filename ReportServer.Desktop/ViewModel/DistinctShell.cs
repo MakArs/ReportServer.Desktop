@@ -1,4 +1,9 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Forms.VisualStyles;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
@@ -13,6 +18,7 @@ namespace ReportServer.Desktop.ViewModel
     public class DistinctShell : Shell
     {
         private readonly ICachedService cachedService;
+        private readonly IDialogCoordinator dialogCoordinator;
 
         public ReactiveCommand SaveCommand { get; set; }
         public ReactiveCommand RefreshCommand { get; set; }
@@ -20,9 +26,10 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand CreateReportCommand { get; set; }
         public ReactiveCommand DeleteCommand { get; set; }
 
-        public DistinctShell(ICachedService cachedService)
+        public DistinctShell(ICachedService cachedService, IDialogCoordinator dialogCoordinator)
         {
             this.cachedService = cachedService;
+            this.dialogCoordinator = dialogCoordinator;
 
             SaveCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -53,6 +60,27 @@ namespace ReportServer.Desktop.ViewModel
                         IView v && v.ViewModel is IDeleteableViewModel vm)
                     await vm.Delete();
             });
+        }
+
+        public async Task InitCachedService(int tries)
+        {
+            while (tries-- > 0)
+            {
+                var serviceUri = await dialogCoordinator.ShowInputAsync(this, "Login",
+                    "Enter working Report service instance url").ConfigureAwait(true);
+
+                if (!cachedService.Init(serviceUri))
+                    continue;
+
+                ShowView<TaskManagerView>(
+                    options: new UiShowOptions {Title = "Task Manager", CanClose = false});
+
+                ShowView<ReportManagerView>(
+                    options: new UiShowOptions {Title = "Report Manager", CanClose = false});
+                return;
+            }
+
+            Application.Current.MainWindow.Close();
         }
 
         public void ShowDistinctView<TView>(string value,

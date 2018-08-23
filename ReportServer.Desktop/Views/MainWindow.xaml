@@ -5,6 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:dock="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        dialogs:DialogParticipation.Register="{Binding}"
+                 xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         d:DataContext="Shell"
         Title="{Binding Title}"
@@ -14,19 +17,10 @@
         <KeyBinding Command="{Binding DeleteCommand}" Key="Delete"/>
         <KeyBinding Command="{Binding SaveCommand}" Modifiers="Control" Key="S"/>
         <KeyBinding Command="{Binding RefreshCommand}" Key="F5"/>
+        <KeyBinding Command="{Binding CreateTaskCommand}" Modifiers="Control" Key="T" />
+        <KeyBinding Command="{Binding CreateReportCommand}" Modifiers="Control" Key="R" />
     </mah:MetroWindow.InputBindings>
     <Grid>
-        <Grid.Resources>
-            <ResourceDictionary>
-                <ResourceDictionary.MergedDictionaries>
-                    <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Menu.xaml" />
-                </ResourceDictionary.MergedDictionaries>
-                <Style TargetType="MenuItem"
-                       BasedOn="{StaticResource StandardMenuItem}" />
-                <Style TargetType="Menu"
-                       BasedOn="{StaticResource StandardMenu}" />
-            </ResourceDictionary>
-        </Grid.Resources>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -34,18 +28,21 @@
         </Grid.RowDefinitions>
 
         <Menu>
-                <MenuItem
-                Header="File">
-                    <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
-                    <MenuItem Header="Refresh"  Command="{Binding RefreshCommand}"/>
-                </MenuItem>
-                <MenuItem
-                    Header="Edit">
-                    <MenuItem Header="Add Task" Command="{Binding CreateTaskCommand}"/>
-                    <MenuItem Header="Add Report" Command="{Binding CreateReportCommand}"/>
-                    <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
-                </MenuItem>
-            </Menu>
+            <MenuItem  FontSize="12"
+                Header="File" >
+                <MenuItem Header="Save" FontSize="12" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S"/>
+                <Separator/>
+                <MenuItem Header="Refresh" FontSize="12" Command="{Binding RefreshCommand}" InputGestureText="F5"/>
+            </MenuItem>
+            <MenuItem
+                    Header="Edit" FontSize="12">
+                <MenuItem Header="Add Task" FontSize="12" Command="{Binding CreateTaskCommand}" InputGestureText="Ctrl+T"/>
+                <Separator/>
+                <MenuItem Header="Add Report" FontSize="12" Command="{Binding CreateReportCommand}" InputGestureText="Ctrl+R"/>
+                <Separator/>
+                <MenuItem Header="Delete" FontSize="12" Command="{Binding DeleteCommand}" InputGestureText="Del"/>
+            </MenuItem>
+        </Menu>
 
         <dock:DockingManager 
         Grid.Row="1"

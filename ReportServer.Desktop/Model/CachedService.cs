@@ -8,6 +8,7 @@ using AutoMapper;
 using ReportServer.Desktop.Interfaces;
 using Gerakul.HttpUtils.Core;
 using Gerakul.HttpUtils.Json;
+using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReportServer.Desktop.Entities;
@@ -17,7 +18,7 @@ namespace ReportServer.Desktop.Model
 {
     public class CachedService : ICachedService
     {
-        private readonly ISimpleHttpClient client;
+        private ISimpleHttpClient client;
         private readonly IMapper mapper;
 
         public ReactiveList<DesktopReport> Reports { get; set; }
@@ -29,18 +30,29 @@ namespace ReportServer.Desktop.Model
 
         public CachedService(IMapper mapper)
         {
-            client = JsonHttpClient.Create("http://localhost:12345/");
             this.mapper = mapper;
-
             Reports = new ReactiveList<DesktopReport>();
             Schedules = new ReactiveList<ApiSchedule>();
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
             Tasks = new ReactiveList<DesktopFullTask>();
             DataExecutors = new ReactiveList<string>();
             ViewExecutors = new ReactiveList<string>();
+        }
 
-            GetExecutors();
-            RefreshData();
+        public bool Init(string serviceUri)
+        {
+            client = JsonHttpClient.Create(serviceUri);
+            try
+            {
+                GetExecutors();
+                RefreshData();
+                return true;
+                //http://localhost:12345/
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         #region RefreshLogics

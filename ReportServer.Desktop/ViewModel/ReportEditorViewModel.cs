@@ -18,7 +18,7 @@ namespace ReportServer.Desktop.ViewModel
 {
     public class ReportEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
-        private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
+        private readonly IDialogCoordinator dialogCoordinator;
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
 
@@ -39,12 +39,14 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
 
-        public ReportEditorViewModel(ICachedService cachedService, IMapper mapper)
+        public ReportEditorViewModel(ICachedService cachedService, IMapper mapper,
+                                     IDialogCoordinator dialogCoordinator)
         {
             this.cachedService = cachedService;
             this.mapper = mapper;
             IsValid = true;
             validator = new ReportEditorValidator();
+            this.dialogCoordinator = dialogCoordinator;
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
                 isd => isd == true);
@@ -127,7 +129,7 @@ namespace ReportServer.Desktop.ViewModel
             if (ReportType == ReportType.Custom) ConnectionString = null;
 
             mapper.Map(this, editedReport);
-            
+
             cachedService.CreateOrUpdateReport(editedReport);
             Close();
             cachedService.RefreshData();

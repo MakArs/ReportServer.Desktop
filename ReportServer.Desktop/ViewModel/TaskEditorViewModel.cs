@@ -19,7 +19,7 @@ namespace ReportServer.Desktop.ViewModel
 {
     public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
-        private readonly IDialogCoordinator dialogCoordinator = DialogCoordinator.Instance;
+        private readonly IDialogCoordinator dialogCoordinator;
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
 
@@ -46,12 +46,14 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand CancelCommand { get; set; }
         public ReactiveCommand OpenCurrentTaskViewCommand { get; set; }
 
-        public TaskEditorViewModel(ICachedService cachedService, IMapper mapper)
+        public TaskEditorViewModel(ICachedService cachedService, IMapper mapper,
+                                   IDialogCoordinator dialogCoordinator)
         {
             this.cachedService = cachedService;
             this.mapper = mapper;
             validator = new TaskEditorValidator();
             IsValid = true;
+            this.dialogCoordinator = dialogCoordinator;
 
             OpenCurrentTaskViewCommand = ReactiveCommand
                 .CreateFromTask(async () =>
@@ -115,8 +117,8 @@ namespace ReportServer.Desktop.ViewModel
             if (viewRequest is TaskEditorRequest request)
             {
                 mapper.Map(request.Task, this);
-                HasSchedule = ScheduleId>0 ;
-                HasRecepients = RecepientGroupId>0;
+                HasSchedule = ScheduleId         > 0;
+                HasRecepients = RecepientGroupId > 0;
             }
 
             if (Id == 0)

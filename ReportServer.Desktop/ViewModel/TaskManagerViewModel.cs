@@ -22,7 +22,7 @@ namespace ReportServer.Desktop.ViewModel
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
         private readonly DistinctShell shell;
-        private readonly IDialogCoordinator dialogCoordinator; 
+        private readonly IDialogCoordinator dialogCoordinator;
 
         public ReactiveList<DesktopFullTask> Tasks { get; set; }
         public ReactiveList<DesktopInstanceCompact> SelectedTaskInstanceCompacts { get; set; }
@@ -37,13 +37,14 @@ namespace ReportServer.Desktop.ViewModel
         public ReactiveCommand OpenPage { get; set; }
         public ReactiveCommand<DesktopFullTask, Unit> EditTaskCommand { get; set; }
 
-        public TaskManagerViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
+        public TaskManagerViewModel(ICachedService cachedService, IMapper mapper, IShell shell,
+                                    IDialogCoordinator dialogCoordinator)
         {
             this.cachedService = cachedService;
             this.mapper = mapper;
             this.shell = shell as DistinctShell;
             SelectedTaskInstanceCompacts = new ReactiveList<DesktopInstanceCompact>();
-            dialogCoordinator = DialogCoordinator.Instance;
+            this.dialogCoordinator = dialogCoordinator;
 
             IObservable<bool> canOpenInstancePage = this
                 .WhenAnyValue(t => t.SelectedInstance,
@@ -54,6 +55,7 @@ namespace ReportServer.Desktop.ViewModel
 
             EditTaskCommand = ReactiveCommand.Create<DesktopFullTask>(task =>
             {
+                if (task == null) return;
                 var name = $"Task {task.Id} editor";
                 this.shell.ShowDistinctView<TaskEditorView>(name,
                     new TaskEditorRequest {Task = task},
@@ -117,6 +119,13 @@ namespace ReportServer.Desktop.ViewModel
             Tasks = cachedService.Tasks;
         }
 
+        public async Task InitCachedService()
+        {
+            var serviceUri = await dialogCoordinator.ShowInputAsync(this, "Login",
+                "Enter working Report service instance url");
+            cachedService.Init(serviceUri);
+        }
+
         private async Task<bool> ShowWarningAffirmativeDialog(string question)
         {
             var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
@@ -130,8 +139,8 @@ namespace ReportServer.Desktop.ViewModel
             if (SelectedInstance != null)
 
             {
-               if(!await ShowWarningAffirmativeDialog
-                   ("Вы действительно хотите удалить информацию о выполненной задаче?")) return;
+                if (!await ShowWarningAffirmativeDialog
+                    ("Вы действительно хотите удалить информацию о выполненной задаче?")) return;
 
                 cachedService.DeleteInstance(SelectedInstance.Id);
                 LoadInstanceCompactsByTaskId(SelectedTask.Id);

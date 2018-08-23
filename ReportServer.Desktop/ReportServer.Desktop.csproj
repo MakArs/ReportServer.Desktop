@@ -273,7 +273,6 @@
     <Compile Include="Views\WpfResources\ViewTemplateControl.xaml.cs">
       <DependentUpon>ViewTemplateControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\Core.cs" />
     <Compile Include="Model\CachedService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

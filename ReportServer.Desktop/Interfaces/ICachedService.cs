@@ -22,6 +22,7 @@ namespace ReportServer.Desktop.Interfaces
         void RefreshRecepientGroups();
         void RefreshReports();
         void RefreshData();
+        bool Init(string serviceUri);
 
         int CreateSchedule(ApiSchedule schedule);
 

@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using Autofac;
 using AutoMapper;
+using MahApps.Metro.Controls.Dialogs;
 using Monik.Client;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
@@ -39,6 +40,12 @@ namespace ReportServer.Desktop
             ConfigureView<TaskEditorViewModel, TaskEditorView>(builder);
 
             ConfigureView<ReportEditorViewModel, ReportEditorView>(builder);
+
+            var dialogCoordinator = DialogCoordinator.Instance;
+
+            builder.RegisterInstance(dialogCoordinator)
+                .As<IDialogCoordinator>()
+                .SingleInstance();
 
             #region monik
 
