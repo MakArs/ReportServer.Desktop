@@ -17,7 +17,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Label  Content="Результаты запусков задачи"/>
+        <Label Margin="0"  Content="Selected task instances list"/>
 
         <DataGrid ColumnWidth="*" Grid.Row="1"
                   ItemsSource="{Binding SelectedTaskInstanceCompacts}"

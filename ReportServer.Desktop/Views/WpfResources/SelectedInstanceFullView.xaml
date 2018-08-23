@@ -10,12 +10,12 @@
         <ResourceDictionary Source="TemplatesDictionary.xaml"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -25,65 +25,53 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.ColumnSpan="4">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Label  Content="Информация об отчёте"/>
-                <Button Grid.Column="1" Margin="0" Command="{Binding OpenPage}" CommandParameter="{Binding SelectedInstance.ViewData}">Открыть отчёт</Button>
-            </Grid>
-        </Border>
+        <Grid Grid.ColumnSpan="4" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="1"  Content="Selected instance information" Margin="2 2 0 2"/>
+            <Button Padding="5" Command="{Binding OpenPage}"
+                    CommandParameter="{Binding SelectedInstance.ViewData}">
+                Open in browser
+            </Button>
+        </Grid>
 
-        <Border Grid.Row="1" >
-            <Label  Content="Start time"/>
-        </Border>
-        <Border Grid.Row="2" >
-            <Label  Content="Duration"/>
-        </Border>
-        <Border Grid.Row="3" >
-            <Label  Content="State"/>
-        </Border>
-        <Border Grid.Row="4" >
-            <Label  Content="Try number"/>
-        </Border>
+        <Label Grid.Row="1"  Content="Start time"/>
 
-        <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" >
-            <Label  Content="Data"/>
-        </Border>
+        <Label Grid.Row="1" Grid.Column="2"  Content="Duration"/>
 
-        <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="2" >
-            <Label  Content="View data"/>
-        </Border>
+        <Label   Grid.Row="2"  Content="State"/>
 
-        <Border Grid.Column="1" Grid.Row="1">
-        <TextBlock  Text="{Binding StringFormat=dd.MM.yy HH:mm, Path= SelectedInstance.StartTime}"/>
-        </Border>
+        <Label Grid.Row="2" Grid.Column="2"  Content="Try number"/>
 
-        <Border Grid.Column="1" Grid.Row="2">
-            <TextBlock Text="{Binding SelectedInstance.Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>
-        </Border>
+        <Label Grid.Row="3" Grid.ColumnSpan="2" Content="Data"/>
 
-        <Border Grid.Column="1" Grid.Row="3">
-            <TextBlock Text="{Binding SelectedInstance.State}"/>
-        </Border>
+        <Label Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Content="View data"/>
 
-        <Border Grid.Column="1" Grid.Row="4">
-            <TextBlock Text="{Binding SelectedInstance.TryNumber}"/>
-        </Border>
+        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"
+                   Padding="20 0 0 0"
+                   Text="{Binding StringFormat=dd.MM.yy HH:mm, Path= SelectedInstance.StartTime}"/>
 
-        <Border Grid.Column="3" Grid.Row="1" Grid.RowSpan="2">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <TextBlock  HorizontalAlignment="Stretch" Text="{Binding SelectedInstance.Data}"/>
+        <TextBlock Grid.Row="1" Grid.Column="3"  HorizontalAlignment="Left"
+                   Padding="20 0 0 0"
+                   Text="{Binding SelectedInstance.Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="1"  HorizontalAlignment="Left"
+                   Padding="20 0 0 0"
+                   Text="{Binding SelectedInstance.State}"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="3"  HorizontalAlignment="Left"
+                   Padding="20 0 0 0"
+                   Text="{Binding SelectedInstance.TryNumber}"/>
+
+        <ScrollViewer Grid.Row="4" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto">
+            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Padding="0 0 20 0" Text="{Binding SelectedInstance.Data}"/>
         </ScrollViewer>
-        </Border>
 
-        <Border Grid.Column="3" Grid.Row="3" Grid.RowSpan="2">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <TextBlock Text="{Binding SelectedInstance.ViewData}"/>
-            </ScrollViewer>
-        </Border>
+        <ScrollViewer Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="2" VerticalScrollBarVisibility="Auto">
+            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Text="{Binding SelectedInstance.ViewData}"/>
+        </ScrollViewer>
 
     </Grid>
 </UserControl>

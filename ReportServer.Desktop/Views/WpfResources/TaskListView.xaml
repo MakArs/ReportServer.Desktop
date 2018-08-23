@@ -23,6 +23,7 @@
                     <KeyBinding Key="Delete"  Command="ApplicationCommands.NotACommand" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
+                <DataGridTextColumn Header = "Id" Binding="{Binding Id}"/>
                 <DataGridTextColumn Header = "Schedule" Binding="{Binding Schedule}"/>
                 <DataGridTextColumn Header = "Report" Binding="{Binding ReportName}"/>
                 <DataGridTextColumn Header = "Recepient group" Binding="{Binding RecepientGroup}"/>

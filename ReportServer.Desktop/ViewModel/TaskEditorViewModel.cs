@@ -124,6 +124,7 @@ namespace ReportServer.Desktop.ViewModel
             if (Id == 0)
             {
                 HasSchedule = true;
+                TryCount = 1;
                 HasRecepients = true;
                 SelectedReport = Reports.FirstOrDefault();
                 ReportId = Reports.FirstOrDefault()?.Id;

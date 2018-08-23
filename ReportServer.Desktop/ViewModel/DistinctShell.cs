@@ -67,7 +67,8 @@ namespace ReportServer.Desktop.ViewModel
             while (tries-- > 0)
             {
                 var serviceUri = await dialogCoordinator.ShowInputAsync(this, "Login",
-                    "Enter working Report service instance url").ConfigureAwait(true);
+                    "Enter working Report service instance url",
+                    new MetroDialogSettings{DefaultText = "http://localhost:12345/"});
 
                 if (!cachedService.Init(serviceUri))
                     continue;

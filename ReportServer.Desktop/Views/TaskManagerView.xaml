@@ -9,7 +9,7 @@
         dialog:DialogParticipation.Register="{Binding}"
         MinHeight="800" MinWidth="1200" BorderThickness="1.5"
        BorderBrush="{DynamicResource AccentColorBrush}">
-    <Grid>
+        <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>

@@ -47,11 +47,10 @@ namespace ReportServer.Desktop.Model
                 GetExecutors();
                 RefreshData();
                 return true;
-                //http://localhost:12345/
             }
             catch (Exception)
             {
-                return false;
+                return true;
             }
         }
 

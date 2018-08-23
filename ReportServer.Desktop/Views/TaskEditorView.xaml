@@ -13,90 +13,92 @@
     <UserControl.Resources>
         <ResourceDictionary Source="WpfResources/TemplatesDictionary.xaml"/>
     </UserControl.Resources>
-
+<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition MinHeight="40" MaxHeight="80"/>
-            <RowDefinition MinHeight="40" MaxHeight="80"/>
-            <RowDefinition MinHeight="40" MaxHeight="80"/>
-            <RowDefinition MinHeight="40" MaxHeight="80"/>
-            <RowDefinition MinHeight="40" MaxHeight="80"/>
-            <RowDefinition MinHeight="40" MaxHeight="80"/>
-            <RowDefinition MinHeight="40" MaxHeight="200"/>
-            <RowDefinition MaxHeight="40"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.3*"/>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="0.3*"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <Border Grid.ColumnSpan="4" >
-            <Grid >
-                <Label  Content="Информация о задаче"/>
-                <Button HorizontalAlignment="Right" Margin="1" Command="{Binding OpenCurrentTaskViewCommand}"
-                    Visibility="{Binding Id,Converter={wpfResources:IntToVisiblity}}">
-                    Сформировать отчёт
-                </Button>
-            </Grid>
-        </Border>
+        <Grid Margin="2 2 2 10" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button HorizontalAlignment="Right" Command="{Binding OpenCurrentTaskViewCommand}"
+                    Visibility="{Binding Id,Converter={wpfResources:IntToVisiblity}}"
+                    Padding="5">
+                Get new instance
+            </Button>
+            <Label  Grid.Column="1"  Content="Task parameters"/>
+        </Grid>
 
-        <Border Grid.Row="1" Background="#F5F5F5">
-            <Grid >
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Margin="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <CheckBox IsChecked="{Binding HasSchedule}" />
-                <Label Grid.Column="1" Content="Schedule"/>
+                <Label Background="White" Grid.Column="1" Content="Schedule"/>
             </Grid>
-        </Border>
 
-        <Border Grid.Row="1" Grid.Column="1">
-            <ComboBox IsEnabled="{Binding HasSchedule}" ItemsSource="{Binding Schedules,
+            <ComboBox Grid.Column="1" Width="300"
+                      Margin="3"
+                      IsEnabled="{Binding HasSchedule}" ItemsSource="{Binding Schedules,
             UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
                       SelectedValuePath="Id"   DisplayMemberPath="Name" 
                       SelectedValue="{Binding ScheduleId, UpdateSourceTrigger=PropertyChanged}"/>
-        </Border>
 
-        <Border Grid.Row="1" Grid.Column="2">
-            <Grid Background="#F5F5F5">
+            <Grid Grid.Row="1" Margin="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <CheckBox IsChecked="{Binding HasRecepients}"/>
-                <Label Grid.Column="1"  Content="Recepient group"/>
+                <Label Background="White" Grid.Column="1"  Content="Recepient group"/>
             </Grid>
-        </Border>
 
-
-        <Border Grid.Row="1" Grid.Column="3">
-            <ComboBox IsEnabled="{Binding HasRecepients}" ItemsSource="{Binding RecepientGroups,
+            <ComboBox Grid.Row="1" Grid.Column="1" Margin="3"
+                      IsEnabled="{Binding HasRecepients}"
+                      ItemsSource="{Binding RecepientGroups,
             UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
                       SelectedValuePath="Id"   DisplayMemberPath="Name" 
                       SelectedValue="{Binding RecepientGroupId, UpdateSourceTrigger=PropertyChanged}"/>
-        </Border>
 
-        <Border Grid.Row="2" >
-            <Label  Content="Try count"/>
-        </Border>
+            <Label Grid.Row="2" Background="White" HorizontalAlignment="Left" 
+                   Margin="18 3 3 3" Content="Report"/>
 
-        <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="0.3*"/>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="0.3*"/>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="0.3*"/>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="0.3*"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Border>
-                <TextBox Text="{Binding TryCount,
+            <ComboBox Grid.Row="2" Grid.Column="1"
+                      Margin="2" Width="300"
+                      ItemsSource="{Binding Reports,
+            UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
+                      SelectedValuePath="Name"  DisplayMemberPath="Name" 
+                      SelectedItem="{Binding SelectedReport}"/>
+
+            <Label Background="White" Grid.Row="3"  HorizontalAlignment="Left"
+                   Margin="18 3 3 3" Content="Try count"/>
+
+            <Border Grid.Row="3" Grid.Column="1" Width="60" HorizontalAlignment="Left" Margin="3">
+                    <TextBox TextAlignment="Left" Text="{Binding TryCount,
             UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}">
                     <i:Interaction.Behaviors>
                         <wpfResources:TextBoxInputBehavior InputMode="DigitInput"/>
@@ -104,117 +106,126 @@
                 </TextBox>
             </Border>
 
-            <Border Grid.Column="1" Grid.ColumnSpan="2">
-                <Grid Background="#F5F5F5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <CheckBox   HorizontalAlignment="Center" 
-                              IsChecked="{Binding HasHtmlBody}"/>
-                    <Label  Grid.Column="1" Content="Html body"/>
-                </Grid>
-            </Border>
+            <Grid Grid.Row="4"   Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox   HorizontalAlignment="Center" 
+                            IsChecked="{Binding HasHtmlBody}"/>
+                <Label Background="White" Grid.Column="1" Content="Html body"/>
+            </Grid>
 
-            <Border Grid.Column="3" Grid.ColumnSpan="2">
-                <Grid Background="#F5F5F5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <CheckBox HorizontalAlignment="Center" 
-                              IsChecked="{Binding HasJsonAttachment}"/>
-                    <Label  Grid.Column="1" Content="Attach *.json"/>
-                </Grid>
-            </Border>
-
-            <Border Grid.Column="5" Grid.ColumnSpan="2">
-                <Grid Background="#F5F5F5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <CheckBox  HorizontalAlignment="Center" 
-                              IsChecked="{Binding HasXlsxAttachment}"/>
-                    <Label Grid.Column="1" Content="Attach *.xlsx"/>
-                </Grid>
-            </Border>
-
-            <Border Grid.Column="7" >
-                <Label  Content="Report"/>
-            </Border>
-
-            <Border Grid.Column="8">
-                <ComboBox  ItemsSource="{Binding Reports,
-            UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
-                      SelectedValuePath="Name"  DisplayMemberPath="Name" 
-                      SelectedItem="{Binding SelectedReport}"/>
-            </Border>
         </Grid>
 
-        <Border Grid.Row="4" Grid.ColumnSpan="4">
-            <Label Content="Параметры выбранного отчёта"/>
-        </Border>
+        <Label Grid.Row="2" Margin="2 2 2 10" Content="Attachments"/>
 
-        <Grid Grid.Row="5" Grid.ColumnSpan="4">
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.3*"/>
-                <ColumnDefinition Width="0.35*"/>
-                <ColumnDefinition Width="0.65*"/>
-                <ColumnDefinition Width="0.3*"/>
-                <ColumnDefinition Width="0.35*"/>
-                <ColumnDefinition Width="0.65*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Border >
-                <Label Content="Report type"/>
-            </Border>
+            <Grid 
+              Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <CheckBox  HorizontalAlignment="Center" 
+                           IsChecked="{Binding HasXlsxAttachment}"/>
+                <Label Background="White" Grid.Column="1" Content="Attach *.xlsx"/>
+            </Grid>
 
-            <Border Grid.Column="1" Background="#F5F5F5">
-                <TextBlock  Text="{Binding SelectedReport.ReportType}"/>
-            </Border>
-
-            <Border Grid.Column="2">
-                <Label Content="Query timeout"/>
-            </Border>
-
-            <Border Grid.Column="3" Background="#F5F5F5">
-                <TextBlock  Text="{Binding SelectedReport.QueryTimeOut}"/>
-            </Border>
-
-            <Border Grid.Column="4">
-                <Label Content="Connection string"/>
-            </Border>
-
-            <Border Grid.Column="5" Background="#F5F5F5">
-                <TextBlock  Text="{Binding SelectedReport.ConnectionString}"/>
-            </Border>
+            <Grid Grid.Row="1"  Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <CheckBox HorizontalAlignment="Center" 
+                          IsChecked="{Binding HasJsonAttachment}"/>
+                <Label Background="White" Grid.Column="1" Content="Attach *.json"/>
+            </Grid>
 
         </Grid>
 
-        <Border Grid.Row="6">
-            <Label Content="Query"/>
-        </Border>
+        <Label Grid.Row="4" Margin="2 2 2 10" 
+               Content="Selected report parameters"/>
 
-        <Border Grid.Row="6" Grid.Column="1" Background="#F5F5F5">
-            <TextBlock Text="{Binding SelectedReport.Query}"/>
-        </Border>
+            <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition  Width="0.5*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="6" Grid.Column="2">
-            <Label Content="View template"/>
-        </Border>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-        <Border Grid.Row="6" Grid.Column="3" Background="#F5F5F5">
-            <TextBlock Text="{Binding SelectedReport.ViewTemplate}"/>
-        </Border>
+                <Grid 
+                    Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Report type"/>
+                    <TextBlock Grid.Column="1"  HorizontalAlignment="Left"
+                               Padding="20 0 0 0" Text="{Binding SelectedReport.ReportType}"/>
+                </Grid>
+                <Grid Grid.Column="1"
+                    Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Query timeout"/>
+                    <TextBlock Grid.Column="1"  HorizontalAlignment="Left"
+                               Padding="20 0 0 0" Text="{Binding SelectedReport.QueryTimeOut}"/>
+                </Grid>
 
-        <!--<Label Grid.Row="1" Grid.Column="2" Content="NeedsArchiving (Future feature)"/>-->
+                <Grid Grid.Column="2"
+                      Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label  Content="Connection string"/>
+                    <TextBlock Grid.Column="1"  HorizontalAlignment="Left"
+                               Padding="20 0 0 0" Text="{Binding SelectedReport.ConnectionString}"/>
+                </Grid>
 
-        <StackPanel Grid.Row="7" Grid.Column="3" Orientation="Horizontal">
-        <Button Command="{Binding SaveChangesCommand}" 
-                IsEnabled="{Binding IsValid}" Width="100">Save</Button>
-        <Button Command="{Binding CancelCommand}" Width="100">Cancel</Button>
-    </StackPanel>
+                <Label Grid.Row="1" Grid.ColumnSpan="2" Content="Query"/>
+                <Label Grid.Row="1" Grid.Column="2" Content="View template"/>
 
-    </Grid>
+                <TextBlock Grid.Row="2" HorizontalAlignment="Left" Padding="20 0 0 0"  Grid.ColumnSpan="2"
+                            VerticalAlignment="Top" Text="{Binding SelectedReport.Query}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="2" Padding="20 0 0 0" HorizontalAlignment="Left" 
+                           VerticalAlignment="Top" Text="{Binding SelectedReport.ViewTemplate}"/>
+            </Grid>
+
+
+        <Grid Grid.Row="6" Margin="0 0 0 50">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                    <ColumnDefinition  Width="0.4*"/>
+            </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+
+                    <Button Command="{Binding SaveChangesCommand}" 
+                IsEnabled="{Binding IsValid}" Height="25" Width="100">Save</Button>
+
+                    <Button Command="{Binding CancelCommand}" Height="25" Width="100">Cancel</Button>
+
+                </StackPanel>
+        </Grid>
+        </Grid>
+</ScrollViewer>
 </UserControl>

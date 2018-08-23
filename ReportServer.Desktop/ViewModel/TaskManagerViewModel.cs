@@ -140,7 +140,7 @@ namespace ReportServer.Desktop.ViewModel
 
             {
                 if (!await ShowWarningAffirmativeDialog
-                    ("Вы действительно хотите удалить информацию о выполненной задаче?")) return;
+                    ("Do you really want to delete this task instance?")) return;
 
                 cachedService.DeleteInstance(SelectedInstance.Id);
                 LoadInstanceCompactsByTaskId(SelectedTask.Id);
@@ -150,7 +150,7 @@ namespace ReportServer.Desktop.ViewModel
             if (SelectedTask != null)
             {
                 if (!await ShowWarningAffirmativeDialog
-                    ("Вы действительно хотите удалить задачу и всю информацию о ней?")) return;
+                    ("Do you really want to delete this task and all it's instances?")) return;
 
                 cachedService.DeleteTask(SelectedTask.Id);
                 cachedService.RefreshData();
