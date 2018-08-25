@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -11,16 +12,21 @@
         <ResourceDictionary Source="TemplatesDictionary.xaml"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Height="auto">
         <Grid>
             <TextBox Visibility="{Binding ReportType,
                 Converter={wpfResources:ReportTypeToVisiblity}}"
+                     HorizontalContentAlignment="Left"
+                     VerticalContentAlignment="Top"
                      Text="{Binding ViewTemplate,UpdateSourceTrigger=PropertyChanged,
-            ValidatesOnDataErrors=True}"/>
+            ValidatesOnDataErrors=True}"
+                     mah:TextBoxHelper.Watermark="Enter HTML view template here"
+                     mah:TextBoxHelper.ClearTextButton="True"/>
 
-            <ComboBox Visibility="{Binding ReportType,
+            <ComboBox Margin="3"  Width="250" Height="auto" VerticalAlignment="Top" 
+                      HorizontalAlignment="Left"
+                Visibility="{Binding ReportType,
                 Converter={wpfResources:AntiReportTypeToVisiblity}}"
-                      HorizontalAlignment="Stretch" 
                       ItemsSource="{Binding ViewTemplates}" 
                       SelectedValue="{Binding ViewTemplate}"
                       HorizontalContentAlignment="Center" />

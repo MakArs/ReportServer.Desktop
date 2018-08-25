@@ -93,7 +93,12 @@ namespace ReportServer.Desktop.ViewModel
             {
                 FullTitle = request.FullId;
                 mapper.Map(request.Report, this);
-                if (Id == 0) Id = null;
+                if (Id == 0)
+                {
+                    Name = "New Report";
+                    Id = null;
+                    QueryTimeOut = 5;
+                }
             }
 
             void Changed(object sender, PropertyChangedEventArgs e)

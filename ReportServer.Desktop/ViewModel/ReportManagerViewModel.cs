@@ -29,13 +29,13 @@ namespace ReportServer.Desktop.ViewModel
             EditReportCommand = ReactiveCommand.Create<DesktopReport>(report =>
             {
                 if (report == null) return;
-                var name = $"Report \"{report.Name}\" editor";
+                //  var name = $"Report \"{report.Name}\" editor";
 
                 var fullName = $"Report {report.Id} editor";
 
                 this.shell.ShowDistinctView<ReportEditorView>(fullName,
                     new ReportEditorRequest {Report = report, FullId = fullName},
-                    new UiShowOptions {Title = name});
+                    new UiShowOptions {Title = fullName});
             });
         }
 

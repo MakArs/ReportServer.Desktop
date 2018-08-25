@@ -3,13 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:interfaces="clr-namespace:ReportServer.Desktop.Interfaces"
              xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
              dialogs:DialogParticipation.Register="{Binding}"
              xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:entities="clr-namespace:ReportServer.Desktop.Entities"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -17,123 +16,129 @@
         <ResourceDictionary Source="WpfResources/TemplatesDictionary.xaml"/>
     </UserControl.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="40"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+            <Label  Margin="2 2 2 10" Content="Report parameters"/>
 
-        <Border Grid.ColumnSpan="6">
-            <Label  Content="Параметры отчёта"/>
-        </Border>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-        <Border Grid.Row="1">
-            <Label Content="Id"/>
-        </Border>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="1" Grid.Column="1">
-            <TextBlock Text="{Binding Id}"/>
-        </Border>
+                <Label  Background="White" HorizontalAlignment="Left" 
+                   Margin="18 3 3 3" Content="Name"/>
 
-        <Border Grid.Row="1" Grid.Column="2">
-            <Label Content="Name"/>
-        </Border>
+                <Border Grid.Column="1" Width="250" HorizontalAlignment="Left" Margin="3">
+                    <TextBox TextWrapping="NoWrap"
+                    AcceptsReturn="False"
+                    TextAlignment="Left" Text="{Binding Name,
+            UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                </Border>
 
-        <Border Grid.Row="1" Grid.Column="3">
-            <TextBox Text="{Binding Name,UpdateSourceTrigger=PropertyChanged,
-                ValidatesOnDataErrors=True}"
-                     TextWrapping="NoWrap"
-                     AcceptsReturn="False"/>
-        </Border>
+                <Label  Background="White" Grid.Row="1" HorizontalAlignment="Left" 
+                        Margin="18 3 3 3" Content="Query timeout"/>
 
-        <Border Grid.Row="1" Grid.Column="4">
-            <Label Content="Query timeout"/>
-        </Border>
-
-        <Border Grid.Row="1" Grid.Column="5">
-            <TextBox Text="{Binding QueryTimeOut,
+                <Border Grid.Row="1" Grid.Column="1" Width="60"
+                        HorizontalAlignment="Left" Margin="3">
+                    <TextBox Text="{Binding QueryTimeOut,
                 UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}">
-                <i:Interaction.Behaviors>
-                    <wpfResources:TextBoxInputBehavior InputMode="DigitInput"/>
-                </i:Interaction.Behaviors>
-            </TextBox>
-        </Border>
+                        <i:Interaction.Behaviors>
+                            <wpfResources:TextBoxInputBehavior InputMode="DigitInput"/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                </Border>
 
-        <Border Grid.Row="2">
-            <Label Content="Connection string"/>
-        </Border>
+                <Label  Background="White" Grid.Row="1" HorizontalAlignment="Left" 
+                        Margin="18 3 3 3" Content="Query timeout"/>
 
-        <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3">
-            <TextBox Text="{Binding ConnectionString,
+                <Label  Background="White" Grid.Row="2" HorizontalAlignment="Left" 
+                        Margin="18 3 3 3" Content="Connection string" />
+
+                <Border Grid.Row="2" Grid.Column="1" Width="650"
+                        HorizontalAlignment="Left" Margin="3">
+                    <TextBox Text="{Binding ConnectionString,
                 UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                       IsEnabled="{Binding ReportType,
+                             IsEnabled="{Binding ReportType,
                 Converter={wpfResources:ReportTypeToBool}}"
-                     TextWrapping="NoWrap"
-                     AcceptsReturn="False"/>
-        </Border>
+                             TextWrapping="NoWrap"
+                             AcceptsReturn="False"
+                             mah:TextBoxHelper.Watermark="Enter connection string to database for this report"
+                             mah:TextBoxHelper.ClearTextButton="True"/>
+                </Border>
 
-        <Border Grid.Row="2" Grid.Column="4">
-            <Label Content="Report type"/>
-        </Border>
+                <Label  Background="White" Grid.Row="3" HorizontalAlignment="Left" 
+                        Margin="18 3 3 3" Content="Report type"/>
 
-        <ComboBox Grid.Row="2" Grid.Column="5"
-                  BorderThickness="1" BorderBrush="Black" Margin="0.5"
-                  ItemsSource="{Binding Source={wpfResources:EnumBindingSource
+                <ComboBox Grid.Row="3" Grid.Column="1" Margin="3"
+                          Width="250" HorizontalAlignment="Left"
+                          ItemsSource="{Binding Source={wpfResources:EnumBindingSource
                 {x:Type entities:ReportType}}}"
-                      SelectedValue="{Binding ReportType}"/>
-        <Grid Grid.Row="3" Grid.ColumnSpan="6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+                          SelectedValue="{Binding ReportType}"/>
+            </Grid>
 
-            <Border>
-                <Label Content="View template"/>
-            </Border>
+            <Label  Margin="2 10 2 10" Grid.Row="2" Content="Data templates"/>
 
-            <Border Grid.Column="1">
-                <Label Content="Query"/>
-            </Border>
-        </Grid>
+            <Grid Grid.Row="3">
 
-        <Grid Grid.Row="4" Grid.ColumnSpan="6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-            <Border>
-                <ScrollViewer MaxHeight="500" MinHeight="100" Height="auto" 
-                              VerticalScrollBarVisibility="Auto">
-                <wpfResources:ViewTemplateControl  Height="auto"/>
-            </ScrollViewer>
-            </Border>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="1">
-                <ScrollViewer MaxHeight="500" MinHeight="100" Height="auto"
-                              VerticalScrollBarVisibility="Auto">
-                <wpfResources:QueryControl Height="auto"/>
+                <Label Background="White"  HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Height="auto"
+                        Margin="18 3 3 3" Content="Query"/>
+
+                <ScrollViewer Height="auto" Grid.Column="1"
+                                  VerticalScrollBarVisibility="Auto">
+                    <wpfResources:QueryControl Height="auto"/>
                 </ScrollViewer>
-            </Border>
-        </Grid>
 
-        <StackPanel  Grid.Column="4" Grid.ColumnSpan="2" Grid.Row="5" Orientation="Horizontal">
-            <Button Command="{Binding SaveChangesCommand}" 
-                        IsEnabled="{Binding IsValid}" Width="100">Save</Button>
-            <Button Command="{Binding CancelCommand}" Width="100">Cancel</Button>
-        </StackPanel>
-    </Grid>
+                <Label Grid.Row="1" Background="White"  HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Height="auto"
+                        Margin="18 3 3 3" Content="View template"/>
+
+                <ScrollViewer Height="auto" Grid.Row="1" Grid.Column="1"
+                                  VerticalScrollBarVisibility="Auto">
+                    <wpfResources:ViewTemplateControl Height="auto"/>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid Grid.Row="4" Margin="0 0 0 50">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition  Width="0.4*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+
+                    <Button Command="{Binding SaveChangesCommand}" 
+                                IsEnabled="{Binding IsValid}" Height="25" Width="100">Save</Button>
+
+                    <Button Command="{Binding CancelCommand}" Height="25" Width="100">Cancel</Button>
+
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

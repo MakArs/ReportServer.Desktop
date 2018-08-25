@@ -11,9 +11,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <DataGrid
-
-                  ColumnWidth="*"
+        <DataGrid ColumnWidth="*"
                   ItemsSource="{Binding Tasks}" 
                   SelectedItem="{Binding SelectedTask}">
             <DataGrid.InputBindings>
@@ -37,3 +35,4 @@
         </DataGrid>
     </Grid>
 </UserControl>
+

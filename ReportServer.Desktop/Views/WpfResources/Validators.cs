@@ -46,12 +46,10 @@ namespace ReportServer.Desktop.Views.WpfResources
 
             RuleFor(red => red.ViewTemplate)
                 .NotNull()
-                .NotEmpty()
                 .WithMessage("This field cannot be empty");
 
             RuleFor(red => red.Query)
                 .NotNull()
-                .NotEmpty()
                 .WithMessage("This field cannot be empty");
         }
     }

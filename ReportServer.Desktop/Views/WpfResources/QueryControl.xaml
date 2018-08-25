@@ -4,20 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary Source="TemplatesDictionary.xaml"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid   Height="auto" >
         <TextBox Visibility="{Binding ReportType,
             Converter={wpfResources:ReportTypeToVisiblity}}"
+                 HorizontalContentAlignment="Left"
+                 VerticalContentAlignment="Top"
                  Text="{Binding Query,UpdateSourceTrigger=PropertyChanged,
-            ValidatesOnDataErrors=True}"/>
-        <ComboBox Visibility="{Binding ReportType,
+            ValidatesOnDataErrors=True}"
+                 mah:TextBoxHelper.Watermark=
+                 "Enter query for connected database here. Attention: only one database connection available in common reports"
+                 mah:TextBoxHelper.ClearTextButton="True"/>
+
+        <ComboBox  Margin="3"  Width="250" Height="auto" VerticalAlignment="Top" HorizontalAlignment="Left"
+            Visibility="{Binding ReportType,
             Converter={wpfResources:AntiReportTypeToVisiblity}}"
-                  HorizontalAlignment="Stretch"
                   ItemsSource="{Binding QueryTemplates}"
                   SelectedValue="{Binding Query}" 
                   HorizontalContentAlignment="Center"

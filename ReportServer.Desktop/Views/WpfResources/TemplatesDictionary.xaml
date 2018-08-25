@@ -65,7 +65,8 @@
         <Setter Property="Margin" Value="2"/>
     </Style>
 
-    <Style TargetType="TextBox">
+    <Style TargetType="TextBox"
+           BasedOn="{StaticResource MetroTextBox}">
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment"  Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>

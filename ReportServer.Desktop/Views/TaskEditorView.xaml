@@ -13,8 +13,9 @@
     <UserControl.Resources>
         <ResourceDictionary Source="WpfResources/TemplatesDictionary.xaml"/>
     </UserControl.Resources>
-<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-    <Grid>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -118,7 +119,7 @@
 
         </Grid>
 
-        <Label Grid.Row="2" Margin="2 2 2 10" Content="Attachments"/>
+        <Label Grid.Row="2" Margin="2 10 2 10" Content="Attachments"/>
 
         <Grid Grid.Row="3">
             <Grid.RowDefinitions>
@@ -153,7 +154,7 @@
 
         </Grid>
 
-        <Label Grid.Row="4" Margin="2 2 2 10" 
+        <Label Grid.Row="4" Margin="2 10 2 10" 
                Content="Selected report parameters"/>
 
             <Grid Grid.Row="5">
