@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms.VisualStyles;
-using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReportServer.Desktop.Entities;
@@ -12,7 +10,7 @@ using ReportServer.Desktop.Views;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 
-namespace ReportServer.Desktop.ViewModel
+namespace ReportServer.Desktop.ViewModels
 {
 
     public class DistinctShell : Shell
@@ -53,7 +51,7 @@ namespace ReportServer.Desktop.ViewModel
                         FullId = "Creating new report"
                     },
                     new UiShowOptions {Title = "Creating new report"}));
-
+           
             DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (DocumentPane.Children.First(child => child.IsActive).Content is
@@ -68,7 +66,11 @@ namespace ReportServer.Desktop.ViewModel
             {
                 var serviceUri = await dialogCoordinator.ShowInputAsync(this, "Login",
                     "Enter working Report service instance url",
-                    new MetroDialogSettings{DefaultText = "http://localhost:12345/"});
+                    new MetroDialogSettings
+                    {
+                        DefaultText = "http://localhost:12345/",
+                        DefaultButtonFocus = MessageDialogResult.Affirmative
+                    });
 
                 if (!cachedService.Init(serviceUri))
                     continue;
@@ -78,6 +80,9 @@ namespace ReportServer.Desktop.ViewModel
 
                 ShowView<ReportManagerView>(
                     options: new UiShowOptions {Title = "Report Manager", CanClose = false});
+
+                ShowView<RecepientManagerView>(
+                    options: new UiShowOptions { Title = "Recepient Manager", CanClose = false });
                 return;
             }
 

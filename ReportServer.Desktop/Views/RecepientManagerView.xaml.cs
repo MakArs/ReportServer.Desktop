@@ -1,14 +1,13 @@
-﻿using ReportServer.Desktop.ViewModel;
-using ReportServer.Desktop.ViewModels;
+﻿using ReportServer.Desktop.ViewModels;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.Views
 {
-    public partial class ReportEditorView : IView
+    public partial class RecepientManagerView : IView
     {
-        public ReportEditorView(ReportEditorViewModel viewModel)
+        public RecepientManagerView(RecepientManagerViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;

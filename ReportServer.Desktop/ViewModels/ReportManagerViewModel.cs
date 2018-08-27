@@ -9,7 +9,7 @@ using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.ViewModel
+namespace ReportServer.Desktop.ViewModels
 {
     public class ReportManagerViewModel : ViewModelBase, IInitializableViewModel
     {

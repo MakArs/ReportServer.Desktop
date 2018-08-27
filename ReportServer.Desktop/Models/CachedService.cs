@@ -5,16 +5,15 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
-using ReportServer.Desktop.Interfaces;
 using Gerakul.HttpUtils.Core;
 using Gerakul.HttpUtils.Json;
-using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReportServer.Desktop.Entities;
+using ReportServer.Desktop.Interfaces;
 using Ui.Wpf.Common;
 
-namespace ReportServer.Desktop.Model
+namespace ReportServer.Desktop.Models
 {
     public class CachedService : ICachedService
     {
@@ -128,7 +127,7 @@ namespace ReportServer.Desktop.Model
             ViewExecutors.PublishCollection(client
                 .Get<List<string>>("/api/v1/reports/customviewexecutors/"));
         }
-
+        
         public async Task<string> GetCurrentTaskViewById(int taskId)
         {
 
@@ -175,6 +174,15 @@ namespace ReportServer.Desktop.Model
 
             client.Put($"/api/v1/reports/{report.Id}", report);
             return report.Id;
+        }
+
+        public int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group)
+        {
+            if (group.Id == null)
+                return client.Post("/api/v1/recepientgroups/", group);
+
+            client.Put($"/api/v1/recepientgroups/{group.Id}", group);
+            return group.Id;
         }
 
     }

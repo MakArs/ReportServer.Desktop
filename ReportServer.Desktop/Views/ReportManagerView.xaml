@@ -11,7 +11,23 @@
     </UserControl.Resources>
 
     <Grid>
-        <DataGrid ColumnWidth="*"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.ColumnSpan="4" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="1"  Content="Current reports list" Margin="2 2 0 2"/>
+            <Button Padding="5" Command="{Binding Shell.CreateReportCommand}">
+                Add new report
+            </Button>
+        </Grid>
+
+        <DataGrid Grid.Row="1" ColumnWidth="*"
                   ItemsSource="{Binding Reports}"  
                   SelectedItem="{Binding SelectedReport,Mode=OneWayToSource}">
             <DataGrid.InputBindings>

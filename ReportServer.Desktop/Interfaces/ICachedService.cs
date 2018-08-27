@@ -31,6 +31,7 @@ namespace ReportServer.Desktop.Interfaces
 
         int? CreateOrUpdateTask(ApiTask fullTask);
         int? CreateOrUpdateReport(ApiReport report);
+        int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group);
 
         Task<string> GetCurrentTaskViewById(int taskId);
     }

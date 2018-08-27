@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.ViewModel;
+using ReportServer.Desktop.ViewModels;
 
 namespace ReportServer.Desktop.Views.WpfResources
 {
@@ -35,8 +36,7 @@ namespace ReportServer.Desktop.Views.WpfResources
                 .WithMessage("You should set min 1 and max 300 seconds timeout for query");
 
             RuleFor(red => red.Name)
-                .NotNull()
-                .NotEmpty()
+                .Must(name => !string.IsNullOrEmpty(name))
                 .WithMessage("This field cannot be empty");
 
             RuleFor(red => red.ConnectionString)
@@ -45,11 +45,25 @@ namespace ReportServer.Desktop.Views.WpfResources
                 .WithMessage("This field cannot be empty");
 
             RuleFor(red => red.ViewTemplate)
-                .NotNull()
+                .Must(viewTemplate => !string.IsNullOrEmpty(viewTemplate))
                 .WithMessage("This field cannot be empty");
 
             RuleFor(red => red.Query)
-                .NotNull()
+                .Must(query => !string.IsNullOrEmpty(query))
+                .WithMessage("This field cannot be empty");
+        }
+    }
+
+    public class RecepientGroupEditorValidator : AbstractValidator<RecepientEditorViewModel>
+    {
+        public RecepientGroupEditorValidator()
+        { 
+            RuleFor(red => red.Name)
+                .Must(name => !string.IsNullOrEmpty(name))
+                .WithMessage("This field cannot be empty");
+
+            RuleFor(red => red.Addresses)
+                .Must(addresses => !string.IsNullOrEmpty(addresses))
                 .WithMessage("This field cannot be empty");
         }
     }

@@ -5,8 +5,9 @@ using MahApps.Metro.Controls.Dialogs;
 using Monik.Client;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
-using ReportServer.Desktop.Model;
+using ReportServer.Desktop.Models;
 using ReportServer.Desktop.ViewModel;
+using ReportServer.Desktop.ViewModels;
 using ReportServer.Desktop.Views;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
@@ -40,6 +41,10 @@ namespace ReportServer.Desktop
             ConfigureView<TaskEditorViewModel, TaskEditorView>(builder);
 
             ConfigureView<ReportEditorViewModel, ReportEditorView>(builder);
+
+            ConfigureView<RecepientManagerViewModel, RecepientManagerView>(builder);
+
+            builder.RegisterType<RecepientEditorViewModel>();
 
             var dialogCoordinator = DialogCoordinator.Instance;
 
@@ -144,6 +149,10 @@ namespace ReportServer.Desktop
             CreateMap<DesktopFullTask, TaskEditorViewModel>();
 
             CreateMap<DesktopReport, ReportEditorViewModel>();
+
+            CreateMap<ApiRecepientGroup, RecepientEditorViewModel>();
+            CreateMap<RecepientEditorViewModel, ApiRecepientGroup>();
+
             CreateMap<ReportEditorViewModel, ApiReport>()
                 .ForMember("ReportType", opt => opt.MapFrom(s => (int)s.ReportType));
         }

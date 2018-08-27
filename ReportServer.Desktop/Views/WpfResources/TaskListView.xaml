@@ -11,7 +11,24 @@
     </UserControl.Resources>
 
     <Grid>
-        <DataGrid ColumnWidth="*"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+
+        <Grid Grid.ColumnSpan="4" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="1"  Content="Current tasks list" Margin="2 2 0 2"/>
+            <Button Padding="5" Command="{Binding Shell.CreateTaskCommand}">
+                Add new task
+            </Button>
+        </Grid>
+
+        <DataGrid Grid.Row="1" ColumnWidth="*"
                   ItemsSource="{Binding Tasks}" 
                   SelectedItem="{Binding SelectedTask}">
             <DataGrid.InputBindings>
@@ -21,12 +38,12 @@
                     <KeyBinding Key="Delete"  Command="ApplicationCommands.NotACommand" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
-                <DataGridTextColumn Header = "Id" Binding="{Binding Id}"/>
+                <DataGridTextColumn Header = "Id" Width="0.5*" Binding="{Binding Id}"/>
                 <DataGridTextColumn Header = "Schedule" Binding="{Binding Schedule}"/>
                 <DataGridTextColumn Header = "Report" Binding="{Binding ReportName}"/>
                 <DataGridTextColumn Header = "Recepient group" Binding="{Binding RecepientGroup}"/>
-                <DataGridTextColumn Header = "Try count" Binding="{Binding TryCount}"/>
-                <DataGridTextColumn Header = "Query timeout" Binding="{Binding QueryTimeOut}"/>
+                <DataGridTextColumn Header = "Try count" Width="0.5*" Binding="{Binding TryCount}"/>
+                <DataGridTextColumn Header = "Query timeout" Width="0.5*" Binding="{Binding QueryTimeOut}"/>
                 <DataGridTextColumn Header = "Report type" Binding="{Binding ReportType}"/>
                 <DataGridTextColumn Header = "Html body" Binding="{Binding HasHtmlBody}"/>
                 <DataGridTextColumn Header = "Json attachment" Binding="{Binding HasJsonAttachment}"/>

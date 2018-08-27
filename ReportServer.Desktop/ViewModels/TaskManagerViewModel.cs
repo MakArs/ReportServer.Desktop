@@ -15,13 +15,13 @@ using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.ViewModel
+namespace ReportServer.Desktop.ViewModels
 {
     public class TaskManagerViewModel : ViewModelBase, IInitializableViewModel, IDeleteableViewModel
     {
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
-        private readonly DistinctShell shell;
+        public  DistinctShell Shell { get; }
         private readonly IDialogCoordinator dialogCoordinator;
 
         public ReactiveList<DesktopFullTask> Tasks { get; set; }
@@ -42,7 +42,7 @@ namespace ReportServer.Desktop.ViewModel
         {
             this.cachedService = cachedService;
             this.mapper = mapper;
-            this.shell = shell as DistinctShell;
+            Shell = shell as DistinctShell;
             SelectedTaskInstanceCompacts = new ReactiveList<DesktopInstanceCompact>();
             this.dialogCoordinator = dialogCoordinator;
 
@@ -57,7 +57,7 @@ namespace ReportServer.Desktop.ViewModel
             {
                 if (task == null) return;
                 var name = $"Task {task.Id} editor";
-                this.shell.ShowDistinctView<TaskEditorView>(name,
+                Shell.ShowDistinctView<TaskEditorView>(name,
                     new TaskEditorRequest {Task = task},
                     new UiShowOptions {Title = name});
             });
@@ -117,13 +117,6 @@ namespace ReportServer.Desktop.ViewModel
             RecepientGroups = cachedService.RecepientGroups;
             Reports = cachedService.Reports;
             Tasks = cachedService.Tasks;
-        }
-
-        public async Task InitCachedService()
-        {
-            var serviceUri = await dialogCoordinator.ShowInputAsync(this, "Login",
-                "Enter working Report service instance url");
-            cachedService.Init(serviceUri);
         }
 
         private async Task<bool> ShowWarningAffirmativeDialog(string question)

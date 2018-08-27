@@ -186,6 +186,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\RecepientManagerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ScheduleManagerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\WpfResources\QueryControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -224,15 +232,22 @@
     </Compile>
     <Compile Include="Entities\CachedServiceEntities.cs" />
     <Compile Include="Interfaces\IDeleteableViewModel.cs" />
-    <Compile Include="Model\ViewRequests.cs" />
-    <Compile Include="ViewModel\DistinctShell.cs" />
+    <Compile Include="Models\ViewRequests.cs" />
+    <Compile Include="ViewModels\DistinctShell.cs" />
     <Compile Include="Interfaces\ISaveableViewModel.cs" />
-    <Compile Include="ViewModel\ReportEditorViewModel.cs" />
-    <Compile Include="ViewModel\ReportManagerViewModel.cs" />
-    <Compile Include="ViewModel\TaskEditorViewModel.cs" />
-    <Compile Include="ViewModel\TaskManagerViewModel.cs" />
+    <Compile Include="ViewModels\RecepientManagerViewModel.cs" />
+    <Compile Include="ViewModels\ReportEditorViewModel.cs" />
+    <Compile Include="ViewModels\ReportManagerViewModel.cs" />
+    <Compile Include="ViewModels\TaskEditorViewModel.cs" />
+    <Compile Include="ViewModels\TaskManagerViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RecepientManagerView.xaml.cs">
+      <DependentUpon>RecepientManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ScheduleManagerView.xaml.cs">
+      <DependentUpon>ScheduleManagerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WpfResources\NumericTextBoxBehavior.cs" />
     <Compile Include="BootsTrap.cs" />
@@ -277,7 +292,7 @@
     <Compile Include="Views\WpfResources\ViewTemplateControl.xaml.cs">
       <DependentUpon>ViewTemplateControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\CachedService.cs" />
+    <Compile Include="Models\CachedService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -14,7 +14,7 @@ using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.ViewModel
+namespace ReportServer.Desktop.ViewModels
 {
     public class ReportEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
@@ -78,10 +78,10 @@ namespace ReportServer.Desktop.ViewModel
                 {
                     Query = type == ReportType.Custom
                         ? QueryTemplates.FirstOrDefault()
-                        : "";
+                        : null;
                     ViewTemplate = type == ReportType.Custom
                         ? ViewTemplates.FirstOrDefault()
-                        : "";
+                        : null;
                     this.RaisePropertyChanged(nameof(ConnectionString));
                 });
 
@@ -98,6 +98,7 @@ namespace ReportServer.Desktop.ViewModel
                     Name = "New Report";
                     Id = null;
                     QueryTimeOut = 5;
+                    ReportType = ReportType.Common;
                 }
             }
 
