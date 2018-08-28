@@ -83,6 +83,9 @@ namespace ReportServer.Desktop.ViewModels
 
                 ShowView<RecepientManagerView>(
                     options: new UiShowOptions { Title = "Recepient Manager", CanClose = false });
+
+                ShowView<CronEditorView>(
+                    options: new UiShowOptions { Title = "CronEditor", CanClose = false });
                 return;
             }
 

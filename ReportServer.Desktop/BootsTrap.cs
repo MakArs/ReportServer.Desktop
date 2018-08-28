@@ -44,6 +44,8 @@ namespace ReportServer.Desktop
 
             ConfigureView<RecepientManagerViewModel, RecepientManagerView>(builder);
 
+            ConfigureView<CronStringCreator, CronEditorView>(builder);
+
             builder.RegisterType<RecepientEditorViewModel>();
 
             var dialogCoordinator = DialogCoordinator.Instance;

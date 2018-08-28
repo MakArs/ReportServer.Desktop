@@ -165,8 +165,19 @@
 
                 </StackPanel>
             </Grid>
-
         </Grid>
     </DataTemplate>
+
+    <Style  TargetType="ListViewItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Border Name="Border" BorderBrush="Transparent" BorderThickness="0">
+                        <ContentPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>
