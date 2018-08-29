@@ -188,7 +188,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Views\CronEditorView.xaml">
+    <Page Include="Views\WpfResources\CronEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -242,7 +242,7 @@
     </Compile>
     <Compile Include="Entities\CachedServiceEntities.cs" />
     <Compile Include="Interfaces\IDeleteableViewModel.cs" />
-    <Compile Include="Models\CronStringCreator.cs" />
+    <Compile Include="ViewModels\CronStringBuilderViewModel.cs" />
     <Compile Include="Models\ViewRequests.cs" />
     <Compile Include="ViewModels\DistinctShell.cs" />
     <Compile Include="Interfaces\ISaveableViewModel.cs" />
@@ -251,7 +251,7 @@
     <Compile Include="ViewModels\ReportManagerViewModel.cs" />
     <Compile Include="ViewModels\TaskEditorViewModel.cs" />
     <Compile Include="ViewModels\TaskManagerViewModel.cs" />
-    <Compile Include="Views\CronEditorView.xaml.cs">
+    <Compile Include="Views\WpfResources\CronEditorView.xaml.cs">
       <DependentUpon>CronEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">

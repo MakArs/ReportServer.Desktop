@@ -7,6 +7,7 @@ using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Model;
 using ReportServer.Desktop.Views;
+using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 

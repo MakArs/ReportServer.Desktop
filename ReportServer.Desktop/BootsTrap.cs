@@ -9,6 +9,7 @@ using ReportServer.Desktop.Models;
 using ReportServer.Desktop.ViewModel;
 using ReportServer.Desktop.ViewModels;
 using ReportServer.Desktop.Views;
+using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 using MainWindow = ReportServer.Desktop.Views.MainWindow;
@@ -44,7 +45,7 @@ namespace ReportServer.Desktop
 
             ConfigureView<RecepientManagerViewModel, RecepientManagerView>(builder);
 
-            ConfigureView<CronStringCreator, CronEditorView>(builder);
+            ConfigureView<CronStringBuilderViewModel, CronEditorView>(builder);
 
             builder.RegisterType<RecepientEditorViewModel>();
 

@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-                    xmlns:viewModels="clr-namespace:ReportServer.Desktop.ViewModels">
+                    xmlns:viewModels="clr-namespace:ReportServer.Desktop.ViewModels"
+                    xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources">
 
     <Style x:Key="MyColumnHeader" 
          BasedOn="{StaticResource MetroDataGridColumnHeader}" 
@@ -29,8 +30,7 @@
 
     <Style TargetType="Button">
         <Setter Property="Background" Value="#F5F5F5"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Margin" Value="2"/>
+        <Setter Property="Margin" Value="2.5"/>
     </Style>
 
     <Style TargetType="DataGrid">
@@ -59,7 +59,7 @@
     </Style>
 
     <Style TargetType="Label">
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="VerticalContentAlignment"  Value="Center"/>
         <Setter Property="FontWeight" Value="DemiBold"/>
         <Setter Property="Background" Value="#F5F5F5"/>
@@ -179,5 +179,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <wpfResources:RangeToString x:Key="TwoBoxesConverter"/>
 
 </ResourceDictionary>

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReportServer.Desktop.Models;
+using ReportServer.Desktop.ViewModels;
 
 namespace ReportServer.Desktop.Views.WpfResources
 {
@@ -93,7 +96,7 @@ namespace ReportServer.Desktop.Views.WpfResources
                                        CultureInfo culture)
         {
             if (value == null) return Visibility.Collapsed;
-            return (int?) value >0 ? Visibility.Visible : Visibility.Collapsed;
+            return (int?) value > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 
@@ -102,7 +105,7 @@ namespace ReportServer.Desktop.Views.WpfResources
         public override object Convert(object value, Type targetType, object parameter,
                                        CultureInfo culture)
         {
-            if (value == null) return true;
+            if (value               == null) return true;
             return value.ToString() != "Custom";
         }
     }
@@ -124,6 +127,88 @@ namespace ReportServer.Desktop.Views.WpfResources
         {
             if (value == null) return Visibility.Hidden;
             return (bool) value ? Visibility.Visible : Visibility.Hidden;
+        }
+    }
+
+    public class MoreThenOneToVisibility : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
+        {
+            return (int?) value > 1 ? Visibility.Visible : Visibility.Hidden;
+        }
+    }
+
+    public class ParsingCategoryToBool : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
+        {
+            return (ParsingCategory) value != ParsingCategory.All;
+        }
+    }
+
+    public class IsRangeToVisibility : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
+        {
+            return (ParsingCategory) value == ParsingCategory.Range
+                ? Visibility.Visible
+                : Visibility.Hidden;
+        }
+    }
+
+    public class IsNotValueToVisibility : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
+        {
+            return (ParsingCategory)value == ParsingCategory.Value
+                ? Visibility.Hidden
+                : Visibility.Visible;
+        }
+    }
+
+    public class RangeToString : BaseConverter
+    {
+        private readonly string[] values = new string[2];
+
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
+        {
+            if (value == null || !value.ToString().Contains('-'))
+                return Binding.DoNothing;
+
+            var gotValues = value.ToString().Split('-');
+
+            if (!int.TryParse(parameter?.ToString(), out var part)
+                || part < 0
+                || part >= values.Length
+                || part >= gotValues.Length)
+                return Binding.DoNothing;
+
+            if (string.IsNullOrEmpty(gotValues[part]) ||
+                !int.TryParse(gotValues[part], out _))
+                values[part] = "0";
+
+            values[part] = gotValues[part];
+
+            return values[part];
+        }
+
+        public override object ConvertBack(object value, Type targetType, object parameter,
+                                           CultureInfo culture)
+        {
+            if (!int.TryParse(parameter?.ToString(), out var part)
+                || part < 0
+                || part >= values.Length)
+                return Binding.DoNothing;
+
+            values[part] = (string) value;
+
+            var t=  string.Join("-", values);
+            return t;
         }
     }
 }
