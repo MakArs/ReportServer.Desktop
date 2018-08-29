@@ -6,7 +6,6 @@ using Monik.Client;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
-using ReportServer.Desktop.ViewModel;
 using ReportServer.Desktop.ViewModels;
 using ReportServer.Desktop.Views;
 using ReportServer.Desktop.Views.WpfResources;
@@ -45,7 +44,9 @@ namespace ReportServer.Desktop
 
             ConfigureView<RecepientManagerViewModel, RecepientManagerView>(builder);
 
-            ConfigureView<CronStringBuilderViewModel, CronEditorView>(builder);
+            ConfigureView<CronEditorViewModel, CronEditorView>(builder);
+
+            ConfigureView<ScheduleManagerViewModel,ScheduleManagerView>(builder);
 
             builder.RegisterType<RecepientEditorViewModel>();
 

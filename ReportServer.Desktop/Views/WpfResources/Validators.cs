@@ -1,6 +1,7 @@
-﻿using FluentValidation;
+﻿using System;
+using CronExpressionDescriptor;
+using FluentValidation;
 using ReportServer.Desktop.Entities;
-using ReportServer.Desktop.ViewModel;
 using ReportServer.Desktop.ViewModels;
 
 namespace ReportServer.Desktop.Views.WpfResources
@@ -65,6 +66,34 @@ namespace ReportServer.Desktop.Views.WpfResources
             RuleFor(red => red.Addresses)
                 .Must(addresses => !string.IsNullOrEmpty(addresses))
                 .WithMessage("This field cannot be empty");
+        }
+    }
+
+    public class CronEditorValidator : AbstractValidator<CronEditorViewModel>
+    {
+        public CronEditorValidator()
+        {
+            RuleFor(red => red.Name)
+                .Must(name => !string.IsNullOrEmpty(name))
+                .WithMessage("This field cannot be empty");
+
+            RuleFor(red => red.FullExpression)
+                .Must(TryGetDescription)
+                .WithMessage("Can not decrypt such schedule");
+
+        }
+
+        private bool TryGetDescription(string expr)
+        {
+            try
+            {
+                var _ = ExpressionDescriptor.GetDescription(expr);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
     }
 }

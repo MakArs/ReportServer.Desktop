@@ -142,9 +142,15 @@ namespace ReportServer.Desktop.Models
             return apiAnswer.Body;
         }
 
-        public int CreateSchedule(ApiSchedule schedule)
+        public int? CreateOrUpdateSchedule(ApiSchedule schedule)
         {
-            return client.Post("/schedules", schedule);
+
+            if (schedule.Id == 0)
+                return client.Post("/api/v1/schedules/", schedule);
+
+            client.Put($"/api/v1/schedules/{schedule.Id}", schedule);
+
+            return schedule.Id;
         }
 
         public void DeleteTask(int id)

@@ -24,7 +24,6 @@ namespace ReportServer.Desktop.Interfaces
         void RefreshData();
         bool Init(string serviceUri);
 
-        int CreateSchedule(ApiSchedule schedule);
 
         void DeleteTask(int id);
         void DeleteInstance(int id);
@@ -32,6 +31,7 @@ namespace ReportServer.Desktop.Interfaces
         int? CreateOrUpdateTask(ApiTask fullTask);
         int? CreateOrUpdateReport(ApiReport report);
         int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group);
+        int? CreateOrUpdateSchedule(ApiSchedule schedule);
 
         Task<string> GetCurrentTaskViewById(int taskId);
     }

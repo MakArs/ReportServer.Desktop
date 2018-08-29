@@ -242,13 +242,14 @@
     </Compile>
     <Compile Include="Entities\CachedServiceEntities.cs" />
     <Compile Include="Interfaces\IDeleteableViewModel.cs" />
-    <Compile Include="ViewModels\CronStringBuilderViewModel.cs" />
+    <Compile Include="ViewModels\CronEditorViewModel.cs" />
     <Compile Include="Models\ViewRequests.cs" />
     <Compile Include="ViewModels\DistinctShell.cs" />
     <Compile Include="Interfaces\ISaveableViewModel.cs" />
     <Compile Include="ViewModels\RecepientManagerViewModel.cs" />
     <Compile Include="ViewModels\ReportEditorViewModel.cs" />
     <Compile Include="ViewModels\ReportManagerViewModel.cs" />
+    <Compile Include="ViewModels\ScheduleManagerViewModel.cs" />
     <Compile Include="ViewModels\TaskEditorViewModel.cs" />
     <Compile Include="ViewModels\TaskManagerViewModel.cs" />
     <Compile Include="Views\WpfResources\CronEditorView.xaml.cs">

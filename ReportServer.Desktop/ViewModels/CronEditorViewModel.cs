@@ -1,27 +1,70 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using CronExpressionDescriptor;
+using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReportServer.Desktop.Entities;
+using ReportServer.Desktop.Interfaces;
+using ReportServer.Desktop.Models;
+using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModels
 {
-    public class CronStringBuilderViewModel : ViewModelBase
+    public class CronEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
+        private string currentExpression;
+        private readonly IDialogCoordinator dialogCoordinator;
+        private readonly ICachedService cachedService;
+
+        public int? Id { get; set; }
         [Reactive] public string FullExpression { get; set; }
         [Reactive] public string FullStringExpression { get; set; }
-        private string currentExpression;
-        public ReactiveList<CronCategory> Categories { get; set; }
+        [Reactive] public bool IsDirty { get; set; }
+        [Reactive] public bool IsValid { get; set; }
+        [Reactive] public string Name { get; set; }
 
-        public CronStringBuilderViewModel()
+        public ReactiveList<CronCategory> Categories { get; set; }
+        public ReactiveCommand SaveChangesCommand { get; set; }
+        public ReactiveCommand CancelCommand { get; set; }
+
+        public CronEditorViewModel(ICachedService cachedService,
+                                   IDialogCoordinator dialogCoordinator)
         {
+            this.cachedService = cachedService;
             Categories = new ReactiveList<CronCategory>();
             Categories.ChangeTrackingEnabled = true;
+            IsValid = true;
+            this.dialogCoordinator = dialogCoordinator;
+            validator = new CronEditorValidator();
+
+            var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
+                isd => isd == true);
+
+            SaveChangesCommand = ReactiveCommand.CreateFromTask(async () => await Save(),
+                canSave);
+
+            CancelCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (IsDirty)
+                {
+                    var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
+                        "Все несохранённые изменения пропадут. Действительно закрыть окно редактирования?"
+                        , MessageDialogStyle.AffirmativeAndNegative);
+
+                    if (dialogResult != MessageDialogResult.Affirmative)
+                        return;
+                }
+
+                Close();
+            });
 
 
             this.WhenAnyObservable(conncr => conncr.Categories.ItemChanged)
@@ -45,19 +88,37 @@ namespace ReportServer.Desktop.ViewModels
 
             Categories.ChangeTrackingEnabled = false;
 
-                var categorieExpressions = FullExpression.Split(' ');
+            var categories = new string[] {"*", "*", "*", "*", "*"};
 
-                for (int i = 0; i < 5; i++)
-                    Categories[i].FillExpressionParts(categorieExpressions[i]);
+            var categorieExpressions =
+                FullExpression.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < categorieExpressions.Length; i++)
+            {
+                categories[i] = categorieExpressions[i];
+            }
+
+            for (int i = 0; i < 5; i++)
+                Categories[i].FillExpressionParts(categories[i]);
 
             Categories.ChangeTrackingEnabled = true;
+
+            try
+            {
+                FullStringExpression = ExpressionDescriptor.GetDescription(FullExpression);
+            }
+
+            catch (Exception e)
+            {
+                FullStringExpression = e.Message;
+            }
         }
 
         public void CreateCronString()
         {
             currentExpression = string.Join(" ",
                 Categories.Select(category => category.GetCategoryExpression()));
-            
+
             FullExpression = currentExpression;
 
             try
@@ -69,6 +130,53 @@ namespace ReportServer.Desktop.ViewModels
             {
                 FullStringExpression = e.Message;
             }
+        }
+
+        public void Initialize(ViewRequest viewRequest)
+        {
+            if (viewRequest is CronEditorRequest request)
+            {
+                Id = request.Schedule.Id;
+
+                if (Id == 0)
+                    Name = "New schedule";
+
+                else
+                {
+                    FullExpression = request.Schedule.Schedule;
+                    Name = request.Schedule.Name;
+                }
+            }
+
+            void Changed(object sender, PropertyChangedEventArgs e)
+            {
+                IsDirty = true;
+                if (Title.Last() != '*')
+                    Title += '*';
+            }
+
+            PropertyChanged += Changed;
+
+            IsDirty = false;
+        }
+
+        public async Task Save()
+        {
+            if (!IsValid) return;
+
+            var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
+                Id > 0
+                    ? "Вы действительно хотите изменить этот отчёт?"
+                    : "Вы действительно хотите создать отчёт?"
+                , MessageDialogStyle.AffirmativeAndNegative);
+
+            if (dialogResult != MessageDialogResult.Affirmative) return;
+
+            var editedSchedule = new ApiSchedule {Id = Id, Name = Name, Schedule = FullExpression};
+
+            cachedService.CreateOrUpdateSchedule(editedSchedule);
+            Close();
+            cachedService.RefreshData();
         }
     }
 
@@ -120,7 +228,7 @@ namespace ReportServer.Desktop.ViewModels
         }
     }
 
-    public class CronCategoryPart : ReactiveObject,IDisposable
+    public class CronCategoryPart : ReactiveObject, IDisposable
     {
         [Reactive] public ParsingCategory ParsingCategory { get; set; }
         private CompositeDisposable disposables;
@@ -148,7 +256,7 @@ namespace ReportServer.Desktop.ViewModels
             disposables.Add(this.ObservableForProperty(cp => cp.ParsingCategory)
                 .Select(x => x.Value)
                 .Subscribe(val => Value = val == ParsingCategory.All ? "*"
-                    : val == ParsingCategory.Range ? "0-0"
+                    : val                     == ParsingCategory.Range ? "0-0"
                     : ""));
 
             disposables.Add(this.ObservableForProperty(cp => cp.HasStep)
@@ -190,5 +298,4 @@ namespace ReportServer.Desktop.ViewModels
         Value,
         Range
     }
-
 }

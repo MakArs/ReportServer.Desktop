@@ -7,7 +7,7 @@ namespace ReportServer.Desktop.Views
 {
     public partial class ScheduleManagerView : IView
     {
-        public ScheduleManagerView(ReportManagerViewModel viewModel)
+        public ScheduleManagerView(ScheduleManagerViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;

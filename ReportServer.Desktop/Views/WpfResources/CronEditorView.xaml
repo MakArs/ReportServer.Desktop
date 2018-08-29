@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:entities="clr-namespace:ReportServer.Desktop.Models"
+             xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+             dialogs:DialogParticipation.Register="{Binding}"
              xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources"
              xmlns:viewModels="clr-namespace:ReportServer.Desktop.ViewModels"
              mc:Ignorable="d" 
@@ -18,17 +19,29 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Label Content="Schedule editor"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Label  Background="White" HorizontalAlignment="Left" 
+                    Margin="18 3 3 3" Content="Name"/>
+            <TextBox Margin="3 3 15 3" TextWrapping="NoWrap"
+                     AcceptsReturn="False"
+                     Width="250" Text="{Binding Name,UpdateSourceTrigger=PropertyChanged,
+                ValidatesOnDataErrors=True}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Label  Background="White" HorizontalAlignment="Left" 
                     Margin="18 3 3 3" Content="Cron expression for schedule"/>
             <TextBox Margin="3 3 15 3" TextWrapping="NoWrap"
                      AcceptsReturn="False"
-                     Width="250" Text="{Binding FullExpression,UpdateSourceTrigger=PropertyChanged}"/>
+                     Width="250" Text="{Binding FullExpression,UpdateSourceTrigger=PropertyChanged,
+                ValidatesOnDataErrors=True}"/>
 
             <Label  Background="White" HorizontalAlignment="Left" 
                     Margin="18 3 3 3" Content="Schedule"/>
@@ -36,9 +49,9 @@
             <TextBlock Text="{Binding FullStringExpression}"/>
         </StackPanel>
 
-        <Label Grid.Row="2" Content="Custom schedule parts"/>
+        <Label Grid.Row="3" Content="Custom schedule parts"/>
 
-        <ListView BorderThickness="0" Grid.Row="3"  HorizontalAlignment="Left" ItemsSource="{Binding Categories}">
+        <ListView BorderThickness="0" Grid.Row="4"  HorizontalAlignment="Left" ItemsSource="{Binding Categories}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -134,5 +147,19 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <Grid Grid.Row="5" Margin="0 0 0 50">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition  Width="0.4*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+
+                <Button Command="{Binding SaveChangesCommand}" 
+                        IsEnabled="{Binding IsValid}" Height="25" Width="100">Save</Button>
+
+                <Button Command="{Binding CancelCommand}" Height="25" Width="100">Cancel</Button>
+
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

@@ -5,7 +5,7 @@ using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
-using ReportServer.Desktop.Model;
+using ReportServer.Desktop.Models;
 using ReportServer.Desktop.Views;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
@@ -23,6 +23,7 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand RefreshCommand { get; set; }
         public ReactiveCommand CreateTaskCommand { get; set; }
         public ReactiveCommand CreateReportCommand { get; set; }
+        public ReactiveCommand CreateScheduleCommand { get; set; }
         public ReactiveCommand DeleteCommand { get; set; }
 
         public DistinctShell(ICachedService cachedService, IDialogCoordinator dialogCoordinator)
@@ -43,6 +44,11 @@ namespace ReportServer.Desktop.ViewModels
                 ShowDistinctView<TaskEditorView>("Creating new Task",
                     new TaskEditorRequest {Task = new DesktopFullTask {Id = 0}},
                     new UiShowOptions {Title = "Creating new Task"}));
+
+            CreateScheduleCommand = ReactiveCommand.Create(() =>
+                ShowDistinctView<CronEditorView>("Creating new Schedule",
+                    new CronEditorRequest { Schedule = new ApiSchedule { Id = 0 } },
+                    new UiShowOptions { Title = "Creating new Schedule" }));
 
             CreateReportCommand = ReactiveCommand.Create(() =>
                 ShowDistinctView<ReportEditorView>("Creating new report",
@@ -85,8 +91,8 @@ namespace ReportServer.Desktop.ViewModels
                 ShowView<RecepientManagerView>(
                     options: new UiShowOptions { Title = "Recepient Manager", CanClose = false });
 
-                ShowView<CronEditorView>(
-                    options: new UiShowOptions { Title = "CronEditor", CanClose = false });
+                ShowView<ScheduleManagerView>(
+                    options: new UiShowOptions { Title = "Schedule Manager", CanClose = false });
                 return;
             }
 

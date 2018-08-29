@@ -1,8 +1,7 @@
-﻿using System.ComponentModel;
-using System;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
@@ -10,12 +9,12 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
-using ReportServer.Desktop.Model;
+using ReportServer.Desktop.Models;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.ViewModel
+namespace ReportServer.Desktop.ViewModels
 {
     public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
