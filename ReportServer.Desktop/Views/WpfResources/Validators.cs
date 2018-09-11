@@ -33,8 +33,8 @@ namespace ReportServer.Desktop.Views.WpfResources
         public ReportEditorValidator()
         {
             RuleFor(red => red.QueryTimeOut)
-                .Must(t => t < 300 && t > 0)
-                .WithMessage("You should set min 1 and max 300 seconds timeout for query");
+                .Must(t => t < 1000 && t > 0)
+                .WithMessage("You should set min 1 and max 1000 seconds timeout for query");
 
             RuleFor(red => red.Name)
                 .Must(name => !string.IsNullOrEmpty(name))
@@ -90,7 +90,7 @@ namespace ReportServer.Desktop.Views.WpfResources
                 var _ = ExpressionDescriptor.GetDescription(expr);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

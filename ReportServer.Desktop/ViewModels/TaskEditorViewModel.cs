@@ -14,6 +14,10 @@ using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
+using System.Reactive;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+
 namespace ReportServer.Desktop.ViewModels
 {
     public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
@@ -85,13 +89,6 @@ namespace ReportServer.Desktop.ViewModels
             this.WhenAnyObservable(s => s.AllErrors.Changed)
                 .Subscribe(_ => IsValid = !AllErrors.Any());
 
-            this.WhenAnyValue(s => s.HasSchedule)
-                .Subscribe(hassch =>
-                    ScheduleId = hassch ? Schedules.FirstOrDefault()?.Id : null);
-
-            this.WhenAnyValue(s => s.HasRecepients)
-                .Subscribe(hasrec =>
-                    RecepientGroupId = hasrec ? RecepientGroups.FirstOrDefault()?.Id : null);
         }
 
         private void OpenPageInBrowser(string htmlPage)
@@ -111,7 +108,7 @@ namespace ReportServer.Desktop.ViewModels
         {
             Schedules = cachedService.Schedules;
             RecepientGroups = cachedService.RecepientGroups;
-            Reports = cachedService.Reports;
+           // Reports = ne
 
             if (viewRequest is TaskEditorRequest request)
             {
@@ -132,6 +129,14 @@ namespace ReportServer.Desktop.ViewModels
                 SelectedReport = Reports.First(rep => rep.Id == ReportId);
 
             PropertyChanged += Changed;
+
+            this.ObservableForProperty(s => s.HasSchedule)
+                .Subscribe(hassch =>
+                    ScheduleId = hassch.Value ? Schedules.FirstOrDefault()?.Id : null);
+
+            this.ObservableForProperty(s => s.HasRecepients)
+                .Subscribe(hasrec =>
+                    RecepientGroupId = hasrec.Value ? RecepientGroups.FirstOrDefault()?.Id : null);
 
             IsDirty = false;
 

@@ -109,8 +109,8 @@ namespace ReportServer.Desktop.ViewModels
                     Title += '*';
             }
 
-            QueryTemplates = cachedService.DataExecutors;
-            ViewTemplates = cachedService.ViewExecutors;
+            QueryTemplates = cachedService.DataImporters;
+            ViewTemplates = cachedService.DataExporters;
 
             PropertyChanged += Changed;
 
@@ -130,13 +130,13 @@ namespace ReportServer.Desktop.ViewModels
 
             if (dialogResult != MessageDialogResult.Affirmative) return;
 
-            var editedReport = new ApiReport();
+            var editedReport = new ApiOper();
 
             if (ReportType == ReportType.Custom) ConnectionString = null;
 
             mapper.Map(this, editedReport);
 
-            cachedService.CreateOrUpdateReport(editedReport);
+            cachedService.CreateOrUpdateOper(editedReport);
             Close();
             cachedService.RefreshData();
         }

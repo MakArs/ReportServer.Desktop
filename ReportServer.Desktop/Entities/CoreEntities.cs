@@ -8,22 +8,9 @@ namespace ReportServer.Desktop.Entities
     public class DesktopFullTask : ReactiveObject
     {
         public int Id { get; set; }
-        public int TelegramChannelId { get; set; }
-        [Reactive] public int ReportId { get; set; }
-        [Reactive] public string ReportName { get; set; }
-        [Reactive] public int ScheduleId { get; set; }
-        [Reactive] public int RecepientGroupId { get; set; }
+        [Reactive] public string Name { get; set; }
+        [Reactive] public string Operations { get; set; }
         [Reactive] public string Schedule { get; set; }
-        [Reactive] public string ConnectionString { get; set; }
-        [Reactive] public string RecepientGroup { get; set; }
-        [Reactive] public string ViewTemplate { get; set; }
-        [Reactive] public string Query { get; set; }
-        [Reactive] public int TryCount { get; set; }
-        [Reactive] public int QueryTimeOut { get; set; }
-        [Reactive] public ReportType ReportType { get; set; }
-        [Reactive] public bool HasHtmlBody { get; set; }
-        [Reactive] public bool HasJsonAttachment { get; set; }
-        [Reactive] public bool HasXlsxAttachment { get; set; }
     }
 
     public class DesktopInstanceCompact

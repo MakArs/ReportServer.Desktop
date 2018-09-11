@@ -95,7 +95,7 @@ namespace ReportServer.Desktop.ViewModels
         private void LoadSelectedInstanceById(int id)
         {
             SelectedInstance = mapper
-                .Map<DesktopInstance>(cachedService.GetFullInstanceById(id));
+                .Map<DesktopInstance>(cachedService.GetFullOperInstanceById(id));
         }
 
         private void OpenPageInBrowser(string htmlPage)
@@ -115,8 +115,8 @@ namespace ReportServer.Desktop.ViewModels
         {
             Schedules = cachedService.Schedules;
             RecepientGroups = cachedService.RecepientGroups;
-            Reports = cachedService.Reports;
-            Tasks = cachedService.Tasks;
+          //  Reports = cachedService.Reports;
+          //  Tasks = cachedService.Tasks;
         }
 
         private async Task<bool> ShowWarningAffirmativeDialog(string question)

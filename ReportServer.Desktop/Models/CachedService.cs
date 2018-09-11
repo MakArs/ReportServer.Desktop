@@ -20,27 +20,31 @@ namespace ReportServer.Desktop.Models
         private ISimpleHttpClient client;
         private readonly IMapper mapper;
 
-        public ReactiveList<DesktopReport> Reports { get; set; }
-        public ReactiveList<ApiSchedule> Schedules { get; set; }
+        public ReactiveList<ApiOper> Operations { get; set; }
         public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
-        public ReactiveList<DesktopFullTask> Tasks { get; set; }
-        public ReactiveList<string> DataExecutors { get; set; }
-        public ReactiveList<string> ViewExecutors { get; set; }
+        public ReactiveList<ApiTelegramChannel> TelegramChannels { get; set; }
+        public ReactiveList<ApiSchedule> Schedules { get; set; }
+        public ReactiveList<ApiTask> Tasks { get; set; }
+        public ReactiveList<ApiTaskOper> TaskOpers { get; set; }
+        public ReactiveList<string> DataImporters { get; set; }
+        public ReactiveList<string> DataExporters { get; set; }
 
         public CachedService(IMapper mapper)
         {
             this.mapper = mapper;
-            Reports = new ReactiveList<DesktopReport>();
-            Schedules = new ReactiveList<ApiSchedule>();
+            Operations = new ReactiveList<ApiOper>();
             RecepientGroups = new ReactiveList<ApiRecepientGroup>();
-            Tasks = new ReactiveList<DesktopFullTask>();
-            DataExecutors = new ReactiveList<string>();
-            ViewExecutors = new ReactiveList<string>();
+            TelegramChannels = new ReactiveList<ApiTelegramChannel>();
+            Schedules = new ReactiveList<ApiSchedule>();
+            Tasks = new ReactiveList<ApiTask>();
+            TaskOpers = new ReactiveList<ApiTaskOper>();
+            DataImporters = new ReactiveList<string>();
+            DataExporters = new ReactiveList<string>();
         }
 
         public bool Init(string serviceUri)
         {
-            client = JsonHttpClient.Create(serviceUri);
+            client = JsonHttpClient.Create(serviceUri+ "/api/v2/");
             try
             {
                 GetExecutors();
@@ -53,86 +57,80 @@ namespace ReportServer.Desktop.Models
             }
         }
 
-        #region RefreshLogics
-
-        public void RefreshSchedules()
+        private void GetExecutors()
         {
-            Schedules.PublishCollection(client.Get<List<ApiSchedule>>("/api/v1/schedules/"));
+            DataImporters.PublishCollection(client
+                .Get<List<string>>("opers/customimporters/"));
+            DataExporters.PublishCollection(client
+                .Get<List<string>>("opers/customexporters/"));
         }
 
-        public void RefreshReports()
+        #region RefreshLogics
+
+        public void RefreshOpers()
         {
-            Reports.Clear();
-            Reports.PublishCollection(client.Get<List<ApiReport>>("/api/v1/reports/")
-                .Select(rep => mapper.Map<DesktopReport>(rep)));
+            Operations.PublishCollection(client.Get<List<ApiOper>>("opers/"));
+               // .Select(rep => mapper.Map<DesktopReport>(rep)));
         }
 
         public void RefreshRecepientGroups()
         {
             RecepientGroups.PublishCollection(
-                client.Get<List<ApiRecepientGroup>>("/api/v1/recepientgroups/"));
+                client.Get<List<ApiRecepientGroup>>("recepientgroups/"));
+        }
+
+        public void RefreshTelegramChannels()
+        {
+            TelegramChannels.PublishCollection(
+                client.Get<List<ApiTelegramChannel>>("telegrams/"));
+        }
+
+        public void RefreshSchedules()
+        {
+            Schedules.PublishCollection(client.Get<List<ApiSchedule>>("schedules/"));
         }
 
         public void RefreshTasks()
         {
-            var deskTasks = client.Get<List<ApiTask>>("/api/v1/tasks")
-                .Select(apiTask => mapper.Map<DesktopFullTask>(apiTask)).ToList();
+            Tasks.PublishCollection(client.Get<List<ApiTask>>("tasks"));
+        }
 
-            deskTasks = deskTasks.Select(deskTask => mapper.Map(Reports
-                    .FirstOrDefault(rep => rep.Id == deskTask.ReportId), deskTask))
-                .Where(t => t != null)
-                .ToList();
-
-            foreach (var deskTask in deskTasks)
-            {
-                deskTask.Schedule = Schedules.FirstOrDefault(sch => sch.Id == deskTask.ScheduleId)
-                    ?.Schedule;
-                deskTask.RecepientGroup = RecepientGroups
-                    .FirstOrDefault(rcg => rcg.Id == deskTask.RecepientGroupId)
-                    ?.Name;
-            }
-
-            Tasks.PublishCollection(deskTasks);
+        public void RefreshTaskOpers()
+        {
+            TaskOpers.PublishCollection(client.Get<List<ApiTaskOper>>("opers/taskopers"));
         }
 
         public void RefreshData()
         {
-            RefreshReports();
+            RefreshOpers();
             RefreshRecepientGroups();
+            RefreshTelegramChannels();
             RefreshSchedules();
             RefreshTasks();
+            RefreshTaskOpers();
         }
 
         #endregion
 
-        public List<ApiInstance> GetInstancesByTaskId(int taskId)
+        public List<ApiTaskInstance> GetInstancesByTaskId(int taskId)
         {
-            return client.Get<List<ApiInstance>>($"/api/v1/tasks/{taskId}/instances");
+            return client.Get<List<ApiTaskInstance>>($"tasks/{taskId}/instances");
         }
 
-        public List<ApiInstance> GetInstanceCompacts()
+        public List<ApiOperInstance> GetOperInstancesByTaskInstanceId(int taskInstanceId)
         {
-            return client.Get<List<ApiInstance>>("/api/v1/instances");
+            return client.Get<List<ApiOperInstance>>($"instances/{taskInstanceId}/operinstances");
         }
 
-        public ApiFullInstance GetFullInstanceById(int id)
+        public ApiOperInstance GetFullOperInstanceById(int id)
         {
-            return client.Get<ApiFullInstance>($"/api/v1/instances/{id}");
-        }
-
-        private void GetExecutors()
-        {
-            DataExecutors.PublishCollection(client
-                .Get<List<string>>("/api/v1/reports/customdataexecutors/"));
-            ViewExecutors.PublishCollection(client
-                .Get<List<string>>("/api/v1/reports/customviewexecutors/"));
+            return client.Get<ApiOperInstance>($"instances/operinstances/{id}");
         }
         
-        public async Task<string> GetCurrentTaskViewById(int taskId)
+        public async Task<string> GetCurrentTaskViewById(int taskId) //currently doesn't work
         {
-
             var apiAnswer = await client
-                .Send<string>(HttpMethod.Get, $"/api/v1/tasks/{taskId}/currentviews");
+                .Send<string>(HttpMethod.Get, $"tasks/{taskId}/currentviews");
 
             var responseCode = apiAnswer.Response.StatusCode;
 
@@ -142,55 +140,60 @@ namespace ReportServer.Desktop.Models
             return apiAnswer.Body;
         }
 
-        public int? CreateOrUpdateSchedule(ApiSchedule schedule)
+        public int? CreateOrUpdateOper(ApiOper oper)
         {
+            if (oper.Id == null)
+                return client.Post("opers/", oper);
 
-            if (schedule.Id == 0)
-                return client.Post("/api/v1/schedules/", schedule);
-
-            client.Put($"/api/v1/schedules/{schedule.Id}", schedule);
-
-            return schedule.Id;
-        }
-
-        public void DeleteTask(int id)
-        {
-            client.Delete($"/api/v1/tasks/{id}");
-        }
-
-        public void DeleteInstance(int id)
-        {
-            client.Delete($"/api/v1/instances/{id}");
-        }
-
-        public int? CreateOrUpdateTask(ApiTask task)
-        {
-            if (task.Id == 0)
-                return client.Post("/api/v1/tasks/", task);
-
-            client.Put($"/api/v1/tasks/{task.Id}", task);
-
-            return task.Id;
-        }
-
-        public int? CreateOrUpdateReport(ApiReport report)
-        {
-            if (report.Id == null)
-                return client.Post("/api/v1/reports/", report);
-
-            client.Put($"/api/v1/reports/{report.Id}", report);
-            return report.Id;
+            client.Put($"opers/{oper.Id}", oper);
+            return oper.Id;
         }
 
         public int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group)
         {
             if (group.Id == null)
-                return client.Post("/api/v1/recepientgroups/", group);
+                return client.Post("recepientgroups/", group);
 
-            client.Put($"/api/v1/recepientgroups/{group.Id}", group);
+            client.Put($"recepientgroups/{group.Id}", group);
             return group.Id;
         }
 
+        public int? CreateOrUpdateTelegramChannel(ApiTelegramChannel channel)
+        {
+            if (channel.Id == null)
+                return client.Post("telegrams/", channel);
+
+            client.Put($"telegrams/{channel.Id}", channel);
+            return channel.Id;
+        }
+
+        public int? CreateOrUpdateSchedule(ApiSchedule schedule)
+        {
+            if (schedule.Id == null)
+                return client.Post("schedules/", schedule);
+
+            client.Put($"schedules/{schedule.Id}", schedule);
+            return schedule.Id;
+        }
+
+        public int? CreateOrUpdateTask(ApiTask task)
+        {
+            if (task.Id == 0)
+                return client.Post("tasks/", task);
+
+            client.Put($"tasks/{task.Id}", task);
+            return task.Id;
+        }
+
+        public void DeleteTask(int id)
+        {
+            client.Delete($"tasks/{id}");
+        }
+
+        public void DeleteInstance(int id)
+        {
+            client.Delete($"instances/{id}");
+        }
     }
 
     public static class JsonHttpClientTimeExtension
@@ -204,7 +207,6 @@ namespace ReportServer.Desktop.Models
 
             if (responseCode != HttpStatusCode.OK)
                 throw new Exception($"Http return error {responseCode.ToString()}");
-
             return JsonConvert.DeserializeObject<T>(task.Result.Result.Body);
         }
 

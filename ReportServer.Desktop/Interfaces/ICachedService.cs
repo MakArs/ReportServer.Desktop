@@ -7,32 +7,37 @@ namespace ReportServer.Desktop.Interfaces
 {
     public interface ICachedService
     {
-        ReactiveList<DesktopReport> Reports { get; set; }
-        ReactiveList<ApiSchedule> Schedules { get; set; }
+        ReactiveList<ApiOper> Operations { get; set; }
         ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
-        ReactiveList<DesktopFullTask> Tasks { get; set; }
-        ReactiveList<string> DataExecutors { get; set; }
-        ReactiveList<string> ViewExecutors { get; set; }
+        ReactiveList<ApiTelegramChannel> TelegramChannels { get; set; }
+        ReactiveList<ApiSchedule> Schedules { get; set; }
+        ReactiveList<ApiTask> Tasks { get; set; }
+        ReactiveList<ApiTaskOper> TaskOpers { get; set; }
+        ReactiveList<string> DataImporters { get; set; }
+        ReactiveList<string> DataExporters { get; set; }
 
-        List<ApiInstance> GetInstanceCompacts();
-        List<ApiInstance> GetInstancesByTaskId(int taskId);
-        ApiFullInstance GetFullInstanceById(int id);
-
-        void RefreshSchedules();
-        void RefreshRecepientGroups();
-        void RefreshReports();
-        void RefreshData();
         bool Init(string serviceUri);
+        void RefreshOpers();
+        void RefreshRecepientGroups();
+        void RefreshTelegramChannels();
+        void RefreshSchedules();
+        void RefreshTasks();
+        void RefreshTaskOpers();
+        void RefreshData();
 
+        List<ApiTaskInstance> GetInstancesByTaskId(int taskId);
+        List<ApiOperInstance> GetOperInstancesByTaskInstanceId(int taskInstanceId);
+        ApiOperInstance GetFullOperInstanceById(int id);
+        Task<string> GetCurrentTaskViewById(int taskId);
+
+        int? CreateOrUpdateOper(ApiOper oper);
+        int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group);
+        int? CreateOrUpdateTelegramChannel(ApiTelegramChannel channel);
+        int? CreateOrUpdateSchedule(ApiSchedule schedule);
+        int? CreateOrUpdateTask(ApiTask task);
 
         void DeleteTask(int id);
         void DeleteInstance(int id);
 
-        int? CreateOrUpdateTask(ApiTask fullTask);
-        int? CreateOrUpdateReport(ApiReport report);
-        int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group);
-        int? CreateOrUpdateSchedule(ApiSchedule schedule);
-
-        Task<string> GetCurrentTaskViewById(int taskId);
     }
 }

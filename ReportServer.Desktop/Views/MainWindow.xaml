@@ -19,6 +19,7 @@
         <KeyBinding Command="{Binding RefreshCommand}" Key="F5"/>
         <KeyBinding Command="{Binding CreateTaskCommand}" Modifiers="Control" Key="T" />
         <KeyBinding Command="{Binding CreateReportCommand}" Modifiers="Control" Key="R" />
+        <KeyBinding Command="{Binding CreateScheduleCommand}" Modifiers="Control" Key="H" />
     </mah:MetroWindow.InputBindings>
     <Grid>
 
@@ -39,6 +40,8 @@
                 <MenuItem Header="Add Task" FontSize="12" Command="{Binding CreateTaskCommand}" InputGestureText="Ctrl+T"/>
                 <Separator/>
                 <MenuItem Header="Add Report" FontSize="12" Command="{Binding CreateReportCommand}" InputGestureText="Ctrl+R"/>
+                <Separator/>
+                <MenuItem Header="Add Report" FontSize="12" Command="{Binding CreateReportCommand}" InputGestureText="Ctrl+H"/>
                 <Separator/>
                 <MenuItem Header="Delete" FontSize="12" Command="{Binding DeleteCommand}" InputGestureText="Del"/>
             </MenuItem>

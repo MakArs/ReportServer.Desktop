@@ -40,7 +40,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
-            Reports = cachedService.Reports;
+            //Reports = cachedService.oper;
         }
     }
 }
