@@ -16,7 +16,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModels
 {
-    public class ReportEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
+    public class OperEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
         private readonly IDialogCoordinator dialogCoordinator;
         private readonly ICachedService cachedService;
@@ -39,7 +39,7 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
 
-        public ReportEditorViewModel(ICachedService cachedService, IMapper mapper,
+        public OperEditorViewModel(ICachedService cachedService, IMapper mapper,
                                      IDialogCoordinator dialogCoordinator)
         {
             this.cachedService = cachedService;
@@ -89,13 +89,13 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
-            if (viewRequest is ReportEditorRequest request)
+            if (viewRequest is OperEditorRequest request)
             {
                 FullTitle = request.FullId;
-                mapper.Map(request.Report, this);
+                mapper.Map(request.Oper, this);
                 if (Id == 0)
                 {
-                    Name = "New Report";
+                    Name = "New Oper";
                     Id = null;
                     QueryTimeOut = 5;
                     ReportType = ReportType.Common;
@@ -115,7 +115,6 @@ namespace ReportServer.Desktop.ViewModels
             PropertyChanged += Changed;
 
             IsDirty = false;
-
         }
 
         public async Task Save()

@@ -13,29 +13,7 @@ namespace ReportServer.Desktop.Entities
         [Reactive] public string Schedule { get; set; }
     }
 
-    public class DesktopInstanceCompact
-    {
-        public int Id { get; set; }
-        public int TaskId { get; set; }
-        public DateTime StartTime { get; set; }
-        public int Duration { get; set; }
-        public InstanceState State { get; set; }
-        public int TryNumber { get; set; }
-    }
-
-    public class DesktopInstance
-    {
-        public int Id { get; set; }
-        public string Data { get; set; } = "";
-        public string ViewData { get; set; } = "";
-        public int TaskId { get; set; }
-        public DateTime StartTime { get; set; }
-        public int Duration { get; set; }
-        public InstanceState State { get; set; }
-        public int TryNumber { get; set; }
-    }
-
-    public class DesktopTaskOper
+    public class DesktopTaskOper : ReactiveObject
     {
         public int? Id { get; set; }
         public string Name { get; set; }
@@ -45,7 +23,7 @@ namespace ReportServer.Desktop.Entities
     }
 
     [DataContract]
-    public class DesktopReport : ReactiveObject
+    public class DesktopOper : ReactiveObject
     {
         [DataMember] public int Id { get; set; }
         [Reactive] [DataMember] public string Name { get; set; }
@@ -56,13 +34,33 @@ namespace ReportServer.Desktop.Entities
         [Reactive] [DataMember] public int QueryTimeOut { get; set; } //seconds
     }
 
+    public class DesktopTaskInstance
+    {
+        public int Id { get; set; }
+        public DateTime StartTime { get; set; }
+        public int Duration { get; set; }
+        public InstanceState State { get; set; }
+    }
+
+    public class DesktopOperInstance
+    {
+        public int Id { get; set; }
+        public int OperId { get; set; }
+        public string OperName { get; set; }
+        public DateTime StartTime { get; set; }
+        public int Duration { get; set; }
+        public InstanceState State { get; set; }
+        public string DataSet { get; set; }
+        public string ErrorMessage { get; set; }
+    }
+
     public enum ReportType : byte
     {
         Common = 1,
         Custom = 2
     }
 
-    public enum InstanceState
+    public enum InstanceState 
     {
         InProcess = 1,
         Success = 2,

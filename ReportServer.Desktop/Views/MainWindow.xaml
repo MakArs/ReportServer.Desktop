@@ -7,7 +7,6 @@
         xmlns:dock="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         dialogs:DialogParticipation.Register="{Binding}"
-                 xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         d:DataContext="Shell"
         Title="{Binding Title}"
@@ -18,7 +17,7 @@
         <KeyBinding Command="{Binding SaveCommand}" Modifiers="Control" Key="S"/>
         <KeyBinding Command="{Binding RefreshCommand}" Key="F5"/>
         <KeyBinding Command="{Binding CreateTaskCommand}" Modifiers="Control" Key="T" />
-        <KeyBinding Command="{Binding CreateReportCommand}" Modifiers="Control" Key="R" />
+        <KeyBinding Command="{Binding CreateOperCommand}" Modifiers="Control" Key="O" />
         <KeyBinding Command="{Binding CreateScheduleCommand}" Modifiers="Control" Key="H" />
     </mah:MetroWindow.InputBindings>
     <Grid>
@@ -37,11 +36,11 @@
             </MenuItem>
             <MenuItem
                     Header="Edit" FontSize="12">
-                <MenuItem Header="Add Task" FontSize="12" Command="{Binding CreateTaskCommand}" InputGestureText="Ctrl+T"/>
+                <MenuItem Header="Add task" FontSize="12" Command="{Binding CreateTaskCommand}" InputGestureText="Ctrl+T"/>
                 <Separator/>
-                <MenuItem Header="Add Report" FontSize="12" Command="{Binding CreateReportCommand}" InputGestureText="Ctrl+R"/>
+                <MenuItem Header="Add oper" FontSize="12" Command="{Binding CreateOperCommand}" InputGestureText="Ctrl+O"/>
                 <Separator/>
-                <MenuItem Header="Add Report" FontSize="12" Command="{Binding CreateReportCommand}" InputGestureText="Ctrl+H"/>
+                <MenuItem Header="Add schedule" FontSize="12" Command="{Binding CreateScheduleCommand}" InputGestureText="Ctrl+H"/>
                 <Separator/>
                 <MenuItem Header="Delete" FontSize="12" Command="{Binding DeleteCommand}" InputGestureText="Del"/>
             </MenuItem>

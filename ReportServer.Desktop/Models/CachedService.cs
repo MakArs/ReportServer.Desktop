@@ -31,12 +31,12 @@ namespace ReportServer.Desktop.Models
         public CachedService(IMapper mapper)
         {
             this.mapper = mapper;
-            Operations = new ReactiveList<ApiOper>();
-            RecepientGroups = new ReactiveList<ApiRecepientGroup>();
-            TelegramChannels = new ReactiveList<ApiTelegramChannel>();
-            Schedules = new ReactiveList<ApiSchedule>();
-            Tasks = new ReactiveList<ApiTask>();
-            TaskOpers = new ReactiveList<ApiTaskOper>();
+            Operations = new ReactiveList<ApiOper> {ChangeTrackingEnabled = true};
+            RecepientGroups = new ReactiveList<ApiRecepientGroup> { ChangeTrackingEnabled = true };
+            TelegramChannels = new ReactiveList<ApiTelegramChannel> { ChangeTrackingEnabled = true };
+            Schedules = new ReactiveList<ApiSchedule> { ChangeTrackingEnabled = true };
+            Tasks = new ReactiveList<ApiTask> { ChangeTrackingEnabled = true };
+            TaskOpers = new ReactiveList<ApiTaskOper> { ChangeTrackingEnabled = true };
             DataImporters = new ReactiveList<string>();
             DataExporters = new ReactiveList<string>();
         }
@@ -69,7 +69,7 @@ namespace ReportServer.Desktop.Models
         public void RefreshOpers()
         {
             Operations.PublishCollection(client.Get<List<ApiOper>>("opers/"));
-               // .Select(rep => mapper.Map<DesktopReport>(rep)));
+               // .Select(rep => mapper.Map<DesktopOper>(rep)));
         }
 
         public void RefreshRecepientGroups()

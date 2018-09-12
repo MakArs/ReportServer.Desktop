@@ -5,9 +5,9 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.Views
 {
-    public partial class ReportManagerView : IView
+    public partial class OperManagerView : IView
     {
-        public ReportManagerView(ReportManagerViewModel viewModel)
+        public OperManagerView(OperManagerViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;

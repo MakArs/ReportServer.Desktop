@@ -26,12 +26,12 @@ namespace ReportServer.Desktop.ViewModels
         private readonly IDialogCoordinator dialogCoordinator;
 
         public ReactiveList<DesktopTask> Tasks { get; set; }
-        public ReactiveList<ApiTaskInstance> SelectedTaskInstances { get; set; }
-        public ReactiveList<ApiOperInstance> OperInstances { get; set; }
+        public ReactiveList<DesktopTaskInstance> SelectedTaskInstances { get; set; }
+        public ReactiveList<DesktopOperInstance> OperInstances { get; set; }
 
         [Reactive] public DesktopTask SelectedTask { get; set; }
-        [Reactive] public ApiTaskInstance SelectedTaskInstance { get; set; }
-        [Reactive] public ApiOperInstance SelectedOperInstance { get; set; }
+        [Reactive] public DesktopTaskInstance SelectedTaskInstance { get; set; }
+        [Reactive] public DesktopOperInstance SelectedOperInstance { get; set; }
         [Reactive] public ApiOperInstance SelectedInstanceData { get; set; }
 
         public ReactiveCommand OpenPage { get; set; }
@@ -46,8 +46,8 @@ namespace ReportServer.Desktop.ViewModels
             this.dialogCoordinator = dialogCoordinator;
 
             Tasks = new ReactiveList<DesktopTask>();
-            SelectedTaskInstances = new ReactiveList<ApiTaskInstance>();
-            OperInstances = new ReactiveList<ApiOperInstance>();
+            SelectedTaskInstances = new ReactiveList<DesktopTaskInstance>();
+            OperInstances = new ReactiveList<DesktopOperInstance>();
 
             IObservable<bool> canOpenInstancePage = this //todo:some check for is viewdataset?"
                 .WhenAnyValue(t => t.SelectedInstanceData,
@@ -88,8 +88,15 @@ namespace ReportServer.Desktop.ViewModels
                     if (x == null)
                         OperInstances.Clear();
                     else
+                    {
                         OperInstances.PublishCollection(
-                            cachedService.GetOperInstancesByTaskInstanceId(x.Id));
+                            cachedService.GetOperInstancesByTaskInstanceId(x.Id)
+                                .Select(mapper.Map<DesktopOperInstance>));
+
+                        foreach (var operinst in OperInstances)
+                            operinst.OperName = cachedService.Operations
+                                .First(op => op.Id == operinst.OperId).Name;
+                    }
                 });
 
             this.WhenAnyValue(s => s.SelectedOperInstance)
@@ -106,7 +113,8 @@ namespace ReportServer.Desktop.ViewModels
         private void LoadInstanceCompactsByTaskId(int taskId)
         {
             SelectedTaskInstances
-                .PublishCollection(cachedService.GetInstancesByTaskId(taskId));
+                .PublishCollection(cachedService.GetInstancesByTaskId(taskId)
+                    .Select(ti=>mapper.Map<DesktopTaskInstance>(ti)));
         }
 
         private void OpenPageInBrowser(string htmlPage)
@@ -122,7 +130,7 @@ namespace ReportServer.Desktop.ViewModels
             System.Diagnostics.Process.Start(path);
         }
 
-        public void Initialize(ViewRequest viewRequest)
+        private void RefreshTaskList()
         {
             Tasks.PublishCollection(cachedService.Tasks.Select(task => new DesktopTask
             {
@@ -139,9 +147,19 @@ namespace ReportServer.Desktop.ViewModels
                         cachedService.Operations.First(oper => oper.Id == taskOper.OperId).Name
                     })
                     .OrderBy(pair => pair.Number)
-                    .Select(pair=>pair.Name)
+                    .Select(pair => pair.Name)
                     .ToList())
             }));
+        }
+
+        public void Initialize(ViewRequest viewRequest)
+        {
+            RefreshTaskList();
+
+            this.WhenAnyObservable(tmvm => tmvm.cachedService.Tasks.Changed)
+                .Subscribe(_ => RefreshTaskList());
+            this.WhenAnyObservable(tmvm => tmvm.cachedService.Tasks.ItemChanged)
+                .Subscribe(_ => RefreshTaskList());
         }
 
         private async Task<bool> ShowWarningAffirmativeDialog(string question)

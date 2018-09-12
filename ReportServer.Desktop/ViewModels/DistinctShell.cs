@@ -22,7 +22,7 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand SaveCommand { get; set; }
         public ReactiveCommand RefreshCommand { get; set; }
         public ReactiveCommand CreateTaskCommand { get; set; }
-        public ReactiveCommand CreateReportCommand { get; set; }
+        public ReactiveCommand CreateOperCommand { get; set; }
         public ReactiveCommand CreateScheduleCommand { get; set; }
         public ReactiveCommand DeleteCommand { get; set; }
 
@@ -50,14 +50,14 @@ namespace ReportServer.Desktop.ViewModels
                     new CronEditorRequest { Schedule = new ApiSchedule { Id = 0 } },
                     new UiShowOptions { Title = "Creating new Schedule" }));
 
-            CreateReportCommand = ReactiveCommand.Create(() =>
-                ShowDistinctView<ReportEditorView>("Creating new report",
-                    new ReportEditorRequest
+            CreateOperCommand = ReactiveCommand.Create(() =>
+                ShowDistinctView<OperEditorView>("Creating new operation",
+                    new OperEditorRequest
                     {
-                        Report = new DesktopReport {Id = 0},
-                        FullId = "Creating new report"
+                        Oper = new ApiOper {Id = 0},
+                        FullId = "Creating new operation"
                     },
-                    new UiShowOptions {Title = "Creating new report"}));
+                    new UiShowOptions {Title = "Creating new operation" }));
            
             DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -85,8 +85,8 @@ namespace ReportServer.Desktop.ViewModels
                 ShowView<TaskManagerView>(
                     options: new UiShowOptions {Title = "Task Manager", CanClose = false});
 
-                ShowView<ReportManagerView>(
-                    options: new UiShowOptions {Title = "Report Manager", CanClose = false});
+                ShowView<OperManagerView>(
+                    options: new UiShowOptions {Title = "Oper Manager", CanClose = false});
 
                 ShowView<RecepientManagerView>(
                     options: new UiShowOptions { Title = "Recepient Manager", CanClose = false });

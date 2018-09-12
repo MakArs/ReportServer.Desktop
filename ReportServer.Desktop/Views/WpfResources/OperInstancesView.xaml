@@ -26,7 +26,7 @@
                 <KeyBinding Key="Delete"  Command="ApplicationCommands.NotACommand" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
-                <DataGridTextColumn  Header="Operation Id"  Binding="{Binding OperId}" />
+                <DataGridTextColumn  Header="Operation name"  Binding="{Binding OperName}" />
                 <DataGridTextColumn  Header="Start time"    Binding="{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" />
                 <DataGridTextColumn  Header="Duration"  Binding="{Binding Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>
                 <DataGridTextColumn  Header="State"  Binding="{Binding State}" />

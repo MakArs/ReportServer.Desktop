@@ -37,11 +37,11 @@ namespace ReportServer.Desktop
 
             ConfigureView<TaskManagerViewModel, TaskManagerView>(builder);
 
-            ConfigureView<ReportManagerViewModel, ReportManagerView>(builder);
+            ConfigureView<OperManagerViewModel, OperManagerView>(builder);
 
             ConfigureView<TaskEditorViewModel, TaskEditorView>(builder);
 
-            ConfigureView<ReportEditorViewModel, ReportEditorView>(builder);
+            ConfigureView<OperEditorViewModel, OperEditorView>(builder);
 
             ConfigureView<RecepientManagerViewModel, RecepientManagerView>(builder);
 
@@ -125,22 +125,14 @@ namespace ReportServer.Desktop
         public MapperProfile()
         {
             CreateMap<ApiTask, DesktopTask>();
-
-            CreateMap<DesktopReport, DesktopTask>()
-                .ForMember("Id", opt => opt.Ignore());
-
             CreateMap<DesktopTask, ApiTask>();
 
-            CreateMap<ApiTaskInstance, DesktopInstanceCompact>()
+            CreateMap<ApiTaskInstance, DesktopTaskInstance>()
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
 
-            CreateMap<ApiOperInstance, DesktopInstance>()
-                .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
+            CreateMap<ApiOperInstance, DesktopOperInstance>()
+                .ForMember("State", opt => opt.MapFrom(s => (InstanceState)s.State));
 
-            //CreateMap<ApiReport, DesktopReport>()
-            //    .ForMember("ReportType", opt => opt.MapFrom(s => (ReportType) s.ReportType));
-            //CreateMap<DesktopReport, ApiReport>()
-            //    .ForMember("ReportType", opt => opt.MapFrom(s => (int) s.ReportType));
 
             CreateMap<TaskEditorViewModel, ApiTask>()
                 .ForMember("ScheduleId", opt =>
@@ -156,13 +148,11 @@ namespace ReportServer.Desktop
 
             CreateMap<ApiTask, TaskEditorViewModel>();
 
-            CreateMap<DesktopReport, ReportEditorViewModel>();
+            CreateMap<DesktopOper, OperEditorViewModel>();
 
             CreateMap<ApiRecepientGroup, RecepientEditorViewModel>();
             CreateMap<RecepientEditorViewModel, ApiRecepientGroup>();
 
-            //CreateMap<ReportEditorViewModel, ApiReport>()
-            //    .ForMember("ReportType", opt => opt.MapFrom(s => (int)s.ReportType));
         }
     }
 }

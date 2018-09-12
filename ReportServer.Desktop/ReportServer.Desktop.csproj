@@ -218,11 +218,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ReportManagerView.xaml">
+    <Page Include="Views\OperManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ReportEditorView.xaml">
+    <Page Include="Views\OperEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -257,8 +257,8 @@
     <Compile Include="ViewModels\DistinctShell.cs" />
     <Compile Include="Interfaces\ISaveableViewModel.cs" />
     <Compile Include="ViewModels\RecepientManagerViewModel.cs" />
-    <Compile Include="ViewModels\ReportEditorViewModel.cs" />
-    <Compile Include="ViewModels\ReportManagerViewModel.cs" />
+    <Compile Include="ViewModels\OperEditorViewModel.cs" />
+    <Compile Include="ViewModels\OperManagerViewModel.cs" />
     <Compile Include="ViewModels\ScheduleManagerViewModel.cs" />
     <Compile Include="ViewModels\TaskEditorViewModel.cs" />
     <Compile Include="ViewModels\TaskManagerViewModel.cs" />
@@ -285,11 +285,11 @@
     <Compile Include="Views\WpfResources\Converters.cs" />
     <Compile Include="Entities\CoreEntities.cs" />
     <Compile Include="Interfaces\ICachedService.cs" />
-    <Compile Include="Views\ReportManagerView.xaml.cs">
-      <DependentUpon>ReportManagerView.xaml</DependentUpon>
+    <Compile Include="Views\OperManagerView.xaml.cs">
+      <DependentUpon>OperManagerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ReportEditorView.xaml.cs">
-      <DependentUpon>ReportEditorView.xaml</DependentUpon>
+    <Compile Include="Views\OperEditorView.xaml.cs">
+      <DependentUpon>OperEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TaskEditorView.xaml.cs">
       <DependentUpon>TaskEditorView.xaml</DependentUpon>

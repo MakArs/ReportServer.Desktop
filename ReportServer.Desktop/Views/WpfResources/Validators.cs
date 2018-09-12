@@ -20,7 +20,7 @@ namespace ReportServer.Desktop.Views.WpfResources
         }
     }
 
-    public class ReportEditorValidator : AbstractValidator<ReportEditorViewModel>
+    public class ReportEditorValidator : AbstractValidator<OperEditorViewModel>
     {
         public ReportEditorValidator()
         {

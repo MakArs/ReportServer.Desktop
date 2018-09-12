@@ -11,9 +11,9 @@ namespace ReportServer.Desktop.Models
         public string FullId { get; set; }
     }
 
-    public class ReportEditorRequest : ViewRequest
+    public class OperEditorRequest : ViewRequest
     {
-        public DesktopReport Report { get; set; }
+        public ApiOper Oper { get; set; }
         public string FullId { get; set; }
     }
 

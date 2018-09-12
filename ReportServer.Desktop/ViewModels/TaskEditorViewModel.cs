@@ -3,11 +3,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
-using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -28,7 +26,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         public ReactiveList<ApiOper> Operations { get; set; }
-        [Reactive] public ReactiveList<DesktopTaskOper> BindedOpers { get; set; }
+        [Reactive] public ReactiveList<DesktopTaskOper> BindedOpers { get; set; } 
 
         public int Id { get; set; }
         [Reactive] public string Name { get; set; }
@@ -54,7 +52,7 @@ namespace ReportServer.Desktop.ViewModels
             IsValid = true;
             this.dialogCoordinator = dialogCoordinator;
 
-            BindedOpers = new ReactiveList<DesktopTaskOper>{ChangeTrackingEnabled = true};
+            BindedOpers = new ReactiveList<DesktopTaskOper>();
 
             RemoveOperCommand = ReactiveCommand.Create<DesktopTaskOper>(to=>
                 BindedOpers.Remove(to));
@@ -121,6 +119,8 @@ namespace ReportServer.Desktop.ViewModels
                 mapper.Map(request.Task, this);
                 HasSchedule = ScheduleId > 0;
 
+                BindedOpers.ChangeTrackingEnabled = true;
+
                 if (request.TaskOpers != null)
                     BindedOpers.PublishCollection(request.TaskOpers.OrderBy(to => to.Number)
                         .Select(to => new DesktopTaskOper
@@ -153,9 +153,11 @@ namespace ReportServer.Desktop.ViewModels
             this.ObservableForProperty(s => s.HasSchedule)
                 .Subscribe(hassch =>
                     ScheduleId = hassch.Value ? Schedules.FirstOrDefault()?.Id : null);
-            
-            IsDirty = false;
 
+            this.WhenAnyObservable(tevm => tevm.BindedOpers.Changed)
+                .Subscribe(_=>this.RaisePropertyChanged());
+
+            IsDirty = false;
         }
 
         public async Task Save()
