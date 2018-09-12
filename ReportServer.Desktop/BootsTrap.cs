@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Linq;
 using Autofac;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
@@ -46,7 +47,7 @@ namespace ReportServer.Desktop
 
             ConfigureView<CronEditorViewModel, CronEditorView>(builder);
 
-            ConfigureView<ScheduleManagerViewModel,ScheduleManagerView>(builder);
+            ConfigureView<ScheduleManagerViewModel, ScheduleManagerView>(builder);
 
             builder.RegisterType<RecepientEditorViewModel>();
 
@@ -123,12 +124,12 @@ namespace ReportServer.Desktop
     {
         public MapperProfile()
         {
-            CreateMap<ApiTask, DesktopFullTask>();
+            CreateMap<ApiTask, DesktopTask>();
 
-            CreateMap<DesktopReport, DesktopFullTask>()
+            CreateMap<DesktopReport, DesktopTask>()
                 .ForMember("Id", opt => opt.Ignore());
 
-            CreateMap<DesktopFullTask, ApiTask>();
+            CreateMap<DesktopTask, ApiTask>();
 
             CreateMap<ApiTaskInstance, DesktopInstanceCompact>()
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
@@ -143,9 +144,17 @@ namespace ReportServer.Desktop
 
             CreateMap<TaskEditorViewModel, ApiTask>()
                 .ForMember("ScheduleId", opt =>
-                    opt.MapFrom(s => s.ScheduleId > 0 ? s.ScheduleId : null));
+                    opt.MapFrom(s => s.ScheduleId > 0 ? s.ScheduleId : null))
+                .ForMember("BindedOpers",opt=>opt.MapFrom(s=>
+                    s.BindedOpers.Select(oper=>new ApiTaskOper
+                    {
+                        Id=oper.Id,
+                        OperId = oper.OperId,
+                        Number = oper.Number,
+                        TaskId = oper.TaskId
+                    }).ToArray()));
 
-            CreateMap<DesktopFullTask, TaskEditorViewModel>();
+            CreateMap<ApiTask, TaskEditorViewModel>();
 
             CreateMap<DesktopReport, ReportEditorViewModel>();
 

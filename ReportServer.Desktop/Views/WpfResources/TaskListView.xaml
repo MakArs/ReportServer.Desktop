@@ -34,20 +34,14 @@
             <DataGrid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" 
                               Command="{Binding EditTaskCommand}" 
-                              CommandParameter="{Binding SelectedTask}"/>
+                              CommandParameter="{Binding SelectedTask.Id}"/>
                     <KeyBinding Key="Delete"  Command="ApplicationCommands.NotACommand" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
-                <DataGridTextColumn Header = "Id" Width="0.5*" Binding="{Binding Id}"/>
-                <DataGridTextColumn Header = "Schedule" Binding="{Binding Schedule}"/>
-                <DataGridTextColumn Header = "Report" Binding="{Binding ReportName}"/>
-                <DataGridTextColumn Header = "Recepient group" Binding="{Binding RecepientGroup}"/>
-                <DataGridTextColumn Header = "Try count" Width="0.5*" Binding="{Binding TryCount}"/>
-                <DataGridTextColumn Header = "Query timeout" Width="0.5*" Binding="{Binding QueryTimeOut}"/>
-                <DataGridTextColumn Header = "Report type" Binding="{Binding ReportType}"/>
-                <DataGridTextColumn Header = "Html body" Binding="{Binding HasHtmlBody}"/>
-                <DataGridTextColumn Header = "Json attachment" Binding="{Binding HasJsonAttachment}"/>
-                <DataGridTextColumn Header = "Xlsx attachment" Binding="{Binding HasXlsxAttachment}"/>
+                <DataGridTextColumn Header = "Id" Width="0.25*" Binding="{Binding Id}"/>
+                <DataGridTextColumn Header = "Name" Width="0.5*" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header = "Schedule" Width="0.25*" Binding="{Binding Schedule}"/>
+                <DataGridTextColumn Header = "Operations" Binding="{Binding Operations}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

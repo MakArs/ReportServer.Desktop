@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ReportServer.Desktop.Views.WpfResources.SelectedTaskInstancesView"
+﻿<UserControl x:Class="ReportServer.Desktop.Views.WpfResources.OperInstancesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -17,15 +17,16 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Label Margin="0"  Content="Selected task instances list"/>
+        <Label Margin="0"  Content="Operation instances list"/>
 
         <DataGrid ColumnWidth="*" Grid.Row="1"
-                  ItemsSource="{Binding SelectedTaskInstances}"
-                  SelectedItem="{Binding SelectedTaskInstance}">
+                  ItemsSource="{Binding OperInstances}"
+                  SelectedItem="{Binding SelectedOperInstance}">
             <DataGrid.InputBindings>
                 <KeyBinding Key="Delete"  Command="ApplicationCommands.NotACommand" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
+                <DataGridTextColumn  Header="Operation Id"  Binding="{Binding OperId}" />
                 <DataGridTextColumn  Header="Start time"    Binding="{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" />
                 <DataGridTextColumn  Header="Duration"  Binding="{Binding Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>
                 <DataGridTextColumn  Header="State"  Binding="{Binding State}" />

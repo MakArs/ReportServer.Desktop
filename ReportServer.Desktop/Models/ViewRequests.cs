@@ -1,11 +1,13 @@
-﻿using ReportServer.Desktop.Entities;
+﻿using System.Collections.Generic;
+using ReportServer.Desktop.Entities;
 using Ui.Wpf.Common;
 
 namespace ReportServer.Desktop.Models
 {
     public class TaskEditorRequest : ViewRequest
     {
-        public DesktopFullTask Task { get; set; }
+        public ApiTask Task { get; set; }
+        public List<ApiTaskOper> TaskOpers { get; set; }
         public string FullId { get; set; }
     }
 

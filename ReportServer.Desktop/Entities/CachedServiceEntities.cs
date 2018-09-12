@@ -2,7 +2,7 @@
 
 namespace ReportServer.Desktop.Entities
 {
-    public class ApiOper 
+    public class ApiOper
     {
         public int? Id { get; set; }
         public string Type { get; set; }
@@ -18,7 +18,7 @@ namespace ReportServer.Desktop.Entities
         public string AddressesBcc { get; set; }
     }
 
-    public class ApiTelegramChannel 
+    public class ApiTelegramChannel
     {
         public int? Id { get; set; }
         public string Name { get; set; }
@@ -47,7 +47,7 @@ namespace ReportServer.Desktop.Entities
         public int? Id { get; set; }
         public int Number { get; set; }
         public int TaskId { get; set; }
-        public int OperId { get; set; }
+        public int? OperId { get; set; }
     }
 
     public class ApiTaskInstance
@@ -67,8 +67,7 @@ namespace ReportServer.Desktop.Entities
         public DateTime StartTime { get; set; }
         public int Duration { get; set; }
         public int State { get; set; }
-        public byte[] DataSet { get; set; }
+        public string DataSet { get; set; }
         public string ErrorMessage { get; set; }
     }
-
 }

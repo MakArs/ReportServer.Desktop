@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using ReportServer.Desktop.Models;
 using ReportServer.Desktop.ViewModels;
 
 namespace ReportServer.Desktop.Views.WpfResources
@@ -165,6 +162,17 @@ namespace ReportServer.Desktop.Views.WpfResources
                                        CultureInfo culture)
         {
             return (ParsingCategory)value == ParsingCategory.Value
+                ? Visibility.Hidden
+                : Visibility.Visible;
+        }
+    }
+
+    public class NullToVisibility : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter,
+                                       CultureInfo culture)
+        {
+            return value == null
                 ? Visibility.Hidden
                 : Visibility.Visible;
         }

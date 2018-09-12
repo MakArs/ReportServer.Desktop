@@ -10,17 +10,14 @@
         <ResourceDictionary Source="TemplatesDictionary.xaml"/>
     </UserControl.Resources>
 
-    <Grid >
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
@@ -30,47 +27,23 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="1"  Content="Selected instance information" Margin="2 2 0 2"/>
+            <Label Grid.Column="1"  Content="Selected operation instance data" Margin="2 2 0 2"/>
             <Button Padding="5" Command="{Binding OpenPage}"
-                    CommandParameter="{Binding SelectedInstance.ViewData}">
-                Open in browser
+                    CommandParameter="{Binding SelectedInstanceData.DataSet}">
+                Open Data Set in browser
             </Button>
         </Grid>
 
-        <Label Grid.Row="1"  Content="Start time"/>
+        <Label Grid.Row="1" Background="White" Height="auto" VerticalAlignment="Top" VerticalContentAlignment="Top" Content="Error Message"/>
 
-        <Label Grid.Row="1" Grid.Column="2"  Content="Duration"/>
+        <Label Grid.Row="2" Background="White" Height="auto" VerticalAlignment="Top" VerticalContentAlignment="Top" Content="Data Set"/>
 
-        <Label   Grid.Row="2"  Content="State"/>
-
-        <Label Grid.Row="2" Grid.Column="2"  Content="Try number"/>
-
-        <Label Grid.Row="3" Grid.ColumnSpan="2" Content="Data"/>
-
-        <Label Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Content="View data"/>
-
-        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"
-                   Padding="20 0 0 0"
-                   Text="{Binding StringFormat=dd.MM.yy HH:mm, Path= SelectedInstance.StartTime}"/>
-
-        <TextBlock Grid.Row="1" Grid.Column="3"  HorizontalAlignment="Left"
-                   Padding="20 0 0 0"
-                   Text="{Binding SelectedInstance.Duration, Converter={wpfResources:IntMsToMinsConverter}}"/>
-
-        <TextBlock Grid.Row="2" Grid.Column="1"  HorizontalAlignment="Left"
-                   Padding="20 0 0 0"
-                   Text="{Binding SelectedInstance.State}"/>
-
-        <TextBlock Grid.Row="2" Grid.Column="3"  HorizontalAlignment="Left"
-                   Padding="20 0 0 0"
-                   Text="{Binding SelectedInstance.TryNumber}"/>
-
-        <ScrollViewer Grid.Row="4" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto">
-            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Padding="0 0 20 0" Text="{Binding SelectedInstance.Data}"/>
+        <ScrollViewer Grid.Row="1" Grid.Column="1"  VerticalScrollBarVisibility="Auto">
+            <TextBlock VerticalAlignment="Top" Padding="10 0 20 0" HorizontalAlignment="Left" Text="{Binding SelectedInstanceData.ErrorMessage}"/>
         </ScrollViewer>
 
-        <ScrollViewer Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="2" VerticalScrollBarVisibility="Auto">
-            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Text="{Binding SelectedInstance.ViewData}"/>
+        <ScrollViewer Grid.Row="2" Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Padding="10 0 20 0" Text="{Binding SelectedInstanceData.DataSet}"/>
         </ScrollViewer>
 
     </Grid>

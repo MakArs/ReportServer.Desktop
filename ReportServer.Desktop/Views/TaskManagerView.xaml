@@ -26,12 +26,18 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
             <wpfResources:SelectedTaskInstancesView   BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
             <GridSplitter Grid.Column="1" HorizontalAlignment="Center" Width="3" 
                           ShowsPreview="False" VerticalAlignment="Stretch"/>
-            <wpfResources:SelectedInstanceFullView Grid.Column="2"  BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
+            <wpfResources:OperInstancesView Grid.Column="2"  BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
+
+            <GridSplitter Grid.Column="3" HorizontalAlignment="Center" Width="3" 
+                          ShowsPreview="False" VerticalAlignment="Stretch"/>
+            <wpfResources:SelectedInstanceFullView Grid.Column="4"  BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
 
         </Grid>
     </Grid>

@@ -42,7 +42,7 @@ namespace ReportServer.Desktop.ViewModels
 
             CreateTaskCommand = ReactiveCommand.Create(() =>
                 ShowDistinctView<TaskEditorView>("Creating new Task",
-                    new TaskEditorRequest {Task = new DesktopFullTask {Id = 0}},
+                    new TaskEditorRequest {Task = new ApiTask {Id = 0}},
                     new UiShowOptions {Title = "Creating new Task"}));
 
             CreateScheduleCommand = ReactiveCommand.Create(() =>
@@ -96,7 +96,7 @@ namespace ReportServer.Desktop.ViewModels
                 return;
             }
 
-            Application.Current.MainWindow.Close();
+            Application.Current.MainWindow?.Close();
         }
 
         public void ShowDistinctView<TView>(string value,

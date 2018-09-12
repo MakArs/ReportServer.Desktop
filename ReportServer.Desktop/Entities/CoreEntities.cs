@@ -5,7 +5,7 @@ using ReactiveUI.Fody.Helpers;
 
 namespace ReportServer.Desktop.Entities
 {
-    public class DesktopFullTask : ReactiveObject
+    public class DesktopTask : ReactiveObject
     {
         public int Id { get; set; }
         [Reactive] public string Name { get; set; }
@@ -33,6 +33,15 @@ namespace ReportServer.Desktop.Entities
         public int Duration { get; set; }
         public InstanceState State { get; set; }
         public int TryNumber { get; set; }
+    }
+
+    public class DesktopTaskOper
+    {
+        public int? Id { get; set; }
+        public string Name { get; set; }
+        public int Number { get; set; }
+        public int TaskId { get; set; }
+        public int? OperId { get; set; }
     }
 
     [DataContract]
