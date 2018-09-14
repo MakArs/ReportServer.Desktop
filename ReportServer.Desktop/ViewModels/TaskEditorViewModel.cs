@@ -3,9 +3,11 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
+using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -36,6 +38,7 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public bool IsValid { get; set; }
 
         [Reactive] public ApiOper SelectedOperation { get; set; }
+        [Reactive] public object SelectedOperationConfig { get; set; }
 
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
@@ -83,7 +86,7 @@ namespace ReportServer.Desktop.ViewModels
                 if (IsDirty)
                 {
                     var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                        "Все несохранённые изменения пропадут. Действительно закрыть окно редактирования?"
+                        "All unsaved changes will be lost. Close window?"
                         , MessageDialogStyle.AffirmativeAndNegative);
 
                     if (dialogResult != MessageDialogResult.Affirmative)
@@ -92,6 +95,18 @@ namespace ReportServer.Desktop.ViewModels
 
                 Close();
             });
+
+            this.ObservableForProperty(s => s.SelectedOperation)
+                .Where(sop => sop.Value != null)
+                .Subscribe(selop =>
+                {
+                    var val = selop.Value;
+                    var type = val.Type == "Exporter"
+                        ? cachedService.DataExporters[val.Name]
+                        : cachedService.DataImporters[val.Name];
+                    SelectedOperationConfig = JsonConvert
+                        .DeserializeObject(val.Config, type);
+                });
 
             this.WhenAnyObservable(s => s.AllErrors.Changed)
                 .Subscribe(_ => IsValid = !AllErrors.Any());
@@ -166,8 +181,8 @@ namespace ReportServer.Desktop.ViewModels
 
             var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
                 Id > 0
-                    ? "Вы действительно хотите изменить эту задачу?"
-                    : "Вы действительно хотите создать задачу?"
+                    ? "Save these task parameters?"
+                    : "Create this task?"
                 , MessageDialogStyle.AffirmativeAndNegative);
 
             if (dialogResult != MessageDialogResult.Affirmative) return;

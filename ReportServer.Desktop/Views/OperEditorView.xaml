@@ -6,9 +6,8 @@
              xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
              dialogs:DialogParticipation.Register="{Binding}"
              xmlns:wpfResources="clr-namespace:ReportServer.Desktop.Views.WpfResources"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:entities="clr-namespace:ReportServer.Desktop.Entities"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -21,17 +20,14 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label  Margin="2 2 2 10" Content="Oper parameters"/>
+            <Label  Margin="2 2 2 10" Content="Operation parameters"/>
 
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -42,93 +38,42 @@
                 </Grid.ColumnDefinitions>
 
                 <Label  Background="White" HorizontalAlignment="Left" 
-                   Margin="18 3 3 3" Content="Name"/>
+                        Margin="18 3 3 3" Content="Operation type"/>
 
-                <Border Grid.Column="1" Width="250" HorizontalAlignment="Left" Margin="3">
-                    <TextBox TextWrapping="NoWrap"
-                    AcceptsReturn="False"
-                    TextAlignment="Left" Text="{Binding Name,
-            UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
-                </Border>
-
-                <Label  Background="White" Grid.Row="1" HorizontalAlignment="Left" 
-                        Margin="18 3 3 3" Content="Query timeout"/>
-
-                <Border Grid.Row="1" Grid.Column="1" Width="60"
-                        HorizontalAlignment="Left" Margin="3">
-                    <TextBox Text="{Binding QueryTimeOut,
-                UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}">
-                        <i:Interaction.Behaviors>
-                            <wpfResources:TextBoxInputBehavior InputMode="DigitInput"/>
-                        </i:Interaction.Behaviors>
-                    </TextBox>
-                </Border>
-
-                <Label  Background="White" Grid.Row="1" HorizontalAlignment="Left" 
-                        Margin="18 3 3 3" Content="Query timeout"/>
-
-                <Label  Background="White" Grid.Row="2" HorizontalAlignment="Left" 
-                        Margin="18 3 3 3" Content="Connection string" />
-
-                <Border Grid.Row="2" Grid.Column="1" Width="650"
-                        HorizontalAlignment="Left" Margin="3">
-                    <TextBox Text="{Binding ConnectionString,
-                UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                             IsEnabled="{Binding ReportType,
-                Converter={wpfResources:ReportTypeToBool}}"
-                             TextWrapping="NoWrap"
-                             AcceptsReturn="False"
-                             mah:TextBoxHelper.Watermark="Enter connection string to database for this report"
-                             mah:TextBoxHelper.ClearTextButton="True"/>
-                </Border>
-
-                <Label  Background="White" Grid.Row="3" HorizontalAlignment="Left" 
-                        Margin="18 3 3 3" Content="Oper type"/>
-
-                <ComboBox Grid.Row="3" Grid.Column="1" Margin="3"
+                <ComboBox Grid.Column="1" Margin="3"
                           Width="250" HorizontalAlignment="Left"
                           ItemsSource="{Binding Source={wpfResources:EnumBindingSource
-                {x:Type entities:ReportType}}}"
-                          SelectedValue="{Binding ReportType}"/>
+                {x:Type entities:OperType}}}"
+                          SelectedValue="{Binding Type}"/>
+
+                <Label  Background="White" Grid.Row="1" HorizontalAlignment="Left" 
+                        Margin="18 3 3 3" Content="Data templates"/>
+
+                <ComboBox Background="White" Grid.Column="1" Grid.Row="1" Margin="3"
+                          Width="250" HorizontalAlignment="Left" 
+                          SelectedItem="{Binding SelectedTemplateName}" 
+                          ItemsSource="{Binding OperTemplates}"/>
             </Grid>
 
-            <Label  Margin="2 10 2 10" Grid.Row="2" Content="Data templates"/>
+            <xctk:PropertyGrid Grid.ColumnSpan="2" Grid.Row="2" 
+                               ShowSearchBox="False"
+                               HorizontalAlignment="Left"
+                               ShowDescriptionByTooltip="True"
+                               ShowSortOptions="False"
+                               Width="800"
+                               Margin="2 2 2 10"
+                               ShowSummary="False"
+                               Background="#F5F5F5"
+                               SelectedObjectName=""
+                               SelectedObjectTypeName="Operation configuration"
+                               Visibility="{Binding Configuration,Converter={wpfResources:NullToVisibility}}"
+                               SelectedObject="{Binding Configuration}">
+            </xctk:PropertyGrid>
 
-            <Grid Grid.Row="3">
-
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-
+            <Grid Grid.Row="3" Margin="0 0 0 50">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="0.4*"/>
                     <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Label Background="White"  HorizontalAlignment="Left" 
-                        VerticalAlignment="Top" Height="auto"
-                        Margin="18 3 3 3" Content="Query"/>
-
-                <ScrollViewer Height="auto" Grid.Column="1"
-                                  VerticalScrollBarVisibility="Auto">
-                    <wpfResources:QueryControl Height="auto"/>
-                </ScrollViewer>
-
-                <Label Grid.Row="1" Background="White"  HorizontalAlignment="Left" 
-                        VerticalAlignment="Top" Height="auto"
-                        Margin="18 3 3 3" Content="View template"/>
-
-                <ScrollViewer Height="auto" Grid.Row="1" Grid.Column="1"
-                                  VerticalScrollBarVisibility="Auto">
-                    <wpfResources:ViewTemplateControl Height="auto"/>
-                </ScrollViewer>
-            </Grid>
-
-            <Grid Grid.Row="4" Margin="0 0 0 50">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition  Width="0.4*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
 

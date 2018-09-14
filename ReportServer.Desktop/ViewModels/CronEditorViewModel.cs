@@ -56,7 +56,7 @@ namespace ReportServer.Desktop.ViewModels
                 if (IsDirty)
                 {
                     var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                        "Все несохранённые изменения пропадут. Действительно закрыть окно редактирования?"
+                        "All unsaved changes will be lost. Close window?"
                         , MessageDialogStyle.AffirmativeAndNegative);
 
                     if (dialogResult != MessageDialogResult.Affirmative)
@@ -166,8 +166,8 @@ namespace ReportServer.Desktop.ViewModels
 
             var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
                 Id > 0
-                    ? "Вы действительно хотите изменить этот отчёт?"
-                    : "Вы действительно хотите создать отчёт?"
+                    ? "Save these schedule parameters?"
+                    : "Create this schedule?"
                 , MessageDialogStyle.AffirmativeAndNegative);
 
             if (dialogResult != MessageDialogResult.Affirmative) return;

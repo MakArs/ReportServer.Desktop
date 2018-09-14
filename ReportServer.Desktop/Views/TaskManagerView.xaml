@@ -37,7 +37,9 @@
 
             <GridSplitter Grid.Column="3" HorizontalAlignment="Center" Width="3" 
                           ShowsPreview="False" VerticalAlignment="Stretch"/>
-            <wpfResources:SelectedInstanceFullView Grid.Column="4"  BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
+            <wpfResources:SelectedInstanceFullView Grid.Column="4"
+                                                   Visibility="{Binding SelectedInstanceData,Converter={wpfResources:NullToVisibility}}"
+                                                   BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
 
         </Grid>
     </Grid>

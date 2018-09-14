@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ReportServer.Desktop.Views.WpfResources.CronEditorView"
+﻿<UserControl x:Class="ReportServer.Desktop.Views.CronEditorView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -11,7 +11,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <ResourceDictionary Source="TemplatesDictionary.xaml"/>
+        <ResourceDictionary Source="WpfResources/TemplatesDictionary.xaml"/>
     </UserControl.Resources>
 
     <Grid>
@@ -149,8 +149,8 @@
         </ListView>
         <Grid Grid.Row="5" Margin="0 0 0 50">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
                 <ColumnDefinition  Width="0.4*"/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
 

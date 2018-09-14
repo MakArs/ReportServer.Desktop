@@ -45,6 +45,7 @@
                 <DataGridTextColumn Header = "Blind copy addresses" Binding="{Binding AddressesBcc}"/>
                 </DataGrid.Columns>
         </DataGrid>
+
         <mah:Flyout Grid.RowSpan="2" IsOpen="{Binding EditorViewModel.IsOpened}"
                     Background="White"
                     CloseButtonVisibility="Hidden"

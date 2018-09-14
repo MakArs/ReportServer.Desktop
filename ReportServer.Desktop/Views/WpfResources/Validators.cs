@@ -20,30 +20,30 @@ namespace ReportServer.Desktop.Views.WpfResources
         }
     }
 
-    public class ReportEditorValidator : AbstractValidator<OperEditorViewModel>
+    public class OperEditorValidator : AbstractValidator<OperEditorViewModel>
     {
-        public ReportEditorValidator()
+        public OperEditorValidator()
         {
-            RuleFor(red => red.QueryTimeOut)
-                .Must(t => t < 1000 && t > 0)
-                .WithMessage("You should set min 1 and max 1000 seconds timeout for query");
+            //RuleFor(red => red.QueryTimeOut)
+            //    .Must(t => t < 1000 && t > 0)
+            //    .WithMessage("You should set min 1 and max 1000 seconds timeout for query");
 
-            RuleFor(red => red.Name)
-                .Must(name => !string.IsNullOrEmpty(name))
-                .WithMessage("Name cannot be empty");
+            //RuleFor(red => red.Name)
+            //    .Must(name => !string.IsNullOrEmpty(name))
+            //    .WithMessage("Name cannot be empty");
 
-            RuleFor(red => red.ConnectionString)
-                .Must((red, connstr) => red.ReportType == ReportType.Custom ||
-                                        !string.IsNullOrEmpty(connstr))
-                .WithMessage("Connection string cannot be empty");
+            //RuleFor(red => red.ConnectionString)
+            //    .Must((red, connstr) => red.ReportType == ReportType.Custom ||
+            //                            !string.IsNullOrEmpty(connstr))
+            //    .WithMessage("Connection string cannot be empty");
 
-            RuleFor(red => red.ViewTemplate)
-                .Must(viewTemplate => !string.IsNullOrEmpty(viewTemplate))
-                .WithMessage("View template cannot be empty");
+            //RuleFor(red => red.ViewTemplate)
+            //    .Must(viewTemplate => !string.IsNullOrEmpty(viewTemplate))
+            //    .WithMessage("View template cannot be empty");
 
-            RuleFor(red => red.Query)
-                .Must(query => !string.IsNullOrEmpty(query))
-                .WithMessage("Query cannot be empty");
+            //RuleFor(red => red.Query)
+            //    .Must(query => !string.IsNullOrEmpty(query))
+            //    .WithMessage("Query cannot be empty");
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -25,28 +26,26 @@ namespace ReportServer.Desktop.Models
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         public ReactiveList<ApiTask> Tasks { get; set; }
         public ReactiveList<ApiTaskOper> TaskOpers { get; set; }
-        public ReactiveList<string> DataImporters { get; set; }
-        public ReactiveList<string> DataExporters { get; set; }
+        public Dictionary<string, Type> DataImporters { get; set; }
+        public Dictionary<string, Type> DataExporters { get; set; }
 
         public CachedService(IMapper mapper)
         {
             this.mapper = mapper;
             Operations = new ReactiveList<ApiOper> {ChangeTrackingEnabled = true};
-            RecepientGroups = new ReactiveList<ApiRecepientGroup> { ChangeTrackingEnabled = true };
-            TelegramChannels = new ReactiveList<ApiTelegramChannel> { ChangeTrackingEnabled = true };
-            Schedules = new ReactiveList<ApiSchedule> { ChangeTrackingEnabled = true };
-            Tasks = new ReactiveList<ApiTask> { ChangeTrackingEnabled = true };
-            TaskOpers = new ReactiveList<ApiTaskOper> { ChangeTrackingEnabled = true };
-            DataImporters = new ReactiveList<string>();
-            DataExporters = new ReactiveList<string>();
+            RecepientGroups = new ReactiveList<ApiRecepientGroup> {ChangeTrackingEnabled = true};
+            TelegramChannels = new ReactiveList<ApiTelegramChannel> {ChangeTrackingEnabled = true};
+            Schedules = new ReactiveList<ApiSchedule> {ChangeTrackingEnabled = true};
+            Tasks = new ReactiveList<ApiTask> {ChangeTrackingEnabled = true};
+            TaskOpers = new ReactiveList<ApiTaskOper> {ChangeTrackingEnabled = true};
         }
 
         public bool Init(string serviceUri)
         {
-            client = JsonHttpClient.Create(serviceUri+ "/api/v2/");
+            client = JsonHttpClient.Create(serviceUri + "/api/v2/");
             try
             {
-                GetExecutors();
+                GetOperations();
                 RefreshData();
                 return true;
             }
@@ -56,12 +55,17 @@ namespace ReportServer.Desktop.Models
             }
         }
 
-        private void GetExecutors()
+        private void GetOperations() //todo:some way to delete custom operations
         {
-            DataImporters.PublishCollection(client
-                .Get<List<string>>("opers/customimporters/"));
-            DataExporters.PublishCollection(client
-                .Get<List<string>>("opers/customexporters/"));
+            DataImporters = client
+                .Get<Dictionary<string, string>>("opers/registeredimporters/")
+                .ToDictionary(pair => pair.Key,
+                    pair => Type.GetType("ReportServer.Desktop.Entities." + pair.Value));
+
+            DataExporters = client
+                .Get<Dictionary<string, string>>("opers/registeredexporters/")
+                .ToDictionary(pair => pair.Key,
+                    pair => Type.GetType("ReportServer.Desktop.Entities." + pair.Value));
         }
 
         #region RefreshLogics
@@ -69,7 +73,7 @@ namespace ReportServer.Desktop.Models
         public void RefreshOpers()
         {
             Operations.PublishCollection(client.Get<List<ApiOper>>("opers/"));
-               // .Select(rep => mapper.Map<DesktopOper>(rep)));
+            // .Select(rep => mapper.Map<DesktopOper>(rep)));
         }
 
         public void RefreshRecepientGroups()
@@ -105,8 +109,8 @@ namespace ReportServer.Desktop.Models
             RefreshRecepientGroups();
             RefreshTelegramChannels();
             RefreshSchedules();
-            RefreshTasks();
             RefreshTaskOpers();
+            RefreshTasks();
         }
 
         #endregion
@@ -125,7 +129,7 @@ namespace ReportServer.Desktop.Models
         {
             return client.Get<ApiOperInstance>($"instances/operinstances/{id}");
         }
-        
+
         public async Task<string> GetCurrentTaskViewById(int taskId) //currently doesn't work
         {
             var apiAnswer = await client
@@ -141,7 +145,7 @@ namespace ReportServer.Desktop.Models
 
         public int? CreateOrUpdateOper(ApiOper oper)
         {
-            if (oper.Id == null)
+            if (oper.Id == null || oper.Id == 0)
                 return client.Post("opers/", oper);
 
             client.Put($"opers/{oper.Id}", oper);
@@ -150,7 +154,7 @@ namespace ReportServer.Desktop.Models
 
         public int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group)
         {
-            if (group.Id == null)
+            if (group.Id == null || group.Id == 0)
                 return client.Post("recepientgroups/", group);
 
             client.Put($"recepientgroups/{group.Id}", group);
@@ -159,7 +163,7 @@ namespace ReportServer.Desktop.Models
 
         public int? CreateOrUpdateTelegramChannel(ApiTelegramChannel channel)
         {
-            if (channel.Id == null)
+            if (channel.Id == null || channel.Id == 0)
                 return client.Post("telegrams/", channel);
 
             client.Put($"telegrams/{channel.Id}", channel);
@@ -168,7 +172,7 @@ namespace ReportServer.Desktop.Models
 
         public int? CreateOrUpdateSchedule(ApiSchedule schedule)
         {
-            if (schedule.Id == null)
+            if (schedule.Id == null || schedule.Id == 0)
                 return client.Post("schedules/", schedule);
 
             client.Put($"schedules/{schedule.Id}", schedule);
@@ -254,9 +258,4 @@ namespace ReportServer.Desktop.Models
 
     }
 }
-
-//todo: delete hotkey logic changed?
-//todo: delete report
 //todo: baseaddress
-//todo: ui improvements
-//todo: recepgroups,schedules,telegramchannels functional

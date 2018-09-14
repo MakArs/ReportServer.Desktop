@@ -65,12 +65,12 @@ namespace ReportServer.Desktop.ViewModels
                     {
                         Task = cachedService
                             .Tasks.FirstOrDefault(task => task.Id == id),
-                        TaskOpers = cachedService.TaskOpers.Where(to=>to.TaskId==id).ToList()
+                        TaskOpers = cachedService.TaskOpers.Where(to => to.TaskId == id).ToList()
                     },
                     new UiShowOptions {Title = name});
             });
 
-            this.WhenAnyObservable(s => s.Tasks.Changed) // todo: add and test when element changed
+            this.WhenAnyObservable(s => s.Tasks.Changed)
                 .Subscribe(x =>
                 {
                     SelectedTask = null;
@@ -114,7 +114,7 @@ namespace ReportServer.Desktop.ViewModels
         {
             SelectedTaskInstances
                 .PublishCollection(cachedService.GetInstancesByTaskId(taskId)
-                    .Select(ti=>mapper.Map<DesktopTaskInstance>(ti)));
+                    .Select(ti => mapper.Map<DesktopTaskInstance>(ti)));
         }
 
         private void OpenPageInBrowser(string htmlPage)
@@ -158,6 +158,7 @@ namespace ReportServer.Desktop.ViewModels
 
             this.WhenAnyObservable(tmvm => tmvm.cachedService.Tasks.Changed)
                 .Subscribe(_ => RefreshTaskList());
+
             this.WhenAnyObservable(tmvm => tmvm.cachedService.Tasks.ItemChanged)
                 .Subscribe(_ => RefreshTaskList());
         }
@@ -192,6 +193,5 @@ namespace ReportServer.Desktop.ViewModels
                 cachedService.RefreshData();
             }
         }
-
     }
 }

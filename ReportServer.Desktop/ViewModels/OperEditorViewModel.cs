@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
+using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -13,6 +15,7 @@ using ReportServer.Desktop.Models;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace ReportServer.Desktop.ViewModels
 {
@@ -22,16 +25,14 @@ namespace ReportServer.Desktop.ViewModels
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
 
-        public ReactiveList<string> QueryTemplates { get; set; }
-        public ReactiveList<string> ViewTemplates { get; set; }
+        private Dictionary<string, Type> DataImporters { get; set; }
+        private Dictionary<string, Type> DataExporters { get; set; }
 
         public int? Id { get; set; }
-        [Reactive] public string Name { get; set; }
-        [Reactive] public string ConnectionString { get; set; }
-        [Reactive] public string ViewTemplate { get; set; }
-        [Reactive] public string Query { get; set; }
-        [Reactive] public ReportType ReportType { get; set; }
-        [Reactive] public int QueryTimeOut { get; set; } //seconds
+        [Reactive] public OperType Type { get; set; }
+        public ReactiveList<string> OperTemplates { get; set; }
+        [Reactive] public string SelectedTemplateName { get; set; }
+        [Reactive] public object Configuration { get; set; }
 
         [Reactive] public bool IsDirty { get; set; }
         [Reactive] public bool IsValid { get; set; }
@@ -40,13 +41,15 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand CancelCommand { get; set; }
 
         public OperEditorViewModel(ICachedService cachedService, IMapper mapper,
-                                     IDialogCoordinator dialogCoordinator)
+                                   IDialogCoordinator dialogCoordinator)
         {
             this.cachedService = cachedService;
             this.mapper = mapper;
             IsValid = true;
-            validator = new ReportEditorValidator();
+            validator = new OperEditorValidator();
             this.dialogCoordinator = dialogCoordinator;
+
+            OperTemplates = new ReactiveList<string>();
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
                 isd => isd == true);
@@ -59,7 +62,7 @@ namespace ReportServer.Desktop.ViewModels
                 if (IsDirty)
                 {
                     var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                        "Все несохранённые изменения пропадут. Действительно закрыть окно редактирования?"
+                        "All unsaved changes will be lost. Close window?"
                         , MessageDialogStyle.AffirmativeAndNegative);
 
                     if (dialogResult != MessageDialogResult.Affirmative)
@@ -69,48 +72,63 @@ namespace ReportServer.Desktop.ViewModels
                 Close();
             });
 
-            this.WhenAnyObservable(s => s.AllErrors.Changed)
-                .Subscribe(_ => IsValid = !AllErrors.Any());
-
-            this.WhenAnyValue(s => s.ReportType)
-                .Skip(2)
+            this.ObservableForProperty(s => s.Type)
                 .Subscribe(type =>
                 {
-                    Query = type == ReportType.Custom
-                        ? QueryTemplates.FirstOrDefault()
-                        : null;
-                    ViewTemplate = type == ReportType.Custom
-                        ? ViewTemplates.FirstOrDefault()
-                        : null;
-                    this.RaisePropertyChanged(nameof(ConnectionString));
+                    var templates = type.Value == OperType.Exporter
+                        ? DataExporters.Select(pair => pair.Key)
+                        : DataImporters.Select(pair => pair.Key);
+
+                    OperTemplates.PublishCollection(templates);
+                    SelectedTemplateName = OperTemplates.First();
                 });
 
+            this.ObservableForProperty(s => s.SelectedTemplateName)
+                .Where(templ => templ.Value != null)
+                .Subscribe(templ =>
+                {
+                    var type = Type == OperType.Exporter
+                        ? DataExporters[templ.Value]
+                        : DataImporters[templ.Value];
+                    if (type == null) return;
+
+                    Configuration = Activator.CreateInstance(type);
+                    mapper.Map(cachedService, Configuration);
+                });
+
+            this.WhenAnyObservable(s => s.AllErrors.Changed)
+                .Subscribe(_ => IsValid = !AllErrors.Any());
         }
 
         public void Initialize(ViewRequest viewRequest)
         {
+
+            DataImporters = cachedService.DataImporters;
+            DataExporters = cachedService.DataExporters;
+
             if (viewRequest is OperEditorRequest request)
             {
                 FullTitle = request.FullId;
                 mapper.Map(request.Oper, this);
+
                 if (Id == 0)
+                    Type = OperType.Importer;
+                else
                 {
-                    Name = "New Oper";
-                    Id = null;
-                    QueryTimeOut = 5;
-                    ReportType = ReportType.Common;
+                    var type = Type == OperType.Exporter
+                        ? DataExporters[SelectedTemplateName]
+                        : DataImporters[SelectedTemplateName];
+
+                    Configuration = JsonConvert.DeserializeObject(request.Oper.Config, type);
                 }
             }
 
             void Changed(object sender, PropertyChangedEventArgs e)
             {
+                if (IsDirty) return;
                 IsDirty = true;
-                if (Title.Last() != '*')
-                    Title += '*';
+                Title += '*';
             }
-
-            QueryTemplates = cachedService.DataImporters;
-            ViewTemplates = cachedService.DataExporters;
 
             PropertyChanged += Changed;
 
@@ -123,21 +141,42 @@ namespace ReportServer.Desktop.ViewModels
 
             var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
                 Id > 0
-                    ? "Вы действительно хотите изменить этот отчёт?"
-                    : "Вы действительно хотите создать отчёт?"
+                    ? "Save these operation parameters?"
+                    : "Create this operation?"
                 , MessageDialogStyle.AffirmativeAndNegative);
 
             if (dialogResult != MessageDialogResult.Affirmative) return;
 
             var editedReport = new ApiOper();
 
-            if (ReportType == ReportType.Custom) ConnectionString = null;
-
             mapper.Map(this, editedReport);
 
             cachedService.CreateOrUpdateOper(editedReport);
             Close();
             cachedService.RefreshData();
+        }
+    }
+
+    public class BadGates: IItemsSource
+    {
+        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
+        public BadGates(ICachedService service)
+        {
+            RecepientGroups = service.RecepientGroups;
+        }
+
+        public ItemCollection GetValues()
+        {
+            ItemCollection coll = new ItemCollection();
+            //foreach (var rgr in new ApiRecepientGroup[]
+            //{
+            //    new ApiRecepientGroup{Id=15,Name="redname"},
+            //    new ApiRecepientGroup{Id=16,Name="greenname"}
+            //})
+
+            foreach (var rgr in RecepientGroups)
+                    coll.Add(rgr.Id, rgr.Name);
+            return coll; 
         }
     }
 }

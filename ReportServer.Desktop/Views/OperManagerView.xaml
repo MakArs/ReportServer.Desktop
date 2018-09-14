@@ -29,7 +29,7 @@
 
         <DataGrid Grid.Row="1" ColumnWidth="*"
                   ItemsSource="{Binding Operations}"  
-                  SelectedItem="{Binding SelectedReport,Mode=OneWayToSource}">
+                  SelectedItem="{Binding SelectedOper,Mode=OneWayToSource}">
             <DataGrid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" 
                               Command="{Binding EditOperCommand}" 
@@ -37,9 +37,8 @@
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Id"  Binding="{Binding Id}"/>
+                <DataGridTextColumn Header = "Type"  Binding="{Binding Type}"/>
                 <DataGridTextColumn Header = "Name"  Binding="{Binding Name}"/>
-                <DataGridTextColumn Header = "Oper type"  Binding="{Binding ReportType}"/>
-                <DataGridTextColumn Header = "Query timeout"  Binding="{Binding QueryTimeOut}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

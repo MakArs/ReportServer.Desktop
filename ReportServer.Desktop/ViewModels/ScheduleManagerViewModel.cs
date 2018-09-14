@@ -4,7 +4,7 @@ using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
-using ReportServer.Desktop.Views.WpfResources;
+using ReportServer.Desktop.Views;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;

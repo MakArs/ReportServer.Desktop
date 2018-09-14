@@ -4,6 +4,7 @@ using Autofac;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using Monik.Client;
+using Newtonsoft.Json;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
@@ -131,16 +132,16 @@ namespace ReportServer.Desktop
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
 
             CreateMap<ApiOperInstance, DesktopOperInstance>()
-                .ForMember("State", opt => opt.MapFrom(s => (InstanceState)s.State));
+                .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
 
 
             CreateMap<TaskEditorViewModel, ApiTask>()
                 .ForMember("ScheduleId", opt =>
                     opt.MapFrom(s => s.ScheduleId > 0 ? s.ScheduleId : null))
-                .ForMember("BindedOpers",opt=>opt.MapFrom(s=>
-                    s.BindedOpers.Select(oper=>new ApiTaskOper
+                .ForMember("BindedOpers", opt => opt.MapFrom(s =>
+                    s.BindedOpers.Select(oper => new ApiTaskOper
                     {
-                        Id=oper.Id,
+                        Id = oper.Id,
                         OperId = oper.OperId,
                         Number = oper.Number,
                         TaskId = oper.TaskId
@@ -148,11 +149,21 @@ namespace ReportServer.Desktop
 
             CreateMap<ApiTask, TaskEditorViewModel>();
 
-            CreateMap<DesktopOper, OperEditorViewModel>();
-
             CreateMap<ApiRecepientGroup, RecepientEditorViewModel>();
             CreateMap<RecepientEditorViewModel, ApiRecepientGroup>();
 
+            CreateMap<CachedService, IOperationConfig>();
+            CreateMap<CachedService, EmailExporterConfig>();
+            CreateMap<CachedService, TelegramExporterConfig>();
+
+            CreateMap<ApiOper, OperEditorViewModel>()
+                .ForMember("SelectedTemplateName", opt => opt.MapFrom
+                    (s => s.Name));
+            CreateMap<OperEditorViewModel, ApiOper>()
+                .ForMember("Config", opt => opt.MapFrom
+                    (s => JsonConvert.SerializeObject(s.Configuration))
+                )
+                .ForMember("Name", opt => opt.MapFrom(s => s.SelectedTemplateName));
         }
     }
 }

@@ -194,7 +194,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Views\WpfResources\CronEditorView.xaml">
+    <Page Include="Views\CronEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -262,7 +262,7 @@
     <Compile Include="ViewModels\ScheduleManagerViewModel.cs" />
     <Compile Include="ViewModels\TaskEditorViewModel.cs" />
     <Compile Include="ViewModels\TaskManagerViewModel.cs" />
-    <Compile Include="Views\WpfResources\CronEditorView.xaml.cs">
+    <Compile Include="Views\CronEditorView.xaml.cs">
       <DependentUpon>CronEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">

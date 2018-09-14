@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ReactiveUI;
 using ReportServer.Desktop.Entities;
@@ -13,8 +14,8 @@ namespace ReportServer.Desktop.Interfaces
         ReactiveList<ApiSchedule> Schedules { get; set; }
         ReactiveList<ApiTask> Tasks { get; set; }
         ReactiveList<ApiTaskOper> TaskOpers { get; set; }
-        ReactiveList<string> DataImporters { get; set; }
-        ReactiveList<string> DataExporters { get; set; }
+        Dictionary<string, Type> DataImporters { get; set; }
+        Dictionary<string, Type> DataExporters { get; set; }
 
         bool Init(string serviceUri);
         void RefreshOpers();

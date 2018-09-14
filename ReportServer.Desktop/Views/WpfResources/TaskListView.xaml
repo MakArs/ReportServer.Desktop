@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -29,6 +30,7 @@
         </Grid>
 
         <DataGrid Grid.Row="1" ColumnWidth="*"
+                  RowHeight="{x:Static sys:Double.NaN}"
                   ItemsSource="{Binding Tasks}" 
                   SelectedItem="{Binding SelectedTask}">
             <DataGrid.InputBindings>
@@ -41,7 +43,13 @@
                 <DataGridTextColumn Header = "Id" Width="0.25*" Binding="{Binding Id}"/>
                 <DataGridTextColumn Header = "Name" Width="0.5*" Binding="{Binding Name}"/>
                 <DataGridTextColumn Header = "Schedule" Width="0.25*" Binding="{Binding Schedule}"/>
-                <DataGridTextColumn Header = "Operations" Binding="{Binding Operations}"/>
+                <DataGridTextColumn Header = "Operations" Binding="{Binding Operations}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -3,7 +3,7 @@ using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.Views.WpfResources
+namespace ReportServer.Desktop.Views
 {
     public partial class CronEditorView : IView
     {

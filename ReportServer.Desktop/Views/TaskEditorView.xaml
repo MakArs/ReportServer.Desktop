@@ -184,10 +184,11 @@
                                Margin="2 2 2 10"
                                ShowSummary="False"
                                Background="#F5F5F5"
-                               SelectedObjectName=""
-                               SelectedObjectTypeName="Operation properties"
-                               Visibility="{Binding SelectedOperation,Converter={wpfResources:NullToVisibility}}"
-                               SelectedObject="{Binding SelectedOperation}">
+                               
+                               SelectedObjectName="properties"
+                               SelectedObjectTypeName="{Binding SelectedOperation.Name}"
+                               Visibility="{Binding SelectedOperationConfig,Converter={wpfResources:NullToVisibility}}"
+                               SelectedObject="{Binding SelectedOperationConfig}">
             </xctk:PropertyGrid>
         </Grid>
     </ScrollViewer>
