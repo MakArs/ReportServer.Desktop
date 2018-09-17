@@ -11,7 +11,6 @@ namespace ReportServer.Desktop
         {
             base.OnStartup(e);
 
-
             var shell = UiStarter.Start<IDockWindow>(
                 new BootsTrap(),
                 new UiShowStartWindowOptions

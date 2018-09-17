@@ -92,8 +92,6 @@ namespace ReportServer.Desktop.ViewModels
             PropertyChanged += Changed;
 
             IsOpened = true;
-
-            IsDirty = false;
         }
 
         public async Task Save()

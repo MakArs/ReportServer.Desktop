@@ -61,13 +61,15 @@
                                ShowDescriptionByTooltip="True"
                                ShowSortOptions="False"
                                Width="800"
+                               MaxHeight="750"
                                Margin="2 2 2 10"
                                ShowSummary="False"
                                Background="#F5F5F5"
                                SelectedObjectName=""
                                SelectedObjectTypeName="Operation configuration"
                                Visibility="{Binding Configuration,Converter={wpfResources:NullToVisibility}}"
-                               SelectedObject="{Binding Configuration}">
+                               SelectedObject="{Binding Configuration,
+                UpdateSourceTrigger=PropertyChanged}">
             </xctk:PropertyGrid>
 
             <Grid Grid.Row="3" Margin="0 0 0 50">
@@ -76,12 +78,10 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-
                     <Button Command="{Binding SaveChangesCommand}" 
                                 IsEnabled="{Binding IsValid}" Height="25" Width="100">Save</Button>
 
                     <Button Command="{Binding CancelCommand}" Height="25" Width="100">Cancel</Button>
-
                 </StackPanel>
             </Grid>
         </Grid>

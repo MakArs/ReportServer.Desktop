@@ -4,6 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using Autofac;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
@@ -15,7 +19,11 @@ using ReportServer.Desktop.Models;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
+using Xceed.Wpf.Toolkit.PropertyGrid;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
+using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
+using IContainer = Autofac.IContainer;
+using ItemCollection = Xceed.Wpf.Toolkit.PropertyGrid.Attributes.ItemCollection;
 
 namespace ReportServer.Desktop.ViewModels
 {
@@ -83,6 +91,7 @@ namespace ReportServer.Desktop.ViewModels
                     SelectedTemplateName = OperTemplates.First();
                 });
 
+
             this.ObservableForProperty(s => s.SelectedTemplateName)
                 .Where(templ => templ.Value != null)
                 .Subscribe(templ =>
@@ -102,6 +111,14 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
+            void Changed(object sender, PropertyChangedEventArgs e)
+            {
+                if (IsDirty) return;
+                IsDirty = true;
+                Title += '*';
+            }
+
+            PropertyChanged += Changed;
 
             DataImporters = cachedService.DataImporters;
             DataExporters = cachedService.DataExporters;
@@ -122,18 +139,7 @@ namespace ReportServer.Desktop.ViewModels
                     Configuration = JsonConvert.DeserializeObject(request.Oper.Config, type);
                 }
             }
-
-            void Changed(object sender, PropertyChangedEventArgs e)
-            {
-                if (IsDirty) return;
-                IsDirty = true;
-                Title += '*';
-            }
-
-            PropertyChanged += Changed;
-
-            IsDirty = false;
-        }
+          }
 
         public async Task Save()
         {
@@ -154,29 +160,6 @@ namespace ReportServer.Desktop.ViewModels
             cachedService.CreateOrUpdateOper(editedReport);
             Close();
             cachedService.RefreshData();
-        }
-    }
-
-    public class BadGates: IItemsSource
-    {
-        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
-        public BadGates(ICachedService service)
-        {
-            RecepientGroups = service.RecepientGroups;
-        }
-
-        public ItemCollection GetValues()
-        {
-            ItemCollection coll = new ItemCollection();
-            //foreach (var rgr in new ApiRecepientGroup[]
-            //{
-            //    new ApiRecepientGroup{Id=15,Name="redname"},
-            //    new ApiRecepientGroup{Id=16,Name="greenname"}
-            //})
-
-            foreach (var rgr in RecepientGroups)
-                    coll.Add(rgr.Id, rgr.Name);
-            return coll; 
         }
     }
 }

@@ -99,7 +99,7 @@ namespace ReportServer.Desktop
                 .SingleInstance();
 
             #endregion
-
+            
             var container = builder.Build();
             return container;
         }
@@ -109,6 +109,9 @@ namespace ReportServer.Desktop
             var container = InitContainer();
             var shell = container.Resolve<IShell>();
             shell.Container = container;
+
+            TelegramChannelsSource.Container = container;
+            RecepGroupsSource.Container = container;
             return shell;
         }
 

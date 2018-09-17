@@ -29,7 +29,6 @@ namespace ReportServer.Desktop.Views.WpfResources
             AssociatedObject.PreviewKeyDown   += AssociatedObjectPreviewKeyDown;
 
             DataObject.AddPastingHandler(AssociatedObject, Pasting);
-
         }
 
         protected override void OnDetaching()

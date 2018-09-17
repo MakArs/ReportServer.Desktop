@@ -67,7 +67,7 @@ namespace ReportServer.Desktop.Models
                 .ToDictionary(pair => pair.Key,
                     pair => Type.GetType("ReportServer.Desktop.Entities." + pair.Value));
         }
-
+        
         #region RefreshLogics
 
         public void RefreshOpers()

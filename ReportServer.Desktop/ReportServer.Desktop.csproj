@@ -279,6 +279,8 @@
     <Compile Include="Views\WpfResources\OperInstancesView.xaml.cs">
       <DependentUpon>OperInstancesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\WpfResources\ManualPropertyGrid.cs" />
+    <Compile Include="Views\WpfResources\PropertyGridHelpers.cs" />
     <Compile Include="Views\WpfResources\QueryControl.xaml.cs">
       <DependentUpon>QueryControl.xaml</DependentUpon>
     </Compile>
@@ -337,6 +339,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config">
       <SubType>Designer</SubType>

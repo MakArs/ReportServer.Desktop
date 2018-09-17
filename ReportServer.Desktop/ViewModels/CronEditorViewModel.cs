@@ -156,8 +156,6 @@ namespace ReportServer.Desktop.ViewModels
             }
 
             PropertyChanged += Changed;
-
-            IsDirty = false;
         }
 
         public async Task Save()

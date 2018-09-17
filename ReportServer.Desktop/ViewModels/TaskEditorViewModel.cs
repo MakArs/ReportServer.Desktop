@@ -171,8 +171,6 @@ namespace ReportServer.Desktop.ViewModels
 
             this.WhenAnyObservable(tevm => tevm.BindedOpers.Changed)
                 .Subscribe(_=>this.RaisePropertyChanged());
-
-            IsDirty = false;
         }
 
         public async Task Save()
