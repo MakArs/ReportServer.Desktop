@@ -47,8 +47,8 @@ namespace ReportServer.Desktop.Views.WpfResources
 
             foreach (var chn in channels)
                 coll.Add(chn.Id, chn.Name);
-
-            return null;
+            
+            return coll;
         }
     }
 
@@ -56,7 +56,9 @@ namespace ReportServer.Desktop.Views.WpfResources
     {
         public FrameworkElement ResolveEditor(PropertyItem propertyItem)
         {
-            TextBox textBox = new TextBox { AcceptsReturn = true, TextWrapping = TextWrapping.Wrap };
+            TextBox textBox = new TextBox { AcceptsReturn = true,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                TextWrapping = TextWrapping.Wrap };
 
             var binding = new Binding("Value")
             {

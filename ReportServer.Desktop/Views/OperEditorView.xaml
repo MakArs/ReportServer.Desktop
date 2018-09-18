@@ -30,6 +30,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -38,21 +39,30 @@
                 </Grid.ColumnDefinitions>
 
                 <Label  Background="White" HorizontalAlignment="Left" 
-                        Margin="18 3 3 3" Content="Operation type"/>
+                        Margin="18 3 3 3" Content="Mode"/>
 
                 <ComboBox Grid.Column="1" Margin="3"
                           Width="250" HorizontalAlignment="Left"
                           ItemsSource="{Binding Source={wpfResources:EnumBindingSource
-                {x:Type entities:OperType}}}"
-                          SelectedValue="{Binding Type}"/>
+                {x:Type entities:OperMode}}}"
+                          SelectedValue="{Binding Mode}"/>
 
                 <Label  Background="White" Grid.Row="1" HorizontalAlignment="Left" 
-                        Margin="18 3 3 3" Content="Data templates"/>
+                        Margin="18 3 3 3" Content="Type"/>
 
                 <ComboBox Background="White" Grid.Column="1" Grid.Row="1" Margin="3"
                           Width="250" HorizontalAlignment="Left" 
-                          SelectedItem="{Binding SelectedTemplateName}" 
+                          SelectedItem="{Binding Type}" 
                           ItemsSource="{Binding OperTemplates}"/>
+
+                <Label  Background="White" Grid.Row="2" HorizontalAlignment="Left" 
+                        Margin="18 3 3 3" Content="Name"/>
+
+                <TextBox Background="White" Grid.Column="1" Grid.Row="2" Margin="3"
+                          Width="250" HorizontalAlignment="Left" 
+                         HorizontalContentAlignment="Left"
+                         AcceptsReturn="False" TextWrapping="NoWrap"
+                          Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
 
             <xctk:PropertyGrid Grid.ColumnSpan="2" Grid.Row="2" 

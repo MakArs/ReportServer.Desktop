@@ -4,10 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using Autofac;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
@@ -19,11 +15,6 @@ using ReportServer.Desktop.Models;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
-using Xceed.Wpf.Toolkit.PropertyGrid;
-using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
-using IContainer = Autofac.IContainer;
-using ItemCollection = Xceed.Wpf.Toolkit.PropertyGrid.Attributes.ItemCollection;
 
 namespace ReportServer.Desktop.ViewModels
 {
@@ -37,9 +28,10 @@ namespace ReportServer.Desktop.ViewModels
         private Dictionary<string, Type> DataExporters { get; set; }
 
         public int? Id { get; set; }
-        [Reactive] public OperType Type { get; set; }
+        [Reactive] public OperMode Mode { get; set; }
         public ReactiveList<string> OperTemplates { get; set; }
-        [Reactive] public string SelectedTemplateName { get; set; }
+        [Reactive] public string Type { get; set; }
+        [Reactive] public string Name { get; set; }
         [Reactive] public object Configuration { get; set; }
 
         [Reactive] public bool IsDirty { get; set; }
@@ -80,28 +72,28 @@ namespace ReportServer.Desktop.ViewModels
                 Close();
             });
 
-            this.ObservableForProperty(s => s.Type)
-                .Subscribe(type =>
+            this.ObservableForProperty(s => s.Mode)
+                .Subscribe(mode =>
                 {
-                    var templates = type.Value == OperType.Exporter
+                    var templates = mode.Value == OperMode.Exporter
                         ? DataExporters.Select(pair => pair.Key)
                         : DataImporters.Select(pair => pair.Key);
 
                     OperTemplates.PublishCollection(templates);
-                    SelectedTemplateName = OperTemplates.First();
+                    Type = OperTemplates.First();
                 });
 
 
-            this.ObservableForProperty(s => s.SelectedTemplateName)
-                .Where(templ => templ.Value != null)
-                .Subscribe(templ =>
+            this.ObservableForProperty(s => s.Type)
+                .Where(type => type.Value != null)
+                .Subscribe(type =>
                 {
-                    var type = Type == OperType.Exporter
-                        ? DataExporters[templ.Value]
-                        : DataImporters[templ.Value];
-                    if (type == null) return;
+                    var operType = Mode == OperMode.Exporter
+                        ? DataExporters[type.Value]
+                        : DataImporters[type.Value];
+                    if (operType == null) return;
 
-                    Configuration = Activator.CreateInstance(type);
+                    Configuration = Activator.CreateInstance(operType);
                     mapper.Map(cachedService, Configuration);
                 });
 
@@ -126,15 +118,20 @@ namespace ReportServer.Desktop.ViewModels
             if (viewRequest is OperEditorRequest request)
             {
                 FullTitle = request.FullId;
-                mapper.Map(request.Oper, this);
 
-                if (Id == 0)
-                    Type = OperType.Importer;
+                if (request.Oper.Id == 0)
+                    Mode = OperMode.Importer;
+
                 else
                 {
-                    var type = Type == OperType.Exporter
-                        ? DataExporters[SelectedTemplateName]
-                        : DataImporters[SelectedTemplateName];
+                    Mode = DataExporters.ContainsKey(request.Oper.Type)
+                        ? OperMode.Exporter
+                        : OperMode.Importer;
+
+                    mapper.Map(request.Oper, this);
+                    var type = Mode == OperMode.Exporter
+                        ? DataExporters[Type]
+                        : DataImporters[Type];
 
                     Configuration = JsonConvert.DeserializeObject(request.Oper.Config, type);
                 }

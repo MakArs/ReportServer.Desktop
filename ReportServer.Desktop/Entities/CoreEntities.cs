@@ -23,7 +23,7 @@ namespace ReportServer.Desktop.Entities
         public int TaskId { get; set; }
         public int? OperId { get; set; }
     }
-    
+
     public class DesktopTaskInstance
     {
         public int Id { get; set; }
@@ -46,45 +46,56 @@ namespace ReportServer.Desktop.Entities
 
     public interface IOperationConfig
     {
-        string DataSetName { get; set; }
     }
 
     public class DbExporterConfig : IOperationConfig
     {
         [DisplayName("Dataset name")]
         [Description("Dataset which exporter needs for work")]
-        [Reactive] public string DataSetName { get; set; }
+        [Reactive]
+        public string DataSetName { get; set; }
 
         [DisplayName("Connection string")]
-        [Reactive] public string ConnectionString { get; set; }
+        [Reactive]
+        public string ConnectionString { get; set; }
 
         [DisplayName("Table name")]
-        [Reactive] public string TableName { get; set; }
+        [Reactive]
+        public string TableName { get; set; }
 
         [DisplayName("Database operation timeout")]
-        [Reactive] public int DbTimeOut { get; set; }
+        [DefaultValue(60)]
+        [Reactive]
+        public int DbTimeOut { get; set; }
 
         [DisplayName("Drop before")]
         [Description("Set if needed clearance before export")]
-        [Reactive] public bool DropBefore { get; set; }
+        [Reactive]
+        public bool DropBefore { get; set; }
     }
 
     public class ReportInstanceExporterConfig : IOperationConfig
     {
         [DisplayName("Dataset name")]
-        [Reactive] public string DataSetName { get; set; }
+        [Reactive]
+        public string DataSetName { get; set; }
 
         [DisplayName("Report name")]
-        [Reactive] public string ReportName { get; set; }
+        [Reactive]
+        public string ReportName { get; set; }
 
         [DisplayName("Connection string")]
-        [Reactive] public string ConnectionString { get; set; }
+        [Reactive]
+        public string ConnectionString { get; set; }
 
         [DisplayName("Table name")]
-        [Reactive] public string TableName { get; set; }
+        [Reactive]
+        public string TableName { get; set; }
 
         [DisplayName("Database operation timeout")]
-        [Reactive] public int DbTimeOut { get; set; }
+        [DefaultValue(60)]
+        [Reactive]
+        public int DbTimeOut { get; set; }
     }
 
 
@@ -92,44 +103,54 @@ namespace ReportServer.Desktop.Entities
     {
         [PropertyOrder(0)]
         [DisplayName("Dataset name")]
-        [Reactive] public string DataSetName { get; set; }
+        [Reactive]
+        public string DataSetName { get; set; }
 
         [PropertyOrder(1)]
         [DisplayName("Html body")]
-        [Reactive] public bool HasHtmlBody { get; set; }
+        [Reactive]
+        public bool HasHtmlBody { get; set; }
 
         [PropertyOrder(2)]
         [DisplayName("Xlsx attachement")]
-        [Reactive] public bool HasXlsxAttachment { get; set; }
+        [Reactive]
+        public bool HasXlsxAttachment { get; set; }
 
         [DisplayName("Json attachement")]
-        [Reactive] public bool HasJsonAttachment { get; set; }
+        [Reactive]
+        public bool HasJsonAttachment { get; set; }
 
         [ItemsSource(typeof(RecepGroupsSource))]
         [DisplayName("Recepient group")]
-        [Reactive] public int RecepientGroupId { get; set; }
+        [Reactive]
+        public int RecepientGroupId { get; set; }
 
         [DisplayName("View template")]
         [Editor(typeof(MultilineTextBoxEditor), typeof(MultilineTextBoxEditor))]
-        [Reactive] public string ViewTemplate { get; set; }
+        [Reactive]
+        public string ViewTemplate { get; set; }
 
         [DisplayName("Report name")]
         [Description("Will be displayed in messages")]
-        [Reactive] public string ReportName { get; set; }
+        [Reactive]
+        public string ReportName { get; set; }
     }
 
     public class TelegramExporterConfig : IOperationConfig
     {
         [DisplayName("Dataset name")]
-        [Reactive] public string DataSetName { get; set; }
+        [Reactive]
+        public string DataSetName { get; set; }
 
         [ItemsSource(typeof(TelegramChannelsSource))]
         [DisplayName("Telegram channel")]
-        [Reactive] public int TelegramChannelId { get; set; }
+        [Reactive]
+        public int TelegramChannelId { get; set; }
 
         [DisplayName("Report name")]
         [Description("Will be displayed in messages")]
-        [Reactive] public string ReportName { get; set; }
+        [Reactive]
+        public string ReportName { get; set; }
     }
 
     public class ExcelImporterConfig : IOperationConfig
@@ -153,8 +174,7 @@ namespace ReportServer.Desktop.Entities
 
         [DisplayName("Using columns")]
         [Description("Set here names of columns which will be used")]
-        public ReactiveList<string> ColumnList { get; set; } =
-            new ReactiveList<string> {"a", "b", "ceced"};
+        public ReactiveList<string> ColumnList { get; set; }
 
         [DisplayName("First data row")]
         [Description("First row in selected columns that will be read")]
@@ -175,26 +195,57 @@ namespace ReportServer.Desktop.Entities
     public class DbImporterConfig : IOperationConfig
     {
         [DisplayName("Dataset name")]
-        [Reactive] public string DataSetName { get; set; }
+        [Reactive]
+        public string DataSetName { get; set; }
 
         [DisplayName("Connection string")]
-        [Reactive] public string ConnectionString { get; set; }
+        [Reactive]
+        public string ConnectionString { get; set; }
 
         [DisplayName("Query")]
         [Editor(typeof(MultilineTextBoxEditor), typeof(MultilineTextBoxEditor))]
-        [Reactive] public string Query { get; set; }
+        [Reactive]
+        public string Query { get; set; }
 
         [DisplayName("Database operation timeout")]
-        [Reactive] public int TimeOut { get; set; }
+        [DefaultValue(60)]
+        [Reactive]
+        public int TimeOut { get; set; }
     }
 
-    public enum OperType : byte
+    public class CustomImporterConfig : IOperationConfig
+    {
+    }
+
+    public class CustomEmailSenderConfig : IOperationConfig
+    {
+        [PropertyOrder(1)]
+        [DisplayName("Html body")]
+        [Reactive]
+        public bool HasHtmlBody { get; set; }
+
+        [PropertyOrder(2)]
+        [DisplayName("Xlsx attachement")]
+        [Reactive]
+        public bool HasXlsxAttachment { get; set; }
+
+        [DisplayName("Json attachement")]
+        [Reactive]
+        public bool HasJsonAttachment { get; set; }
+
+        [ItemsSource(typeof(RecepGroupsSource))]
+        [DisplayName("Recepient group")]
+        [Reactive]
+        public int RecepientGroupId { get; set; }
+    }
+
+    public enum OperMode : byte
     {
         Importer = 1,
         Exporter = 2
     }
 
-    public enum InstanceState 
+    public enum InstanceState
     {
         InProcess = 1,
         Success = 2,

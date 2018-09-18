@@ -159,14 +159,10 @@ namespace ReportServer.Desktop
             CreateMap<CachedService, EmailExporterConfig>();
             CreateMap<CachedService, TelegramExporterConfig>();
 
-            CreateMap<ApiOper, OperEditorViewModel>()
-                .ForMember("SelectedTemplateName", opt => opt.MapFrom
-                    (s => s.Name));
+            CreateMap<ApiOper, OperEditorViewModel>();
             CreateMap<OperEditorViewModel, ApiOper>()
                 .ForMember("Config", opt => opt.MapFrom
-                    (s => JsonConvert.SerializeObject(s.Configuration))
-                )
-                .ForMember("Name", opt => opt.MapFrom(s => s.SelectedTemplateName));
+                    (s => JsonConvert.SerializeObject(s.Configuration)));
         }
     }
 }

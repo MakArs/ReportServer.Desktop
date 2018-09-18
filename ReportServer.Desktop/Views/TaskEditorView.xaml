@@ -184,8 +184,7 @@
                                Margin="2 2 2 10"
                                ShowSummary="False"
                                Background="#F5F5F5"
-                               
-                               SelectedObjectName="properties"
+                               SelectedObjectName="{Binding SelectedOperation.Type, StringFormat=({0})}"
                                SelectedObjectTypeName="{Binding SelectedOperation.Name}"
                                Visibility="{Binding SelectedOperationConfig,Converter={wpfResources:NullToVisibility}}"
                                SelectedObject="{Binding SelectedOperationConfig}">

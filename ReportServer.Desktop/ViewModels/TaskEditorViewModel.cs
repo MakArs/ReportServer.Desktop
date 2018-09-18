@@ -101,9 +101,10 @@ namespace ReportServer.Desktop.ViewModels
                 .Subscribe(selop =>
                 {
                     var val = selop.Value;
-                    var type = val.Type == "Exporter"
-                        ? cachedService.DataExporters[val.Name]
-                        : cachedService.DataImporters[val.Name];
+
+                    var type = cachedService.DataExporters.ContainsKey(val.Type)
+                        ? cachedService.DataExporters[val.Type]
+                        : cachedService.DataImporters[val.Type];
                     SelectedOperationConfig = JsonConvert
                         .DeserializeObject(val.Config, type);
                 });
