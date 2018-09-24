@@ -4,6 +4,7 @@ using Autofac;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using Monik.Client;
+using Monik.Common;
 using Newtonsoft.Json;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
@@ -65,7 +66,7 @@ namespace ReportServer.Desktop
                 "incoming");
 
             builder.RegisterInstance(logSender)
-                .As<IClientSender>();
+                .As<IMonikSender>();
 
             var monikSettings = new ClientSettings()
             {
@@ -75,11 +76,11 @@ namespace ReportServer.Desktop
             };
 
             builder.RegisterInstance(monikSettings)
-                .As<IClientSettings>();
+                .As<IMonikSettings>();
 
             builder
-                .RegisterType<MonikInstance>()
-                .As<IClientControl>()
+                .RegisterType<MonikClient>()
+                .As<IMonik>()
                 .SingleInstance();
 
             #endregion
