@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using FluentValidation.Validators;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Views.WpfResources;
@@ -19,6 +20,8 @@ namespace ReportServer.Desktop.Entities
     {
         public int? Id { get; set; }
         public string Name { get; set; }
+        [Reactive]
+        public bool IsDefault { get; set; }
         public int Number { get; set; }
         public int TaskId { get; set; }
         public int? OperId { get; set; }
@@ -55,6 +58,14 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string DataSetName { get; set; }
 
+        [DisplayName("Run if dataset is void")]
+        [Reactive]
+        public bool RunIfVoidDataSet { get; set; }
+
+        [DisplayName("Create table if not exists")]
+        [Reactive]
+        public bool CreateTable { get; set; }
+
         [DisplayName("Connection string")]
         [Reactive]
         public string ConnectionString { get; set; }
@@ -68,7 +79,7 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public int DbTimeOut { get; set; }
 
-        [DisplayName("Drop before")]
+        [DisplayName("Clean table before run")]
         [Description("Set if needed clearance before export")]
         [Reactive]
         public bool DropBefore { get; set; }
@@ -79,6 +90,10 @@ namespace ReportServer.Desktop.Entities
         [DisplayName("Dataset name")]
         [Reactive]
         public string DataSetName { get; set; }
+
+        [DisplayName("Run if dataset is void")]
+        [Reactive]
+        public bool RunIfVoidDataSet { get; set; }
 
         [DisplayName("Report name")]
         [Reactive]
@@ -105,6 +120,10 @@ namespace ReportServer.Desktop.Entities
         [DisplayName("Dataset name")]
         [Reactive]
         public string DataSetName { get; set; }
+
+        [DisplayName("Run if dataset is void")]
+        [Reactive]
+        public bool RunIfVoidDataSet { get; set; }
 
         [PropertyOrder(1)]
         [DisplayName("Html body")]
@@ -141,6 +160,10 @@ namespace ReportServer.Desktop.Entities
         [DisplayName("Dataset name")]
         [Reactive]
         public string DataSetName { get; set; }
+
+        [DisplayName("Run if dataset is void")]
+        [Reactive]
+        public bool RunIfVoidDataSet { get; set; }
 
         [ItemsSource(typeof(TelegramChannelsSource))]
         [DisplayName("Telegram channel")]
@@ -213,7 +236,7 @@ namespace ReportServer.Desktop.Entities
         public int TimeOut { get; set; }
     }
 
-    public class CustomImporterConfig : IOperationConfig
+    public class CustomDbImporterConfig : IOperationConfig
     {
     }
 
@@ -223,6 +246,11 @@ namespace ReportServer.Desktop.Entities
         [DisplayName("Html body")]
         [Reactive]
         public bool HasHtmlBody { get; set; }
+
+
+        [DisplayName("Run if dataset is void")]
+        [Reactive]
+        public bool RunIfVoidDataSet { get; set; }
 
         [PropertyOrder(2)]
         [DisplayName("Xlsx attachement")]
@@ -237,6 +265,18 @@ namespace ReportServer.Desktop.Entities
         [DisplayName("Recepient group")]
         [Reactive]
         public int RecepientGroupId { get; set; }
+    }
+
+    public class CustomTelegramExporterConfig : IOperationConfig
+    {
+        [ItemsSource(typeof(TelegramChannelsSource))]
+        [DisplayName("Telegram channel")]
+        [Reactive]
+        public int TelegramChannelId { get; set; }
+
+        [DisplayName("Run if dataset is void")]
+        [Reactive]
+        public bool RunIfVoidDataSet { get; set; }
     }
 
     public enum OperMode : byte

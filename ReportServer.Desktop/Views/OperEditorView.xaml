@@ -62,7 +62,8 @@
                           Width="250" HorizontalAlignment="Left" 
                          HorizontalContentAlignment="Left"
                          AcceptsReturn="False" TextWrapping="NoWrap"
-                          Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}"/>
+                          Text="{Binding Name,UpdateSourceTrigger=PropertyChanged,
+                    ValidatesOnDataErrors=True}"/>
             </Grid>
 
             <xctk:PropertyGrid Grid.ColumnSpan="2" Grid.Row="2" 

@@ -79,6 +79,9 @@ namespace ReportServer.Desktop.ViewModels
             this.WhenAnyValue(conncr => conncr.FullExpression)
                 .Where(value => !string.IsNullOrEmpty(value))
                 .Subscribe(_ => UpdateCategories());
+
+            this.WhenAnyObservable(s => s.AllErrors.Changed)
+                .Subscribe(_ => IsValid = !AllErrors.Any());
         }
 
         public void UpdateCategories()

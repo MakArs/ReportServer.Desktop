@@ -12,6 +12,13 @@
         Title="{Binding Title}"
         WindowState="Maximized">
 
+    <mah:MetroWindow.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="TextWrapping" Value="NoWrap"></Setter>
+            <Setter Property="AcceptsReturn" Value="False"></Setter>
+        </Style>
+    </mah:MetroWindow.Resources>
+
     <mah:MetroWindow.InputBindings>
         <KeyBinding Command="{Binding DeleteCommand}" Key="Delete"/>
         <KeyBinding Command="{Binding SaveCommand}" Modifiers="Control" Key="S"/>
@@ -31,17 +38,13 @@
             <MenuItem  FontSize="12"
                 Header="File" >
                 <MenuItem Header="Save" FontSize="12" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S"/>
-                <Separator/>
                 <MenuItem Header="Refresh" FontSize="12" Command="{Binding RefreshCommand}" InputGestureText="F5"/>
             </MenuItem>
             <MenuItem
                     Header="Edit" FontSize="12">
                 <MenuItem Header="Add task" FontSize="12" Command="{Binding CreateTaskCommand}" InputGestureText="Ctrl+T"/>
-                <Separator/>
                 <MenuItem Header="Add oper" FontSize="12" Command="{Binding CreateOperCommand}" InputGestureText="Ctrl+O"/>
-                <Separator/>
                 <MenuItem Header="Add schedule" FontSize="12" Command="{Binding CreateScheduleCommand}" InputGestureText="Ctrl+H"/>
-                <Separator/>
                 <MenuItem Header="Delete" FontSize="12" Command="{Binding DeleteCommand}" InputGestureText="Del"/>
             </MenuItem>
         </Menu>

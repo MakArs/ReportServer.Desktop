@@ -142,12 +142,13 @@ namespace ReportServer.Desktop
                 .ForMember("ScheduleId", opt =>
                     opt.MapFrom(s => s.ScheduleId > 0 ? s.ScheduleId : null))
                 .ForMember("BindedOpers", opt => opt.MapFrom(s =>
-                    s.BindedOpers.Select(oper => new ApiTaskOper
+                    s.BindedOpers.Select(taskOper => new ApiTaskOper
                     {
-                        Id = oper.Id,
-                        OperId = oper.OperId,
-                        Number = oper.Number,
-                        TaskId = oper.TaskId
+                        Id = taskOper.Id,
+                        OperId = taskOper.OperId,
+                        Number = taskOper.Number,
+                        TaskId = taskOper.TaskId,
+                        IsDefault = taskOper.IsDefault
                     }).ToArray()));
 
             CreateMap<ApiTask, TaskEditorViewModel>();

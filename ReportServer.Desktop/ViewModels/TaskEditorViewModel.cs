@@ -143,6 +143,7 @@ namespace ReportServer.Desktop.ViewModels
                         {
                             Id = to.Id,
                             Number = to.Number,
+                            IsDefault = to.IsDefault,
                             OperId = to.OperId,
                             TaskId = to.TaskId,
                             Name = cachedService.Operations

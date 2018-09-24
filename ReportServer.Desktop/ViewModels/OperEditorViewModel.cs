@@ -120,7 +120,10 @@ namespace ReportServer.Desktop.ViewModels
                 FullTitle = request.FullId;
 
                 if (request.Oper.Id == 0)
+                {
                     Mode = OperMode.Importer;
+                    Name = "New operation";
+                }
 
                 else
                 {
