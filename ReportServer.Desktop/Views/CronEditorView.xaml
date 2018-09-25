@@ -13,7 +13,6 @@
     <UserControl.Resources>
         <ResourceDictionary Source="WpfResources/TemplatesDictionary.xaml"/>
     </UserControl.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

@@ -71,6 +71,7 @@ namespace ReportServer.Desktop.ViewModels
         public RecepientEditorViewModel(ICachedService cachedService, IMapper mapper,
                                          ApiRecepientGroup group)
         {
+            CanClose = false;
             this.cachedService = cachedService;
             this.mapper = mapper;
             validator=new RecepientGroupEditorValidator();

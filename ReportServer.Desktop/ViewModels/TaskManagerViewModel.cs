@@ -40,6 +40,7 @@ namespace ReportServer.Desktop.ViewModels
         public TaskManagerViewModel(ICachedService cachedService, IMapper mapper, IShell shell,
                                     IDialogCoordinator dialogCoordinator)
         {
+            CanClose = false;
             this.cachedService = cachedService;
             this.mapper = mapper;
             Shell = shell as DistinctShell;

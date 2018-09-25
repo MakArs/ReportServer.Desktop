@@ -23,6 +23,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public ScheduleManagerViewModel(ICachedService cachedService, IShell shell)
         {
+            CanClose = false;
             this.cachedService = cachedService;
             Shell = shell as DistinctShell;
 
