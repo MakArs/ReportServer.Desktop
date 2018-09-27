@@ -37,8 +37,9 @@ namespace ReportServer.Desktop.Interfaces
         int? CreateOrUpdateSchedule(ApiSchedule schedule);
         int? CreateOrUpdateTask(ApiTask task);
 
+        void DeleteOperation(int id);
+        void DeleteSchedule(int id);
         void DeleteTask(int id);
         void DeleteInstance(int id);
-
     }
 }

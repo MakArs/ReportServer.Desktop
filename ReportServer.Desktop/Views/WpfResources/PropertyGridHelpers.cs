@@ -5,6 +5,7 @@ using Autofac;
 using ReactiveUI;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
+using Ui.Wpf.Common;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
@@ -24,7 +25,8 @@ namespace ReportServer.Desktop.Views.WpfResources
             ItemCollection coll = new ItemCollection();
 
             var cach = Container.Resolve<ICachedService>();
-            groups = cach.RecepientGroups;
+            lock(this)
+            groups.PublishCollection(cach.RecepientGroups);
 
             foreach (var rgr in groups)
                 coll.Add(rgr.Id, rgr.Name);
@@ -43,7 +45,8 @@ namespace ReportServer.Desktop.Views.WpfResources
             ItemCollection coll = new ItemCollection();
 
             var cach = Container.Resolve<ICachedService>();
-            channels = cach.TelegramChannels;
+            lock (this)
+                channels.PublishCollection(cach.TelegramChannels);
 
             foreach (var chn in channels)
                 coll.Add(chn.Id, chn.Name);

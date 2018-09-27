@@ -145,7 +145,7 @@ namespace ReportServer.Desktop
                 .ForMember("BindedOpers", opt => opt.MapFrom(s =>
                     s.BindedOpers.Select(taskOper => new ApiTaskOper
                     {
-                        Id = taskOper.Id,
+                        Id = taskOper.Id ?? 0,
                         OperId = taskOper.OperId,
                         Number = taskOper.Number,
                         TaskId = taskOper.TaskId,

@@ -143,7 +143,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public async Task Save()
         {
-            if (!IsValid) return;
+            if (!IsValid || !IsDirty) return;
 
             var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
                 Id > 0

@@ -29,10 +29,11 @@ namespace ReportServer.Desktop.ViewModels
 
         public RecepientManagerViewModel(ICachedService cachedService, IShell shell)
         {
+            CanClose = false;
             this.cachedService = cachedService;
             this.shell = shell;
 
-            CreateGroupCommand= ReactiveCommand.Create(() =>
+            CreateGroupCommand = ReactiveCommand.Create(() =>
             {
                 EditorViewModel = this.shell.Container.Resolve<RecepientEditorViewModel>(
                     new NamedParameter("group", new ApiRecepientGroup()));
@@ -69,18 +70,18 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand CancelCommand { get; set; }
 
         public RecepientEditorViewModel(ICachedService cachedService, IMapper mapper,
-                                         ApiRecepientGroup group)
+                                        ApiRecepientGroup group)
         {
             CanClose = false;
             this.cachedService = cachedService;
             this.mapper = mapper;
-            validator=new RecepientGroupEditorValidator();
+            validator = new RecepientGroupEditorValidator();
 
             mapper.Map(group, this);
 
             SaveChangesCommand = ReactiveCommand.Create(async () => await Save());
 
-            CancelCommand = ReactiveCommand.Create(()=>IsOpened = false);
+            CancelCommand = ReactiveCommand.Create(() => IsOpened = false);
 
             this.WhenAnyObservable(s => s.AllErrors.Changed)
                 .Subscribe(_ => IsValid = !AllErrors.Any());

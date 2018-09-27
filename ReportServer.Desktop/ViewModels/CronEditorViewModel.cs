@@ -91,7 +91,7 @@ namespace ReportServer.Desktop.ViewModels
 
             Categories.ChangeTrackingEnabled = false;
 
-            var categories = new string[] {"*", "*", "*", "*", "*"};
+            var categories = new[] {"*", "*", "*", "*", "*"};
 
             var categorieExpressions =
                 FullExpression.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
@@ -163,7 +163,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public async Task Save()
         {
-            if (!IsValid) return;
+            if (!IsValid || !IsDirty) return;
 
             var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
                 Id > 0
@@ -173,7 +173,7 @@ namespace ReportServer.Desktop.ViewModels
 
             if (dialogResult != MessageDialogResult.Affirmative) return;
 
-            var editedSchedule = new ApiSchedule {Id = Id, Name = Name, Schedule = FullExpression};
+            var editedSchedule = new ApiSchedule {Id = Id ?? 0, Name = Name, Schedule = FullExpression};
 
             cachedService.CreateOrUpdateSchedule(editedSchedule);
             Close();

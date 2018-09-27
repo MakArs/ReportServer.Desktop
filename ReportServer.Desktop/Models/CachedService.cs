@@ -145,7 +145,7 @@ namespace ReportServer.Desktop.Models
 
         public int? CreateOrUpdateOper(ApiOper oper)
         {
-            if (oper.Id == null || oper.Id == 0)
+            if (oper.Id == 0)
                 return client.Post("opers/", oper);
 
             client.Put($"opers/{oper.Id}", oper);
@@ -154,7 +154,7 @@ namespace ReportServer.Desktop.Models
 
         public int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group)
         {
-            if (group.Id == null || group.Id == 0)
+            if (@group.Id == 0)
                 return client.Post("recepientgroups/", group);
 
             client.Put($"recepientgroups/{group.Id}", group);
@@ -163,7 +163,7 @@ namespace ReportServer.Desktop.Models
 
         public int? CreateOrUpdateTelegramChannel(ApiTelegramChannel channel)
         {
-            if (channel.Id == null || channel.Id == 0)
+            if (channel.Id == 0)
                 return client.Post("telegrams/", channel);
 
             client.Put($"telegrams/{channel.Id}", channel);
@@ -172,7 +172,7 @@ namespace ReportServer.Desktop.Models
 
         public int? CreateOrUpdateSchedule(ApiSchedule schedule)
         {
-            if (schedule.Id == null || schedule.Id == 0)
+            if (schedule.Id == 0)
                 return client.Post("schedules/", schedule);
 
             client.Put($"schedules/{schedule.Id}", schedule);
@@ -186,6 +186,16 @@ namespace ReportServer.Desktop.Models
 
             client.Put($"tasks/{task.Id}", task);
             return task.Id;
+        }
+
+        public void DeleteOperation(int id)
+        {
+            client.Delete($"opers/{id}");
+        }
+
+        public void DeleteSchedule(int id)
+        {
+            client.Delete($"schedules/{id}");
         }
 
         public void DeleteTask(int id)

@@ -4,7 +4,7 @@ namespace ReportServer.Desktop.Entities
 {
     public class ApiOper
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public string Type { get; set; }
         public string Name { get; set; }
         public string Config { get; set; }
@@ -12,7 +12,7 @@ namespace ReportServer.Desktop.Entities
 
     public class ApiRecepientGroup
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Addresses { get; set; }
         public string AddressesBcc { get; set; }
@@ -20,7 +20,7 @@ namespace ReportServer.Desktop.Entities
 
     public class ApiTelegramChannel
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public long ChatId { get; set; }
@@ -29,7 +29,7 @@ namespace ReportServer.Desktop.Entities
 
     public class ApiSchedule
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Schedule { get; set; }
     }
@@ -44,7 +44,7 @@ namespace ReportServer.Desktop.Entities
 
     public class ApiTaskOper
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public int Number { get; set; }
         public bool IsDefault { get; set; }
         public int TaskId { get; set; }

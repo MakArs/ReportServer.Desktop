@@ -28,7 +28,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         public ReactiveList<ApiOper> Operations { get; set; }
-        [Reactive] public ReactiveList<DesktopTaskOper> BindedOpers { get; set; } 
+        [Reactive] public ReactiveList<DesktopTaskOper> BindedOpers { get; set; }
 
         public int Id { get; set; }
         [Reactive] public string Name { get; set; }
@@ -42,7 +42,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
-        public ReactiveCommand<DesktopTaskOper,Unit> RemoveOperCommand { get; set; }
+        public ReactiveCommand<DesktopTaskOper, Unit> RemoveOperCommand { get; set; }
         public ReactiveCommand<ApiOper, Unit> AddOperCommand { get; set; }
         public ReactiveCommand OpenCurrentTaskViewCommand { get; set; }
 
@@ -56,8 +56,9 @@ namespace ReportServer.Desktop.ViewModels
             this.dialogCoordinator = dialogCoordinator;
 
             BindedOpers = new ReactiveList<DesktopTaskOper>();
+            Schedules = new ReactiveList<ApiSchedule>();
 
-            RemoveOperCommand = ReactiveCommand.Create<DesktopTaskOper>(to=>
+            RemoveOperCommand = ReactiveCommand.Create<DesktopTaskOper>(to =>
                 BindedOpers.Remove(to));
 
             AddOperCommand = ReactiveCommand.Create<ApiOper>(op =>
@@ -127,7 +128,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
-            Schedules = cachedService.Schedules;
+            Schedules.PublishCollection(cachedService.Schedules);
             Operations = cachedService.Operations;
 
             if (viewRequest is TaskEditorRequest request)
@@ -172,12 +173,12 @@ namespace ReportServer.Desktop.ViewModels
                     ScheduleId = hassch.Value ? Schedules.FirstOrDefault()?.Id : null);
 
             this.WhenAnyObservable(tevm => tevm.BindedOpers.Changed)
-                .Subscribe(_=>this.RaisePropertyChanged());
+                .Subscribe(_ => this.RaisePropertyChanged());
         }
 
         public async Task Save()
         {
-            if (!IsValid) return;
+            if (!IsValid || !IsDirty) return;
 
             var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
                 Id > 0

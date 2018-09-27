@@ -174,13 +174,12 @@ namespace ReportServer.Desktop.ViewModels
 
         public async Task Delete()
         {
-            if (SelectedOperInstance != null)
-
+            if (SelectedTaskInstance != null)
             {
                 if (!await ShowWarningAffirmativeDialog
                     ("Do you really want to delete this task instance?")) return;
 
-                cachedService.DeleteInstance(SelectedOperInstance.Id);
+                cachedService.DeleteInstance(SelectedTaskInstance.Id);
                 LoadInstanceCompactsByTaskId(SelectedTask.Id);
                 return;
             }
@@ -188,7 +187,7 @@ namespace ReportServer.Desktop.ViewModels
             if (SelectedTask != null)
             {
                 if (!await ShowWarningAffirmativeDialog
-                    ("Do you really want to delete this task and all it's instances?")) return;
+                    ($"Do you really want to delete task {SelectedTask.Name} and all it's instances?")) return;
 
                 cachedService.DeleteTask(SelectedTask.Id);
                 cachedService.RefreshData();
