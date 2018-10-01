@@ -1,0 +1,24 @@
+using ReportServer.Desktop.Views.WpfResources;
+
+UserControl "ReportServer.Desktop.Views.WpfResources.SelectedTaskInstancesView" {
+  Resources: ResourceDictionary { Source: "TemplatesDictionary.g.xaml" }
+  Grid {
+    RowDefinitions: [
+      RowDefinition { Height: "40" }
+      RowDefinition { }
+    ]
+    Label { Margin: "0",  Content: "Selected task instances list" }
+    DataGrid {
+      ColumnWidth: "*"
+      Grid.Row: "1"
+      ItemsSource: "{Binding SelectedTaskInstances}"
+      SelectedItem: "{Binding SelectedTaskInstance}"
+      InputBindings: KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
+      Columns: [
+        DataGridTextColumn { Header: "Start time",  Binding: "{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" }
+        DataGridTextColumn { Header: "Duration",  Binding: "{Binding Duration, Converter={StaticResource IntMsToMinsConverter}}" }
+        DataGridTextColumn { Header: "State",  Binding: "{Binding State}" }
+      ]
+    }
+  }
+}

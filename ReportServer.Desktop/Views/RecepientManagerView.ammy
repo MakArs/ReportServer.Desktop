@@ -1,0 +1,65 @@
+using MahApps.Metro.Controls;
+
+UserControl "ReportServer.Desktop.Views.RecepientManagerView" {
+  Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
+  Grid {
+    RowDefinitions: [
+      RowDefinition { Height: "40" }
+      RowDefinition { }
+    ]
+    Grid {
+      Grid.ColumnSpan: "4"
+      ColumnDefinitions: [
+        ColumnDefinition { Width: "Auto" }
+        ColumnDefinition { }
+      ]
+      Button {
+        Padding: "5"
+        Command: "{Binding CreateGroupCommand}"
+        "Add new recepient group"
+      }
+      Label {
+        Grid.Column: "1"
+        Content: "Current recepient groups list"
+        Margin: "2 2 0 2"
+      }
+    }
+    DataGrid {
+      Grid.Row: "1"
+      ColumnWidth: "*"
+      ItemsSource: "{Binding RecepientGroups}"
+      SelectedItem: "{Binding SelectedGroup}"
+      CanUserAddRows: "True"
+      InputBindings: [
+        MouseBinding { MouseAction: "LeftDoubleClick",  Command: "{Binding EditGroupCommand}" }
+        KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
+      ]
+      Columns: [
+        DataGridTextColumn {
+          Width: "0.1*"
+          Header: "Id"
+          Binding: "{Binding Id}"
+        }
+        DataGridTextColumn {
+          Width: "0.3*"
+          Header: "Name"
+          Binding: "{Binding Name}"
+        }
+        DataGridTextColumn { Header: "Addresses",  Binding: "{Binding Addresses}" }
+        DataGridTextColumn { Header: "Blind copy addresses",  Binding: "{Binding AddressesBcc}" }
+      ]
+    }
+    Flyout {
+      Grid.RowSpan: "2"
+      IsOpen: "{Binding EditorViewModel.IsOpened}"
+      Background: "White"
+      CloseButtonVisibility: "Hidden"
+      Position: "Top"
+      Width: "auto"
+      Height: "{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}, Path=ActualHeight}"
+      Theme: "Light"
+      IsModal: "True"
+      Content: "{Binding EditorViewModel}"
+    }
+  }
+}

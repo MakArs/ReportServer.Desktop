@@ -289,3 +289,4 @@ __pycache__/
 
 #ignore app.config
 App.config
+*.g.xaml

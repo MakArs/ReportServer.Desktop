@@ -16,7 +16,8 @@ namespace ReportServer.Desktop.Views.WpfResources
 
     public class RecepGroupsSource : IItemsSource
     {
-        private ReactiveList<ApiRecepientGroup> groups { get; set; }
+        private ReactiveList<ApiRecepientGroup> groups { get; set; } =
+            new ReactiveList<ApiRecepientGroup>();
 
         public static IContainer Container;
 
@@ -25,8 +26,8 @@ namespace ReportServer.Desktop.Views.WpfResources
             ItemCollection coll = new ItemCollection();
 
             var cach = Container.Resolve<ICachedService>();
-            lock(this)
-            groups.PublishCollection(cach.RecepientGroups);
+            lock (this)
+                groups.PublishCollection(cach.RecepientGroups);
 
             foreach (var rgr in groups)
                 coll.Add(rgr.Id, rgr.Name);
@@ -37,7 +38,9 @@ namespace ReportServer.Desktop.Views.WpfResources
 
     public class TelegramChannelsSource : IItemsSource
     {
-        private ReactiveList<ApiTelegramChannel> channels { get; set; }
+        private ReactiveList<ApiTelegramChannel> channels { get; set; } =
+            new ReactiveList<ApiTelegramChannel>();
+
         public static IContainer Container;
 
         public ItemCollection GetValues()
@@ -50,7 +53,7 @@ namespace ReportServer.Desktop.Views.WpfResources
 
             foreach (var chn in channels)
                 coll.Add(chn.Id, chn.Name);
-            
+
             return coll;
         }
     }
@@ -59,9 +62,12 @@ namespace ReportServer.Desktop.Views.WpfResources
     {
         public FrameworkElement ResolveEditor(PropertyItem propertyItem)
         {
-            TextBox textBox = new TextBox { AcceptsReturn = true,
+            TextBox textBox = new TextBox
+            {
+                AcceptsReturn = true,
                 HorizontalContentAlignment = HorizontalAlignment.Left,
-                TextWrapping = TextWrapping.Wrap };
+                TextWrapping = TextWrapping.Wrap
+            };
 
             var binding = new Binding("Value")
             {

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 using ReactiveUI.Fody.Helpers;
+using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.ViewModels;
 
 namespace ReportServer.Desktop.Views.WpfResources
@@ -27,13 +28,39 @@ namespace ReportServer.Desktop.Views.WpfResources
         }
     }
 
-    public class EnumBindingSourceExtension : MarkupExtension
+    public class ParsingCategorySourceExtension : MarkupExtension
     {
         [Reactive] public Type EnumType { get; set; }
 
-        public EnumBindingSourceExtension(Type enumType)
+        public ParsingCategorySourceExtension()
         {
-            EnumType = enumType;
+            EnumType = typeof(ParsingCategory);
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            if (EnumType == null)
+                throw new InvalidOperationException("The EnumType must be specified.");
+
+            Type actualEnumType = Nullable.GetUnderlyingType(EnumType) ?? EnumType;
+            Array enumValues = Enum.GetValues(actualEnumType);
+
+            if (actualEnumType == EnumType)
+                return enumValues;
+
+            Array tempArray = Array.CreateInstance(actualEnumType, enumValues.Length + 1);
+            enumValues.CopyTo(tempArray, 1);
+            return tempArray;
+        }
+    }
+
+    public class OperModeSourceExtension : MarkupExtension
+    {
+        [Reactive] public Type EnumType { get; set; }
+
+        public OperModeSourceExtension()
+        {
+            EnumType = typeof(OperMode);
         }
 
         public override object ProvideValue(IServiceProvider serviceProvider)

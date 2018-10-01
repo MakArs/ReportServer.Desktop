@@ -1,5 +1,6 @@
 ﻿using System;
 using Ui.Wpf.Common;
+using Xceed.Wpf.AvalonDock;
 
 namespace ReportServer.Desktop.Views
 {

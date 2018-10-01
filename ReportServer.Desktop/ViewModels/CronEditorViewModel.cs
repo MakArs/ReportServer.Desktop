@@ -39,8 +39,7 @@ namespace ReportServer.Desktop.ViewModels
                                    IDialogCoordinator dialogCoordinator)
         {
             this.cachedService = cachedService;
-            Categories = new ReactiveList<CronCategory>();
-            Categories.ChangeTrackingEnabled = true;
+            Categories = new ReactiveList<CronCategory> {ChangeTrackingEnabled = true};
             IsValid = true;
             this.dialogCoordinator = dialogCoordinator;
             validator = new CronEditorValidator();

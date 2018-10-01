@@ -1,0 +1,57 @@
+using MahApps.Metro.Controls;
+
+UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
+  Dialogs.DialogParticipation.Register: "{Binding}"
+  Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
+  Grid {
+    RowDefinitions: [
+      RowDefinition { Height: "40" }
+      RowDefinition { }
+    ]
+    Grid {
+      Grid.ColumnSpan: "4"
+      ColumnDefinitions: [
+        ColumnDefinition { Width: "Auto" }
+        ColumnDefinition { }
+      ]
+      Label {
+        Grid.Column: "1"
+        Content: "Current schedules list"
+        Margin: "2 2 0 2"
+      }
+      Button {
+        Padding: "5"
+        Command: "{Binding Shell.CreateScheduleCommand}"
+        "Add new schedule"
+      }
+    }
+    DataGrid {
+      Grid.Row: "1"
+      ColumnWidth: "*"
+      ItemsSource: "{Binding Schedules}"
+      SelectedItem: "{Binding SelectedSchedule}"
+      CanUserAddRows: "True"
+      InputBindings: [
+        MouseBinding {
+          MouseAction: "LeftDoubleClick"
+          Command: "{Binding EditScheduleCommand}"
+          CommandParameter: "{Binding SelectedSchedule}"
+        }
+        KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
+      ]
+      Columns: [
+        DataGridTextColumn {
+          Width: "0.1*"
+          Header: "Id"
+          Binding: "{Binding Id}"
+        }
+        DataGridTextColumn {
+          Width: "0.3*"
+          Header: "Name"
+          Binding: "{Binding Name}"
+        }
+        DataGridTextColumn { Header: "Schedule",  Binding: "{Binding Schedule}" }
+      ]
+    }
+  }
+}

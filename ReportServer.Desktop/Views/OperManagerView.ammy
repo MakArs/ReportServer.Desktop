@@ -1,0 +1,48 @@
+using MahApps.Metro.Controls;
+
+UserControl "ReportServer.Desktop.Views.OperManagerView" {
+Dialogs.DialogParticipation.Register: "{Binding}"
+  Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
+  Grid {
+    RowDefinitions: [
+      RowDefinition { Height: "40" }
+      RowDefinition { }
+    ]
+    Grid {
+      Grid.ColumnSpan: "4"
+      ColumnDefinitions: [
+        ColumnDefinition { Width: "Auto" }
+        ColumnDefinition { }
+      ]
+      Label {
+        Grid.Column: "1"
+        Content: "Current reports list"
+        Margin: "2 2 0 2"
+      }
+      Button {
+        Padding: "5"
+        Command: "{Binding Shell.CreateOperCommand}"
+        "Add new operation"
+      }
+    }
+    DataGrid {
+      Grid.Row: "1"
+      ColumnWidth: "*"
+      ItemsSource: "{Binding Operations}"
+      SelectedItem: "{Binding SelectedOper,Mode=OneWayToSource}"
+      InputBindings: [
+        MouseBinding {
+          MouseAction: "LeftDoubleClick"
+          Command: "{Binding EditOperCommand}"
+          CommandParameter: "{Binding SelectedOper}"
+        }
+        KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
+      ]
+      Columns: [
+        DataGridTextColumn { Header: "Id",  Binding: "{Binding Id}" }
+        DataGridTextColumn { Header: "Type",  Binding: "{Binding Type}" }
+        DataGridTextColumn { Header: "Name",  Binding: "{Binding Name}" }
+      ]
+    }
+  }
+}
