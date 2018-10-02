@@ -108,7 +108,7 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
                   Grid.Column: "1"
                   Width: "250"
                   HorizontalAlignment: "Left"
-                  ItemsSource: "{Binding Source={StaticResource EnumBindingSource}}" 
+                  ItemsSource: bind from $resource ParsingEnum
                   SelectedValue: "{Binding ParsingCategory}"
                 }
                 Label {

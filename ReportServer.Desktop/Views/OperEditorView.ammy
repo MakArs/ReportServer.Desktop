@@ -40,7 +40,7 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
           Margin: "3"
           Width: "250"
           HorizontalAlignment: "Left"
-          ItemsSource: "{Binding Source={StaticResource OperModeSource }}"
+          ItemsSource:  bind  from  $resource OperModeEnum
           SelectedValue: "{Binding Mode}"
         }
         Label {

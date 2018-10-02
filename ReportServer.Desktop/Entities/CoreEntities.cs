@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using FluentValidation.Validators;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Views.WpfResources;

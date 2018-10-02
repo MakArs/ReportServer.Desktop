@@ -2,12 +2,11 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
 using ReportServer.Desktop.ViewModels;
 using ReportServer.Desktop.Views.WpfResources;
+using ReportServer.Desktop.Entities;
 
 ResourceDictionary {
 
   IntMsToMinsConverter Key="IntMsToMinsConverter"{  }
-  ParsingCategorySourceExtension Key="EnumBindingSource" {  }
-   OperModeSourceExtension Key="OperModeSource" {  }
   NullToVisibility Key="NullToVisibility" {  }
   IntToVisiblity Key="IntToVisiblity" {  }
   ReportTypeToVisiblity Key="ReportTypeToVisiblity" {  }
@@ -15,12 +14,17 @@ ResourceDictionary {
   IsRangeToVisibility Key="IsRangeToVisibility" {  }
   IsNotValueToVisibility Key="IsNotValueToVisibility" {  }
   MoreThenOneToVisibility Key="MoreThenOneToVisibility" {  }
-  PackIconModernKind Key="Modern" {  }
-  PackIconEntypoKind Key="Entypo"  {  }
   OperInstancesView Key="OperInstancesView"{  }
   SelectedInstanceFullView Key="SelectedInstanceFullView"{  }
   SelectedTaskInstancesView Key="SelectedTaskInstancesView"{  }
-  TaskListView Key="TaskListView"{  }
+  TaskListView Key="TaskListView" {  }
+  PackIconModern  Key="CursorHand"  { Kind: "CursorHand" }
+  ObjectDataProvider Key="ParsingEnum" { ObjectType: ParsingCategory
+         MethodName: "GetValues"
+		 MethodParameters: [ParsingCategory]}
+  ObjectDataProvider Key="OperModeEnum" { ObjectType: OperMode
+         MethodName: "GetValues"
+		 MethodParameters: [OperMode]}
 
   "xmlns:mah": "http://metro.mahapps.com/winfx/xaml/controls"
   Style Key="MyColumnHeader" {
@@ -32,6 +36,7 @@ ResourceDictionary {
     Setter { Property: "Background",  Value: "#F5F5F5" }
     Setter { Property: "mah:ControlsHelper.ContentCharacterCasing",  Value: "Normal" }
   }
+
   Style Key="MyCell" {
     TargetType: "DataGridCell"
     Setter {
@@ -45,6 +50,7 @@ ResourceDictionary {
       }
     }
   }
+
   Style {
     TargetType: "Button"
     Setter { Property: "Background",  Value: "#F5F5F5" }

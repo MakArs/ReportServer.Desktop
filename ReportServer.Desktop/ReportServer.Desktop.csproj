@@ -30,8 +30,8 @@
     <ProductName>ReportServer.Desktop</ProductName>
     <PublisherName>Лаборатория умного вождения</PublisherName>
     <MinimumRequiredVersion>2.1.2.2</MinimumRequiredVersion>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>2.1.2.2</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
