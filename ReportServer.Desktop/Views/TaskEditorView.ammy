@@ -8,10 +8,7 @@ UserControl
 "ReportServer.Desktop.Views.TaskEditorView" {
   DialogParticipation.Register: "{Binding}"
   Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
-
  "xmlns:dd": "clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
- "xmlns:iconPacks": "http://metro.mahapps.com/winfx/xaml/iconpacks"
-
   ScrollViewer {
     VerticalScrollBarVisibility: "Auto"
     HorizontalScrollBarVisibility: "Auto"
@@ -143,7 +140,7 @@ UserControl
               }
               Button {
                 Grid.Column: "3"
-                Content: "{iconPacks:Modern CursorHand}" 
+                Content:  PackIconModern { Kind:"CursorHand"}
                 Width: "40"
                 Margin: "2"
               }
@@ -151,7 +148,7 @@ UserControl
                 Grid.Column: "4"
                 Command: "{Binding  RelativeSource={RelativeSource AncestorType={x:Type ListView}},                             Path=DataContext.RemoveOperCommand}"
                 CommandParameter: "{Binding}"
-                Content: "{iconPacks:Entypo SquaredCross}" 
+                Content: PackIconEntypo { Kind: "SquaredCross" }  
                 Width: "40"
                 Margin: "2"
               }

@@ -29,6 +29,8 @@ namespace ReportServer.Desktop.Views.WpfResources
             lock (this)
                 groups.PublishCollection(cach.RecepientGroups);
 
+            coll.Add(0,"None");
+
             foreach (var rgr in groups)
                 coll.Add(rgr.Id, rgr.Name);
 

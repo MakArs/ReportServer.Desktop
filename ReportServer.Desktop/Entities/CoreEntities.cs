@@ -143,6 +143,11 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public int RecepientGroupId { get; set; }
 
+        [DisplayName("Recepients dataset")]
+        [Description("Dataset must contain 'RecType' column with value 'To' or 'Bcc' and 'Address' column with recepient address")]
+        [Reactive]
+        public string RecepientsDatasetName { get; set; }
+
         [DisplayName("View template")]
         [Editor(typeof(MultilineTextBoxEditor), typeof(MultilineTextBoxEditor))]
         [Reactive]
@@ -259,6 +264,11 @@ namespace ReportServer.Desktop.Entities
         [DisplayName("Json attachement")]
         [Reactive]
         public bool HasJsonAttachment { get; set; }
+
+        [DisplayName("Recepients dataset")]
+        [Description("Dataset must contain 'RecType' column with value 'To' or 'Bcc' and 'Address' column with recepient address")]
+        [Reactive]
+        public string RecepientsDatasetName { get; set; }
 
         [ItemsSource(typeof(RecepGroupsSource))]
         [DisplayName("Recepient group")]

@@ -55,7 +55,7 @@ namespace ReportServer.Desktop.Models
             }
         }
 
-        private void GetOperations() //todo:some way to delete custom operations
+        private void GetOperations() 
         {
             DataImporters = client
                 .Get<Dictionary<string, string>>("opers/registeredimporters/")

@@ -4,8 +4,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
-using ReactiveUI.Fody.Helpers;
-using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.ViewModels;
 
 namespace ReportServer.Desktop.Views.WpfResources
