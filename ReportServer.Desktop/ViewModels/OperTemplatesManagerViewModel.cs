@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -14,40 +15,51 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModels
 {
-    public class OperManagerViewModel : ViewModelBase, IInitializableViewModel, IDeleteableViewModel
+    public class OperTemplatesManagerViewModel : ViewModelBase, IInitializableViewModel
     {
         private readonly ICachedService cachedService;
         private readonly IDialogCoordinator dialogCoordinator;
-        public DistinctShell Shell { get; }
+        public CachedServiceShell Shell { get; }
 
-        public ReactiveList<ApiOper> Operations { get; set; }
+        public ReactiveList<ApiOper> OperTemplates { get; set; }
         [Reactive] public ApiOper SelectedOper { get; set; }
 
-        public ReactiveCommand<ApiOper, Unit> EditOperCommand { get; set; }
+        public ReactiveCommand EditOperCommand { get; set; }
+        public ReactiveCommand DeleteCommand { get; set; }
 
-        public OperManagerViewModel(ICachedService cachedService, IShell shell,
+        public OperTemplatesManagerViewModel(ICachedService cachedService, IShell shell,
                                     IDialogCoordinator dialogCoordinator)
         {
             CanClose = false;
             this.cachedService = cachedService;
             this.dialogCoordinator = dialogCoordinator;
-            Shell = shell as DistinctShell;
+            Shell = shell as CachedServiceShell;
 
-            EditOperCommand = ReactiveCommand.Create<ApiOper>(oper =>
+            EditOperCommand = ReactiveCommand.Create(() =>
             {
-                if (oper == null) return;
+                if (SelectedOper == null) return;
 
-                var fullName = $"Oper {oper.Id} editor";
+                var fullName = $"Oper template {SelectedOper.Id} editor";
 
-                Shell.ShowDistinctView<OperEditorView>(fullName,
-                    new OperEditorRequest {Oper = oper, FullId = fullName},
-                    new UiShowOptions {Title = fullName});
+                Shell.ShowView<OperEditorView>(new OperEditorRequest
+                        { Oper = SelectedOper, ViewId = fullName },
+                    new UiShowOptions { Title = fullName });
             });
+
+            DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
+                await Delete());
         }
 
         public void Initialize(ViewRequest viewRequest)
         {
-            Operations = cachedService.Operations;
+            Shell.AddVMCommand("File", "Delete",
+                    "DeleteCommand", this)
+                .SetHotKey(ModifierKeys.None, Key.Delete);
+            
+            Shell.AddVMCommand("Edit", "Change oper template",
+                "EditOperCommand", this);
+
+            OperTemplates = cachedService.Operations;
         }
 
         public async Task Delete()

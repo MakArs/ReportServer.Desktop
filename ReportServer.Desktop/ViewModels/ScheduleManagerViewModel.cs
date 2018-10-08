@@ -18,7 +18,7 @@ namespace ReportServer.Desktop.ViewModels
     {
         private readonly ICachedService cachedService;
         private readonly IDialogCoordinator dialogCoordinator;
-        public DistinctShell Shell { get; }
+        public CachedServiceShell Shell { get; }
 
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         [Reactive] public ApiSchedule SelectedSchedule { get; set; }
@@ -31,7 +31,7 @@ namespace ReportServer.Desktop.ViewModels
             CanClose = false;
             this.cachedService = cachedService;
             this.dialogCoordinator = dialogCoordinator;
-            Shell = shell as DistinctShell;
+            Shell = shell as CachedServiceShell;
 
             EditScheduleCommand = ReactiveCommand.Create<ApiSchedule>(sched =>
             {
@@ -39,8 +39,8 @@ namespace ReportServer.Desktop.ViewModels
 
                 var fullName = $"Schedule {SelectedSchedule.Id} editor";
 
-                Shell.ShowDistinctView<CronEditorView>(fullName,
-                    new CronEditorRequest {Schedule = sched, FullId = fullName},
+                Shell.ShowView<CronEditorView>(new CronEditorRequest
+                        { Schedule = sched, ViewId = fullName},
                     new UiShowOptions {Title = fullName});
             });
 

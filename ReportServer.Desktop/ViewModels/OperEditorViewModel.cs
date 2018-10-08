@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
@@ -18,11 +19,12 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModels
 {
-    public class OperEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
+    public class OperEditorViewModel : ViewModelBase, IInitializableViewModel
     {
         private readonly IDialogCoordinator dialogCoordinator;
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
+        private readonly IShell shell;
 
         private Dictionary<string, Type> DataImporters { get; set; }
         private Dictionary<string, Type> DataExporters { get; set; }
@@ -41,8 +43,9 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand CancelCommand { get; set; }
 
         public OperEditorViewModel(ICachedService cachedService, IMapper mapper,
-                                   IDialogCoordinator dialogCoordinator)
+                                   IDialogCoordinator dialogCoordinator,IShell shell)
         {
+            this.shell = shell;
             this.cachedService = cachedService;
             this.mapper = mapper;
             IsValid = true;
@@ -83,7 +86,6 @@ namespace ReportServer.Desktop.ViewModels
                     Type = OperTemplates.First();
                 });
 
-
             this.ObservableForProperty(s => s.Type)
                 .Where(type => type.Value != null)
                 .Subscribe(type =>
@@ -103,6 +105,10 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
+            shell.AddVMCommand("File", "Save",
+                    "SaveChangesCommand", this)
+                .SetHotKey(ModifierKeys.Control, Key.S);
+
             void Changed(object sender, PropertyChangedEventArgs e)
             {
                 if (IsDirty) return;
@@ -117,7 +123,7 @@ namespace ReportServer.Desktop.ViewModels
 
             if (viewRequest is OperEditorRequest request)
             {
-                FullTitle = request.FullId;
+                FullTitle = request.ViewId;
 
                 if (request.Oper.Id == 0)
                 {
@@ -159,6 +165,7 @@ namespace ReportServer.Desktop.ViewModels
 
             cachedService.CreateOrUpdateOper(editedReport);
             Close();
+
             cachedService.RefreshData();
         }
     }

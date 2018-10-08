@@ -1,9 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
@@ -18,11 +17,11 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModels
 {
-    public class TaskManagerViewModel : ViewModelBase, IInitializableViewModel, IDeleteableViewModel
+    public class TaskManagerViewModel : ViewModelBase, IInitializableViewModel
     {
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
-        public DistinctShell Shell { get; }
+        public CachedServiceShell Shell { get; }
         private readonly IDialogCoordinator dialogCoordinator;
 
         public ReactiveList<DesktopTask> Tasks { get; set; }
@@ -35,7 +34,8 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public ApiOperInstance SelectedInstanceData { get; set; }
 
         public ReactiveCommand OpenPage { get; set; }
-        public ReactiveCommand<int?, Unit> EditTaskCommand { get; set; }
+        public ReactiveCommand EditTaskCommand { get; set; }
+        public ReactiveCommand DeleteCommand { get; set; }
 
         public TaskManagerViewModel(ICachedService cachedService, IMapper mapper, IShell shell,
                                     IDialogCoordinator dialogCoordinator)
@@ -43,7 +43,7 @@ namespace ReportServer.Desktop.ViewModels
             CanClose = false;
             this.cachedService = cachedService;
             this.mapper = mapper;
-            Shell = shell as DistinctShell;
+            Shell = shell as CachedServiceShell;
             this.dialogCoordinator = dialogCoordinator;
 
             Tasks = new ReactiveList<DesktopTask>();
@@ -55,21 +55,26 @@ namespace ReportServer.Desktop.ViewModels
                     si => !string.IsNullOrEmpty(si?.DataSet));
 
             OpenPage = ReactiveCommand.Create<string>
-                (OpenPageInBrowser, canOpenInstancePage);
+                (cachedService.OpenPageInBrowser, canOpenInstancePage);
 
-            EditTaskCommand = ReactiveCommand.Create<int?>(id =>
+            EditTaskCommand = ReactiveCommand.Create(() =>
             {
-                if (id == null) return;
+                if (SelectedTask == null) return;
+                var id = SelectedTask.Id;
+
                 var name = $"Task {id} editor";
-                Shell.ShowDistinctView<TaskEditorView>(name,
-                    new TaskEditorRequest
+                Shell.ShowView<TaskEditorView>(new TaskEditorRequest
                     {
+                        ViewId = name,
                         Task = cachedService
                             .Tasks.FirstOrDefault(task => task.Id == id),
                         TaskOpers = cachedService.TaskOpers.Where(to => to.TaskId == id).ToList()
                     },
                     new UiShowOptions {Title = name});
             });
+
+            DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
+                await Delete());
 
             this.WhenAnyObservable(s => s.Tasks.Changed)
                 .Subscribe(x =>
@@ -103,11 +108,9 @@ namespace ReportServer.Desktop.ViewModels
             this.WhenAnyValue(s => s.SelectedOperInstance)
                 .Subscribe(x =>
                 {
-                    if (x == null)
-                        SelectedInstanceData = null;
-                    else
-                        SelectedInstanceData =
-                            cachedService.GetFullOperInstanceById(SelectedOperInstance.Id);
+                    SelectedInstanceData = x == null
+                        ? null
+                        : cachedService.GetFullOperInstanceById(SelectedOperInstance.Id);
                 });
         }
 
@@ -116,19 +119,6 @@ namespace ReportServer.Desktop.ViewModels
             SelectedTaskInstances
                 .PublishCollection(cachedService.GetInstancesByTaskId(taskId)
                     .Select(ti => mapper.Map<DesktopTaskInstance>(ti)));
-        }
-
-        private void OpenPageInBrowser(string htmlPage)
-        {
-
-            var path = $"{AppDomain.CurrentDomain.BaseDirectory}testreport.html";
-            using (FileStream fstr = new FileStream(path, FileMode.Create))
-            {
-                byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
-                fstr.Write(bytePage, 0, bytePage.Length);
-            }
-
-            System.Diagnostics.Process.Start(path);
         }
 
         private void RefreshTaskList()
@@ -157,6 +147,29 @@ namespace ReportServer.Desktop.ViewModels
         {
             RefreshTaskList();
 
+            Shell.AddGlobalCommand("File", "Refresh",
+                    "Shell.RefreshCommand", this)
+                .SetHotKey(ModifierKeys.None, Key.F5);
+
+            Shell.AddGlobalCommand("Edit", "New task",
+                    "Shell.CreateTaskCommand", this)
+                .SetHotKey(ModifierKeys.Control, Key.T);
+
+            Shell.AddGlobalCommand("Edit", "New operation template",
+                    "Shell.CreateOperTemplateCommand", this)
+                .SetHotKey(ModifierKeys.Control, Key.O);
+
+            Shell.AddGlobalCommand("Edit", "New schedule",
+                    "Shell.CreateScheduleCommand", this)
+                .SetHotKey(ModifierKeys.Control, Key.H);
+
+            Shell.AddVMCommand("Edit", "Change task",
+                "EditTaskCommand", this);
+
+            Shell.AddVMCommand("File", "Delete",
+                    "DeleteCommand", this)
+                .SetHotKey(ModifierKeys.None, Key.Delete);
+
             this.WhenAnyObservable(tmvm => tmvm.cachedService.Tasks.Changed)
                 .Subscribe(_ => RefreshTaskList());
 
@@ -172,7 +185,7 @@ namespace ReportServer.Desktop.ViewModels
             return dialogResult == MessageDialogResult.Affirmative;
         }
 
-        public async Task Delete()
+        private async Task Delete()
         {
             if (SelectedTaskInstance != null)
             {
@@ -187,7 +200,8 @@ namespace ReportServer.Desktop.ViewModels
             if (SelectedTask != null)
             {
                 if (!await ShowWarningAffirmativeDialog
-                    ($"Do you really want to delete task {SelectedTask.Name} and all it's instances?")) return;
+                    ($"Do you really want to delete task {SelectedTask.Name} and all it's instances?")
+                ) return;
 
                 cachedService.DeleteTask(SelectedTask.Id);
                 cachedService.RefreshData();

@@ -11,14 +11,16 @@ UserControl "ReportServer.Desktop.Views.WpfResources.OperInstancesView" {
     DataGrid {
       ColumnWidth: "*"
       Grid.Row: "1"
-      ItemsSource: "{Binding OperInstances}"
-      SelectedItem: "{Binding SelectedOperInstance}"
+      ItemsSource: bind OperInstances
+      SelectedItem: bind SelectedOperInstance 
       InputBindings: KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
       Columns: [
-        DataGridTextColumn { Header: "Operation name",  Binding: "{Binding OperName}" }
-        DataGridTextColumn { Header: "Start time",  Binding: "{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" }
-        DataGridTextColumn { Header: "Duration",  Binding: "{Binding Duration, Converter={StaticResource IntMsToMinsConverter}}" }
-        DataGridTextColumn { Header: "State",  Binding: "{Binding State}" }
+        DataGridTextColumn { Header: "Operation name",  Binding: bind OperName }
+        DataGridTextColumn { Header: "Start time",  Binding:  bind StartTime
+		set[StringFormat: "dd.MM.yy HH:mm"] }
+        DataGridTextColumn { Header: "Duration",  
+		Binding: "{Binding Duration, Converter={StaticResource IntMsToMinsConverter}}" }
+        DataGridTextColumn { Header: "State",  Binding: bind State }
       ]
     }
   }

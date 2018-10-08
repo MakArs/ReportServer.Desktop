@@ -224,8 +224,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Ui.Wpf.Common, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ui.Wpf.Common.1.0.9\lib\net462\Ui.Wpf.Common.dll</HintPath>
+    <Reference Include="Ui.Wpf.Common, Version=1.0.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ui.Wpf.Common.1.0.13\lib\net462\Ui.Wpf.Common.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -274,9 +274,9 @@
     <None Include="Views\WpfResources\OperInstancesView.g.xaml">
       <DependentUpon>OperInstancesView.ammy</DependentUpon>
     </None>
-    <None Include="Views\OperManagerView.ammy" />
-    <None Include="Views\OperManagerView.g.xaml">
-      <DependentUpon>OperManagerView.ammy</DependentUpon>
+    <None Include="Views\OperTemplatesManagerView.ammy" />
+    <None Include="Views\OperTemplatesManagerView.g.xaml">
+      <DependentUpon>OperTemplatesManagerView.ammy</DependentUpon>
     </None>
     <None Include="Views\OperEditorView.ammy" />
     <None Include="Views\OperEditorView.g.xaml">
@@ -310,11 +310,11 @@
     <Compile Include="Interfaces\IDeleteableViewModel.cs" />
     <Compile Include="ViewModels\CronEditorViewModel.cs" />
     <Compile Include="Models\ViewRequests.cs" />
-    <Compile Include="ViewModels\DistinctShell.cs" />
+    <Compile Include="ViewModels\CachedServiceShell.cs" />
     <Compile Include="Interfaces\ISaveableViewModel.cs" />
     <Compile Include="ViewModels\RecepientManagerViewModel.cs" />
     <Compile Include="ViewModels\OperEditorViewModel.cs" />
-    <Compile Include="ViewModels\OperManagerViewModel.cs" />
+    <Compile Include="ViewModels\OperTemplatesManagerViewModel.cs" />
     <Compile Include="ViewModels\ScheduleManagerViewModel.cs" />
     <Compile Include="ViewModels\TaskEditorViewModel.cs" />
     <Compile Include="ViewModels\TaskManagerViewModel.cs" />
@@ -340,8 +340,8 @@
     <Compile Include="Views\WpfResources\Converters.cs" />
     <Compile Include="Entities\CoreEntities.cs" />
     <Compile Include="Interfaces\ICachedService.cs" />
-    <Compile Include="Views\OperManagerView.xaml.cs">
-      <DependentUpon>OperManagerView.ammy</DependentUpon>
+    <Compile Include="Views\OperTemplatesManagerView.xaml.cs">
+      <DependentUpon>OperTemplatesManagerView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\OperEditorView.xaml.cs">
       <DependentUpon>OperEditorView.ammy</DependentUpon>
@@ -470,11 +470,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>ScheduleManagerView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\OperManagerView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>OperManagerView.ammy</DependentUpon>
     </Page>
     <Page Include="Views\OperEditorView.g.xaml">
       <SubType>Designer</SubType>

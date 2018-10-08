@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
@@ -20,11 +20,12 @@ using ReactiveCommand = ReactiveUI.ReactiveCommand;
 
 namespace ReportServer.Desktop.ViewModels
 {
-    public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
+    public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel
     {
         private readonly IDialogCoordinator dialogCoordinator;
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
+        private readonly IShell shell;
 
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         public ReactiveList<ApiOper> Operations { get; set; }
@@ -47,13 +48,14 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand OpenCurrentTaskViewCommand { get; set; }
 
         public TaskEditorViewModel(ICachedService cachedService, IMapper mapper,
-                                   IDialogCoordinator dialogCoordinator)
+                                   IDialogCoordinator dialogCoordinator, IShell shell)
         {
             this.cachedService = cachedService;
             this.mapper = mapper;
             validator = new TaskEditorValidator();
             IsValid = true;
             this.dialogCoordinator = dialogCoordinator;
+            this.shell = shell;
 
             BindedOpers = new ReactiveList<DesktopTaskOper>();
             Schedules = new ReactiveList<ApiSchedule>();
@@ -73,7 +75,7 @@ namespace ReportServer.Desktop.ViewModels
                 .CreateFromTask(async () =>
                 {
                     var str = await cachedService.GetCurrentTaskViewById(Id);
-                    OpenPageInBrowser(str);
+                    cachedService.OpenPageInBrowser(str);
                 });
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
@@ -114,20 +116,12 @@ namespace ReportServer.Desktop.ViewModels
                 .Subscribe(_ => IsValid = !AllErrors.Any());
         }
 
-        private void OpenPageInBrowser(string htmlPage)
-        {
-            var path = $"{AppDomain.CurrentDomain.BaseDirectory}testreport.html";
-            using (FileStream fstr = new FileStream(path, FileMode.Create))
-            {
-                byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
-                fstr.Write(bytePage, 0, bytePage.Length);
-            }
-
-            System.Diagnostics.Process.Start(path);
-        }
-
         public void Initialize(ViewRequest viewRequest)
         {
+            shell.AddVMCommand("File", "Save",
+                    "SaveChangesCommand", this)
+                .SetHotKey(ModifierKeys.Control, Key.S);
+
             Schedules.PublishCollection(cachedService.Schedules);
             Operations = cachedService.Operations;
 
@@ -176,7 +170,7 @@ namespace ReportServer.Desktop.ViewModels
                 .Subscribe(_ => this.RaisePropertyChanged());
         }
 
-        public async Task Save()
+        private async Task Save()
         {
             if (!IsValid || !IsDirty) return;
 
@@ -192,6 +186,7 @@ namespace ReportServer.Desktop.ViewModels
                 oper.Number = BindedOpers.IndexOf(oper) + 1;
 
             var editedTask = new ApiTask();
+
             mapper.Map(this, editedTask);
 
             cachedService.CreateOrUpdateTask(editedTask);

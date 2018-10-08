@@ -99,6 +99,14 @@ ResourceDictionary {
     Setter { Property: "TextWrapping",  Value: "Wrap" }
     Setter { Property: "AcceptsReturn",  Value: "True" }
   }
+
+  Style Key="NoWrapTextBox"{
+    TargetType: "TextBox"
+    BasedOn: "{StaticResource MetroTextBox}"
+    Setter { Property: "TextWrapping",  Value: "NoWrap" }
+    Setter { Property: "AcceptsReturn",  Value: "False" }
+  }
+
   Style {
     TargetType: "Border"
     Setter { Property: "BorderThickness",  Value: "1" }
@@ -117,6 +125,7 @@ ResourceDictionary {
     Setter { Property: "Placement",  Value: "Right" }
     Setter { Property: "FlowDirection",  Value: "RightToLeft" }
   }
+
   DataTemplate {
     DataType: RecepientEditorViewModel
     Grid {
@@ -139,7 +148,7 @@ ResourceDictionary {
       }
       TextBox {
         Grid.Column: "1"
-        Text: "{Binding Name,UpdateSourceTrigger=PropertyChanged,             ValidatesOnDataErrors=True}"
+        Text: "{Binding Name,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
         TextBoxHelper.Watermark: "Enter group name here"
         TextBoxHelper.ClearTextButton: "True"
         Width: "150"
@@ -174,6 +183,7 @@ ResourceDictionary {
         Margin: "18 3 3 3"
         Content: "Blind copy addresses"
       }
+
       TextBox {
         Grid.Row: "2"
         Grid.Column: "1"

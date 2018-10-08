@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -206,6 +207,19 @@ namespace ReportServer.Desktop.Models
         public void DeleteInstance(int id)
         {
             client.Delete($"instances/{id}");
+        }
+
+
+        public void OpenPageInBrowser(string htmlPage)
+        {
+            var path = $"{AppDomain.CurrentDomain.BaseDirectory}testreport.html";
+            using (FileStream fstr = new FileStream(path, FileMode.Create))
+            {
+                byte[] bytePage = System.Text.Encoding.UTF8.GetBytes(htmlPage);
+                fstr.Write(bytePage, 0, bytePage.Length);
+            }
+
+            System.Diagnostics.Process.Start(path);
         }
     }
 

@@ -19,8 +19,7 @@ namespace ReportServer.Desktop
                     ToolPaneWidth = 100
                 });
 
-            (shell as DistinctShell)?.InitCachedService(2);
-
+            (shell as CachedServiceShell)?.InitCachedService(2);
         }
     }
 }

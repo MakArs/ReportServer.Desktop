@@ -14,7 +14,7 @@ using ReportServer.Desktop.Views;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
-using MainWindow = ReportServer.Desktop.Views.MainWindow;
+using MainWindow = Ui.Wpf.Common.MainWindow;
 
 namespace ReportServer.Desktop
 {
@@ -24,7 +24,7 @@ namespace ReportServer.Desktop
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterType<DistinctShell>()
+            builder.RegisterType<CachedServiceShell>()
                 .As<IShell>()
                 .SingleInstance();
 
@@ -39,7 +39,7 @@ namespace ReportServer.Desktop
 
             ConfigureView<TaskManagerViewModel, TaskManagerView>(builder);
 
-            ConfigureView<OperManagerViewModel, OperManagerView>(builder);
+            ConfigureView<OperTemplatesManagerViewModel, OperTemplatesManagerView>(builder);
 
             ConfigureView<TaskEditorViewModel, TaskEditorView>(builder);
 

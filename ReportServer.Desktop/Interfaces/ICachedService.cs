@@ -41,5 +41,7 @@ namespace ReportServer.Desktop.Interfaces
         void DeleteSchedule(int id);
         void DeleteTask(int id);
         void DeleteInstance(int id);
+
+        void OpenPageInBrowser(string htmlPage);
     }
 }

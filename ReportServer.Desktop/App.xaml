@@ -17,10 +17,6 @@
                 <!-- change "BaseLight" to the theme you want -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/amber.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <Style TargetType="Button">
-                <Setter Property="Margin" Value="5"/>
-                <Setter Property="Padding" Value="5"/>
-            </Style>
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="Padding" Value="5"/>
                 <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -28,15 +24,7 @@
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                 <Setter Property="MinWidth" Value="25"/>
             </Style>
-            <Style TargetType="ListViewItem">
-                <Setter Property="BorderBrush" Value="Black"/>
-                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            </Style>
-            <!--<Style TargetType="Rectangle">
-                <Setter Property="Stroke" Value="Black"></Setter>
-                <Setter Property="Fill" Value="Transparent"></Setter>
-                <Setter Property="StrokeThickness" Value="0.5"></Setter>
-            </Style>-->
+
             <Style TargetType="Label">
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -46,12 +34,7 @@
                 <Setter Property="VerticalAlignment" Value="Center"/>
                 <Setter Property="TextWrapping" Value="Wrap"/>
             </Style>
-            <Style TargetType="TextBox">
-                <Setter Property="TextWrapping" Value="Wrap"/>
-                <Setter Property="AcceptsReturn" Value="True"/>
-            </Style>
         </ResourceDictionary>
-
 
     </Application.Resources>
 </Application>

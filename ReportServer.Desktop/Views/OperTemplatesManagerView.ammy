@@ -1,6 +1,6 @@
 using MahApps.Metro.Controls;
 
-UserControl "ReportServer.Desktop.Views.OperManagerView" {
+UserControl "ReportServer.Desktop.Views.OperTemplatesManagerView" {
 Dialogs.DialogParticipation.Register: "{Binding}"
   Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
   Grid {
@@ -16,25 +16,24 @@ Dialogs.DialogParticipation.Register: "{Binding}"
       ]
       Label {
         Grid.Column: "1"
-        Content: "Current reports list"
+        Content: "Current templates list"
         Margin: "2 2 0 2"
       }
       Button {
         Padding: "5"
-        Command: "{Binding Shell.CreateOperCommand}"
-        "Add new operation"
+        Command: "{Binding Shell.CreateOperTemplateCommand}"
+        "Add new operation template"
       }
     }
     DataGrid {
       Grid.Row: "1"
       ColumnWidth: "*"
-      ItemsSource: "{Binding Operations}"
+      ItemsSource: "{Binding OperTemplates}"
       SelectedItem: "{Binding SelectedOper,Mode=OneWayToSource}"
       InputBindings: [
         MouseBinding {
           MouseAction: "LeftDoubleClick"
           Command: "{Binding EditOperCommand}"
-          CommandParameter: "{Binding SelectedOper}"
         }
         KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
       ]

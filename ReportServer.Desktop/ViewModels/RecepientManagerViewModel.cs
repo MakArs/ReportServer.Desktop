@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Windows.Input;
 using Autofac;
 using AutoMapper;
 using ReactiveUI;
@@ -48,12 +48,16 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
+            shell.AddVMCommand("File", "Save",
+                    "EditorViewModel?.SaveChangesCommand", this)
+                .SetHotKey(ModifierKeys.Control, Key.S);
+
             RecepientGroups = cachedService.RecepientGroups;
         }
     }
 
 
-    public class RecepientEditorViewModel : ViewModelBase, ISaveableViewModel
+    public class RecepientEditorViewModel : ViewModelBase
     {
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
@@ -77,28 +81,34 @@ namespace ReportServer.Desktop.ViewModels
             this.mapper = mapper;
             validator = new RecepientGroupEditorValidator();
 
+            IsValid = true;
+
             mapper.Map(group, this);
 
-            SaveChangesCommand = ReactiveCommand.Create(async () => await Save());
+            var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
+                isd => isd == true);
+
+            SaveChangesCommand = ReactiveCommand.Create(Save, canSave);
 
             CancelCommand = ReactiveCommand.Create(() => IsOpened = false);
 
             this.WhenAnyObservable(s => s.AllErrors.Changed)
                 .Subscribe(_ => IsValid = !AllErrors.Any());
 
+            IsOpened = true;
+
             void Changed(object sender, PropertyChangedEventArgs e)
             {
+                if (IsDirty || e.PropertyName == "IsDirty") return;
                 IsDirty = true;
             }
 
             PropertyChanged += Changed;
-
-            IsOpened = true;
         }
 
-        public async Task Save()
+        public void Save()
         {
-            if (!IsValid) return;
+            if (!IsValid || !IsDirty) return;
 
             var editedGroup = new ApiRecepientGroup();
 
@@ -110,6 +120,7 @@ namespace ReportServer.Desktop.ViewModels
             cachedService.CreateOrUpdateRecepientGroup(editedGroup);
             cachedService.RefreshData();
             IsOpened = false;
+            Close();
         }
     }
 }

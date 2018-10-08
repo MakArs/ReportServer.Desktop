@@ -35,7 +35,6 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
         MouseBinding {
           MouseAction: "LeftDoubleClick"
           Command: "{Binding EditTaskCommand}"
-          CommandParameter: "{Binding SelectedTask.Id}"
         }
         KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
       ]

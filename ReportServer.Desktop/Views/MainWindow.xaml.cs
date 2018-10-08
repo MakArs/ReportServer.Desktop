@@ -9,6 +9,7 @@ namespace ReportServer.Desktop.Views
         public MainWindow(IShell shell)
         {
             Shell = shell;
+            DataContext = Shell;
             InitializeComponent();
         }
 
@@ -20,7 +21,6 @@ namespace ReportServer.Desktop.Views
 
             Shell.AttachDockingManager(DockingManager);
 
-            DataContext = Shell;
         }
 
         protected override void OnClosed(EventArgs e)

@@ -21,6 +21,7 @@ UserControl
         RowDefinition { Height: "Auto" }
         RowDefinition { }
       ]
+
       ColumnDefinitions: [
         ColumnDefinition { }
         ColumnDefinition { Width: "Auto" }

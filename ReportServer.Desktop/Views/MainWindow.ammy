@@ -6,86 +6,12 @@ MetroWindow "ReportServer.Desktop.Views.MainWindow" {
   DialogParticipation.Register: "{Binding}"
   Title: "{Binding Title}"
   WindowState: "Maximized"
-  Resources: Style {
-    TargetType: "TextBox"
-    Setter { Property: "TextWrapping",  Value: "NoWrap" }
-    Setter { Property: "AcceptsReturn",  Value: "False" }
-  }
-  InputBindings: [
-    KeyBinding { Command: "{Binding DeleteCommand}",  Key: "Delete" }
-    KeyBinding {
-      Command: "{Binding SaveCommand}"
-      Modifiers: "Control"
-      Key: "S"
-    }
-    KeyBinding { Command: "{Binding RefreshCommand}",  Key: "F5" }
-    KeyBinding {
-      Command: "{Binding CreateTaskCommand}"
-      Modifiers: "Control"
-      Key: "T"
-    }
-    KeyBinding {
-      Command: "{Binding CreateOperCommand}"
-      Modifiers: "Control"
-      Key: "O"
-    }
-    KeyBinding {
-      Command: "{Binding CreateScheduleCommand}"
-      Modifiers: "Control"
-      Key: "H"
-    }
-  ]
+  
   Grid {
     RowDefinitions: [
       RowDefinition { Height: "30" }
       RowDefinition { }
     ]
-    Menu {
-      MenuItem {
-        FontSize: "12"
-        Header: "File"
-        MenuItem {
-          Header: "Save"
-          FontSize: "12"
-          Command: "{Binding SaveCommand}"
-          InputGestureText: "Ctrl+S"
-        }
-        MenuItem {
-          Header: "Refresh"
-          FontSize: "12"
-          Command: "{Binding RefreshCommand}"
-          InputGestureText: "F5"
-        }
-      }
-      MenuItem {
-        Header: "Edit"
-        FontSize: "12"
-        MenuItem {
-          Header: "Add task"
-          FontSize: "12"
-          Command: "{Binding CreateTaskCommand}"
-          InputGestureText: "Ctrl+T"
-        }
-        MenuItem {
-          Header: "Add oper"
-          FontSize: "12"
-          Command: "{Binding CreateOperCommand}"
-          InputGestureText: "Ctrl+O"
-        }
-        MenuItem {
-          Header: "Add schedule"
-          FontSize: "12"
-          Command: "{Binding CreateScheduleCommand}"
-          InputGestureText: "Ctrl+H"
-        }
-        MenuItem {
-          Header: "Delete"
-          FontSize: "12"
-          Command: "{Binding DeleteCommand}"
-          InputGestureText: "Del"
-        }
-      }
-    }
     DockingManager {
       Grid.Row: "1"
       Name: "DockingManager"
