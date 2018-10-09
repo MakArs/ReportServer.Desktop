@@ -8,7 +8,7 @@ namespace ReportServer.Desktop.Interfaces
 {
     public interface ICachedService
     {
-        ReactiveList<ApiOper> Operations { get; set; }
+        ReactiveList<ApiOperTemplate> OperTemplates { get; set; }
         ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
         ReactiveList<ApiTelegramChannel> TelegramChannels { get; set; }
         ReactiveList<ApiSchedule> Schedules { get; set; }
@@ -18,7 +18,7 @@ namespace ReportServer.Desktop.Interfaces
         Dictionary<string, Type> DataExporters { get; set; }
 
         bool Init(string serviceUri);
-        void RefreshOpers();
+        void RefreshOperTemplates();
         void RefreshRecepientGroups();
         void RefreshTelegramChannels();
         void RefreshSchedules();
@@ -31,13 +31,13 @@ namespace ReportServer.Desktop.Interfaces
         ApiOperInstance GetFullOperInstanceById(int id);
         Task<string> GetCurrentTaskViewById(int taskId);
 
-        int? CreateOrUpdateOper(ApiOper oper);
+        int? CreateOrUpdateOper(ApiOperTemplate operTemplateTemplate);
         int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group);
         int? CreateOrUpdateTelegramChannel(ApiTelegramChannel channel);
         int? CreateOrUpdateSchedule(ApiSchedule schedule);
         int? CreateOrUpdateTask(ApiTask task);
 
-        void DeleteOperation(int id);
+        void DeleteOperTemplate(int id);
         void DeleteSchedule(int id);
         void DeleteTask(int id);
         void DeleteInstance(int id);

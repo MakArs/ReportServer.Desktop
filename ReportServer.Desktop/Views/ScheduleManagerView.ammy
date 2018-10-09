@@ -35,7 +35,6 @@ UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
         MouseBinding {
           MouseAction: "LeftDoubleClick"
           Command: "{Binding EditScheduleCommand}"
-          CommandParameter: "{Binding SelectedSchedule}"
         }
         KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
       ]

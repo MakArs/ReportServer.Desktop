@@ -56,10 +56,11 @@ namespace ReportServer.Desktop.ViewModels
             CreateOperTemplateCommand = ReactiveCommand.Create(() =>
                 ShowView<OperEditorView>(new OperEditorRequest
                     {
-                        Oper = new ApiOper {Id = 0},
+                        Oper = new ApiOperTemplate {Id = 0},
                         ViewId = "Creating new operation template"
                     },
                     new UiShowOptions {Title = "Creating new operation template"}));
+
         }
 
         public async Task InitCachedService(int tries)

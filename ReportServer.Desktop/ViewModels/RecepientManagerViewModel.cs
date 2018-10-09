@@ -26,6 +26,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public ReactiveCommand EditGroupCommand { get; set; }
         public ReactiveCommand CreateGroupCommand { get; set; }
+        public ReactiveCommand SaveChangesCommand { get; set; }
 
         public RecepientManagerViewModel(ICachedService cachedService, IShell shell)
         {
@@ -44,13 +45,23 @@ namespace ReportServer.Desktop.ViewModels
                 EditorViewModel = this.shell.Container.Resolve<RecepientEditorViewModel>(
                     new NamedParameter("group", SelectedGroup));
             });
+
+            SaveChangesCommand = ReactiveCommand.Create(() =>
+            {
+                if (EditorViewModel == null || EditorViewModel.IsOpened == false)
+                    return;
+                EditorViewModel.Save();
+            });
         }
 
         public void Initialize(ViewRequest viewRequest)
         {
             shell.AddVMCommand("File", "Save",
-                    "EditorViewModel?.SaveChangesCommand", this)
+                    "SaveChangesCommand", this)
                 .SetHotKey(ModifierKeys.Control, Key.S);
+
+            shell.AddVMCommand("Edit", "Change recepient group",
+                "EditGroupCommand", this);
 
             RecepientGroups = cachedService.RecepientGroups;
         }

@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
@@ -21,8 +20,8 @@ namespace ReportServer.Desktop.ViewModels
         private readonly IDialogCoordinator dialogCoordinator;
         public CachedServiceShell Shell { get; }
 
-        public ReactiveList<ApiOper> OperTemplates { get; set; }
-        [Reactive] public ApiOper SelectedOper { get; set; }
+        public ReactiveList<ApiOperTemplate> OperTemplates { get; set; }
+        [Reactive] public ApiOperTemplate SelectedOperTemplate { get; set; }
 
         public ReactiveCommand EditOperCommand { get; set; }
         public ReactiveCommand DeleteCommand { get; set; }
@@ -37,12 +36,12 @@ namespace ReportServer.Desktop.ViewModels
 
             EditOperCommand = ReactiveCommand.Create(() =>
             {
-                if (SelectedOper == null) return;
+                if (SelectedOperTemplate == null) return;
 
-                var fullName = $"Oper template {SelectedOper.Id} editor";
+                var fullName = $"Oper template {SelectedOperTemplate.Id} editor";
 
                 Shell.ShowView<OperEditorView>(new OperEditorRequest
-                        { Oper = SelectedOper, ViewId = fullName },
+                        { Oper = SelectedOperTemplate, ViewId = fullName },
                     new UiShowOptions { Title = fullName });
             });
 
@@ -59,15 +58,15 @@ namespace ReportServer.Desktop.ViewModels
             Shell.AddVMCommand("Edit", "Change oper template",
                 "EditOperCommand", this);
 
-            OperTemplates = cachedService.Operations;
+            OperTemplates = cachedService.OperTemplates;
         }
 
         public async Task Delete()
         {
-            if (SelectedOper != null)
+            if (SelectedOperTemplate != null)
 
             {
-                var taskOpers = cachedService.TaskOpers.Where(to => to.OperId == SelectedOper.Id)
+                var taskOpers = cachedService.TaskOpers.Where(to => to.OperTemplateId == SelectedOperTemplate.Id)
                     .ToList();
 
                 if (taskOpers.Any())
@@ -79,10 +78,10 @@ namespace ReportServer.Desktop.ViewModels
                 }
 
                 if (!await ShowWarningAffirmativeDialog
-                    ($"Do you really want to delete operation {SelectedOper.Name}?")) return;
+                    ($"Do you really want to delete operation {SelectedOperTemplate.Name}?")) return;
 
-                cachedService.DeleteOperation(SelectedOper.Id);
-                cachedService.RefreshOpers();
+                cachedService.DeleteOperTemplate(SelectedOperTemplate.Id);
+                cachedService.RefreshOperTemplates();
             }
         }
 

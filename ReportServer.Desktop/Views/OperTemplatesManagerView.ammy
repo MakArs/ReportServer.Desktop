@@ -29,7 +29,7 @@ Dialogs.DialogParticipation.Register: "{Binding}"
       Grid.Row: "1"
       ColumnWidth: "*"
       ItemsSource: "{Binding OperTemplates}"
-      SelectedItem: "{Binding SelectedOper,Mode=OneWayToSource}"
+      SelectedItem: "{Binding SelectedOperTemplate,Mode=OneWayToSource}"
       InputBindings: [
         MouseBinding {
           MouseAction: "LeftDoubleClick"

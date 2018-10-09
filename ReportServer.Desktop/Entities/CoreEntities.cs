@@ -23,7 +23,7 @@ namespace ReportServer.Desktop.Entities
         public bool IsDefault { get; set; }
         public int Number { get; set; }
         public int TaskId { get; set; }
-        public int? OperId { get; set; }
+        public int? OperTemplateId { get; set; }
     }
 
     public class DesktopTaskInstance
@@ -37,7 +37,7 @@ namespace ReportServer.Desktop.Entities
     public class DesktopOperInstance
     {
         public int Id { get; set; }
-        public int OperId { get; set; }
+        public int OperTemplateId { get; set; }
         public string OperName { get; set; }
         public DateTime StartTime { get; set; }
         public int Duration { get; set; }

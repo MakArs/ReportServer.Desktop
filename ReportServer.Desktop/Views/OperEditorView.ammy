@@ -17,7 +17,7 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
         RowDefinition { }
         RowDefinition { Height: "Auto" }
       ]
-      Label { Margin: "2 2 2 10",  Content: "Operation parameters" }
+      Label { Margin: "2 2 2 10",  Content: "Template parameters" }
       Grid {
         Grid.Row: "1"
         RowDefinitions: [
@@ -93,7 +93,7 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
         ShowSummary: "False"
         Background: "#F5F5F5"
         SelectedObjectName: ""
-        SelectedObjectTypeName: "Operation configuration"
+        SelectedObjectTypeName: "Template configuration"
         Visibility: "{Binding Configuration,Converter={StaticResource NullToVisibility}}"
         SelectedObject: "{Binding Configuration,                 UpdateSourceTrigger=PropertyChanged}"
       }

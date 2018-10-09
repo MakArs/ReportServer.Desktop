@@ -142,7 +142,7 @@ namespace ReportServer.Desktop.ViewModels
                         ? DataExporters[Type]
                         : DataImporters[Type];
 
-                    Configuration = JsonConvert.DeserializeObject(request.Oper.Config, type);
+                    Configuration = JsonConvert.DeserializeObject(request.Oper.ConfigTemplate, type);
                 }
             }
           }
@@ -159,7 +159,7 @@ namespace ReportServer.Desktop.ViewModels
 
             if (dialogResult != MessageDialogResult.Affirmative) return;
 
-            var editedReport = new ApiOper();
+            var editedReport = new ApiOperTemplate();
 
             mapper.Map(this, editedReport);
 

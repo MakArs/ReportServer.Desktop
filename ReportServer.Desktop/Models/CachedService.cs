@@ -21,7 +21,7 @@ namespace ReportServer.Desktop.Models
         private ISimpleHttpClient client;
         private readonly IMapper mapper;
 
-        public ReactiveList<ApiOper> Operations { get; set; }
+        public ReactiveList<ApiOperTemplate> OperTemplates { get; set; }
         public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
         public ReactiveList<ApiTelegramChannel> TelegramChannels { get; set; }
         public ReactiveList<ApiSchedule> Schedules { get; set; }
@@ -33,7 +33,7 @@ namespace ReportServer.Desktop.Models
         public CachedService(IMapper mapper)
         {
             this.mapper = mapper;
-            Operations = new ReactiveList<ApiOper> {ChangeTrackingEnabled = true};
+            OperTemplates = new ReactiveList<ApiOperTemplate> {ChangeTrackingEnabled = true};
             RecepientGroups = new ReactiveList<ApiRecepientGroup> {ChangeTrackingEnabled = true};
             TelegramChannels = new ReactiveList<ApiTelegramChannel> {ChangeTrackingEnabled = true};
             Schedules = new ReactiveList<ApiSchedule> {ChangeTrackingEnabled = true};
@@ -46,7 +46,7 @@ namespace ReportServer.Desktop.Models
             client = JsonHttpClient.Create(serviceUri + "/api/v2/");
             try
             {
-                GetOperations();
+                GetOperTemplates();
                 RefreshData();
                 return true;
             }
@@ -56,24 +56,24 @@ namespace ReportServer.Desktop.Models
             }
         }
 
-        private void GetOperations() 
+        private void GetOperTemplates() 
         {
             DataImporters = client
-                .Get<Dictionary<string, string>>("opers/registeredimporters/")
+                .Get<Dictionary<string, string>>("opertemplates/registeredimporters/")
                 .ToDictionary(pair => pair.Key,
                     pair => Type.GetType("ReportServer.Desktop.Entities." + pair.Value));
 
             DataExporters = client
-                .Get<Dictionary<string, string>>("opers/registeredexporters/")
+                .Get<Dictionary<string, string>>("opertemplates/registeredexporters/")
                 .ToDictionary(pair => pair.Key,
                     pair => Type.GetType("ReportServer.Desktop.Entities." + pair.Value));
         }
         
         #region RefreshLogics
 
-        public void RefreshOpers()
+        public void RefreshOperTemplates()
         {
-            Operations.PublishCollection(client.Get<List<ApiOper>>("opers/"));
+            OperTemplates.PublishCollection(client.Get<List<ApiOperTemplate>>("opertemplates/"));
             // .Select(rep => mapper.Map<DesktopOper>(rep)));
         }
 
@@ -101,12 +101,12 @@ namespace ReportServer.Desktop.Models
 
         public void RefreshTaskOpers()
         {
-            TaskOpers.PublishCollection(client.Get<List<ApiTaskOper>>("opers/taskopers"));
+            TaskOpers.PublishCollection(client.Get<List<ApiTaskOper>>("opertemplates/taskopers"));
         }
 
         public void RefreshData()
         {
-            RefreshOpers();
+            RefreshOperTemplates();
             RefreshRecepientGroups();
             RefreshTelegramChannels();
             RefreshSchedules();
@@ -144,13 +144,13 @@ namespace ReportServer.Desktop.Models
             return apiAnswer.Body;
         }
 
-        public int? CreateOrUpdateOper(ApiOper oper)
+        public int? CreateOrUpdateOper(ApiOperTemplate operTemplateTemplate)
         {
-            if (oper.Id == 0)
-                return client.Post("opers/", oper);
+            if (operTemplateTemplate.Id == 0)
+                return client.Post("opertemplates/", operTemplateTemplate);
 
-            client.Put($"opers/{oper.Id}", oper);
-            return oper.Id;
+            client.Put($"opertemplates/{operTemplateTemplate.Id}", operTemplateTemplate);
+            return operTemplateTemplate.Id;
         }
 
         public int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group)
@@ -189,9 +189,9 @@ namespace ReportServer.Desktop.Models
             return task.Id;
         }
 
-        public void DeleteOperation(int id)
+        public void DeleteOperTemplate(int id)
         {
-            client.Delete($"opers/{id}");
+            client.Delete($"opertemplates/{id}");
         }
 
         public void DeleteSchedule(int id)

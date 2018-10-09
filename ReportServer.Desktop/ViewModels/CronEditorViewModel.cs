@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using CronExpressionDescriptor;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
@@ -23,6 +24,7 @@ namespace ReportServer.Desktop.ViewModels
         private string currentExpression;
         private readonly IDialogCoordinator dialogCoordinator;
         private readonly ICachedService cachedService;
+        private IShell shell;
 
         public int? Id { get; set; }
         [Reactive] public string FullExpression { get; set; }
@@ -36,8 +38,9 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand CancelCommand { get; set; }
 
         public CronEditorViewModel(ICachedService cachedService,
-                                   IDialogCoordinator dialogCoordinator)
+                                   IDialogCoordinator dialogCoordinator,IShell shell)
         {
+            this.shell = shell;
             this.cachedService = cachedService;
             Categories = new ReactiveList<CronCategory> {ChangeTrackingEnabled = true};
             IsValid = true;
@@ -136,6 +139,10 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
+            shell.AddVMCommand("File", "Save",
+                    "SaveChangesCommand", this)
+                .SetHotKey(ModifierKeys.Control, Key.S);
+
             if (viewRequest is CronEditorRequest request)
             {
                 Id = request.Schedule.Id;

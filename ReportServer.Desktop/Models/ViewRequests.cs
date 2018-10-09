@@ -12,7 +12,7 @@ namespace ReportServer.Desktop.Models
 
     public class OperEditorRequest : ViewRequest
     {
-        public ApiOper Oper { get; set; }
+        public ApiOperTemplate Oper { get; set; }
     }
 
     public class CronEditorRequest : ViewRequest

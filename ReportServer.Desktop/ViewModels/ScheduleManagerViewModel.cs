@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using System.Reactive;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -14,7 +14,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModels
 {
-    public class ScheduleManagerViewModel : ViewModelBase, IInitializableViewModel,IDeleteableViewModel
+    public class ScheduleManagerViewModel : ViewModelBase, IInitializableViewModel
     {
         private readonly ICachedService cachedService;
         private readonly IDialogCoordinator dialogCoordinator;
@@ -23,7 +23,8 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         [Reactive] public ApiSchedule SelectedSchedule { get; set; }
 
-        public ReactiveCommand<ApiSchedule, Unit> EditScheduleCommand { get; set; }
+        public ReactiveCommand EditScheduleCommand { get; set; }
+        public ReactiveCommand DeleteCommand { get; set; }
 
         public ScheduleManagerViewModel(ICachedService cachedService, IShell shell,
                                         IDialogCoordinator dialogCoordinator)
@@ -33,21 +34,30 @@ namespace ReportServer.Desktop.ViewModels
             this.dialogCoordinator = dialogCoordinator;
             Shell = shell as CachedServiceShell;
 
-            EditScheduleCommand = ReactiveCommand.Create<ApiSchedule>(sched =>
+            EditScheduleCommand = ReactiveCommand.Create(() =>
             {
-                if (sched == null) return;
+                if (SelectedSchedule == null) return;
 
                 var fullName = $"Schedule {SelectedSchedule.Id} editor";
 
                 Shell.ShowView<CronEditorView>(new CronEditorRequest
-                        { Schedule = sched, ViewId = fullName},
+                        { Schedule = SelectedSchedule, ViewId = fullName},
                     new UiShowOptions {Title = fullName});
             });
 
+            DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
+                await Delete());
         }
 
         public void Initialize(ViewRequest viewRequest)
         {
+            Shell.AddVMCommand("File", "Delete",
+                    "DeleteCommand", this)
+                .SetHotKey(ModifierKeys.None, Key.Delete);
+
+            Shell.AddVMCommand("Edit", "Change schedule",
+                "EditScheduleCommand", this);
+
             Schedules = cachedService.Schedules;
         }
 

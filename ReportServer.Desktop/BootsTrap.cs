@@ -146,7 +146,7 @@ namespace ReportServer.Desktop
                     s.BindedOpers.Select(taskOper => new ApiTaskOper
                     {
                         Id = taskOper.Id ?? 0,
-                        OperId = taskOper.OperId,
+                        OperTemplateId = taskOper.OperTemplateId,
                         Number = taskOper.Number,
                         TaskId = taskOper.TaskId,
                         IsDefault = taskOper.IsDefault
@@ -161,9 +161,9 @@ namespace ReportServer.Desktop
             CreateMap<CachedService, EmailExporterConfig>();
             CreateMap<CachedService, TelegramExporterConfig>();
 
-            CreateMap<ApiOper, OperEditorViewModel>();
-            CreateMap<OperEditorViewModel, ApiOper>()
-                .ForMember("Config", opt => opt.MapFrom
+            CreateMap<ApiOperTemplate, OperEditorViewModel>();
+            CreateMap<OperEditorViewModel, ApiOperTemplate>()
+                .ForMember("ConfigTemplate", opt => opt.MapFrom
                     (s => JsonConvert.SerializeObject(s.Configuration)));
         }
     }

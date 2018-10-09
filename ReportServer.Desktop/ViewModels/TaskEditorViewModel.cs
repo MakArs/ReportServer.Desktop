@@ -28,7 +28,7 @@ namespace ReportServer.Desktop.ViewModels
         private readonly IShell shell;
 
         public ReactiveList<ApiSchedule> Schedules { get; set; }
-        public ReactiveList<ApiOper> Operations { get; set; }
+        public ReactiveList<ApiOperTemplate> Operations { get; set; }
         [Reactive] public ReactiveList<DesktopTaskOper> BindedOpers { get; set; }
 
         public int Id { get; set; }
@@ -38,13 +38,13 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public bool IsDirty { get; set; }
         [Reactive] public bool IsValid { get; set; }
 
-        [Reactive] public ApiOper SelectedOperation { get; set; }
+        [Reactive] public ApiOperTemplate SelectedOperation { get; set; }
         [Reactive] public object SelectedOperationConfig { get; set; }
 
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
         public ReactiveCommand<DesktopTaskOper, Unit> RemoveOperCommand { get; set; }
-        public ReactiveCommand<ApiOper, Unit> AddOperCommand { get; set; }
+        public ReactiveCommand<ApiOperTemplate, Unit> AddOperCommand { get; set; }
         public ReactiveCommand OpenCurrentTaskViewCommand { get; set; }
 
         public TaskEditorViewModel(ICachedService cachedService, IMapper mapper,
@@ -63,12 +63,12 @@ namespace ReportServer.Desktop.ViewModels
             RemoveOperCommand = ReactiveCommand.Create<DesktopTaskOper>(to =>
                 BindedOpers.Remove(to));
 
-            AddOperCommand = ReactiveCommand.Create<ApiOper>(op =>
+            AddOperCommand = ReactiveCommand.Create<ApiOperTemplate>(op =>
                 BindedOpers.Add(new DesktopTaskOper
                 {
                     Name = op.Name,
                     TaskId = Id,
-                    OperId = op.Id
+                    OperTemplateId = op.Id
                 }));
 
             OpenCurrentTaskViewCommand = ReactiveCommand
@@ -109,7 +109,7 @@ namespace ReportServer.Desktop.ViewModels
                         ? cachedService.DataExporters[val.Type]
                         : cachedService.DataImporters[val.Type];
                     SelectedOperationConfig = JsonConvert
-                        .DeserializeObject(val.Config, type);
+                        .DeserializeObject(val.ConfigTemplate, type);
                 });
 
             this.WhenAnyObservable(s => s.AllErrors.Changed)
@@ -123,7 +123,7 @@ namespace ReportServer.Desktop.ViewModels
                 .SetHotKey(ModifierKeys.Control, Key.S);
 
             Schedules.PublishCollection(cachedService.Schedules);
-            Operations = cachedService.Operations;
+            Operations = cachedService.OperTemplates;
 
             if (viewRequest is TaskEditorRequest request)
             {
@@ -139,10 +139,10 @@ namespace ReportServer.Desktop.ViewModels
                             Id = to.Id,
                             Number = to.Number,
                             IsDefault = to.IsDefault,
-                            OperId = to.OperId,
+                            OperTemplateId = to.OperTemplateId,
                             TaskId = to.TaskId,
-                            Name = cachedService.Operations
-                                .First(oper => oper.Id == to.OperId).Name
+                            Name = cachedService.OperTemplates
+                                .First(oper => oper.Id == to.OperTemplateId).Name
                         }));
             }
 
