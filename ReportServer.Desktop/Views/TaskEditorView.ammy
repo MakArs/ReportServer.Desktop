@@ -6,7 +6,6 @@ using MahApps.Metro.IconPacks;
 
 UserControl
 "ReportServer.Desktop.Views.TaskEditorView" {
-  DialogParticipation.Register: "{Binding}"
   Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
  "xmlns:dd": "clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
   ScrollViewer {

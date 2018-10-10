@@ -1,7 +1,6 @@
 using MahApps.Metro.Controls;
 
 UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
-  Dialogs.DialogParticipation.Register: "{Binding}"
   Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
   Grid {
     RowDefinitions: [

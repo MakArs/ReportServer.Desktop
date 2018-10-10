@@ -2,7 +2,6 @@ using MahApps.Metro.Controls.Dialogs;
 using ReportServer.Desktop.Views.WpfResources;
 
 UserControl "ReportServer.Desktop.Views.TaskManagerView" {
-  DialogParticipation.Register: "{Binding}"
   MinHeight: "800"
   MinWidth: "1200"
   BorderThickness: "1.5"

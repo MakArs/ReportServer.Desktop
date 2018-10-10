@@ -4,7 +4,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -22,7 +21,6 @@ namespace ReportServer.Desktop.ViewModels
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
         public CachedServiceShell Shell { get; }
-        private readonly IDialogCoordinator dialogCoordinator;
 
         public ReactiveList<DesktopTask> Tasks { get; set; }
         public ReactiveList<DesktopTaskInstance> SelectedTaskInstances { get; set; }
@@ -37,14 +35,12 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand EditTaskCommand { get; set; }
         public ReactiveCommand DeleteCommand { get; set; }
 
-        public TaskManagerViewModel(ICachedService cachedService, IMapper mapper, IShell shell,
-                                    IDialogCoordinator dialogCoordinator)
+        public TaskManagerViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
         {
             CanClose = false;
             this.cachedService = cachedService;
             this.mapper = mapper;
             Shell = shell as CachedServiceShell;
-            this.dialogCoordinator = dialogCoordinator;
 
             Tasks = new ReactiveList<DesktopTask>();
             SelectedTaskInstances = new ReactiveList<DesktopTaskInstance>();
@@ -101,7 +97,7 @@ namespace ReportServer.Desktop.ViewModels
 
                         foreach (var operinst in OperInstances)
                             operinst.OperName = cachedService.OperTemplates
-                                .First(op => op.Id == operinst.OperTemplateId).Name;
+                                .FirstOrDefault(op => op.Id == operinst.OperTemplateId)?.Name;
                     }
                 });
 
@@ -135,7 +131,8 @@ namespace ReportServer.Desktop.ViewModels
                     .Select(taskOper => new
                     {
                         taskOper.Number,
-                        cachedService.OperTemplates.First(oper => oper.Id == taskOper.OperTemplateId).Name
+                        cachedService.OperTemplates
+                            .First(oper => oper.Id == taskOper.OperTemplateId).Name
                     })
                     .OrderBy(pair => pair.Number)
                     .Select(pair => pair.Name)
@@ -177,19 +174,11 @@ namespace ReportServer.Desktop.ViewModels
                 .Subscribe(_ => RefreshTaskList());
         }
 
-        private async Task<bool> ShowWarningAffirmativeDialog(string question)
-        {
-            var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                question
-                , MessageDialogStyle.AffirmativeAndNegative);
-            return dialogResult == MessageDialogResult.Affirmative;
-        }
-
         private async Task Delete()
         {
             if (SelectedTaskInstance != null)
             {
-                if (!await ShowWarningAffirmativeDialog
+                if (!await Shell.ShowWarningAffirmativeDialogAsync
                     ("Do you really want to delete this task instance?")) return;
 
                 cachedService.DeleteInstance(SelectedTaskInstance.Id);
@@ -199,7 +188,7 @@ namespace ReportServer.Desktop.ViewModels
 
             if (SelectedTask != null)
             {
-                if (!await ShowWarningAffirmativeDialog
+                if (!await Shell.ShowWarningAffirmativeDialogAsync
                     ($"Do you really want to delete task {SelectedTask.Name} and all it's instances?")
                 ) return;
 

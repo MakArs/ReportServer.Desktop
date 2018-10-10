@@ -4,7 +4,6 @@ using ReportServer.Desktop.ViewModels;
 
 UserControl "ReportServer.Desktop.Views.CronEditorView" {
   "xmlns:viewModels": "clr-namespace:ReportServer.Desktop.ViewModels"
-  DialogParticipation.Register: "{Binding}"
   Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
   Grid {
     RowDefinitions: [

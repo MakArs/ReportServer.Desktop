@@ -22,9 +22,8 @@ namespace ReportServer.Desktop.ViewModels
     public class CronEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
     {
         private string currentExpression;
-        private readonly IDialogCoordinator dialogCoordinator;
         private readonly ICachedService cachedService;
-        private IShell shell;
+        private readonly CachedServiceShell shell;
 
         public int? Id { get; set; }
         [Reactive] public string FullExpression { get; set; }
@@ -37,14 +36,12 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
 
-        public CronEditorViewModel(ICachedService cachedService,
-                                   IDialogCoordinator dialogCoordinator,IShell shell)
+        public CronEditorViewModel(ICachedService cachedService, IShell shell)
         {
-            this.shell = shell;
+            this.shell = shell as CachedServiceShell;
             this.cachedService = cachedService;
             Categories = new ReactiveList<CronCategory> {ChangeTrackingEnabled = true};
             IsValid = true;
-            this.dialogCoordinator = dialogCoordinator;
             validator = new CronEditorValidator();
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
@@ -57,11 +54,8 @@ namespace ReportServer.Desktop.ViewModels
             {
                 if (IsDirty)
                 {
-                    var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                        "All unsaved changes will be lost. Close window?"
-                        , MessageDialogStyle.AffirmativeAndNegative);
-
-                    if (dialogResult != MessageDialogResult.Affirmative)
+                    if (!await this.shell.ShowWarningAffirmativeDialogAsync
+                        ("All unsaved changes will be lost. Close window?"))
                         return;
                 }
 
@@ -171,15 +165,13 @@ namespace ReportServer.Desktop.ViewModels
         {
             if (!IsValid || !IsDirty) return;
 
-            var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                Id > 0
-                    ? "Save these schedule parameters?"
-                    : "Create this schedule?"
-                , MessageDialogStyle.AffirmativeAndNegative);
+            if (!await shell.ShowWarningAffirmativeDialogAsync(Id > 0
+                ? "Save these schedule parameters?"
+                : "Create this schedule?"))
+                return;
 
-            if (dialogResult != MessageDialogResult.Affirmative) return;
-
-            var editedSchedule = new ApiSchedule {Id = Id ?? 0, Name = Name, Schedule = FullExpression};
+            var editedSchedule =
+                new ApiSchedule {Id = Id ?? 0, Name = Name, Schedule = FullExpression};
 
             cachedService.CreateOrUpdateSchedule(editedSchedule);
             Close();

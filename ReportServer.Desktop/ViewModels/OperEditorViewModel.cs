@@ -21,10 +21,9 @@ namespace ReportServer.Desktop.ViewModels
 {
     public class OperEditorViewModel : ViewModelBase, IInitializableViewModel
     {
-        private readonly IDialogCoordinator dialogCoordinator;
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
-        private readonly IShell shell;
+        private readonly CachedServiceShell shell;
 
         private Dictionary<string, Type> DataImporters { get; set; }
         private Dictionary<string, Type> DataExporters { get; set; }
@@ -42,15 +41,13 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
 
-        public OperEditorViewModel(ICachedService cachedService, IMapper mapper,
-                                   IDialogCoordinator dialogCoordinator,IShell shell)
+        public OperEditorViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
         {
-            this.shell = shell;
+            this.shell = shell as CachedServiceShell;
             this.cachedService = cachedService;
             this.mapper = mapper;
             IsValid = true;
             validator = new OperEditorValidator();
-            this.dialogCoordinator = dialogCoordinator;
 
             OperTemplates = new ReactiveList<string>();
 
@@ -64,11 +61,8 @@ namespace ReportServer.Desktop.ViewModels
             {
                 if (IsDirty)
                 {
-                    var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                        "All unsaved changes will be lost. Close window?"
-                        , MessageDialogStyle.AffirmativeAndNegative);
-
-                    if (dialogResult != MessageDialogResult.Affirmative)
+                    if (!await this.shell.ShowWarningAffirmativeDialogAsync
+                        ("All unsaved changes will be lost. Close window?"))
                         return;
                 }
 
@@ -142,22 +136,20 @@ namespace ReportServer.Desktop.ViewModels
                         ? DataExporters[Type]
                         : DataImporters[Type];
 
-                    Configuration = JsonConvert.DeserializeObject(request.Oper.ConfigTemplate, type);
+                    Configuration =
+                        JsonConvert.DeserializeObject(request.Oper.ConfigTemplate, type);
                 }
             }
-          }
+        }
 
         public async Task Save()
         {
             if (!IsValid || !IsDirty) return;
 
-            var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                Id > 0
-                    ? "Save these operation parameters?"
-                    : "Create this operation?"
-                , MessageDialogStyle.AffirmativeAndNegative);
-
-            if (dialogResult != MessageDialogResult.Affirmative) return;
+            if (!await shell.ShowWarningAffirmativeDialogAsync(Id > 0
+                ? "Save these operation parameters?"
+                : "Create this operation?"))
+                return;
 
             var editedReport = new ApiOperTemplate();
 

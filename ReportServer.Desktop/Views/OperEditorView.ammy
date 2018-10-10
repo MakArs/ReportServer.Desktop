@@ -5,7 +5,6 @@ using Xceed.Wpf.Toolkit;
 
 UserControl "ReportServer.Desktop.Views.OperEditorView" {
   "xmlns:entities": "clr-namespace:ReportServer.Desktop.Entities"
-  DialogParticipation.Register: "{Binding}"
   Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
   ScrollViewer {
     VerticalScrollBarVisibility: "Auto"

@@ -22,10 +22,9 @@ namespace ReportServer.Desktop.ViewModels
 {
     public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel
     {
-        private readonly IDialogCoordinator dialogCoordinator;
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
-        private readonly IShell shell;
+        private readonly CachedServiceShell shell;
 
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         public ReactiveList<ApiOperTemplate> Operations { get; set; }
@@ -38,24 +37,24 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public bool IsDirty { get; set; }
         [Reactive] public bool IsValid { get; set; }
 
+        [Reactive] public OperEditorViewModel RedactedModel { get; set; }
         [Reactive] public ApiOperTemplate SelectedOperation { get; set; }
         [Reactive] public object SelectedOperationConfig { get; set; }
 
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
+        public ReactiveCommand NewOperCommand { get; set; }
         public ReactiveCommand<DesktopTaskOper, Unit> RemoveOperCommand { get; set; }
         public ReactiveCommand<ApiOperTemplate, Unit> AddOperCommand { get; set; }
         public ReactiveCommand OpenCurrentTaskViewCommand { get; set; }
 
-        public TaskEditorViewModel(ICachedService cachedService, IMapper mapper,
-                                   IDialogCoordinator dialogCoordinator, IShell shell)
+        public TaskEditorViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
         {
             this.cachedService = cachedService;
             this.mapper = mapper;
             validator = new TaskEditorValidator();
             IsValid = true;
-            this.dialogCoordinator = dialogCoordinator;
-            this.shell = shell;
+            this.shell = shell as CachedServiceShell;
 
             BindedOpers = new ReactiveList<DesktopTaskOper>();
             Schedules = new ReactiveList<ApiSchedule>();
@@ -88,16 +87,15 @@ namespace ReportServer.Desktop.ViewModels
             {
                 if (IsDirty)
                 {
-                    var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                        "All unsaved changes will be lost. Close window?"
-                        , MessageDialogStyle.AffirmativeAndNegative);
-
-                    if (dialogResult != MessageDialogResult.Affirmative)
+                    if (!await this.shell.ShowWarningAffirmativeDialogAsync
+                        ("All unsaved changes will be lost. Close window?"))
                         return;
                 }
 
                 Close();
             });
+
+            //   NewOperCommand=ReactiveCommand.Create();
 
             this.ObservableForProperty(s => s.SelectedOperation)
                 .Where(sop => sop.Value != null)
@@ -114,6 +112,7 @@ namespace ReportServer.Desktop.ViewModels
 
             this.WhenAnyObservable(s => s.AllErrors.Changed)
                 .Subscribe(_ => IsValid = !AllErrors.Any());
+
         }
 
         public void Initialize(ViewRequest viewRequest)
@@ -121,6 +120,12 @@ namespace ReportServer.Desktop.ViewModels
             shell.AddVMCommand("File", "Save",
                     "SaveChangesCommand", this)
                 .SetHotKey(ModifierKeys.Control, Key.S);
+
+            shell.AddVMCommand("Edit", "Add operation from existing templates",
+                "ChooseOperCommand", this);
+
+            shell.AddVMCommand("Edit", "Add new operation",
+                "NewOperCommand", this);
 
             Schedules.PublishCollection(cachedService.Schedules);
             Operations = cachedService.OperTemplates;
@@ -174,13 +179,10 @@ namespace ReportServer.Desktop.ViewModels
         {
             if (!IsValid || !IsDirty) return;
 
-            var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                Id > 0
-                    ? "Save these task parameters?"
-                    : "Create this task?"
-                , MessageDialogStyle.AffirmativeAndNegative);
-
-            if (dialogResult != MessageDialogResult.Affirmative) return;
+            if (!await shell.ShowWarningAffirmativeDialogAsync(Id > 0
+                ? "Save these task parameters?"
+                : "Create this task?"))
+                return;
 
             foreach (var oper in BindedOpers)
                 oper.Number = BindedOpers.IndexOf(oper) + 1;

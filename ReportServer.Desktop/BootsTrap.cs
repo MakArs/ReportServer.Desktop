@@ -53,12 +53,6 @@ namespace ReportServer.Desktop
 
             builder.RegisterType<RecepientEditorViewModel>();
 
-            var dialogCoordinator = DialogCoordinator.Instance;
-
-            builder.RegisterInstance(dialogCoordinator)
-                .As<IDialogCoordinator>()
-                .SingleInstance();
-
             #region monik
 
             var logSender = new AzureSender(
@@ -100,7 +94,7 @@ namespace ReportServer.Desktop
                 .SingleInstance();
 
             #endregion
-            
+
             var container = builder.Build();
             return container;
         }

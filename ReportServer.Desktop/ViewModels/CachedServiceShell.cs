@@ -63,7 +63,7 @@ namespace ReportServer.Desktop.ViewModels
 
         }
 
-        public async Task InitCachedService(int tries)
+        public async Task InitCachedServiceAsync(int tries)
         {
             while (tries-- > 0)
             {
@@ -85,7 +85,11 @@ namespace ReportServer.Desktop.ViewModels
                     options: new UiShowOptions {Title = "Task Manager", CanClose = false});
 
                 ShowView<OperTemplatesManagerView>(
-                    options: new UiShowOptions {Title = "Operation template Manager", CanClose = false});
+                    options: new UiShowOptions
+                    {
+                        Title = "Operation template Manager",
+                        CanClose = false
+                    });
 
                 ShowView<RecepientManagerView>(
                     options: new UiShowOptions {Title = "Recepient Manager", CanClose = false});
@@ -97,6 +101,25 @@ namespace ReportServer.Desktop.ViewModels
             }
 
             Application.Current.MainWindow?.Close();
+        }
+
+        public async Task<bool> ShowWarningAffirmativeDialogAsync(
+            string question, string title = "Warning",
+            MessageDialogStyle dialogStyle = MessageDialogStyle.AffirmativeAndNegative)
+        {
+            var mainview = Application.Current.MainWindow as MetroWindow;
+
+            var dialogResult = await mainview.ShowMessageAsync(title,
+                question
+                , dialogStyle);
+            return dialogResult == MessageDialogResult.Affirmative;
+        }
+
+        public async Task ShowMessageAsync(string text, string title = "Warning")
+        {
+            var mainview = Application.Current.MainWindow as MetroWindow;
+
+            await mainview.ShowMessageAsync(title, text);
         }
     }
 }

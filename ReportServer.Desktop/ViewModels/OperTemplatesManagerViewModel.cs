@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -17,7 +16,6 @@ namespace ReportServer.Desktop.ViewModels
     public class OperTemplatesManagerViewModel : ViewModelBase, IInitializableViewModel
     {
         private readonly ICachedService cachedService;
-        private readonly IDialogCoordinator dialogCoordinator;
         public CachedServiceShell Shell { get; }
 
         public ReactiveList<ApiOperTemplate> OperTemplates { get; set; }
@@ -26,12 +24,10 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand EditOperCommand { get; set; }
         public ReactiveCommand DeleteCommand { get; set; }
 
-        public OperTemplatesManagerViewModel(ICachedService cachedService, IShell shell,
-                                    IDialogCoordinator dialogCoordinator)
+        public OperTemplatesManagerViewModel(ICachedService cachedService, IShell shell)
         {
             CanClose = false;
             this.cachedService = cachedService;
-            this.dialogCoordinator = dialogCoordinator;
             Shell = shell as CachedServiceShell;
 
             EditOperCommand = ReactiveCommand.Create(() =>
@@ -41,8 +37,8 @@ namespace ReportServer.Desktop.ViewModels
                 var fullName = $"Oper template {SelectedOperTemplate.Id} editor";
 
                 Shell.ShowView<OperEditorView>(new OperEditorRequest
-                        { Oper = SelectedOperTemplate, ViewId = fullName },
-                    new UiShowOptions { Title = fullName });
+                        {Oper = SelectedOperTemplate, ViewId = fullName},
+                    new UiShowOptions {Title = fullName});
             });
 
             DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -54,7 +50,7 @@ namespace ReportServer.Desktop.ViewModels
             Shell.AddVMCommand("File", "Delete",
                     "DeleteCommand", this)
                 .SetHotKey(ModifierKeys.None, Key.Delete);
-            
+
             Shell.AddVMCommand("Edit", "Change oper template",
                 "EditOperCommand", this);
 
@@ -66,31 +62,25 @@ namespace ReportServer.Desktop.ViewModels
             if (SelectedOperTemplate != null)
 
             {
-                var taskOpers = cachedService.TaskOpers.Where(to => to.OperTemplateId == SelectedOperTemplate.Id)
+                var taskOpers = cachedService.TaskOpers
+                    .Where(to => to.OperTemplateId == SelectedOperTemplate.Id)
                     .ToList();
 
                 if (taskOpers.Any())
                 {
                     var bindedTasks = string.Join(", ", taskOpers.Select(to => to.TaskId));
-                    await dialogCoordinator.ShowMessageAsync(this, "Warning",
+                    await Shell.ShowMessageAsync(
                         $"You can't delete this operation. It is used in tasks {bindedTasks}");
                     return;
                 }
 
-                if (!await ShowWarningAffirmativeDialog
-                    ($"Do you really want to delete operation {SelectedOperTemplate.Name}?")) return;
+                if (!await Shell.ShowWarningAffirmativeDialogAsync
+                    ($"Do you really want to delete operation {SelectedOperTemplate.Name}?"))
+                    return;
 
                 cachedService.DeleteOperTemplate(SelectedOperTemplate.Id);
                 cachedService.RefreshOperTemplates();
             }
-        }
-
-        private async Task<bool> ShowWarningAffirmativeDialog(string question)
-        {
-            var dialogResult = await dialogCoordinator.ShowMessageAsync(this, "Warning",
-                question,
-                MessageDialogStyle.AffirmativeAndNegative);
-            return dialogResult == MessageDialogResult.Affirmative;
         }
     }
 }
