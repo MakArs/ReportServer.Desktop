@@ -23,32 +23,26 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
           RowDefinition { Height: "Auto" }
           RowDefinition { Height: "Auto" }
           RowDefinition { Height: "Auto" }
+		    RowDefinition { Height: "Auto" }
         ]
         ColumnDefinitions: [
           ColumnDefinition { Width: "Auto" }
           ColumnDefinition { Width: "Auto" }
         ]
-        Label {
-          Background: "White"
-          HorizontalAlignment: "Left"
-          Margin: "18 3 3 3"
-          Content: "Mode"
-        }
+		
+     @ContentLabel("Mode") 
+
         ComboBox {
           Grid.Column: "1"
           Margin: "3"
           Width: "250"
           HorizontalAlignment: "Left"
           ItemsSource:  bind  from  $resource OperModeEnum
-          SelectedValue: "{Binding Mode}"
+          SelectedValue: bind Mode
         }
-        Label {
-          Background: "White"
-          Grid.Row: "1"
-          HorizontalAlignment: "Left"
-          Margin: "18 3 3 3"
-          Content: "Type"
-        }
+
+		@ContentLabel("Type","1") 
+
         ComboBox {
           Background: "White"
           Grid.Column: "1"
@@ -56,16 +50,12 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
           Margin: "3"
           Width: "250"
           HorizontalAlignment: "Left"
-          SelectedItem: "{Binding Type}"
-          ItemsSource: "{Binding OperTemplates}"
+          SelectedItem: bind Type
+          ItemsSource: bind OperTemplates
         }
-        Label {
-          Background: "White"
-          Grid.Row: "2"
-          HorizontalAlignment: "Left"
-          Margin: "18 3 3 3"
-          Content: "Name"
-        }
+
+		@ContentLabel("Name","2") 
+
         TextBox {
           Background: "White"
           Grid.Column: "1"
@@ -76,7 +66,8 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
           HorizontalContentAlignment: "Left"
           AcceptsReturn: "False"
           TextWrapping: "NoWrap"
-          Text: "{Binding Name,UpdateSourceTrigger=PropertyChanged,                     ValidatesOnDataErrors=True}"
+          Text: bind Name set[UpdateSourceTrigger: PropertyChanged
+		  ValidatesOnDataErrors: true]
         }
       }
      PropertyGrid.PropertyGrid {
@@ -94,7 +85,8 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
         SelectedObjectName: ""
         SelectedObjectTypeName: "Template configuration"
         Visibility: "{Binding Configuration,Converter={StaticResource NullToVisibility}}"
-        SelectedObject: "{Binding Configuration,                 UpdateSourceTrigger=PropertyChanged}"
+        SelectedObject: bind Configuration set[
+		UpdateSourceTrigger: PropertyChanged]
       }
       Grid {
         Grid.Row: "3"
@@ -107,14 +99,14 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
           Grid.Column: "1"
           Orientation: "Horizontal"
           Button {
-            Command: "{Binding SaveChangesCommand}"
-            IsEnabled: "{Binding IsValid}"
+            Command: bind SaveChangesCommand
+            IsEnabled: bind IsValid
             Height: "25"
             Width: "100"
             "Save"
           }
           Button {
-            Command: "{Binding CancelCommand}"
+            Command: bind CancelCommand
             Height: "25"
             Width: "100"
             "Cancel"

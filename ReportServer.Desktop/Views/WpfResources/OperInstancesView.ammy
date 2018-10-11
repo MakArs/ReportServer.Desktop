@@ -7,12 +7,12 @@ UserControl "ReportServer.Desktop.Views.WpfResources.OperInstancesView" {
       RowDefinition { Height: "40" }
       RowDefinition { }
     ]
-    Label { Margin: "0",  Content: "Operation instances list" }
+
+    @ViewLabel("Operation instances list")
+
     DataGrid {
-      ColumnWidth: "*"
+      #DataGridMix(bind OperInstances,bind SelectedOperInstance)
       Grid.Row: "1"
-      ItemsSource: bind OperInstances
-      SelectedItem: bind SelectedOperInstance 
       InputBindings: KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
       Columns: [
         DataGridTextColumn { Header: "Operation name",  Binding: bind OperName }

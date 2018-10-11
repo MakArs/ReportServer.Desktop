@@ -7,7 +7,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CronExpressionDescriptor;
-using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -19,7 +18,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModels
 {
-    public class CronEditorViewModel : ViewModelBase, IInitializableViewModel, ISaveableViewModel
+    public class CronEditorViewModel : ViewModelBase, IInitializableViewModel
     {
         private string currentExpression;
         private readonly ICachedService cachedService;
@@ -289,12 +288,5 @@ namespace ReportServer.Desktop.ViewModels
         Days,
         Month,
         WeekDay
-    }
-
-    public enum ParsingCategory
-    {
-        All,
-        Value,
-        Range
     }
 }

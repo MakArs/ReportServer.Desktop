@@ -26,9 +26,7 @@ UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
     }
     DataGrid {
       Grid.Row: "1"
-      ColumnWidth: "*"
-      ItemsSource: "{Binding Schedules}"
-      SelectedItem: "{Binding SelectedSchedule}"
+      #DataGridMix(bind Schedules,bind SelectedSchedule)
       CanUserAddRows: "True"
       InputBindings: [
         MouseBinding {

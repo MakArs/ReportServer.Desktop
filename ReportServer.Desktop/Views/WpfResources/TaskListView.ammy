@@ -27,14 +27,12 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
     }
     DataGrid {
       Grid.Row: "1"
-      ColumnWidth: "*"
+      #DataGridMix(bind Tasks,bind SelectedTask)
       RowHeight: "{x:Static sys:Double.NaN}"
-      ItemsSource: "{Binding Tasks}"
-      SelectedItem: "{Binding SelectedTask}"
       InputBindings: [
         MouseBinding {
           MouseAction: "LeftDoubleClick"
-          Command: "{Binding EditTaskCommand}"
+          Command: bind EditTaskCommand
         }
         KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
       ]

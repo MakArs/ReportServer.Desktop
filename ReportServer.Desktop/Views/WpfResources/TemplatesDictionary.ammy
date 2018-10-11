@@ -12,6 +12,7 @@ ResourceDictionary {
   ReportTypeToVisiblity Key="ReportTypeToVisiblity" {  }
   ParsingCategoryToBool Key="ParsingCategoryToBool" {  }
   IsRangeToVisibility Key="IsRangeToVisibility" {  }
+  RangeToString Key="TwoBoxesConverter" { }
   IsNotValueToVisibility Key="IsNotValueToVisibility" {  }
   MoreThenOneToVisibility Key="MoreThenOneToVisibility" {  }
   OperInstancesView Key="OperInstancesView"{  }
@@ -58,21 +59,7 @@ ResourceDictionary {
   }
   Style {
     TargetType: "DataGrid"
-    Setter { Property: "HorizontalAlignment",  Value: "Stretch" }
     Setter { Property: "CellStyle",  Value: "{StaticResource MyCell}" }
-    Setter { Property: "RowBackground",  Value: "#F5F5F5" }
-    Setter { Property: "Background",  Value: "White" }
-    Setter { Property: "ColumnWidth",  Value: "*" }
-    Setter { Property: "MinRowHeight",  Value: "25" }
-    Setter { Property: "AutoGenerateColumns",  Value: "False" }
-    Setter { Property: "GridLinesVisibility",  Value: "All" }
-    Setter { Property: "RowHeaderWidth",  Value: "0" }
-    Setter { Property: "CanUserAddRows",  Value: "False" }
-    Setter { Property: "CanUserDeleteRows",  Value: "False" }
-    Setter { Property: "SelectionMode",  Value: "Single" }
-    Setter { Property: "IsReadOnly",  Value: "True" }
-    Setter { Property: "HorizontalGridLinesBrush",  Value: "Gray" }
-    Setter { Property: "VerticalGridLinesBrush",  Value: "Gray" }
     Setter { Property: "ColumnHeaderStyle",  Value: "{StaticResource MyColumnHeader}" }
   }
   Style {
@@ -124,6 +111,24 @@ ResourceDictionary {
     Setter { Property: "HorizontalAlignment",  Value: "Right" }
     Setter { Property: "Placement",  Value: "Right" }
     Setter { Property: "FlowDirection",  Value: "RightToLeft" }
+  }
+
+    Style {
+    TargetType: "ListViewItem"
+    Setter { Property: "Padding",  Value: "0" }
+    Setter {
+      Property: "Template"
+      Value: ControlTemplate 
+		{
+        TargetType: "ListViewItem"
+        Border {
+          Name: "Border"
+          BorderBrush: "Transparent"
+          BorderThickness: "0"
+          ContentPresenter { }
+				}
+		 }	
+    }
   }
 
   DataTemplate {
@@ -224,21 +229,7 @@ ResourceDictionary {
       }
     }
   }
-  Style {
-    TargetType: "ListViewItem"
-    Setter { Property: "Padding",  Value: "0" }
-    Setter {
-      Property: "Template"
-      Value: ControlTemplate {
-        TargetType: "ListViewItem"
-        Border {
-          Name: "Border"
-          BorderBrush: "Transparent"
-          BorderThickness: "0"
-          ContentPresenter { }
-        }
-      }
-    }
-  }
-  RangeToString Key="TwoBoxesConverter" { }
+
+  DataTemplate { DataType:  ApiOperTemplate}
+
 }

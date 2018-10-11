@@ -262,6 +262,7 @@
     <None Include="Views\MainWindow.g.xaml">
       <DependentUpon>MainWindow.ammy</DependentUpon>
     </None>
+    <None Include="Views\OperTemplatesManagerView.ammy" />
     <None Include="Views\RecepientManagerView.ammy" />
     <None Include="Views\RecepientManagerView.g.xaml">
       <DependentUpon>RecepientManagerView.ammy</DependentUpon>
@@ -273,10 +274,6 @@
     <None Include="Views\WpfResources\OperInstancesView.ammy" />
     <None Include="Views\WpfResources\OperInstancesView.g.xaml">
       <DependentUpon>OperInstancesView.ammy</DependentUpon>
-    </None>
-    <None Include="Views\OperTemplatesManagerView.ammy" />
-    <None Include="Views\OperTemplatesManagerView.g.xaml">
-      <DependentUpon>OperTemplatesManagerView.ammy</DependentUpon>
     </None>
     <None Include="Views\OperEditorView.ammy" />
     <None Include="Views\OperEditorView.g.xaml">
@@ -307,11 +304,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Entities\CachedServiceEntities.cs" />
-    <Compile Include="Interfaces\IDeleteableViewModel.cs" />
     <Compile Include="ViewModels\CronEditorViewModel.cs" />
     <Compile Include="Models\ViewRequests.cs" />
     <Compile Include="ViewModels\CachedServiceShell.cs" />
-    <Compile Include="Interfaces\ISaveableViewModel.cs" />
     <Compile Include="ViewModels\RecepientManagerViewModel.cs" />
     <Compile Include="ViewModels\OperEditorViewModel.cs" />
     <Compile Include="ViewModels\OperTemplatesManagerViewModel.cs" />
@@ -323,6 +318,9 @@
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.ammy</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OperTemplatesManagerView.ammy.cs">
+      <DependentUpon>OperTemplatesManagerView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\RecepientManagerView.xaml.cs">
       <DependentUpon>RecepientManagerView.ammy</DependentUpon>
@@ -340,9 +338,6 @@
     <Compile Include="Views\WpfResources\Converters.cs" />
     <Compile Include="Entities\CoreEntities.cs" />
     <Compile Include="Interfaces\ICachedService.cs" />
-    <Compile Include="Views\OperTemplatesManagerView.xaml.cs">
-      <DependentUpon>OperTemplatesManagerView.ammy</DependentUpon>
-    </Compile>
     <Compile Include="Views\OperEditorView.xaml.cs">
       <DependentUpon>OperEditorView.ammy</DependentUpon>
     </Compile>
@@ -421,6 +416,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\OperTemplatesManagerView.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>OperTemplatesManagerView.ammy</DependentUpon>
+    </Page>
     <Page Include="Views\WpfResources\TemplatesDictionary.g.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

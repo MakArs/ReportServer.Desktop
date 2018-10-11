@@ -294,6 +294,13 @@ namespace ReportServer.Desktop.Entities
         Exporter = 2
     }
 
+    public enum ParsingCategory
+    {
+        All,
+        Value,
+        Range
+    }
+
     public enum InstanceState
     {
         InProcess = 1,

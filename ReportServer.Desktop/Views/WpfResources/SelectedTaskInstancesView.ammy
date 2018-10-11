@@ -7,12 +7,12 @@ UserControl "ReportServer.Desktop.Views.WpfResources.SelectedTaskInstancesView" 
       RowDefinition { Height: "40" }
       RowDefinition { }
     ]
-    Label { Margin: "0",  Content: "Selected task instances list" }
+
+    @ViewLabel("Selected task instances list")
+
     DataGrid {
-      ColumnWidth: "*"
+     #DataGridMix(bind SelectedTaskInstances,bind SelectedTaskInstance)
       Grid.Row: "1"
-      ItemsSource: "{Binding SelectedTaskInstances}"
-      SelectedItem: "{Binding SelectedTaskInstance}"
       InputBindings: KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
       Columns: [
         DataGridTextColumn { Header: "Start time",  Binding: "{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" }

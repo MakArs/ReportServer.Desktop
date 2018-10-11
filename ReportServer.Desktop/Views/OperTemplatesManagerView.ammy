@@ -1,4 +1,4 @@
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 
 UserControl "ReportServer.Desktop.Views.OperTemplatesManagerView" {
   Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
@@ -26,9 +26,8 @@ UserControl "ReportServer.Desktop.Views.OperTemplatesManagerView" {
     }
     DataGrid {
       Grid.Row: "1"
-      ColumnWidth: "*"
-      ItemsSource: "{Binding OperTemplates}"
-      SelectedItem: "{Binding SelectedOperTemplate,Mode=OneWayToSource}"
+      #DataGridMix(bind OperTemplates,bind SelectedOperTemplate set
+	  [Mode:"OneWayToSource"])
       InputBindings: [
         MouseBinding {
           MouseAction: "LeftDoubleClick"

@@ -236,3 +236,53 @@ mixin Fade_OnBinding(binding, bindingValue) for Style {
 mixin MergeDictionary (source) for ResourceDictionary {
   combine MergedDictionaries: ResourceDictionary { Source: $source }
 }
+
+alias ViewLabel(text="New Label") 
+{Label
+    {HorizontalContentAlignment: "Left" 
+	VerticalContentAlignment: "Center" 
+	FontWeight: "DemiBold"
+	Background: "#F5F5F5" 
+	Margin:"0"
+	Content: $text
+	}
+ }
+
+alias ContentLabel(text="New Label",row="0",column="0",margin="18 3 3 3") 
+{ Label
+    { Background: "White"
+          HorizontalAlignment: "Left"
+          Margin: $margin
+          Content: $text
+		  Grid.Column: $column
+		  Grid.Row: $row
+	}
+}
+
+alias InputTextBox(bindedvalue)
+{  TextBox { TextWrapping: "NoWrap"
+				AcceptsReturn: "False"
+				TextAlignment: "Left"
+				Text: bind $bindedvalue set[UpdateSourceTrigger: "PropertyChanged"
+				ValidatesOnDataErrors: "True"]}
+}
+
+mixin DataGridMix(source,selected,colhedstyle="MyColHeader",cellstyle="MyCell") for DataGrid
+{
+  ColumnWidth: "*"
+  ItemsSource: $source
+  SelectedItem: $selected
+  HorizontalAlignment: "Stretch" 
+  RowBackground: "#F5F5F5"
+  Background: "White" 
+  MinRowHeight : "25"
+  AutoGenerateColumns: "False"
+  GridLinesVisibility: "All"
+  RowHeaderWidth: "0"
+  CanUserAddRows: "False"
+  CanUserDeleteRows: "False"
+  SelectionMode: "Single"
+  IsReadOnly:"True"
+  HorizontalGridLinesBrush: "Gray"
+  VerticalGridLinesBrush: "Gray"
+}

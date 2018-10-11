@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -27,13 +26,6 @@ namespace ReportServer.Desktop.ViewModels
         public CachedServiceShell(ICachedService cachedService)
         {
             this.cachedService = cachedService;
-
-            SaveCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (DocumentPane.Children.First(child => child.IsActive).Content is
-                        IView v && v.ViewModel is ISaveableViewModel vm)
-                    await vm.Save();
-            });
 
             RefreshCommand = ReactiveCommand.Create(this.cachedService.RefreshData);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
@@ -6,7 +7,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -16,7 +16,6 @@ using ReportServer.Desktop.Models;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
-using ReactiveCommand = ReactiveUI.ReactiveCommand;
 
 namespace ReportServer.Desktop.ViewModels
 {
@@ -32,25 +31,28 @@ namespace ReportServer.Desktop.ViewModels
 
         public int Id { get; set; }
         [Reactive] public string Name { get; set; }
+        [Reactive] public string OperationsSearchString { get; set; }
         [Reactive] public int? ScheduleId { get; set; }
         [Reactive] public bool HasSchedule { get; set; }
         [Reactive] public bool IsDirty { get; set; }
         [Reactive] public bool IsValid { get; set; }
+        [Reactive] public bool TemplatesListOpened { get; set; }
 
-        [Reactive] public OperEditorViewModel RedactedModel { get; set; }
         [Reactive] public ApiOperTemplate SelectedOperation { get; set; }
         [Reactive] public object SelectedOperationConfig { get; set; }
 
         public ReactiveCommand SaveChangesCommand { get; set; }
         public ReactiveCommand CancelCommand { get; set; }
-        public ReactiveCommand NewOperCommand { get; set; }
-        public ReactiveCommand<DesktopTaskOper, Unit> RemoveOperCommand { get; set; }
-        public ReactiveCommand<ApiOperTemplate, Unit> AddOperCommand { get; set; }
+        public ReactiveCommand CreateOperConfigCommand { get; set; }
+        public ReactiveCommand OpenTemplatesListCommand { get; set; }
+        public ReactiveCommand<ApiOperTemplate, Unit> SelectTemplateCommand { get; set; }
+        public ReactiveCommand<DesktopTaskOper, Unit> RemoveTaskOperCommand { get; set; }
+        public ReactiveCommand<ApiOperTemplate, Unit> AddTaskOperCommand { get; set; }
         public ReactiveCommand OpenCurrentTaskViewCommand { get; set; }
 
-        public TaskEditorViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
+        public TaskEditorViewModel(ICachedService service, IMapper mapper, IShell shell)
         {
-            this.cachedService = cachedService;
+            cachedService = service;
             this.mapper = mapper;
             validator = new TaskEditorValidator();
             IsValid = true;
@@ -58,11 +60,12 @@ namespace ReportServer.Desktop.ViewModels
 
             BindedOpers = new ReactiveList<DesktopTaskOper>();
             Schedules = new ReactiveList<ApiSchedule>();
+            Operations = new ReactiveList<ApiOperTemplate>();
 
-            RemoveOperCommand = ReactiveCommand.Create<DesktopTaskOper>(to =>
+            RemoveTaskOperCommand = ReactiveCommand.Create<DesktopTaskOper>(to =>
                 BindedOpers.Remove(to));
 
-            AddOperCommand = ReactiveCommand.Create<ApiOperTemplate>(op =>
+            AddTaskOperCommand = ReactiveCommand.Create<ApiOperTemplate>(op =>
                 BindedOpers.Add(new DesktopTaskOper
                 {
                     Name = op.Name,
@@ -95,19 +98,65 @@ namespace ReportServer.Desktop.ViewModels
                 Close();
             });
 
-            //   NewOperCommand=ReactiveCommand.Create();
-
-            this.ObservableForProperty(s => s.SelectedOperation)
-                .Where(sop => sop.Value != null)
-                .Subscribe(selop =>
+            CreateOperConfigCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SelectedOperation != null)
                 {
-                    var val = selop.Value;
+                    if (!await this.shell.ShowWarningAffirmativeDialogAsync
+                        ("All unsaved operation configuration changes will be lost. Close window?"))
 
-                    var type = cachedService.DataExporters.ContainsKey(val.Type)
-                        ? cachedService.DataExporters[val.Type]
-                        : cachedService.DataImporters[val.Type];
-                    SelectedOperationConfig = JsonConvert
-                        .DeserializeObject(val.ConfigTemplate, type);
+                        return;
+                }
+
+                SelectedOperation = new ApiOperTemplate
+                {
+                    Id = 0,
+                    Name = "New Operation",
+                    Type = cachedService.DataImporters.First().Key
+                };
+            });
+
+            OpenTemplatesListCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SelectedOperation != null)
+                {
+                    if (!await this.shell.ShowWarningAffirmativeDialogAsync
+                        ("All unsaved operation configuration changes will be lost. Close window?"))
+
+                        return;
+                    SelectedOperation = null;
+                }
+
+                TemplatesListOpened = true;
+            });
+
+            SelectTemplateCommand = ReactiveCommand.Create<ApiOperTemplate>(templ =>
+            {
+                SelectedOperation = templ;
+
+                var type = cachedService.DataExporters.ContainsKey(templ.Type)
+                    ? cachedService.DataExporters[templ.Type]
+                    : cachedService.DataImporters[templ.Type];
+
+                SelectedOperationConfig = JsonConvert
+                    .DeserializeObject(templ.ConfigTemplate, type);
+
+                OperationsSearchString = "";
+
+                TemplatesListOpened = false;
+            });
+
+            this.ObservableForProperty(s => s.OperationsSearchString)
+                .Subscribe(sstr =>
+                {
+                    List<ApiOperTemplate> opers;
+                    lock (this)
+                        opers = cachedService.OperTemplates.Where(oper =>
+                                oper.Name.IndexOf(sstr.Value, StringComparison.OrdinalIgnoreCase) >=
+                                0)
+                            .ToList();
+
+                    Operations.PublishCollection(opers);
                 });
 
             this.WhenAnyObservable(s => s.AllErrors.Changed)
@@ -122,13 +171,13 @@ namespace ReportServer.Desktop.ViewModels
                 .SetHotKey(ModifierKeys.Control, Key.S);
 
             shell.AddVMCommand("Edit", "Add operation from existing templates",
-                "ChooseOperCommand", this);
+                "OpenTemplatesListCommand", this);
 
             shell.AddVMCommand("Edit", "Add new operation",
-                "NewOperCommand", this);
+                "CreateOperConfigCommand", this);
 
             Schedules.PublishCollection(cachedService.Schedules);
-            Operations = cachedService.OperTemplates;
+            Operations.PublishCollection(cachedService.OperTemplates);
 
             if (viewRequest is TaskEditorRequest request)
             {

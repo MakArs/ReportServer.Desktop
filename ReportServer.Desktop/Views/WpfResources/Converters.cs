@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
-using ReportServer.Desktop.ViewModels;
+using ReportServer.Desktop.Entities;
 
 namespace ReportServer.Desktop.Views.WpfResources
 {

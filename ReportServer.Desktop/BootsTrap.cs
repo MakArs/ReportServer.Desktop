@@ -2,7 +2,6 @@
 using System.Linq;
 using Autofac;
 using AutoMapper;
-using MahApps.Metro.Controls.Dialogs;
 using Monik.Client;
 using Monik.Common;
 using Newtonsoft.Json;

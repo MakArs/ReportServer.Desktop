@@ -3,237 +3,273 @@ using GongSolutions.Wpf.DragDrop;
 using Xceed.Wpf.Toolkit;
 using ReportServer.Desktop.Views.WpfResources;
 using MahApps.Metro.IconPacks;
+using MahApps.Metro.Controls;
 
 UserControl
 "ReportServer.Desktop.Views.TaskEditorView" {
+
   Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
  "xmlns:dd": "clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
-  ScrollViewer {
-    VerticalScrollBarVisibility: "Auto"
+  ScrollViewer {VerticalScrollBarVisibility: "Auto"
     HorizontalScrollBarVisibility: "Auto"
-    Grid {
-      RowDefinitions: [
-        RowDefinition { Height: "Auto" }
-        RowDefinition { Height: "Auto" }
-        RowDefinition { Height: "Auto" }
-        RowDefinition { Height: "Auto" }
-        RowDefinition { Height: "Auto" }
-        RowDefinition { }
-      ]
 
-      ColumnDefinitions: [
-        ColumnDefinition { }
-        ColumnDefinition { Width: "Auto" }
-        ColumnDefinition { }
-        ColumnDefinition { Width: "Auto" }
-      ]
+	Grid { 	ColumnDefinitions: [
+			ColumnDefinition { Width: "0.5*" }
+			ColumnDefinition { Width: "auto" }
+			 ColumnDefinition {}]
+
+		Grid { Grid.Column: 0
+		  RowDefinitions: [
+			RowDefinition { Height: "Auto" }
+			RowDefinition { Height: "Auto" }
+			RowDefinition { Height: "Auto" }
+			RowDefinition { Height: "Auto" }
+			RowDefinition { Height: "Auto" }
+			RowDefinition {}
+		  ]
+
+		  ColumnDefinitions: [
+			ColumnDefinition { }
+			ColumnDefinition { Width: "Auto" }
+		  ]
 	  
-      Grid {
-        Margin: "2 2 2 10"
-        ColumnDefinitions: [
-          ColumnDefinition { Width: "Auto" }
-          ColumnDefinition { }
-        ]
-        Button {
-          HorizontalAlignment: "Right"
-          Command: "{Binding OpenCurrentTaskViewCommand}"
-          Visibility: "{Binding Id,Converter={StaticResource IntToVisiblity}}"
-          Padding: "5"
-          "Get new instance"
-        }
-        Label {
-          Grid.Column: "1"
-          Margin: "0"
-          Content: "Task parameters"
-        }
-      }
-      Grid {
-        Grid.Row: "1"
-        RowDefinitions: [
-          RowDefinition { Height: "Auto" }
-          RowDefinition { Height: "Auto" }
-        ]
-        ColumnDefinitions: [
-          ColumnDefinition { Width: "Auto" }
-          ColumnDefinition { Width: "Auto" }
-        ]
-        Label {
-          Background: "White"
-          Margin: "28 0 0 0"
-          Content: "Name"
-        }
-        Border {
-          Grid.Column: "1"
-          Width: "150"
-          HorizontalAlignment: "Left"
-          Margin: "3"
-          TextBox {
-            TextWrapping: "NoWrap"
-            AcceptsReturn: "False"
-            TextAlignment: "Left"
-            Text: "{Binding Name,   UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-          }
-        }
+		 Grid {
+			Margin: "2 2 2 10"
+			ColumnDefinitions: [
+			  ColumnDefinition { Width: "Auto" }
+			  ColumnDefinition { }
+			]
 
-        Grid {
-          Margin: "3"
-          Grid.Row: "1"
-          ColumnDefinitions: [
-            ColumnDefinition { Width: "Auto" }
-            ColumnDefinition { Width: "Auto" }
-          ]
-          CheckBox { IsChecked: "{Binding HasSchedule}" }
-          Label {
-            Background: "White"
-            Grid.Column: "1"
-            Content: "Schedule"
-          }
-        }
-        ComboBox {
-          Grid.Column: "1"
-          Grid.Row: "1"
-          Width: "300"
-          Margin: "3"
-          IsEnabled: "{Binding HasSchedule}"
-          ItemsSource: "{Binding Schedules,                       UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-          SelectedValuePath: "Id"
-          DisplayMemberPath: "Name"
-          SelectedValue: "{Binding ScheduleId, UpdateSourceTrigger=PropertyChanged}"
-        }
-      }
+			Button {HorizontalAlignment: "Right"
+			  Command: bind OpenCurrentTaskViewCommand
+			  Visibility: bind Id set [Converter: "{StaticResource IntToVisiblity}"]
+			  Padding: "5"
+			  "Get new instance"
+			}
 
-      Label { Grid.Row: "2",  Content: "Task operations" }
+			@ViewLabel("Task parameters")
+			{Grid.Column: "1"}
 
-	 ListView {
-        BorderThickness: "0"
-        Grid.Row: "3"
-		"dd:DragDrop.IsDragSource": "True"
-        "dd:DragDrop.IsDropTarget": "True"
-        "dd:DragDrop.UseDefaultEffectDataTemplate": "True"
-        HorizontalAlignment: "Stretch"
-        MaxHeight: "600"
-        ScrollViewer.CanContentScroll: "True"
-        ItemsSource: "{Binding BindedOpers,UpdateSourceTrigger=PropertyChanged}"
-        ItemTemplate: DataTemplate {
-          Border {
-            BorderThickness: "1"
-            BorderBrush: "#F5F5F5"
-            Grid {
-              Height: "auto"
-              ColumnDefinitions: [
-                ColumnDefinition { Width: "Auto" }
-                ColumnDefinition { Width: "Auto" }
-                ColumnDefinition { }
-                ColumnDefinition { Width: "Auto" }
-                ColumnDefinition { Width: "Auto" }
-              ]
-              TextBlock {
-                Background: "White"
-                Margin: "10 0 0 0"
-                Text: "Use as default"
-              }
-              CheckBox { Grid.Column: "1",  IsChecked: "{Binding IsDefault}" }
-              TextBlock {
-                Padding: "5"
-                Grid.Column: "2"
-                Text: "{Binding Path=Name}"
-              }
-              Button {
-                Grid.Column: "3"
-                Content:  PackIconModern { Kind:"CursorHand"}
-                Width: "40"
-                Margin: "2"
-              }
-              Button {
-                Grid.Column: "4"
-                Command: "{Binding  RelativeSource={RelativeSource AncestorType={x:Type ListView}},                             Path=DataContext.RemoveOperCommand}"
-                CommandParameter: "{Binding}"
-                Content: PackIconEntypo { Kind: "SquaredCross" }  
-                Width: "40"
-                Margin: "2"
-              }
-            }
-          }
-        }
-      }
-      Grid {
-        Grid.Row: "4"
-        Margin: "0 0 0 50"
-        ColumnDefinitions: [
-          ColumnDefinition { }
-          ColumnDefinition { Width: "0.4*" }
-        ]
-        StackPanel {
-          Grid.Column: "1"
-          Orientation: "Horizontal"
-          Button {
-            Command: "{Binding SaveChangesCommand}"
-            IsEnabled: "{Binding IsValid, UpdateSourceTrigger=PropertyChanged}"
-            Height: "25"
-            Width: "100"
-            "Save"
-          }
-          Button {
-            Command: "{Binding CancelCommand}"
-            Height: "25"
-            Width: "100"
-            "Cancel"
-          }
-        }
-      }
-      GridSplitter {
+		  }
+
+		 Grid {
+			Grid.Row: "1"
+			RowDefinitions: [
+			  RowDefinition { Height: "Auto" }
+			  RowDefinition { Height: "Auto" }
+			]
+			ColumnDefinitions: [
+			  ColumnDefinition { Width: "Auto" }
+			  ColumnDefinition { Width: "Auto" }
+			]
+
+			@ContentLabel("Name","0","0","28 0 0 0")
+
+			Border {
+			  Grid.Column: "1"
+			  Width: "150"
+			  HorizontalAlignment: "Left"
+			  Margin: "3"
+			  @InputTextBox("Name")
+			}
+
+			Grid {
+			  Margin: "3"
+			  Grid.Row: "1"
+			  ColumnDefinitions: [
+				ColumnDefinition { Width: "Auto" }
+				ColumnDefinition { Width: "Auto" }
+			  ]
+
+			  CheckBox { IsChecked: bind HasSchedule }
+
+			  @ContentLabel("Schedule","0","1","0")
+
+			}
+			ComboBox {
+			  Grid.Column: "1"
+			  Grid.Row: "1"
+			  Width: "300"
+			  Margin: "3"
+			  IsEnabled: bind HasSchedule
+			  ItemsSource: bind Schedules set [
+			  UpdateSourceTrigger: "PropertyChanged"
+			  ValidatesOnDataErrors: "True"]
+			  SelectedValuePath: "Id"
+			  DisplayMemberPath: "Name"
+			  SelectedValue: bind ScheduleId set [UpdateSourceTrigger: "PropertyChanged"]
+			}
+		  }
+
+		 @ViewLabel("Task operations")
+		   {Grid.Row: "2"
+		   Margin: "0 15 0 0"}
+
+
+		 ListView {
+			BorderThickness: "0"
+			Grid.Row: "3"
+			"dd:DragDrop.IsDragSource": "True"
+			"dd:DragDrop.IsDropTarget": "True"
+			"dd:DragDrop.UseDefaultEffectDataTemplate": "True"
+			HorizontalAlignment: "Stretch"
+			MaxHeight: "600"
+			ScrollViewer.CanContentScroll: "True"
+			ItemsSource: bind BindedOpers set[UpdateSourceTrigger: PropertyChanged]
+			ItemTemplate: DataTemplate {
+			  Border {
+				BorderThickness: "1"
+				BorderBrush: "#F5F5F5"
+				Grid {
+				  Height: "auto"
+				  ColumnDefinitions: [
+					ColumnDefinition { Width: "Auto" }
+					ColumnDefinition { Width: "Auto" }
+					ColumnDefinition { }
+					ColumnDefinition { Width: "Auto" }
+					ColumnDefinition { Width: "Auto" }
+				  ]
+				  TextBlock {
+					Background: "White"
+					Margin: "10 0 0 0"
+					Text: "Use as default"
+				  }
+				  CheckBox { Grid.Column: "1",  IsChecked: bind IsDefault }
+				  TextBlock {
+					Padding: "5"
+					Grid.Column: "2"
+					Text: "{Binding Path=Name}"
+				  }
+				  Button {
+					Grid.Column: "3"
+					Content:  PackIconModern { Kind:"CursorHand"}
+					Width: "40"
+					Margin: "2"
+				  }
+				  Button {
+					Grid.Column: "4"
+					Command: "{Binding  RelativeSource={RelativeSource AncestorType={x:Type ListView}},  Path=DataContext.RemoveTaskOperCommand}"
+					CommandParameter: bind
+					Content: PackIconMaterial { Kind: "CloseOctagon" }  
+					Width: "40"
+					Margin: "2"
+				  }
+				}
+			  }
+			}
+		  }
+		  
+		 Grid {
+			Grid.Row: "4"
+			Margin: "0 0 0 50"
+			ColumnDefinitions: [
+			  ColumnDefinition { }
+			  ColumnDefinition { Width: "0.4*" }
+			]
+			StackPanel {
+			  Grid.Column: "1"
+			  Orientation: "Horizontal"
+			  Button {
+				Command: bind SaveChangesCommand
+				IsEnabled: bind IsValid set [UpdateSourceTrigger: PropertyChanged]
+				Height: "25"
+				Width: "100"
+				"Save"
+			  }
+			  Button {
+				Command: bind CancelCommand
+				Height: "25"
+				Width: "100"
+				"Cancel"
+			  }
+			}
+		  }
+  
+}
+
+		 Flyout{
+	 Grid.Column: "2"
+	 Position: "Top"
+	 BorderBrush: "{DynamicResource AccentBaseColorBrush}"
+	 BorderThickness: "4"
+	 CloseButtonVisibility: "Hidden"
+	 TitleVisibility: "Hidden"
+	 Theme: "Adapt"
+	 AnimateOpacity: "False"
+	 Width: "450"
+	 IsOpen: bind TemplatesListOpened
+	IsModal: "True"
+	 Content: Grid{
+	 Height: "500"
+	   RowDefinitions: [
+			RowDefinition { Height: "Auto" }
+			RowDefinition {}
+		  ]
+		  Grid { 
+		  	ColumnDefinitions: [
+			  ColumnDefinition { Width: "Auto" }
+			  ColumnDefinition { }
+			//  ColumnDefinition { Width: "Auto" }
+			]
+		  @ViewLabel("Available operations")
+
+		  @InputTextBox("OperationsSearchString")
+		  {Grid.Column: 1
+		    TextBoxHelper.Watermark: "Enter search string here"
+		    TextBoxHelper.ClearTextButton: "True"
+		    HorizontalAlignment: "Stretch"}
+
+		  /*PackIconMaterial { Kind: "magnify" 
+		  Grid.Column: 2
+		  Margin: "5"}*/
+
+		  }
+				ListBox {
+				BorderThickness: "0"
+				Grid.Row: "1"
+				ItemsSource: bind Operations
+				HorizontalAlignment: "Stretch"
+				ScrollViewer.CanContentScroll: "True"
+				SelectedItem: bind SelectedOperation
+				ItemContainerStyle: Style {
+					TargetType: "ListBoxItem"
+					BasedOn: "{StaticResource MetroListBoxItem}"
+					Setter { Property: "Padding",  Value: "0" }}
+				
+				ItemTemplate: DataTemplate {
+					Border {
+						BorderThickness: "1"
+						BorderBrush: "#F5F5F5"
+						Grid {
+						 InputBindings: [
+							MouseBinding {
+							  MouseAction: "LeftDoubleClick"
+							  Command: "{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.SelectTemplateCommand}"
+								CommandParameter: bind
+							}]
+							Height: "auto"
+							ColumnDefinitions: [
+							ColumnDefinition { }
+							ColumnDefinition { Width: "Auto" }
+							]
+							TextBlock { Padding: "5",  Text: bind "Name" }
+						}
+					}
+				}
+				}
+				}
+	 }
+
+	     GridSplitter {
         Grid.Column: "1"
-        Grid.RowSpan: "6"
         HorizontalAlignment: "Center"
         Width: "3"
         ShowsPreview: "False"
         VerticalAlignment: "Stretch"
       }
-      Label {
+      
+	 /*PropertyGrid.PropertyGrid {
         Grid.Column: "2"
-        Margin: "2 2 2 10"
-        Content: "Available operations"
-      }
-      ListBox {
-        BorderThickness: "0"
-        Grid.Column: "2"
-        Grid.Row: "1"
-        Grid.RowSpan: "4"
-        ItemsSource: "{Binding Operations}"
-        HorizontalAlignment: "Stretch"
-        ScrollViewer.CanContentScroll: "True"
-        SelectedItem: "{Binding SelectedOperation}"
-        ItemContainerStyle: Style {
-          TargetType: "ListBoxItem"
-          BasedOn: "{StaticResource MetroListBoxItem}"
-          Setter { Property: "Padding",  Value: "0" }
-        }
-        ItemTemplate: DataTemplate {
-          Border {
-            BorderThickness: "1"
-            BorderBrush: "#F5F5F5"
-            Grid {
-              Height: "auto"
-              ColumnDefinitions: [
-                ColumnDefinition { }
-                ColumnDefinition { Width: "Auto" }
-              ]
-              TextBlock { Padding: "5",  Text: "{Binding Path=Name}" }
-              Button {
-                Grid.Column: "1"
-                Command: "{Binding                              RelativeSource={RelativeSource AncestorType={x:Type ListBox}},                             Path=DataContext.AddOperCommand}"
-                CommandParameter: "{Binding}"
-                Content: "+"
-                Width: "40"
-                Margin: "2"
-              }
-            }
-          }
-        }
-      }
-      PropertyGrid.PropertyGrid {
-        Grid.Column: "3"
-        Grid.RowSpan: "6"
         ShowSearchBox: "False"
         HorizontalAlignment: "Stretch"
         ShowSortOptions: "False"
@@ -245,8 +281,8 @@ UserControl
         SelectedObjectName: "{Binding SelectedOperation.Type, StringFormat=({0})}"
         SelectedObjectTypeName: "{Binding SelectedOperation.Name}"
         Visibility: "{Binding SelectedOperationConfig,Converter={StaticResource NullToVisibility}}"
-        SelectedObject: "{Binding SelectedOperationConfig}"
-      }
-    }
+        SelectedObject: bind SelectedOperationConfig
+      }*/
   }
+ }
 }

@@ -26,9 +26,7 @@ UserControl "ReportServer.Desktop.Views.RecepientManagerView" {
     }
     DataGrid {
       Grid.Row: "1"
-      ColumnWidth: "*"
-      ItemsSource: "{Binding RecepientGroups}"
-      SelectedItem: "{Binding SelectedGroup}"
+      #DataGridMix(bind RecepientGroups,bind SelectedGroup)
       CanUserAddRows: "True"
       InputBindings: [
         MouseBinding { MouseAction: "LeftDoubleClick",  Command: "{Binding EditGroupCommand}" }
