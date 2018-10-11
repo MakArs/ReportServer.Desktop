@@ -105,7 +105,6 @@ UserControl
 		   {Grid.Row: "2"
 		   Margin: "0 15 0 0"}
 
-
 		 ListView {
 			BorderThickness: "0"
 			Grid.Row: "3"
@@ -188,10 +187,11 @@ UserControl
 }
 
 		 Flyout{
-	 Grid.Column: "2"
+	 Grid.Column: "0"
+	 Grid.ColumnSpan: 3
 	 Position: "Top"
 	 BorderBrush: "{DynamicResource AccentBaseColorBrush}"
-	 BorderThickness: "4"
+	 BorderThickness: 4
 	 CloseButtonVisibility: "Hidden"
 	 TitleVisibility: "Hidden"
 	 Theme: "Adapt"
@@ -215,6 +215,7 @@ UserControl
 
 		  @InputTextBox("OperationsSearchString")
 		  {Grid.Column: 1
+		  BorderThickness: 0
 		    TextBoxHelper.Watermark: "Enter search string here"
 		    TextBoxHelper.ClearTextButton: "True"
 		    HorizontalAlignment: "Stretch"}
@@ -268,21 +269,88 @@ UserControl
         VerticalAlignment: "Stretch"
       }
       
-	 /*PropertyGrid.PropertyGrid {
-        Grid.Column: "2"
-        ShowSearchBox: "False"
-        HorizontalAlignment: "Stretch"
-        ShowSortOptions: "False"
-        IsReadOnly: "True"
-        Width: "500"
+	  Grid { Grid.Column: 2
+	  Visibility: "{Binding SelectedOperation,Converter={StaticResource NullToVisibility}}"
+	    RowDefinitions: [
+			RowDefinition { Height: "Auto" }
+			RowDefinition {}
+			RowDefinition { Height: "Auto" }
+		  ]
+
+	Grid {
+	Visibility: bind SelectedOperation.Id
+	 convert (int Id) => Id==0 ? Visibility.Visible : Visibility.Collapsed
+        RowDefinitions: [
+          RowDefinition { Height: "Auto" }
+          RowDefinition { Height: "Auto" }
+          RowDefinition { Height: "Auto" }
+		    RowDefinition { Height: "Auto" }
+        ]
+        ColumnDefinitions: [
+          ColumnDefinition { Width: "Auto" }
+          ColumnDefinition { Width: "Auto" }
+        ]
+		
+     @ContentLabel("Mode") 
+
+        ComboBox {
+          Grid.Column: "1"
+          Margin: "3"
+          Width: "250"
+          HorizontalAlignment: "Left"
+          ItemsSource:  bind  from  $resource OperModeEnum
+          SelectedValue: bind Mode
+        }
+
+		@ContentLabel("Type","1") 
+
+        ComboBox {
+          Background: "White"
+          Grid.Column: "1"
+          Grid.Row: "1"
+          Margin: "3"
+          Width: "250"
+          HorizontalAlignment: "Left"
+          SelectedItem: bind Type
+          ItemsSource: bind OperTemplates
+        }
+
+		@ContentLabel("Name","2") 
+
+		@InputTextBox("SelectedOperation.Name") 
+		{ Grid.Column: "1"
+          Grid.Row: "2"
+          Margin: "3"
+          Width: "250"
+        }
+      }
+
+	 PropertyGrid.PropertyGrid {
+	    BorderThickness: 0
+		 Grid.Row: 1
+        ShowSearchBox: false
+        HorizontalAlignment: Left
+		VerticalAlignment: Top
+        ShowSortOptions: false
+        Width: 800
+		MaxHeight: 750
         Margin: "2 2 2 10"
-        ShowSummary: "False"
+        ShowSummary: false
         Background: "#F5F5F5"
-        SelectedObjectName: "{Binding SelectedOperation.Type, StringFormat=({0})}"
-        SelectedObjectTypeName: "{Binding SelectedOperation.Name}"
-        Visibility: "{Binding SelectedOperationConfig,Converter={StaticResource NullToVisibility}}"
-        SelectedObject: bind SelectedOperationConfig
-      }*/
+        SelectedObjectName: bind SelectedOperation.Type set [StringFormat: "({0})"]
+        SelectedObjectTypeName: bind SelectedOperation.Name
+        SelectedObject: bind SelectedOperationConfig set[
+		UpdateSourceTrigger: PropertyChanged]
+      }
+
+	  Button {
+	  Grid.Row: 2
+				Command: bind AddTaskOperCommand
+				Height: "25"
+				Width: "100"
+				"Add"
+			  }
+	  }
   }
  }
 }

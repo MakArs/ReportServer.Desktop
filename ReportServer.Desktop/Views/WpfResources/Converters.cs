@@ -146,7 +146,7 @@ namespace ReportServer.Desktop.Views.WpfResources
                                        CultureInfo culture)
         {
             return value == null
-                ? Visibility.Hidden
+                ? Visibility.Collapsed
                 : Visibility.Visible;
         }
     }

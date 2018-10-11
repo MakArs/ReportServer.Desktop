@@ -19,7 +19,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.ViewModels
 {
-    public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel
+    public class TaskEditorViewModel : ViewModelBase, IInitializableViewModel //todo:find some optimal interception between taskeditor and opereditor vms
     {
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
@@ -31,13 +31,18 @@ namespace ReportServer.Desktop.ViewModels
 
         public int Id { get; set; }
         [Reactive] public string Name { get; set; }
-        [Reactive] public string OperationsSearchString { get; set; }
         [Reactive] public int? ScheduleId { get; set; }
         [Reactive] public bool HasSchedule { get; set; }
         [Reactive] public bool IsDirty { get; set; }
         [Reactive] public bool IsValid { get; set; }
         [Reactive] public bool TemplatesListOpened { get; set; }
+        [Reactive] public string OperationsSearchString { get; set; }
 
+        private Dictionary<string, Type> DataImporters { get; set; }
+        private Dictionary<string, Type> DataExporters { get; set; }
+        public ReactiveList<string> OperTemplates { get; set; }
+        [Reactive] public OperMode Mode { get; set; }
+        [Reactive] public string Type { get; set; }
         [Reactive] public ApiOperTemplate SelectedOperation { get; set; }
         [Reactive] public object SelectedOperationConfig { get; set; }
 
@@ -47,7 +52,7 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand OpenTemplatesListCommand { get; set; }
         public ReactiveCommand<ApiOperTemplate, Unit> SelectTemplateCommand { get; set; }
         public ReactiveCommand<DesktopTaskOper, Unit> RemoveTaskOperCommand { get; set; }
-        public ReactiveCommand<ApiOperTemplate, Unit> AddTaskOperCommand { get; set; }
+        public ReactiveCommand AddTaskOperCommand { get; set; }
         public ReactiveCommand OpenCurrentTaskViewCommand { get; set; }
 
         public TaskEditorViewModel(ICachedService service, IMapper mapper, IShell shell)
@@ -61,17 +66,49 @@ namespace ReportServer.Desktop.ViewModels
             BindedOpers = new ReactiveList<DesktopTaskOper>();
             Schedules = new ReactiveList<ApiSchedule>();
             Operations = new ReactiveList<ApiOperTemplate>();
+            DataImporters = cachedService.DataImporters;
+            DataExporters = cachedService.DataExporters;
+            OperTemplates=new ReactiveList<string>();
+
+            this.ObservableForProperty(s => s.Mode)
+                .Subscribe(mode =>
+                {
+                    var templates = mode.Value == OperMode.Exporter
+                        ? DataExporters.Select(pair => pair.Key)
+                        : DataImporters.Select(pair => pair.Key);
+
+                    OperTemplates.PublishCollection(templates);
+                    Type = OperTemplates.First();
+                });
+
+            this.ObservableForProperty(s => s.Type)
+                .Where(type => type.Value != null)
+                .Subscribe(type =>
+                {
+                    var operType = Mode == OperMode.Exporter
+                        ? DataExporters[type.Value]
+                        : DataImporters[type.Value];
+                    if (operType == null) return;
+
+                    SelectedOperationConfig = Activator.CreateInstance(operType);
+                    mapper.Map(cachedService, SelectedOperationConfig);
+                });
 
             RemoveTaskOperCommand = ReactiveCommand.Create<DesktopTaskOper>(to =>
                 BindedOpers.Remove(to));
 
-            AddTaskOperCommand = ReactiveCommand.Create<ApiOperTemplate>(op =>
+            AddTaskOperCommand = ReactiveCommand.Create(() =>
+            {
                 BindedOpers.Add(new DesktopTaskOper
                 {
-                    Name = op.Name,
+                    Name = SelectedOperation.Name,
                     TaskId = Id,
-                    OperTemplateId = op.Id
-                }));
+                    OperTemplateId = SelectedOperation.Id,
+                    Config = JsonConvert.SerializeObject(SelectedOperationConfig)
+                });
+                SelectedOperation = null;
+                SelectedOperationConfig = null;
+            });
 
             OpenCurrentTaskViewCommand = ReactiveCommand
                 .CreateFromTask(async () =>
@@ -124,7 +161,9 @@ namespace ReportServer.Desktop.ViewModels
                         ("All unsaved operation configuration changes will be lost. Close window?"))
 
                         return;
+
                     SelectedOperation = null;
+                    SelectedOperationConfig = null;
                 }
 
                 TemplatesListOpened = true;

@@ -17,7 +17,6 @@ namespace ReportServer.Desktop.ViewModels
     {
         private readonly ICachedService cachedService;
 
-        public ReactiveCommand SaveCommand { get; set; }
         public ReactiveCommand RefreshCommand { get; set; }
         public ReactiveCommand CreateTaskCommand { get; set; }
         public ReactiveCommand CreateOperTemplateCommand { get; set; }

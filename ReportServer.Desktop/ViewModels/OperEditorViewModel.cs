@@ -28,8 +28,8 @@ namespace ReportServer.Desktop.ViewModels
         private Dictionary<string, Type> DataExporters { get; set; }
 
         public int? Id { get; set; }
-        [Reactive] public OperMode Mode { get; set; }
         public ReactiveList<string> OperTemplates { get; set; }
+        [Reactive] public OperMode Mode { get; set; }
         [Reactive] public string Type { get; set; }
         [Reactive] public string Name { get; set; }
         [Reactive] public object Configuration { get; set; }
