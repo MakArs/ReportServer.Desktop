@@ -29,7 +29,7 @@ ResourceDictionary {
     MethodName: "GetValues"
     MethodParameters: [OperMode]
   }
-    "xmlns:mah": "http://metro.mahapps.com/winfx/xaml/controls"
+  "xmlns:mah": "http://metro.mahapps.com/winfx/xaml/controls"
   Style Key="MyColumnHeader" {
     BasedOn: "{StaticResource MetroDataGridColumnHeader}"
     TargetType: DataGridColumnHeader

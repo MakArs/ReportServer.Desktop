@@ -70,53 +70,6 @@ namespace ReportServer.Desktop.ViewModels
             DataExporters = cachedService.DataExporters;
             OperTemplates=new ReactiveList<string>();
 
-            this.ObservableForProperty(s => s.Mode)
-                .Subscribe(mode =>
-                {
-                    var templates = mode.Value == OperMode.Exporter
-                        ? DataExporters.Select(pair => pair.Key)
-                        : DataImporters.Select(pair => pair.Key);
-
-                    OperTemplates.PublishCollection(templates);
-                    Type = OperTemplates.First();
-                });
-
-            this.ObservableForProperty(s => s.Type)
-                .Where(type => type.Value != null)
-                .Subscribe(type =>
-                {
-                    var operType = Mode == OperMode.Exporter
-                        ? DataExporters[type.Value]
-                        : DataImporters[type.Value];
-                    if (operType == null) return;
-
-                    SelectedOperationConfig = Activator.CreateInstance(operType);
-                    mapper.Map(cachedService, SelectedOperationConfig);
-                });
-
-            RemoveTaskOperCommand = ReactiveCommand.Create<DesktopTaskOper>(to =>
-                BindedOpers.Remove(to));
-
-            AddTaskOperCommand = ReactiveCommand.Create(() =>
-            {
-                BindedOpers.Add(new DesktopTaskOper
-                {
-                    Name = SelectedOperation.Name,
-                    TaskId = Id,
-                    OperTemplateId = SelectedOperation.Id,
-                    Config = JsonConvert.SerializeObject(SelectedOperationConfig)
-                });
-                SelectedOperation = null;
-                SelectedOperationConfig = null;
-            });
-
-            OpenCurrentTaskViewCommand = ReactiveCommand
-                .CreateFromTask(async () =>
-                {
-                    var str = await cachedService.GetCurrentTaskViewById(Id);
-                    cachedService.OpenPageInBrowser(str);
-                });
-
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
                 isd => isd == true);
 
@@ -135,6 +88,29 @@ namespace ReportServer.Desktop.ViewModels
                 Close();
             });
 
+            OpenCurrentTaskViewCommand = ReactiveCommand
+                .CreateFromTask(async () =>
+                {
+                    var str = await cachedService.GetCurrentTaskViewById(Id);
+                    cachedService.OpenPageInBrowser(str);
+                });
+
+            RemoveTaskOperCommand = ReactiveCommand.Create<DesktopTaskOper>(to =>
+                BindedOpers.Remove(to));
+
+            AddTaskOperCommand = ReactiveCommand.Create(() =>
+            {
+                BindedOpers.Add(new DesktopTaskOper
+                {
+                    Name = SelectedOperation.Name,
+                    TaskId = Id,
+                    OperTemplateId = SelectedOperation.Id,
+                    Config = JsonConvert.SerializeObject(SelectedOperationConfig)
+                });
+                SelectedOperation = null;
+                SelectedOperationConfig = null;
+            });
+
             CreateOperConfigCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (SelectedOperation != null)
@@ -145,12 +121,14 @@ namespace ReportServer.Desktop.ViewModels
                         return;
                 }
 
+                SelectedOperationConfig = null;
                 SelectedOperation = new ApiOperTemplate
                 {
-                    Id = 0,
+                    Id = 10000000,
                     Name = "New Operation",
                     Type = cachedService.DataImporters.First().Key
                 };
+                Mode = OperMode.Importer;
             });
 
             OpenTemplatesListCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -190,12 +168,36 @@ namespace ReportServer.Desktop.ViewModels
                 {
                     List<ApiOperTemplate> opers;
                     lock (this)
-                        opers = cachedService.OperTemplates.Where(oper =>
+                        opers = cachedService.OperTypes.Where(oper =>
                                 oper.Name.IndexOf(sstr.Value, StringComparison.OrdinalIgnoreCase) >=
                                 0)
                             .ToList();
 
                     Operations.PublishCollection(opers);
+                });
+
+            this.ObservableForProperty(s => s.Mode)
+                .Subscribe(mode =>
+                {
+                    var templates = mode.Value == OperMode.Exporter
+                        ? DataExporters.Select(pair => pair.Key)
+                        : DataImporters.Select(pair => pair.Key);
+
+                    OperTemplates.PublishCollection(templates);
+                    Type = OperTemplates.FirstOrDefault();
+                });
+
+            this.ObservableForProperty(s => s.Type)
+                .Where(type => type.Value != null)
+                .Subscribe(type =>
+                {
+                    var operType = Mode == OperMode.Exporter
+                        ? DataExporters[type.Value]
+                        : DataImporters[type.Value];
+                    if (operType == null) return;
+
+                    SelectedOperationConfig = Activator.CreateInstance(operType);
+                    mapper.Map(cachedService, SelectedOperationConfig);
                 });
 
             this.WhenAnyObservable(s => s.AllErrors.Changed)
@@ -216,7 +218,8 @@ namespace ReportServer.Desktop.ViewModels
                 "CreateOperConfigCommand", this);
 
             Schedules.PublishCollection(cachedService.Schedules);
-            Operations.PublishCollection(cachedService.OperTemplates);
+
+            Operations.PublishCollection(cachedService.OperTypes);
 
             if (viewRequest is TaskEditorRequest request)
             {
@@ -226,17 +229,16 @@ namespace ReportServer.Desktop.ViewModels
                 BindedOpers.ChangeTrackingEnabled = true;
 
                 if (request.TaskOpers != null)
+                {
                     BindedOpers.PublishCollection(request.TaskOpers.OrderBy(to => to.Number)
-                        .Select(to => new DesktopTaskOper
-                        {
-                            Id = to.Id,
-                            Number = to.Number,
-                            IsDefault = to.IsDefault,
-                            OperTemplateId = to.OperTemplateId,
-                            TaskId = to.TaskId,
-                            Name = cachedService.OperTemplates
-                                .First(oper => oper.Id == to.OperTemplateId).Name
-                        }));
+                        .Select(to => mapper.Map<DesktopTaskOper>(to)));
+
+                    foreach (var dto in BindedOpers)
+                    {
+                        dto.Name = cachedService.OperTypes
+                            .First(oper => oper.Id == dto.OperTemplateId).Name;
+                    }
+                }
             }
 
             if (Id == 0)

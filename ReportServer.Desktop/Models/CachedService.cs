@@ -21,7 +21,7 @@ namespace ReportServer.Desktop.Models
         private ISimpleHttpClient client;
         private readonly IMapper mapper;
 
-        public ReactiveList<ApiOperTemplate> OperTemplates { get; set; }
+        public ReactiveList<ApiOperTemplate> OperTypes { get; set; }
         public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
         public ReactiveList<ApiTelegramChannel> TelegramChannels { get; set; }
         public ReactiveList<ApiSchedule> Schedules { get; set; }
@@ -33,7 +33,7 @@ namespace ReportServer.Desktop.Models
         public CachedService(IMapper mapper)
         {
             this.mapper = mapper;
-            OperTemplates = new ReactiveList<ApiOperTemplate> {ChangeTrackingEnabled = true};
+            OperTypes = new ReactiveList<ApiOperTemplate> {ChangeTrackingEnabled = true};
             RecepientGroups = new ReactiveList<ApiRecepientGroup> {ChangeTrackingEnabled = true};
             TelegramChannels = new ReactiveList<ApiTelegramChannel> {ChangeTrackingEnabled = true};
             Schedules = new ReactiveList<ApiSchedule> {ChangeTrackingEnabled = true};
@@ -73,7 +73,7 @@ namespace ReportServer.Desktop.Models
 
         public void RefreshOperTemplates()
         {
-            OperTemplates.PublishCollection(client.Get<List<ApiOperTemplate>>("opertemplates/"));
+            OperTypes.PublishCollection(client.Get<List<ApiOperTemplate>>("opertemplates/"));
             // .Select(rep => mapper.Map<DesktopOper>(rep)));
         }
 

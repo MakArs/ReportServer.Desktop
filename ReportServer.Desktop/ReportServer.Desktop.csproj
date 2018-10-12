@@ -258,10 +258,6 @@
     <None Include="Views\CronEditorView.g.xaml">
       <DependentUpon>CronEditorView.ammy</DependentUpon>
     </None>
-    <None Include="Views\MainWindow.ammy" />
-    <None Include="Views\MainWindow.g.xaml">
-      <DependentUpon>MainWindow.ammy</DependentUpon>
-    </None>
     <None Include="Views\OperTemplatesManagerView.ammy" />
     <None Include="Views\RecepientManagerView.ammy" />
     <None Include="Views\RecepientManagerView.g.xaml">
@@ -315,9 +311,6 @@
     <Compile Include="ViewModels\TaskManagerViewModel.cs" />
     <Compile Include="Views\CronEditorView.xaml.cs">
       <DependentUpon>CronEditorView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\OperTemplatesManagerView.ammy.cs">
       <DependentUpon>OperTemplatesManagerView.ammy</DependentUpon>
@@ -455,11 +448,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>CronEditorView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\MainWindow.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>MainWindow.ammy</DependentUpon>
     </Page>
     <Page Include="Views\RecepientManagerView.g.xaml">
       <SubType>Designer</SubType>

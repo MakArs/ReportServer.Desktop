@@ -1,22 +1,24 @@
 using ReportServer.Desktop.Views.WpfResources;
 
 UserControl "ReportServer.Desktop.Views.WpfResources.SelectedInstanceFullView" {
-  Resources: ResourceDictionary { Source: "TemplatesDictionary.g.xaml" }
+  Resources: ResourceDictionary {
+    Source: "TemplatesDictionary.g.xaml"
+  }
   Grid {
     RowDefinitions: [
-      RowDefinition { Height: "40" }
-      RowDefinition { Height: "*" }
-      RowDefinition { Height: "5*" }
+      RowDefinition {Height: "40"}
+      RowDefinition {Height: "*"}
+      RowDefinition {Height: "5*"}
     ]
     ColumnDefinitions: [
-      ColumnDefinition { Width: "Auto" }
-      ColumnDefinition { }
+      ColumnDefinition {Width: "Auto"}
+      ColumnDefinition {}
     ]
     Grid {
       Grid.ColumnSpan: "4"
       ColumnDefinitions: [
-        ColumnDefinition { Width: "Auto" }
-        ColumnDefinition { }
+        ColumnDefinition {Width: "Auto"}
+        ColumnDefinition {}
       ]
       Label {
         Grid.Column: "1"
@@ -25,8 +27,8 @@ UserControl "ReportServer.Desktop.Views.WpfResources.SelectedInstanceFullView" {
       }
       Button {
         Padding: "5"
-        Command: "{Binding OpenPage}"
-        CommandParameter: "{Binding SelectedInstanceData.DataSet}"
+        Command: bind OpenPage
+        CommandParameter: bind SelectedInstanceData.DataSet
         "Open Data Set in browser"
       }
     }
@@ -54,7 +56,7 @@ UserControl "ReportServer.Desktop.Views.WpfResources.SelectedInstanceFullView" {
         VerticalAlignment: "Top"
         Padding: "10 0 20 0"
         HorizontalAlignment: "Left"
-        Text: "{Binding SelectedInstanceData.ErrorMessage}"
+        Text: bind SelectedInstanceData.ErrorMessage
       }
     }
     ScrollViewer {
@@ -65,7 +67,7 @@ UserControl "ReportServer.Desktop.Views.WpfResources.SelectedInstanceFullView" {
         VerticalAlignment: "Top"
         HorizontalAlignment: "Left"
         Padding: "10 0 20 0"
-        Text: "{Binding SelectedInstanceData.DataSet}"
+        Text: bind SelectedInstanceData.DataSet
       }
     }
   }

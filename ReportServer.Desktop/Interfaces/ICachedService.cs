@@ -8,7 +8,7 @@ namespace ReportServer.Desktop.Interfaces
 {
     public interface ICachedService
     {
-        ReactiveList<ApiOperTemplate> OperTemplates { get; set; }
+        ReactiveList<ApiOperTemplate> OperTypes { get; set; }
         ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
         ReactiveList<ApiTelegramChannel> TelegramChannels { get; set; }
         ReactiveList<ApiSchedule> Schedules { get; set; }

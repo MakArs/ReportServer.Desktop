@@ -1,23 +1,35 @@
 using ReportServer.Desktop.Views.WpfResources;
 
 UserControl "ReportServer.Desktop.Views.WpfResources.SelectedTaskInstancesView" {
-  Resources: ResourceDictionary { Source: "TemplatesDictionary.g.xaml" }
+  Resources: ResourceDictionary {
+    Source: "TemplatesDictionary.g.xaml"
+  }
   Grid {
     RowDefinitions: [
-      RowDefinition { Height: "40" }
-      RowDefinition { }
+      RowDefinition {Height: "40"}
+      RowDefinition {}
     ]
-
     @ViewLabel("Selected task instances list")
-
     DataGrid {
-     #DataGridMix(bind SelectedTaskInstances,bind SelectedTaskInstance)
+      #DataGridMix(bind SelectedTaskInstances,bind SelectedTaskInstance)
       Grid.Row: "1"
-      InputBindings: KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
+      InputBindings: KeyBinding {
+        Key: "Delete"
+        Command: "ApplicationCommands.NotACommand"
+      }
       Columns: [
-        DataGridTextColumn { Header: "Start time",  Binding: "{Binding StringFormat=dd.MM.yy HH:mm, Path=StartTime}" }
-        DataGridTextColumn { Header: "Duration",  Binding: "{Binding Duration, Converter={StaticResource IntMsToMinsConverter}}" }
-        DataGridTextColumn { Header: "State",  Binding: "{Binding State}" }
+        DataGridTextColumn {
+          Header: "Start time"
+          Binding: bind StartTime set [StringFormat: "dd.MM.yy HH:mm"]
+        }
+        DataGridTextColumn {
+          Header: "Duration"
+          Binding: "{Binding Duration, Converter={StaticResource IntMsToMinsConverter}}"
+        }
+        DataGridTextColumn {
+          Header: "State"
+          Binding: bind State
+        }
       ]
     }
   }

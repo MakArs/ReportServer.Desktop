@@ -267,7 +267,7 @@ alias InputTextBox(bindedvalue)
 				ValidatesOnDataErrors: "True"]}
 }
 
-mixin DataGridMix(source,selected,colhedstyle="MyColHeader",cellstyle="MyCell") for DataGrid
+mixin DataGridMix(source,selected) for DataGrid
 {
   ColumnWidth: "*"
   ItemsSource: $source

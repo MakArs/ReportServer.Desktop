@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using Autofac;
 using AutoMapper;
@@ -142,8 +143,11 @@ namespace ReportServer.Desktop
                         OperTemplateId = taskOper.OperTemplateId,
                         Number = taskOper.Number,
                         TaskId = taskOper.TaskId,
-                        IsDefault = taskOper.IsDefault
+                        IsDefault = taskOper.IsDefault,
+                        Config = taskOper.Config
                     }).ToArray()));
+
+            CreateMap<ApiTaskOper, DesktopTaskOper>();
 
             CreateMap<ApiTask, TaskEditorViewModel>();
 

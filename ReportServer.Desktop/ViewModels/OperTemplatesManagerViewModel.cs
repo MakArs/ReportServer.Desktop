@@ -54,7 +54,7 @@ namespace ReportServer.Desktop.ViewModels
             Shell.AddVMCommand("Edit", "Change oper template",
                 "EditOperCommand", this);
 
-            OperTemplates = cachedService.OperTemplates;
+            OperTemplates = cachedService.OperTypes;
         }
 
         public async Task Delete()

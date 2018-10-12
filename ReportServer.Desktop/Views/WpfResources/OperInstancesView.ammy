@@ -1,26 +1,40 @@
 using ReportServer.Desktop.Views.WpfResources;
 
 UserControl "ReportServer.Desktop.Views.WpfResources.OperInstancesView" {
-  Resources: ResourceDictionary { Source: "TemplatesDictionary.g.xaml" }
+  Resources: ResourceDictionary {
+    Source: "TemplatesDictionary.g.xaml"
+  }
   Grid {
     RowDefinitions: [
-      RowDefinition { Height: "40" }
-      RowDefinition { }
+      RowDefinition {Height: "40"}
+      RowDefinition {}
     ]
-
     @ViewLabel("Operation instances list")
-
     DataGrid {
       #DataGridMix(bind OperInstances,bind SelectedOperInstance)
       Grid.Row: "1"
-      InputBindings: KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
+      InputBindings: KeyBinding {
+        Key: "Delete"
+        Command: "ApplicationCommands.NotACommand"
+      }
       Columns: [
-        DataGridTextColumn { Header: "Operation name",  Binding: bind OperName }
-        DataGridTextColumn { Header: "Start time",  Binding:  bind StartTime
-		set[StringFormat: "dd.MM.yy HH:mm"] }
-        DataGridTextColumn { Header: "Duration",  
-		Binding: "{Binding Duration, Converter={StaticResource IntMsToMinsConverter}}" }
-        DataGridTextColumn { Header: "State",  Binding: bind State }
+        DataGridTextColumn {
+          Header: "Operation name"
+          Binding: bind OperName
+        }
+        DataGridTextColumn {
+          Header: "Start time"
+          Binding: bind StartTime
+		set[StringFormat: "dd.MM.yy HH:mm"]
+        }
+        DataGridTextColumn {
+          Header: "Duration"
+          Binding: "{Binding Duration, Converter={StaticResource IntMsToMinsConverter}}"
+        }
+        DataGridTextColumn {
+          Header: "State"
+          Binding: bind State
+        }
       ]
     }
   }

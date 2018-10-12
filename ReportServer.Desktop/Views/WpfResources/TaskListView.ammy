@@ -2,17 +2,19 @@ using System;
 
 UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
   "xmlns:sys": "clr-namespace:System;assembly=mscorlib"
-  Resources: ResourceDictionary { Source: "TemplatesDictionary.g.xaml" }
+  Resources: ResourceDictionary {
+    Source: "TemplatesDictionary.g.xaml"
+  }
   Grid {
     RowDefinitions: [
-      RowDefinition { Height: "40" }
-      RowDefinition { }
+      RowDefinition {Height: "40"}
+      RowDefinition {}
     ]
     Grid {
       Grid.ColumnSpan: "4"
       ColumnDefinitions: [
-        ColumnDefinition { Width: "Auto" }
-        ColumnDefinition { }
+        ColumnDefinition {Width: "Auto"}
+        ColumnDefinition {}
       ]
       Label {
         Grid.Column: "1"
@@ -21,7 +23,7 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
       }
       Button {
         Padding: "5"
-        Command: "{Binding Shell.CreateTaskCommand}"
+        Command: bind Shell.CreateTaskCommand
         "Add new task"
       }
     }
@@ -34,29 +36,35 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
           MouseAction: "LeftDoubleClick"
           Command: bind EditTaskCommand
         }
-        KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
+        KeyBinding {
+          Key: "Delete"
+          Command: "ApplicationCommands.NotACommand"
+        }
       ]
       Columns: [
         DataGridTextColumn {
           Header: "Id"
           Width: "0.25*"
-          Binding: "{Binding Id}"
+          Binding: bind Id
         }
         DataGridTextColumn {
           Header: "Name"
           Width: "0.5*"
-          Binding: "{Binding Name}"
+          Binding: bind Name
         }
         DataGridTextColumn {
           Header: "Schedule"
           Width: "0.25*"
-          Binding: "{Binding Schedule}"
+          Binding: bind Schedule
         }
         DataGridTextColumn {
           Header: "Operations"
-          Binding: "{Binding Operations}"
+          Binding: bind Operations
           ElementStyle: Style {
-            Setter { Property: "TextBlock.TextWrapping",  Value: "Wrap" }
+            Setter {
+              Property: "TextBlock.TextWrapping"
+              Value: "Wrap"
+            }
           }
         }
       ]

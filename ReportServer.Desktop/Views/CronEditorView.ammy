@@ -3,16 +3,18 @@ using ReportServer.Desktop.Views.WpfResources;
 using ReportServer.Desktop.ViewModels;
 
 UserControl "ReportServer.Desktop.Views.CronEditorView" {
-  "xmlns:viewModels": "clr-namespace:ReportServer.Desktop.ViewModels"
-  Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
+ "xmlns:viewModels": "clr-namespace:ReportServer.Desktop.ViewModels"
+  Resources: ResourceDictionary {
+    Source: "WpfResources/TemplatesDictionary.g.xaml"
+  }
   Grid {
     RowDefinitions: [
-      RowDefinition { Height: "Auto" }
-      RowDefinition { Height: "Auto" }
-      RowDefinition { Height: "Auto" }
-      RowDefinition { Height: "Auto" }
-      RowDefinition { }
-      RowDefinition { Height: "Auto" }
+      RowDefinition {Height: "Auto"}
+      RowDefinition {Height: "Auto"}
+      RowDefinition {Height: "Auto"}
+      RowDefinition {Height: "Auto"}
+      RowDefinition {}
+      RowDefinition {Height: "Auto"}
     ]
     Label { Content: "Schedule editor" }
     StackPanel {
@@ -29,7 +31,7 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
         TextWrapping: "NoWrap"
         AcceptsReturn: "False"
         Width: "250"
-        Text: "{Binding Name,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+        Text: bind Name set[UpdateSourceTrigger:PropertyChanged, ValidatesOnDataErrors:true]
       }
     }
     StackPanel {
@@ -46,7 +48,7 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
         TextWrapping: "NoWrap"
         AcceptsReturn: "False"
         Width: "250"
-        Text: "{Binding FullExpression,UpdateSourceTrigger=PropertyChanged,                 ValidatesOnDataErrors=True}"
+        Text: bind FullExpression set [UpdateSourceTrigger:PropertyChanged, ValidatesOnDataErrors:true]
       }
       Label {
         Background: "White"
@@ -54,26 +56,29 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
         Margin: "18 3 3 3"
         Content: "Schedule"
       }
-      TextBlock { Text: "{Binding FullStringExpression}" }
+      TextBlock { Text: bind FullStringExpression }
     }
-    Label { Grid.Row: "3",  Content: "Custom schedule parts" }
+    Label {
+      Grid.Row: "3"
+      Content: "Custom schedule parts"
+    }
     ListView {
       BorderThickness: "0"
       Grid.Row: "4"
       HorizontalAlignment: "Left"
-      ItemsSource: "{Binding Categories}"
+      ItemsSource: bind Categories
       ItemTemplate: DataTemplate {
         StackPanel {
           Grid {
             ColumnDefinitions: [
-              ColumnDefinition { }
-              ColumnDefinition { Width: "Auto" }
+              ColumnDefinition {}
+              ColumnDefinition {Width: "Auto"}
             ]
-            Label { Content: "{Binding DescriprionType}" }
+            Label { Content: bind DescriprionType }
             Button {
               Grid.Column: "1"
               HorizontalAlignment: "Right"
-              Command: "{Binding AddCategoryCommand}"
+              Command: bind AddCategoryCommand
               Width: "45"
               FontSize: "15"
               "+"
@@ -83,19 +88,19 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
             BorderThickness: "0"
             ScrollViewer.CanContentScroll: "True"
             MaxHeight: "200"
-            ItemsSource: "{Binding ExpressionParts}"
+            ItemsSource: bind ExpressionParts
             ItemTemplate: DataTemplate {
               Grid {
                 HorizontalAlignment: "Left"
                 ColumnDefinitions: [
-                  ColumnDefinition { Width: "Auto" }
-                  ColumnDefinition { Width: "Auto" }
-                  ColumnDefinition { Width: "Auto" }
-                  ColumnDefinition { Width: "Auto" }
-                  ColumnDefinition { Width: "Auto" }
-                  ColumnDefinition { Width: "Auto" }
-                  ColumnDefinition { Width: "Auto" }
-                  ColumnDefinition { Width: "Auto" }
+                  ColumnDefinition {Width: "Auto"}
+                  ColumnDefinition {Width: "Auto"}
+                  ColumnDefinition {Width: "Auto"}
+                  ColumnDefinition {Width: "Auto"}
+                  ColumnDefinition {Width: "Auto"}
+                  ColumnDefinition {Width: "Auto"}
+                  ColumnDefinition {Width: "Auto"}
+                  ColumnDefinition {Width: "Auto"}
                 ]
                 Label {
                   Background: "White"
@@ -108,7 +113,7 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
                   Width: "250"
                   HorizontalAlignment: "Left"
                   ItemsSource: bind from $resource ParsingEnum
-                  SelectedValue: "{Binding ParsingCategory}"
+                  SelectedValue: bind ParsingCategory
                 }
                 Label {
                   Grid.Column: "2"
@@ -124,7 +129,7 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
                   TextWrapping: "NoWrap"
                   IsEnabled: "{Binding ParsingCategory,   Converter={StaticResource ParsingCategoryToBool}}"
                   AcceptsReturn: "False"
-                  Text: "{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                  Text: bind Value set [UpdateSourceTrigger:PropertyChanged]
                 }
                 Grid {
                   Grid.Column: "3"
@@ -134,9 +139,9 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
                   Panel.ZIndex: "1"
                   Visibility: "{Binding ParsingCategory,  Converter={StaticResource IsRangeToVisibility}}"
                   ColumnDefinitions: [
-                    ColumnDefinition { }
-                    ColumnDefinition { Width: "Auto" }
-                    ColumnDefinition { }
+                    ColumnDefinition {}
+                    ColumnDefinition {Width: "Auto"}
+                    ColumnDefinition {}
                   ]
                   TextBox {
                     TextWrapping: "NoWrap"
@@ -177,7 +182,7 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
                   Margin: "18 3 3 3"
                   TextWrapping: "NoWrap"
                   AcceptsReturn: "False"
-                  Text: "{Binding Step, UpdateSourceTrigger=PropertyChanged}"
+                  Text: bind Step set [UpdateSourceTrigger:PropertyChanged]
                   Visibility: "{Binding ParsingCategory, Converter={StaticResource IsNotValueToVisibility}}"
                 }
                 Button {
@@ -187,7 +192,7 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
                   Margin: "50 3 2.5 3"
                   Command: "{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}, Path=DataContext.RemoveCategoryCommand}"
                   Width: "45"
-                  CommandParameter: "{Binding}"
+                  CommandParameter: bind
                   "-"
                 }
               }
@@ -200,21 +205,21 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
       Grid.Row: "5"
       Margin: "0 0 0 50"
       ColumnDefinitions: [
-        ColumnDefinition { Width: "0.4*" }
-        ColumnDefinition { }
+        ColumnDefinition {Width: "0.4*"}
+        ColumnDefinition {}
       ]
       StackPanel {
         Grid.Column: "1"
         Orientation: "Horizontal"
         Button {
-          Command: "{Binding SaveChangesCommand}"
-          IsEnabled: "{Binding IsValid}"
+          Command: bind SaveChangesCommand
+          IsEnabled: bind IsValid
           Height: "25"
           Width: "100"
           "Save"
         }
         Button {
-          Command: "{Binding CancelCommand}"
+          Command: bind CancelCommand
           Height: "25"
           Width: "100"
           "Cancel"
