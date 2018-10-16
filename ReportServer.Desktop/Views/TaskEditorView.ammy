@@ -101,9 +101,27 @@ UserControl
 			}
 		  }
 
-		 @ViewLabel("Task operations")
-		   {Grid.Row: "2"
-		   Margin: "0 15 0 0"}
+		  Grid { Margin: "0 15 0 0"
+		   Grid.Row: "2"
+		   
+		   ColumnDefinitions: [
+			  ColumnDefinition { Width: "*" }
+			  ColumnDefinition { Width: "Auto" }
+			]
+		   @ViewLabel("Task operations")
+
+		   Button {HorizontalAlignment: "Right"
+			  Command: bind OpenTemplatesListCommand
+			  "Add from existing"
+			  Grid.Row: "2"}
+
+			   Button {
+			   Grid.Column: 1
+			  Command: bind CreateOperConfigCommand
+			  "Add new config"
+			  Grid.Row: "2"
+			}
+			}
 
 		 ListView {
 			BorderThickness: "0"
@@ -113,13 +131,15 @@ UserControl
 			"dd:DragDrop.UseDefaultEffectDataTemplate": "True"
 			HorizontalAlignment: "Stretch"
 			MaxHeight: "600"
+			 
 			ScrollViewer.CanContentScroll: "True"
-			ItemsSource: bind BindedOpers set[UpdateSourceTrigger: PropertyChanged]
+						ItemsSource: bind BindedOpers set[UpdateSourceTrigger: PropertyChanged]
 			ItemTemplate: DataTemplate {
+			
 			  Border {
 				BorderThickness: "1"
 				BorderBrush: "#F5F5F5"
-				Grid {
+				Grid {  
 				  Height: "auto"
 				  ColumnDefinitions: [
 					ColumnDefinition { Width: "Auto" }
@@ -138,6 +158,13 @@ UserControl
 					Padding: "5"
 					Grid.Column: "2"
 					Text: "{Binding Path=Name}"
+					
+			InputBindings: [
+							MouseBinding {
+							  MouseAction: "LeftDoubleClick"
+							  Command: "{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}, Path=DataContext.ChooseEditedTaskOperCommand}"
+								CommandParameter: bind
+							}]
 				  }
 				  Button {
 					Grid.Column: "3"
@@ -204,6 +231,7 @@ UserControl
 	   RowDefinitions: [
 			RowDefinition { Height: "Auto" }
 			RowDefinition {}
+			RowDefinition { Height: "Auto" }
 		  ]
 		  Grid { 
 		  	ColumnDefinitions: [
@@ -229,6 +257,7 @@ UserControl
 				BorderThickness: "0"
 				Grid.Row: "1"
 				ItemsSource: bind Operations
+				SelectedItem: bind SelectedOperation
 				HorizontalAlignment: "Stretch"
 				ScrollViewer.CanContentScroll: "True"
 				ItemContainerStyle: Style {
@@ -257,7 +286,37 @@ UserControl
 					}
 				}
 				}
-				}
+				StackPanel {
+			Grid.Row: "2"
+			Margin: "0 25 0 25"
+			  Grid.Column: "1"
+			  Orientation: "Horizontal"
+			  HorizontalAlignment: Right
+			  Button {
+				Command: bind CloseTemplatesListCommand
+				Height: "25"
+				Width: "100"
+				"Cancel"
+			  }
+			  Button {
+				Command: bind SelectTemplateCommand
+				CommandParameter: bind SelectedOperation
+				IsEnabled: bind SelectedOperation 
+				convert(selop)=>selop!=null
+				Height: "25"
+				Width: "100"
+				"Edit"
+			  }
+			   Button {
+				Command: bind AddTaskOperCommand
+				IsEnabled: bind SelectedOperation 
+				convert (selop) => selop==null? false:true
+				Height: "25"
+				Width: "100"
+				"Add full"
+			  }
+			}
+		  }
 	 }
 
 	     GridSplitter {
@@ -269,7 +328,7 @@ UserControl
       }
       
 	  Grid { Grid.Column: 2
-	  Visibility: "{Binding SelectedOperation,Converter={StaticResource NullToVisibility}}"
+	  Visibility: "{Binding SelectedOperationConfig,Converter={StaticResource NullToVisibility}}"
 	    RowDefinitions: [
 			RowDefinition {Height: "Auto"}
 			RowDefinition {Height: "Auto"}
@@ -278,7 +337,8 @@ UserControl
 
 	Grid {
 	Visibility: bind SelectedOperation.Id
-	 convert (int Id) => Id==0 ? Visibility.Visible : Visibility.Collapsed
+	 convert (int Id) => Id == 10000000 ? Visibility.Visible 
+	 : Visibility.Collapsed
         RowDefinitions: [
           RowDefinition {Height: "Auto"}
           RowDefinition {Height: "Auto"}
@@ -311,7 +371,7 @@ UserControl
           Width: "250"
           HorizontalAlignment: "Left"
           SelectedItem: bind Type
-          ItemsSource: bind OperTypes
+          ItemsSource: bind OperTemplates
         }
 
 		@ContentLabel("Name","2") 

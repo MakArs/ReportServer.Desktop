@@ -22,9 +22,10 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public bool IsDefault { get; set; }
         public int Number { get; set; }
+        public string Type { get; set; }
         public string Config { get; set; }
         public int TaskId { get; set; }
-        public int? OperTemplateId { get; set; }
+        public int OperTemplateId { get; set; }
     }
 
     public class DesktopTaskInstance
