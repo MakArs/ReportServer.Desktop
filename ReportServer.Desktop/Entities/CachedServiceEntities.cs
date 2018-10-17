@@ -5,10 +5,9 @@ namespace ReportServer.Desktop.Entities
     public class ApiOperTemplate
     {
         public int Id { get; set; }
-        public string Type { get; set; }
+        public string ImplementationType { get; set; }
         public string Name { get; set; }
         public string ConfigTemplate { get; set; }
-        public bool IsDeleted { get; set; }
     }
 
     public class ApiRecepientGroup
@@ -40,17 +39,19 @@ namespace ReportServer.Desktop.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public int? ScheduleId { get; set; }
-        public ApiTaskOper[] BindedOpers { get; set; }
+        public ApiOperation[] BindedOpers { get; set; }
     }
 
-    public class ApiTaskOper
+    public class ApiOperation
     {
         public int Id { get; set; }
-        public int Number { get; set; }
-        public bool IsDefault { get; set; }
         public int TaskId { get; set; }
-        public int? OperTemplateId { get; set; }
+        public int Number { get; set; }
+        public string Name { get; set; }
+        public string ImplementationType { get; set; }
+        public bool IsDefault { get; set; }
         public string Config { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class ApiTaskInstance
@@ -66,7 +67,7 @@ namespace ReportServer.Desktop.Entities
     {
         public int Id { get; set; }
         public int TaskInstanceId { get; set; }
-        public int OperTemplateId { get; set; }
+        public int OperationId { get; set; }
         public DateTime StartTime { get; set; }
         public int Duration { get; set; }
         public int State { get; set; }

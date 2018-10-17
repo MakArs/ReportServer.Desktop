@@ -29,7 +29,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         public ReactiveList<ApiOperTemplate> Operations { get; set; }
-        [Reactive] public ReactiveList<DesktopTaskOper> BindedOpers { get; set; }
+        [Reactive] public ReactiveList<DesktopOperation> BindedOpers { get; set; }
 
         public int Id { get; set; }
         [Reactive] public string Name { get; set; }
@@ -45,7 +45,7 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveList<string> OperTemplates { get; set; }
         [Reactive] public OperMode Mode { get; set; }
         [Reactive] public string Type { get; set; }
-        [Reactive] public DesktopTaskOper EditedTaskOper { get; set; }
+        [Reactive] public DesktopOperation EditedOperation { get; set; }
         [Reactive] public ApiOperTemplate SelectedOperation { get; set; }
         [Reactive] public object SelectedOperationConfig { get; set; }
 
@@ -55,10 +55,10 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand CreateOperConfigCommand { get; set; }
         public ReactiveCommand OpenTemplatesListCommand { get; set; }
         public ReactiveCommand<ApiOperTemplate, Unit> SelectTemplateCommand { get; set; }
-        public ReactiveCommand<DesktopTaskOper, Unit> RemoveTaskOperCommand { get; set; }
+        public ReactiveCommand<DesktopOperation, Unit> RemoveTaskOperCommand { get; set; }
         public ReactiveCommand AddTaskOperCommand { get; set; }
         public ReactiveCommand OpenCurrentTaskViewCommand { get; set; }
-        public ReactiveCommand<DesktopTaskOper, Unit> ChooseEditedTaskOperCommand { get; set; }
+        public ReactiveCommand<DesktopOperation, Unit> ChooseEditedTaskOperCommand { get; set; }
 
         public TaskEditorViewModel(ICachedService service, IMapper mapper, IShell shell)
         {
@@ -68,7 +68,7 @@ namespace ReportServer.Desktop.ViewModels
             IsValid = true;
             this.shell = shell as CachedServiceShell;
 
-            BindedOpers = new ReactiveList<DesktopTaskOper>();
+            BindedOpers = new ReactiveList<DesktopOperation>();
             Schedules = new ReactiveList<ApiSchedule>();
             Operations = new ReactiveList<ApiOperTemplate>();
             DataImporters = cachedService.DataImporters;
@@ -88,12 +88,12 @@ namespace ReportServer.Desktop.ViewModels
                     cachedService.OpenPageInBrowser(
                         await cachedService.GetCurrentTaskViewById(Id)));
 
-            RemoveTaskOperCommand = ReactiveCommand.Create<DesktopTaskOper>(to =>
+            RemoveTaskOperCommand = ReactiveCommand.Create<DesktopOperation>(to =>
                 BindedOpers.Remove(to));
 
             AddTaskOperCommand = ReactiveCommand.Create(() =>
             {
-                if (EditedTaskOper != null)
+                if (EditedOperation != null)
                     ChangeTaskOper();
                 else
                     AddTaskOper();
@@ -110,7 +110,7 @@ namespace ReportServer.Desktop.ViewModels
 
             SelectTemplateCommand = ReactiveCommand.Create<ApiOperTemplate>(SelectTemplate);
 
-            ChooseEditedTaskOperCommand = ReactiveCommand.CreateFromTask<DesktopTaskOper>
+            ChooseEditedTaskOperCommand = ReactiveCommand.CreateFromTask<DesktopOperation>
                 (ChooseEditedTaskOper);
 
             this.ObservableForProperty(s => s.OperationsSearchString)
@@ -118,7 +118,7 @@ namespace ReportServer.Desktop.ViewModels
                 {
                     List<ApiOperTemplate> opers;
                     lock (this)
-                        opers = cachedService.OperTypes.Where(oper =>
+                        opers = cachedService.OperTemplates.Where(oper =>
                                 oper.Name.IndexOf(sstr.Value, StringComparison.OrdinalIgnoreCase) >=
                                 0)
                             .ToList();
@@ -168,12 +168,11 @@ namespace ReportServer.Desktop.ViewModels
 
         private void AddTaskOper()
         {
-            BindedOpers.Add(new DesktopTaskOper
+            BindedOpers.Add(new DesktopOperation
             {
                 Name = SelectedOperation.Name,
                 TaskId = Id,
-                Type = string.IsNullOrEmpty(Type) ? SelectedOperation.Type : Type,
-                OperTemplateId = SelectedOperation.Id,
+                ImplementationType = string.IsNullOrEmpty(Type) ? SelectedOperation.ImplementationType : Type,
                 Config = SelectedOperationConfig != null
                     ? JsonConvert.SerializeObject(SelectedOperationConfig)
                     : null
@@ -182,12 +181,12 @@ namespace ReportServer.Desktop.ViewModels
 
         private void ChangeTaskOper()
         {
-            EditedTaskOper.Config = SelectedOperationConfig != null
+            EditedOperation.Config = SelectedOperationConfig != null
                 ? JsonConvert.SerializeObject(SelectedOperationConfig)
                 : null;
         }
 
-        private async Task ChooseEditedTaskOper(DesktopTaskOper taskOper)
+        private async Task ChooseEditedTaskOper(DesktopOperation operation)
         {
             if (SelectedOperationConfig != null)
             {
@@ -198,18 +197,18 @@ namespace ReportServer.Desktop.ViewModels
 
             ClearSelections();
 
-            EditedTaskOper = taskOper;
+            EditedOperation = operation;
 
 
-            var config = string.IsNullOrEmpty(taskOper.Config)
-                ? Operations.FirstOrDefault(oper => oper.Id == taskOper.OperTemplateId)
+            var config = string.IsNullOrEmpty(operation.Config)
+                ? Operations.FirstOrDefault()
                     ?.ConfigTemplate
-                : taskOper.Config;
+                : operation.Config;
 
-            var typename = !string.IsNullOrEmpty(taskOper.Type)
-                ? taskOper.Type
-                : Operations.FirstOrDefault(oper => oper.Id == taskOper.OperTemplateId)?
-                    .Type;
+            var typename = !string.IsNullOrEmpty(operation.ImplementationType)
+                ? operation.ImplementationType
+                : Operations.FirstOrDefault()?
+                    .ImplementationType;
 
             var type = cachedService.DataExporters.ContainsKey(typename)
                 ? cachedService.DataExporters[typename]
@@ -217,9 +216,8 @@ namespace ReportServer.Desktop.ViewModels
 
             SelectedOperation = new ApiOperTemplate
             {
-                Id = taskOper.OperTemplateId,
-                Type = typename,
-                Name = taskOper.Name
+                ImplementationType = typename,
+                Name = operation.Name
             };
             SelectedOperationConfig = JsonConvert
                 .DeserializeObject(config, type);
@@ -232,7 +230,7 @@ namespace ReportServer.Desktop.ViewModels
                 TemplatesListOpened = false;
             Mode = 0;
             Type = null;
-            EditedTaskOper = null;
+            EditedOperation = null;
             SelectedOperation = null;
             SelectedOperationConfig = null; //todo:find the way for risepropertychanged
         }
@@ -253,7 +251,7 @@ namespace ReportServer.Desktop.ViewModels
             {
                 Id = 10000000,
                 Name = "New Operation",
-                Type = cachedService.DataImporters.First().Key
+                ImplementationType = cachedService.DataImporters.First().Key
             };
             Mode = OperMode.Importer;
             //this.RaisePropertyChanged(nameof(Mode));
@@ -277,9 +275,9 @@ namespace ReportServer.Desktop.ViewModels
         {
             SelectedOperation = templ;
 
-            var type = cachedService.DataExporters.ContainsKey(templ.Type)
-                ? cachedService.DataExporters[templ.Type]
-                : cachedService.DataImporters[templ.Type];
+            var type = cachedService.DataExporters.ContainsKey(templ.ImplementationType)
+                ? cachedService.DataExporters[templ.ImplementationType]
+                : cachedService.DataImporters[templ.ImplementationType];
 
             SelectedOperationConfig = JsonConvert
                 .DeserializeObject(templ.ConfigTemplate, type);
@@ -303,7 +301,7 @@ namespace ReportServer.Desktop.ViewModels
 
             Schedules.PublishCollection(cachedService.Schedules);
 
-            Operations.PublishCollection(cachedService.OperTypes);
+            Operations.PublishCollection(cachedService.OperTemplates);
 
             if (viewRequest is TaskEditorRequest request)
             {
@@ -315,12 +313,12 @@ namespace ReportServer.Desktop.ViewModels
                 if (request.TaskOpers != null)
                 {
                     BindedOpers.PublishCollection(request.TaskOpers.OrderBy(to => to.Number)
-                        .Select(to => mapper.Map<DesktopTaskOper>(to)));
+                        .Select(to => mapper.Map<DesktopOperation>(to)));
 
                     foreach (var dto in BindedOpers)
                     {
-                        dto.Name = cachedService.OperTypes
-                            .First(oper => oper.Id == dto.OperTemplateId).Name;
+                        dto.Name = cachedService.OperTemplates
+                            .First().Name;
                     }
                 }
             }

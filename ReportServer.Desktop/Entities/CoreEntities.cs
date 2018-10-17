@@ -7,6 +7,10 @@ using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace ReportServer.Desktop.Entities
 {
+    public interface IOperationConfig
+    {
+    }
+
     public class DesktopTask : ReactiveObject
     {
         public int Id { get; set; }
@@ -15,17 +19,15 @@ namespace ReportServer.Desktop.Entities
         [Reactive] public string Schedule { get; set; }
     }
 
-    public class DesktopTaskOper : ReactiveObject
+    public class DesktopOperation : ReactiveObject
     {
         public int? Id { get; set; }
-        public string Name { get; set; }
-        [Reactive]
-        public bool IsDefault { get; set; }
-        public int Number { get; set; }
-        public string Type { get; set; }
-        public string Config { get; set; }
         public int TaskId { get; set; }
-        public int OperTemplateId { get; set; }
+        public int Number { get; set; }
+        public string Name { get; set; }
+        public string ImplementationType { get; set; }
+        [Reactive] public bool IsDefault { get; set; }
+        public string Config { get; set; }
     }
 
     public class DesktopTaskInstance
@@ -39,17 +41,13 @@ namespace ReportServer.Desktop.Entities
     public class DesktopOperInstance
     {
         public int Id { get; set; }
-        public int OperTemplateId { get; set; }
+        public int OperationId { get; set; }
         public string OperName { get; set; }
         public DateTime StartTime { get; set; }
         public int Duration { get; set; }
         public InstanceState State { get; set; }
         public string DataSet { get; set; }
         public string ErrorMessage { get; set; }
-    }
-
-    public interface IOperationConfig
-    {
     }
 
     public class DbExporterConfig : IOperationConfig
@@ -146,7 +144,8 @@ namespace ReportServer.Desktop.Entities
         public int RecepientGroupId { get; set; }
 
         [DisplayName("Recepients dataset")]
-        [Description("Dataset must contain 'RecType' column with value 'To' or 'Bcc' and 'Address' column with recepient address")]
+        [Description("Dataset must contain 'RecType' column with value 'To' or 'Bcc'" +
+                     " and 'Address' column with recepient address")]
         [Reactive]
         public string RecepientsDatasetName { get; set; }
 
@@ -268,7 +267,8 @@ namespace ReportServer.Desktop.Entities
         public bool HasJsonAttachment { get; set; }
 
         [DisplayName("Recepients dataset")]
-        [Description("Dataset must contain 'RecType' column with value 'To' or 'Bcc' and 'Address' column with recepient address")]
+        [Description(
+            "Dataset must contain 'RecType' column with value 'To' or 'Bcc' and 'Address' column with recepient address")]
         [Reactive]
         public string RecepientsDatasetName { get; set; }
 

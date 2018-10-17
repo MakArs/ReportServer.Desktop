@@ -259,12 +259,22 @@ alias ContentLabel(text="New Label",row="0",column="0",margin="18 3 3 3")
 	}
 }
 
+alias DefaultComboBox(source,selecteditem) 
+{  ComboBox {
+          Margin: "3"
+		  HorizontalAlignment: "Left"
+		  SelectedItem: $selecteditem
+          ItemsSource: $source}
+}
+
 alias InputTextBox(bindedvalue)
 {  TextBox { TextWrapping: "NoWrap"
+				Background: "White"
 				AcceptsReturn: "False"
 				TextAlignment: "Left"
 				Text: bind $bindedvalue set[UpdateSourceTrigger: "PropertyChanged"
-				ValidatesOnDataErrors: "True"]}
+					ValidatesOnDataErrors: "True"]
+			}
 }
 
 mixin DataGridMix(source,selected) for DataGrid

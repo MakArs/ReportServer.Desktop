@@ -30,7 +30,7 @@ namespace ReportServer.Desktop.ViewModels
         public int? Id { get; set; }
         public ReactiveList<string> OperTemplates { get; set; }
         [Reactive] public OperMode Mode { get; set; }
-        [Reactive] public string Type { get; set; }
+        [Reactive] public string ImplementationType { get; set; }
         [Reactive] public string Name { get; set; }
         [Reactive] public object Configuration { get; set; }
 
@@ -76,10 +76,10 @@ namespace ReportServer.Desktop.ViewModels
                         : DataImporters.Select(pair => pair.Key);
 
                     OperTemplates.PublishCollection(templates);
-                    Type = OperTemplates.First();
+                    ImplementationType = OperTemplates.First();
                 });
 
-            this.ObservableForProperty(s => s.Type)
+            this.ObservableForProperty(s => s.ImplementationType)
                 .Where(type => type.Value != null)
                 .Subscribe(type =>
                 {
@@ -126,14 +126,14 @@ namespace ReportServer.Desktop.ViewModels
 
                 else
                 {
-                    Mode = DataExporters.ContainsKey(request.Oper.Type)
+                    Mode = DataExporters.ContainsKey(request.Oper.ImplementationType)
                         ? OperMode.Exporter
                         : OperMode.Importer;
 
                     mapper.Map(request.Oper, this);
                     var type = Mode == OperMode.Exporter
-                        ? DataExporters[Type]
-                        : DataImporters[Type];
+                        ? DataExporters[ImplementationType]
+                        : DataImporters[ImplementationType];
 
                     Configuration =
                         JsonConvert.DeserializeObject(request.Oper.ConfigTemplate, type);

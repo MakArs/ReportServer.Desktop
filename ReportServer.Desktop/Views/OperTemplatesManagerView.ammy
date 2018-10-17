@@ -6,41 +6,41 @@ UserControl "ReportServer.Desktop.Views.OperTemplatesManagerView" {
   }
   Grid {
     RowDefinitions: [
-      RowDefinition {
-        Height: "40"
-      }
-      RowDefinition {
-      }
+      RowDefinition {Height: "40"}
+      RowDefinition {}
     ]
+
     Grid {
       Grid.ColumnSpan: "4"
       ColumnDefinitions: [
-        ColumnDefinition {
-          Width: "Auto"
-        }
-        ColumnDefinition {
-        }
+        ColumnDefinition {Width: "Auto"}
+        ColumnDefinition {}
       ]
-      Label {
+
+	  @ViewLabel("Current templates list")
+      {
         Grid.Column: "1"
-        Content: "Current templates list"
         Margin: "2 2 0 2"
       }
+	  
       Button {
         Padding: "5"
         Command: bind Shell.CreateOperTemplateCommand
         "Add new operation template"
       }
     }
+
     DataGrid {
       Grid.Row: "1"
       #DataGridMix(bind OperTemplates,bind SelectedOperTemplate set
 	  [Mode:"OneWayToSource"])
+
       InputBindings: [
         MouseBinding {
           MouseAction: "LeftDoubleClick"
           Command: bind EditOperCommand
         }
+
         KeyBinding {
           Key: "Delete"
           Command: "ApplicationCommands.NotACommand"
@@ -53,7 +53,7 @@ UserControl "ReportServer.Desktop.Views.OperTemplatesManagerView" {
         }
         DataGridTextColumn {
           Header: "Type"
-          Binding: bind Type
+          Binding: bind ImplementationType
         }
         DataGridTextColumn {
           Header: "Name"

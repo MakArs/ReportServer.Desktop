@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using AutoMapper;
 using Gerakul.HttpUtils.Core;
 using Gerakul.HttpUtils.Json;
 using Newtonsoft.Json;
@@ -19,26 +18,24 @@ namespace ReportServer.Desktop.Models
     public class CachedService : ICachedService
     {
         private ISimpleHttpClient client;
-        private readonly IMapper mapper;
 
-        public ReactiveList<ApiOperTemplate> OperTypes { get; set; }
+        public ReactiveList<ApiOperTemplate> OperTemplates { get; set; }
         public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
         public ReactiveList<ApiTelegramChannel> TelegramChannels { get; set; }
         public ReactiveList<ApiSchedule> Schedules { get; set; }
         public ReactiveList<ApiTask> Tasks { get; set; }
-        public ReactiveList<ApiTaskOper> TaskOpers { get; set; }
+        public ReactiveList<ApiOperation> Operations { get; set; }
         public Dictionary<string, Type> DataImporters { get; set; }
         public Dictionary<string, Type> DataExporters { get; set; }
 
-        public CachedService(IMapper mapper)
+        public CachedService()
         {
-            this.mapper = mapper;
-            OperTypes = new ReactiveList<ApiOperTemplate> {ChangeTrackingEnabled = true};
-            RecepientGroups = new ReactiveList<ApiRecepientGroup> {ChangeTrackingEnabled = true};
-            TelegramChannels = new ReactiveList<ApiTelegramChannel> {ChangeTrackingEnabled = true};
-            Schedules = new ReactiveList<ApiSchedule> {ChangeTrackingEnabled = true};
-            Tasks = new ReactiveList<ApiTask> {ChangeTrackingEnabled = true};
-            TaskOpers = new ReactiveList<ApiTaskOper> {ChangeTrackingEnabled = true};
+            OperTemplates = new ReactiveList<ApiOperTemplate>();
+            RecepientGroups = new ReactiveList<ApiRecepientGroup>();
+            TelegramChannels = new ReactiveList<ApiTelegramChannel>();
+            Schedules = new ReactiveList<ApiSchedule>();
+            Tasks = new ReactiveList<ApiTask>();
+            Operations = new ReactiveList<ApiOperation>();
         }
 
         public bool Init(string serviceUri)
@@ -73,8 +70,7 @@ namespace ReportServer.Desktop.Models
 
         public void RefreshOperTemplates()
         {
-            OperTypes.PublishCollection(client.Get<List<ApiOperTemplate>>("opertemplates/"));
-            // .Select(rep => mapper.Map<DesktopOper>(rep)));
+            OperTemplates.PublishCollection(client.Get<List<ApiOperTemplate>>("opertemplates/"));
         }
 
         public void RefreshRecepientGroups()
@@ -99,9 +95,9 @@ namespace ReportServer.Desktop.Models
             Tasks.PublishCollection(client.Get<List<ApiTask>>("tasks"));
         }
 
-        public void RefreshTaskOpers()
+        public void RefreshOperations()
         {
-            TaskOpers.PublishCollection(client.Get<List<ApiTaskOper>>("opertemplates/taskopers"));
+            Operations.PublishCollection(client.Get<List<ApiOperation>>("opertemplates/taskopers"));
         }
 
         public void RefreshData()
@@ -110,7 +106,7 @@ namespace ReportServer.Desktop.Models
             RefreshRecepientGroups();
             RefreshTelegramChannels();
             RefreshSchedules();
-            RefreshTaskOpers();
+            RefreshOperations();
             RefreshTasks();
         }
 
@@ -210,7 +206,7 @@ namespace ReportServer.Desktop.Models
         }
 
 
-        public void OpenPageInBrowser(string htmlPage)
+        public void OpenPageInBrowser(string htmlPage) //maybe worker-model class for features?
         {
             var path = $"{AppDomain.CurrentDomain.BaseDirectory}testreport.html";
             using (FileStream fstr = new FileStream(path, FileMode.Create))
@@ -273,13 +269,7 @@ namespace ReportServer.Desktop.Models
             if (responseCode != HttpStatusCode.OK)
                 throw new Exception($"Http return error {responseCode.ToString()}");
         }
-
-        public static T CreateClone<T>(this T someObj)
-        {
-            string tem = JsonConvert.SerializeObject(someObj);
-            return JsonConvert.DeserializeObject<T>(tem);
-        }
-
+        
     }
 }
-//todo: baseaddress
+//todo: baseaddress (config?)
