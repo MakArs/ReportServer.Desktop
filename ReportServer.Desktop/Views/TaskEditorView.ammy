@@ -133,7 +133,7 @@ UserControl
 			MaxHeight: "600"
 			 
 			ScrollViewer.CanContentScroll: "True"
-						ItemsSource: bind BindedOpers set[UpdateSourceTrigger: PropertyChanged]
+			ItemsSource: bind BindedOpers set[UpdateSourceTrigger: PropertyChanged]
 			ItemTemplate: DataTemplate {
 			
 			  Border {
@@ -162,7 +162,7 @@ UserControl
 			InputBindings: [
 							MouseBinding {
 							  MouseAction: "LeftDoubleClick"
-							  Command: "{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}, Path=DataContext.ChooseEditedTaskOperCommand}"
+							  Command: "{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}, Path=DataContext.SelectOperationCommand}"
 								CommandParameter: bind
 							}]
 				  }
@@ -174,7 +174,7 @@ UserControl
 				  }
 				  Button {
 					Grid.Column: "4"
-					Command: "{Binding  RelativeSource={RelativeSource AncestorType={x:Type ListView}},  Path=DataContext.RemoveTaskOperCommand}"
+					Command: "{Binding  RelativeSource={RelativeSource AncestorType={x:Type ListView}},  Path=DataContext.RemoveOperationCommand}"
 					CommandParameter: bind
 					Content: PackIconMaterial { Kind: "CloseOctagon" }  
 					Width: "40"
@@ -197,7 +197,6 @@ UserControl
 			  Orientation: "Horizontal"
 			  Button {
 				Command: bind SaveChangesCommand
-				IsEnabled: bind IsValid set [UpdateSourceTrigger: PropertyChanged]
 				Height: "25"
 				Width: "100"
 				"Save"
@@ -239,7 +238,7 @@ UserControl
 			  ColumnDefinition { }
 			//  ColumnDefinition { Width: "Auto" }
 			]
-		  @ViewLabel("Available operations")
+		  @ViewLabel("Available operation templates")
 
 		  @InputTextBox("OperationsSearchString")
 		  {Grid.Column: 1
@@ -256,8 +255,8 @@ UserControl
 				ListBox {
 				BorderThickness: "0"
 				Grid.Row: "1"
-				ItemsSource: bind Operations
-				SelectedItem: bind SelectedOperation
+				ItemsSource: bind OperTemplates
+				SelectedItem: bind SelectedTemplate
 				HorizontalAlignment: "Stretch"
 				ScrollViewer.CanContentScroll: "True"
 				ItemContainerStyle: Style {
@@ -300,17 +299,18 @@ UserControl
 			  }
 			  Button {
 				Command: bind SelectTemplateCommand
-				CommandParameter: bind SelectedOperation
-				IsEnabled: bind SelectedOperation 
-				convert(selop)=>selop!=null
+				CommandParameter: bind SelectedTemplate
+				IsEnabled: bind SelectedTemplate 
+				convert(selt)=>selt!=null
 				Height: "25"
 				Width: "100"
 				"Edit"
 			  }
 			   Button {
-				Command: bind AddTaskOperCommand
-				IsEnabled: bind SelectedOperation 
-				convert (selop) => selop==null? false:true
+				Command: bind AddFullTemplateCommand
+				CommandParameter: bind SelectedTemplate
+				IsEnabled: bind SelectedTemplate 
+				convert (selt) => selt!=null
 				Height: "25"
 				Width: "100"
 				"Add full"
@@ -336,9 +336,6 @@ UserControl
 		  ]
 
 	Grid {
-	Visibility: bind SelectedOperation.Id
-	 convert (int Id) => Id == 10000000 ? Visibility.Visible 
-	 : Visibility.Collapsed
         RowDefinitions: [
           RowDefinition {Height: "Auto"}
           RowDefinition {Height: "Auto"}
@@ -349,6 +346,9 @@ UserControl
           ColumnDefinition {Width: "Auto"}
           ColumnDefinition {Width: "Auto"}
         ]
+		    Visibility: bind Type
+			 convert (string type) => string.IsNullOrEmpty(type) ? Visibility.Collapsed 
+			 : Visibility.Visible
 		
      @ContentLabel("Mode") 
 
@@ -371,7 +371,7 @@ UserControl
           Width: "250"
           HorizontalAlignment: "Left"
           SelectedItem: bind Type
-          ItemsSource: bind OperTemplates
+          ItemsSource: bind ImplementationTypes
         }
 
 		@ContentLabel("Name","2") 
@@ -383,13 +383,15 @@ UserControl
           Width: "250"
         }
       }
+
 	   Button {
 	  Grid.Row: 2
-				Command: bind AddTaskOperCommand
+				Command: bind AddOperationCommand
 				Height: "25"
 				Width: "100"
 				"Add"
 			  }
+
 	 PropertyGrid.PropertyGrid {
 	    BorderThickness: 0
 		 Grid.Row: 1
@@ -402,7 +404,7 @@ UserControl
         Margin: "2 2 2 10"
         ShowSummary: false
         Background: "#F5F5F5"
-        SelectedObjectName: bind SelectedOperation.Type set [StringFormat: "({0})"]
+        SelectedObjectName: bind Type set [StringFormat: "({0})"]
         SelectedObjectTypeName: bind SelectedOperation.Name
         SelectedObject: bind SelectedOperationConfig set[
 		UpdateSourceTrigger: PropertyChanged]

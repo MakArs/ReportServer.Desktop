@@ -6,37 +6,36 @@ UserControl "ReportServer.Desktop.Views.RecepientManagerView" {
   }
   Grid {
     RowDefinitions: [
-      RowDefinition {
-        Height: "40"
-      }
-      RowDefinition {
-      }
+      RowDefinition {Height: "40"}
+      RowDefinition {}
     ]
+
     Grid {
       Grid.ColumnSpan: "4"
       ColumnDefinitions: [
-        ColumnDefinition {
-          Width: "Auto"
-        }
-        ColumnDefinition {
-        }
+        ColumnDefinition {Width: "Auto"}
+        ColumnDefinition {}
       ]
+
       Button {
         Padding: "5"
         Command: bind CreateGroupCommand
         "Add new recepient group"
       }
-      Label {
+
+      @ViewLabel("Current recepient groups list") 
+	  {
         Grid.Column: "1"
-        Content: "Current recepient groups list"
         Margin: "2 2 0 2"
       }
     }
+
     DataGrid {
       Grid.Row: "1"
       #DataGridMix(bind RecepientGroups,bind SelectedGroup)
-      CanUserAddRows: "True"
-      InputBindings: [
+      CanUserAddRows: "False"
+	  
+	  InputBindings: [
         MouseBinding {
           MouseAction: "LeftDoubleClick"
           Command: bind EditGroupCommand

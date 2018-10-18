@@ -10,21 +10,25 @@ UserControl "ReportServer.Desktop.Views.WpfResources.SelectedInstanceFullView" {
       RowDefinition {Height: "*"}
       RowDefinition {Height: "5*"}
     ]
+
     ColumnDefinitions: [
       ColumnDefinition {Width: "Auto"}
       ColumnDefinition {}
     ]
+
     Grid {
       Grid.ColumnSpan: "4"
       ColumnDefinitions: [
         ColumnDefinition {Width: "Auto"}
         ColumnDefinition {}
       ]
-      Label {
+
+	  @ViewLabel("Selected operation instance data")
+      {
         Grid.Column: "1"
-        Content: "Selected operation instance data"
         Margin: "2 2 0 2"
       }
+
       Button {
         Padding: "5"
         Command: bind OpenPage
@@ -32,22 +36,19 @@ UserControl "ReportServer.Desktop.Views.WpfResources.SelectedInstanceFullView" {
         "Open Data Set in browser"
       }
     }
-    Label {
-      Grid.Row: "1"
-      Background: "White"
-      Height: "auto"
+
+    @ContentLabel("Error Message",1,0,0) 
+	{
       VerticalAlignment: "Top"
       VerticalContentAlignment: "Top"
-      Content: "Error Message"
     }
-    Label {
-      Grid.Row: "2"
-      Background: "White"
-      Height: "auto"
+
+    @ContentLabel("Data Set",2,0,0) 
+	{
       VerticalAlignment: "Top"
       VerticalContentAlignment: "Top"
-      Content: "Data Set"
     }
+	
     ScrollViewer {
       Grid.Row: "1"
       Grid.Column: "1"
@@ -59,6 +60,7 @@ UserControl "ReportServer.Desktop.Views.WpfResources.SelectedInstanceFullView" {
         Text: bind SelectedInstanceData.ErrorMessage
       }
     }
+
     ScrollViewer {
       Grid.Row: "2"
       Grid.Column: "1"

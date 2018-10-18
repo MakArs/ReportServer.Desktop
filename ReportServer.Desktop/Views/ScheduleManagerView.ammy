@@ -1,17 +1,20 @@
 using MahApps.Metro.Controls;
 
 UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
-  Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
+  Resources: ResourceDictionary {
+    Source: "WpfResources/TemplatesDictionary.g.xaml"
+  }
   Grid {
     RowDefinitions: [
-      RowDefinition { Height: "40" }
-      RowDefinition { }
+      RowDefinition {Height: "40"}
+      RowDefinition {}
     ]
+
     Grid {
       Grid.ColumnSpan: "4"
       ColumnDefinitions: [
-        ColumnDefinition { Width: "Auto" }
-        ColumnDefinition { }
+        ColumnDefinition {Width: "Auto"}
+        ColumnDefinition {}
       ]
       Label {
         Grid.Column: "1"
@@ -24,16 +27,21 @@ UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
         "Add new schedule"
       }
     }
+
     DataGrid {
       Grid.Row: "1"
       #DataGridMix(bind Schedules,bind SelectedSchedule)
       CanUserAddRows: "True"
-      InputBindings: [
+     
+	 InputBindings: [
         MouseBinding {
           MouseAction: "LeftDoubleClick"
           Command: "{Binding EditScheduleCommand}"
         }
-        KeyBinding { Key: "Delete",  Command: "ApplicationCommands.NotACommand" }
+        KeyBinding {
+          Key: "Delete"
+          Command: "ApplicationCommands.NotACommand"
+        }
       ]
       Columns: [
         DataGridTextColumn {
@@ -46,7 +54,10 @@ UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
           Header: "Name"
           Binding: "{Binding Name}"
         }
-        DataGridTextColumn { Header: "Schedule",  Binding: "{Binding Schedule}" }
+        DataGridTextColumn {
+          Header: "Schedule"
+          Binding: "{Binding Schedule}"
+        }
       ]
     }
   }

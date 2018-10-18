@@ -136,17 +136,10 @@ namespace ReportServer.Desktop
             CreateMap<TaskEditorViewModel, ApiTask>()
                 .ForMember("ScheduleId", opt =>
                     opt.MapFrom(s => s.ScheduleId > 0 ? s.ScheduleId : null))
-                .ForMember("BindedOpers", opt => opt.MapFrom(s =>
-                    s.BindedOpers.Select(taskOper => new ApiOperation
-                    {
-                        Id = taskOper.Id ?? 0,
-                        Number = taskOper.Number,
-                        TaskId = taskOper.TaskId,
-                        IsDefault = taskOper.IsDefault,
-                        Config = taskOper.Config
-                    }).ToArray()));
+                .ForMember("BindedOpers", opt => opt.Ignore());
 
             CreateMap<ApiOperation, DesktopOperation>();
+            CreateMap<DesktopOperation, ApiOperation>();
 
             CreateMap<ApiTask, TaskEditorViewModel>();
 
@@ -154,8 +147,10 @@ namespace ReportServer.Desktop
             CreateMap<RecepientEditorViewModel, ApiRecepientGroup>();
 
             CreateMap<CachedService, IOperationConfig>();
-            CreateMap<CachedService, EmailExporterConfig>();
-            CreateMap<CachedService, TelegramExporterConfig>();
+
+            CreateMap<ApiOperTemplate, DesktopOperation>()
+                .ForMember("Id", opt => opt.Ignore())
+                .ForMember("Config", opt => opt.MapFrom(s => s.ConfigTemplate));
 
             CreateMap<ApiOperTemplate, OperEditorViewModel>();
             CreateMap<OperEditorViewModel, ApiOperTemplate>()

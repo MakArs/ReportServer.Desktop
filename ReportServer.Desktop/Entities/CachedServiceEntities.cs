@@ -73,5 +73,6 @@ namespace ReportServer.Desktop.Entities
         public int State { get; set; }
         public string DataSet { get; set; }
         public string ErrorMessage { get; set; }
+        public string OperName { get; set; }
     }
 }

@@ -251,11 +251,11 @@ alias ViewLabel(text="New Label")
 alias ContentLabel(text="New Label",row="0",column="0",margin="18 3 3 3") 
 { Label
     { Background: "White"
-          HorizontalAlignment: "Left"
           Margin: $margin
           Content: $text
 		  Grid.Column: $column
 		  Grid.Row: $row
+		  Height: "auto"
 	}
 }
 

@@ -8,12 +8,16 @@ UserControl "ReportServer.Desktop.Views.TaskManagerView" {
   BorderBrush: "{DynamicResource AccentColorBrush}"
   Grid {
     RowDefinitions: [
-      RowDefinition { }
-      RowDefinition { Height: "Auto" }
-      RowDefinition { }
+      RowDefinition {}
+      RowDefinition {Height: "Auto"}
+      RowDefinition {}
     ]
-	
-    TaskListView { BorderThickness: "1",  BorderBrush: "{DynamicResource AccentBaseColorBrush}" }
+
+    TaskListView {
+      BorderThickness: "1"
+      BorderBrush: "{DynamicResource AccentBaseColorBrush}"
+    }
+
     GridSplitter {
       Grid.Row: "1"
       HorizontalAlignment: "Stretch"
@@ -21,16 +25,22 @@ UserControl "ReportServer.Desktop.Views.TaskManagerView" {
       ShowsPreview: "False"
       VerticalAlignment: "Center"
     }
+
     Grid {
       Grid.Row: "2"
       ColumnDefinitions: [
-        ColumnDefinition { }
-        ColumnDefinition { Width: "Auto" }
-        ColumnDefinition { }
-        ColumnDefinition { Width: "Auto" }
-        ColumnDefinition { }
+        ColumnDefinition {}
+        ColumnDefinition {Width: "Auto"}
+        ColumnDefinition {}
+        ColumnDefinition {Width: "Auto"}
+        ColumnDefinition {}
       ]
-      SelectedTaskInstancesView { BorderThickness: "1",  BorderBrush: "{DynamicResource AccentBaseColorBrush}" }
+
+      SelectedTaskInstancesView {
+        BorderThickness: "1"
+        BorderBrush: "{DynamicResource AccentBaseColorBrush}"
+      }
+
       GridSplitter {
         Grid.Column: "1"
         HorizontalAlignment: "Center"
@@ -38,11 +48,13 @@ UserControl "ReportServer.Desktop.Views.TaskManagerView" {
         ShowsPreview: "False"
         VerticalAlignment: "Stretch"
       }
+
       OperInstancesView {
         Grid.Column: "2"
         BorderThickness: "1"
         BorderBrush: "{DynamicResource AccentBaseColorBrush}"
       }
+
       GridSplitter {
         Grid.Column: "3"
         HorizontalAlignment: "Center"
@@ -50,6 +62,7 @@ UserControl "ReportServer.Desktop.Views.TaskManagerView" {
         ShowsPreview: "False"
         VerticalAlignment: "Stretch"
       }
+
       SelectedInstanceFullView {
         Grid.Column: "4"
         Visibility: "{Binding SelectedInstanceData,Converter={StaticResource NullToVisibility}}"

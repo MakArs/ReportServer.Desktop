@@ -94,10 +94,6 @@ namespace ReportServer.Desktop.ViewModels
                         OperInstances.PublishCollection(
                             cachedService.GetOperInstancesByTaskInstanceId(x.Id)
                                 .Select(mapper.Map<DesktopOperInstance>));
-
-                        foreach (var operinst in OperInstances)
-                            operinst.OperName = cachedService.OperTemplates
-                                .FirstOrDefault(op => op.Id == operinst.OperationId)?.Name;
                     }
                 });
 
@@ -127,12 +123,11 @@ namespace ReportServer.Desktop.ViewModels
                     .FirstOrDefault(sched => sched.Id == task.ScheduleId)?.Schedule,
 
                 Operations = string.Join("=>", cachedService.Operations
-                    .Where(taskOper => taskOper.TaskId == task.Id)
-                    .Select(taskOper => new
+                    .Where(oper => oper.TaskId == task.Id)
+                    .Select(oper => new
                     {
-                        taskOper.Number,
-                        cachedService.OperTemplates
-                            .First().Name
+                        oper.Number,
+                        oper.Name
                     })
                     .OrderBy(pair => pair.Number)
                     .Select(pair => pair.Name)
