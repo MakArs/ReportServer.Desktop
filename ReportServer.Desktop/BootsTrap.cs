@@ -12,6 +12,7 @@ using ReportServer.Desktop.Models;
 using ReportServer.Desktop.ViewModels;
 using ReportServer.Desktop.Views;
 using ReportServer.Desktop.Views.WpfResources;
+using ReportService;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 using MainWindow = Ui.Wpf.Common.MainWindow;
@@ -130,7 +131,10 @@ namespace ReportServer.Desktop
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
 
             CreateMap<ApiOperInstance, DesktopOperInstance>()
-                .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
+                .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State))
+                .ForMember("DataSet",
+                    opt => opt.MapFrom(s =>
+                        JsonConvert.SerializeObject(OperationPackage.Parser.ParseFrom(s.DataSet))));
 
 
             CreateMap<TaskEditorViewModel, ApiTask>()
@@ -145,6 +149,7 @@ namespace ReportServer.Desktop
 
             CreateMap<ApiRecepientGroup, RecepientEditorViewModel>();
             CreateMap<RecepientEditorViewModel, ApiRecepientGroup>();
+
 
             CreateMap<CachedService, IOperationConfig>();
 

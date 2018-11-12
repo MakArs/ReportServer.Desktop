@@ -29,7 +29,7 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public DesktopTask SelectedTask { get; set; }
         [Reactive] public DesktopTaskInstance SelectedTaskInstance { get; set; }
         [Reactive] public DesktopOperInstance SelectedOperInstance { get; set; }
-        [Reactive] public ApiOperInstance SelectedInstanceData { get; set; }
+        [Reactive] public DesktopOperInstance SelectedInstanceData { get; set; }
 
         public ReactiveCommand OpenPage { get; set; }
         public ReactiveCommand EditTaskCommand { get; set; }
@@ -102,7 +102,7 @@ namespace ReportServer.Desktop.ViewModels
                 {
                     SelectedInstanceData = x == null
                         ? null
-                        : cachedService.GetFullOperInstanceById(SelectedOperInstance.Id);
+                        : mapper.Map<DesktopOperInstance>(cachedService.GetFullOperInstanceById(SelectedOperInstance.Id));
                 });
         }
 

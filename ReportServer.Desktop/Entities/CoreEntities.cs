@@ -52,10 +52,10 @@ namespace ReportServer.Desktop.Entities
 
     public class DbExporterConfig : IOperationConfig
     {
-        [DisplayName("Dataset name")]
-        [Description("Dataset which exporter needs for work")]
+        [DisplayName("Package name")]
+        [Description("Package which exporter needs for work")]
         [Reactive]
-        public string DataSetName { get; set; }
+        public string PackageName { get; set; }
 
         [DisplayName("Run if dataset is void")]
         [Reactive]
@@ -86,9 +86,9 @@ namespace ReportServer.Desktop.Entities
 
     public class ReportInstanceExporterConfig : IOperationConfig
     {
-        [DisplayName("Dataset name")]
+        [DisplayName("Package name")]
         [Reactive]
-        public string DataSetName { get; set; }
+        public string PackageName { get; set; }
 
         [DisplayName("Run if dataset is void")]
         [Reactive]
@@ -116,9 +116,9 @@ namespace ReportServer.Desktop.Entities
     public class EmailExporterConfig : IOperationConfig
     {
         [PropertyOrder(0)]
-        [DisplayName("Dataset name")]
+        [DisplayName("Package name")]
         [Reactive]
-        public string DataSetName { get; set; }
+        public string PackageName { get; set; }
 
         [DisplayName("Run if dataset is void")]
         [Reactive]
@@ -143,9 +143,9 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public int RecepientGroupId { get; set; }
 
-        [DisplayName("Recepients dataset")]
-        [Description("Dataset must contain 'RecType' column with value 'To' or 'Bcc'" +
-                     " and 'Address' column with recepient address")]
+        [DisplayName("Recepients package")]
+        [Description("Package must contain dataset consisting of with'RecType' column with value" +
+                     " 'To' or 'Bcc' and 'Address' column with recepient address")]
         [Reactive]
         public string RecepientsDatasetName { get; set; }
 
@@ -162,9 +162,9 @@ namespace ReportServer.Desktop.Entities
 
     public class TelegramExporterConfig : IOperationConfig
     {
-        [DisplayName("Dataset name")]
+        [DisplayName("Package name")]
         [Reactive]
-        public string DataSetName { get; set; }
+        public string PackageName { get; set; }
 
         [DisplayName("Run if dataset is void")]
         [Reactive]
@@ -183,9 +183,9 @@ namespace ReportServer.Desktop.Entities
 
     public class ExcelImporterConfig : IOperationConfig
     {
-        [DisplayName("Dataset name")]
+        [DisplayName("Package name")]
         [Reactive]
-        public string DataSetName { get; set; }
+        public string PackageName { get; set; }
 
         [DisplayName("Path to file")]
         [Reactive]
@@ -222,9 +222,9 @@ namespace ReportServer.Desktop.Entities
 
     public class DbImporterConfig : IOperationConfig
     {
-        [DisplayName("Dataset name")]
+        [DisplayName("Package name")]
         [Reactive]
-        public string DataSetName { get; set; }
+        public string PackageName { get; set; }
 
         [DisplayName("Connection string")]
         [Reactive]
@@ -266,9 +266,9 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public bool HasJsonAttachment { get; set; }
 
-        [DisplayName("Recepients dataset")]
-        [Description(
-            "Dataset must contain 'RecType' column with value 'To' or 'Bcc' and 'Address' column with recepient address")]
+        [DisplayName("Recepients package")]
+        [Description("Package must contain dataset consisting of with'RecType' column with value" +
+                     " 'To' or 'Bcc' and 'Address' column with recepient address")]
         [Reactive]
         public string RecepientsDatasetName { get; set; }
 
