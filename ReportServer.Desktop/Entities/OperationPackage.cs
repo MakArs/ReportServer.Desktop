@@ -32,15 +32,19 @@ namespace ReportService {
             "Zm8SIAoEUm93cxgDIAMoCzISLlJlcG9ydFNlcnZpY2UuUm93IlUKCkNvbHVt",
             "bkluZm8SDAoETmFtZRgBIAEoCRInCgRUeXBlGAIgASgOMhkuUmVwb3J0U2Vy",
             "dmljZS5TY2FsYXJUeXBlEhAKCE51bGxhYmxlGAMgASgIIjIKA1JvdxIrCgZW",
-            "YWx1ZXMYASADKAsyGy5SZXBvcnRTZXJ2aWNlLlZhcmlhbnRWYWx1ZSLYAQoM",
+            "YWx1ZXMYASADKAsyGy5SZXBvcnRTZXJ2aWNlLlZhcmlhbnRWYWx1ZSLJAgoM",
             "VmFyaWFudFZhbHVlEhIKCkludDMyVmFsdWUYASABKAUSEwoLRG91YmxlVmFs",
             "dWUYAiABKAESEgoKSW50NjRWYWx1ZRgDIAEoAxIRCglCb29sVmFsdWUYBCAB",
             "KAgSEwoLU3RyaW5nVmFsdWUYBSABKAkSEgoKQnl0ZXNWYWx1ZRgGIAEoDBIQ",
             "CghEYXRlVGltZRgHIAEoAxItCglUaW1lU3RhbXAYCCABKAsyGi5nb29nbGUu",
-            "cHJvdG9idWYuVGltZXN0YW1wEg4KBklzTnVsbBgPIAEoCCp5CgpTY2FsYXJU",
-            "eXBlEgsKB1Vua25vd24QABIJCgVJbnQzMhABEgoKBkRvdWJsZRACEgkKBUlu",
-            "dDY0EAMSCAoEQm9vbBAEEgoKBlN0cmluZxAFEgkKBUJ5dGVzEAYSDAoIRGF0",
-            "ZVRpbWUQBxINCglUaW1lU3RhbXAQCGIGcHJvdG8z"));
+            "cHJvdG9idWYuVGltZXN0YW1wEhIKCkludDE2VmFsdWUYCSABKAUSEQoJSW50",
+            "OFZhbHVlGAogASgFEhsKE0RhdGVUaW1lT2Zmc2V0VmFsdWUYCyABKAMSFQoN",
+            "VGltZVNwYW5WYWx1ZRgMIAEoAxIUCgxEZWNpbWFsVmFsdWUYDSABKAESDgoG",
+            "SXNOdWxsGA8gASgIKr0BCgpTY2FsYXJUeXBlEgsKB1Vua25vd24QABIJCgVJ",
+            "bnQzMhABEgoKBkRvdWJsZRACEgkKBUludDY0EAMSCAoEQm9vbBAEEgoKBlN0",
+            "cmluZxAFEgkKBUJ5dGVzEAYSDAoIRGF0ZVRpbWUQBxINCglUaW1lU3RhbXAQ",
+            "CBIJCgVJbnQxNhAJEggKBEludDgQChISCg5EYXRlVGltZU9mZnNldBALEgwK",
+            "CFRpbWVTcGFuEAwSCwoHRGVjaW1hbBANYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::ReportService.ScalarType), }, new pbr::GeneratedClrTypeInfo[] {
@@ -48,7 +52,7 @@ namespace ReportService {
             new pbr::GeneratedClrTypeInfo(typeof(global::ReportService.DataSet), global::ReportService.DataSet.Parser, new[]{ "Name", "Columns", "Rows" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ReportService.ColumnInfo), global::ReportService.ColumnInfo.Parser, new[]{ "Name", "Type", "Nullable" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ReportService.Row), global::ReportService.Row.Parser, new[]{ "Values" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ReportService.VariantValue), global::ReportService.VariantValue.Parser, new[]{ "Int32Value", "DoubleValue", "Int64Value", "BoolValue", "StringValue", "BytesValue", "DateTime", "TimeStamp", "IsNull" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::ReportService.VariantValue), global::ReportService.VariantValue.Parser, new[]{ "Int32Value", "DoubleValue", "Int64Value", "BoolValue", "StringValue", "BytesValue", "DateTime", "TimeStamp", "Int16Value", "Int8Value", "DateTimeOffsetValue", "TimeSpanValue", "DecimalValue", "IsNull" }, null, null, null)
           }));
     }
     #endregion
@@ -64,10 +68,15 @@ namespace ReportService {
     [pbr::OriginalName("String")] String = 5,
     [pbr::OriginalName("Bytes")] Bytes = 6,
     [pbr::OriginalName("DateTime")] DateTime = 7,
+    [pbr::OriginalName("TimeStamp")] TimeStamp = 8,
+    [pbr::OriginalName("Int16")] Int16 = 9,
+    [pbr::OriginalName("Int8")] Int8 = 10,
+    [pbr::OriginalName("DateTimeOffset")] DateTimeOffset = 11,
+    [pbr::OriginalName("TimeSpan")] TimeSpan = 12,
     /// <summary>
     ///Can add other if needed.
     /// </summary>
-    [pbr::OriginalName("TimeStamp")] TimeStamp = 8,
+    [pbr::OriginalName("Decimal")] Decimal = 13,
   }
 
   #endregion
@@ -764,6 +773,11 @@ namespace ReportService {
       bytesValue_ = other.bytesValue_;
       dateTime_ = other.dateTime_;
       timeStamp_ = other.timeStamp_ != null ? other.timeStamp_.Clone() : null;
+      int16Value_ = other.int16Value_;
+      int8Value_ = other.int8Value_;
+      dateTimeOffsetValue_ = other.dateTimeOffsetValue_;
+      timeSpanValue_ = other.timeSpanValue_;
+      decimalValue_ = other.decimalValue_;
       isNull_ = other.isNull_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -861,6 +875,61 @@ namespace ReportService {
       }
     }
 
+    /// <summary>Field number for the "Int16Value" field.</summary>
+    public const int Int16ValueFieldNumber = 9;
+    private int int16Value_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Int16Value {
+      get { return int16Value_; }
+      set {
+        int16Value_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "Int8Value" field.</summary>
+    public const int Int8ValueFieldNumber = 10;
+    private int int8Value_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Int8Value {
+      get { return int8Value_; }
+      set {
+        int8Value_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "DateTimeOffsetValue" field.</summary>
+    public const int DateTimeOffsetValueFieldNumber = 11;
+    private long dateTimeOffsetValue_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public long DateTimeOffsetValue {
+      get { return dateTimeOffsetValue_; }
+      set {
+        dateTimeOffsetValue_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "TimeSpanValue" field.</summary>
+    public const int TimeSpanValueFieldNumber = 12;
+    private long timeSpanValue_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public long TimeSpanValue {
+      get { return timeSpanValue_; }
+      set {
+        timeSpanValue_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "DecimalValue" field.</summary>
+    public const int DecimalValueFieldNumber = 13;
+    private double decimalValue_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public double DecimalValue {
+      get { return decimalValue_; }
+      set {
+        decimalValue_ = value;
+      }
+    }
+
     /// <summary>Field number for the "IsNull" field.</summary>
     public const int IsNullFieldNumber = 15;
     private bool isNull_;
@@ -893,6 +962,11 @@ namespace ReportService {
       if (BytesValue != other.BytesValue) return false;
       if (DateTime != other.DateTime) return false;
       if (!object.Equals(TimeStamp, other.TimeStamp)) return false;
+      if (Int16Value != other.Int16Value) return false;
+      if (Int8Value != other.Int8Value) return false;
+      if (DateTimeOffsetValue != other.DateTimeOffsetValue) return false;
+      if (TimeSpanValue != other.TimeSpanValue) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(DecimalValue, other.DecimalValue)) return false;
       if (IsNull != other.IsNull) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -908,6 +982,11 @@ namespace ReportService {
       if (BytesValue.Length != 0) hash ^= BytesValue.GetHashCode();
       if (DateTime != 0L) hash ^= DateTime.GetHashCode();
       if (timeStamp_ != null) hash ^= TimeStamp.GetHashCode();
+      if (Int16Value != 0) hash ^= Int16Value.GetHashCode();
+      if (Int8Value != 0) hash ^= Int8Value.GetHashCode();
+      if (DateTimeOffsetValue != 0L) hash ^= DateTimeOffsetValue.GetHashCode();
+      if (TimeSpanValue != 0L) hash ^= TimeSpanValue.GetHashCode();
+      if (DecimalValue != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(DecimalValue);
       if (IsNull != false) hash ^= IsNull.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -954,6 +1033,26 @@ namespace ReportService {
         output.WriteRawTag(66);
         output.WriteMessage(TimeStamp);
       }
+      if (Int16Value != 0) {
+        output.WriteRawTag(72);
+        output.WriteInt32(Int16Value);
+      }
+      if (Int8Value != 0) {
+        output.WriteRawTag(80);
+        output.WriteInt32(Int8Value);
+      }
+      if (DateTimeOffsetValue != 0L) {
+        output.WriteRawTag(88);
+        output.WriteInt64(DateTimeOffsetValue);
+      }
+      if (TimeSpanValue != 0L) {
+        output.WriteRawTag(96);
+        output.WriteInt64(TimeSpanValue);
+      }
+      if (DecimalValue != 0D) {
+        output.WriteRawTag(105);
+        output.WriteDouble(DecimalValue);
+      }
       if (IsNull != false) {
         output.WriteRawTag(120);
         output.WriteBool(IsNull);
@@ -989,6 +1088,21 @@ namespace ReportService {
       }
       if (timeStamp_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(TimeStamp);
+      }
+      if (Int16Value != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Int16Value);
+      }
+      if (Int8Value != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Int8Value);
+      }
+      if (DateTimeOffsetValue != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(DateTimeOffsetValue);
+      }
+      if (TimeSpanValue != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(TimeSpanValue);
+      }
+      if (DecimalValue != 0D) {
+        size += 1 + 8;
       }
       if (IsNull != false) {
         size += 1 + 1;
@@ -1030,6 +1144,21 @@ namespace ReportService {
           timeStamp_ = new global::Google.Protobuf.WellKnownTypes.Timestamp();
         }
         TimeStamp.MergeFrom(other.TimeStamp);
+      }
+      if (other.Int16Value != 0) {
+        Int16Value = other.Int16Value;
+      }
+      if (other.Int8Value != 0) {
+        Int8Value = other.Int8Value;
+      }
+      if (other.DateTimeOffsetValue != 0L) {
+        DateTimeOffsetValue = other.DateTimeOffsetValue;
+      }
+      if (other.TimeSpanValue != 0L) {
+        TimeSpanValue = other.TimeSpanValue;
+      }
+      if (other.DecimalValue != 0D) {
+        DecimalValue = other.DecimalValue;
       }
       if (other.IsNull != false) {
         IsNull = other.IsNull;
@@ -1078,6 +1207,26 @@ namespace ReportService {
               timeStamp_ = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }
             input.ReadMessage(timeStamp_);
+            break;
+          }
+          case 72: {
+            Int16Value = input.ReadInt32();
+            break;
+          }
+          case 80: {
+            Int8Value = input.ReadInt32();
+            break;
+          }
+          case 88: {
+            DateTimeOffsetValue = input.ReadInt64();
+            break;
+          }
+          case 96: {
+            TimeSpanValue = input.ReadInt64();
+            break;
+          }
+          case 105: {
+            DecimalValue = input.ReadDouble();
             break;
           }
           case 120: {

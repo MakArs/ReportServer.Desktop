@@ -65,11 +65,14 @@ UserControl "ReportServer.Desktop.Views.WpfResources.SelectedInstanceFullView" {
       Grid.Row: "2"
       Grid.Column: "1"
       VerticalScrollBarVisibility: "Auto"
-      TextBlock {
+      TextBox {
         VerticalAlignment: "Top"
         HorizontalAlignment: "Left"
         Padding: "10 0 20 0"
         Text: bind SelectedInstanceData.DataSet
+		BorderThickness: 0
+		IsReadOnly: true
+		MaxLines: "50" 
       }
     }
   }

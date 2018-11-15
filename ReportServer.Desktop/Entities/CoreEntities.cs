@@ -84,7 +84,7 @@ namespace ReportServer.Desktop.Entities
         public bool DropBefore { get; set; }
     }
 
-    public class ReportInstanceExporterConfig : IOperationConfig
+    public class B2BExporterConfig : IOperationConfig
     {
         [DisplayName("Package name")]
         [Reactive]
@@ -98,13 +98,20 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string ReportName { get; set; }
 
+        [Reactive]
+        public string Description { get; set; }
+
         [DisplayName("Connection string")]
         [Reactive]
         public string ConnectionString { get; set; }
 
-        [DisplayName("Table name")]
+        [DisplayName("Export table name")]
         [Reactive]
-        public string TableName { get; set; }
+        public string ExportTableName { get; set; }
+
+        [DisplayName("Export instance table name")]
+        [Reactive]
+        public string ExportInstanceTableName { get; set; }
 
         [DisplayName("Database operation timeout")]
         [DefaultValue(60)]

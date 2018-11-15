@@ -132,9 +132,7 @@ namespace ReportServer.Desktop
 
             CreateMap<ApiOperInstance, DesktopOperInstance>()
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State))
-                .ForMember("DataSet",
-                    opt => opt.MapFrom(s =>
-                        JsonConvert.SerializeObject(OperationPackage.Parser.ParseFrom(s.DataSet))));
+               ;
 
 
             CreateMap<TaskEditorViewModel, ApiTask>()

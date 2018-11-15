@@ -4,12 +4,14 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
 using ReportServer.Desktop.Views;
+using ReportService;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
@@ -20,6 +22,7 @@ namespace ReportServer.Desktop.ViewModels
     {
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
+        private readonly ProtoPackageBuilder packageBuilder;
         public CachedServiceShell Shell { get; }
 
         public ReactiveList<DesktopTask> Tasks { get; set; }
@@ -41,6 +44,7 @@ namespace ReportServer.Desktop.ViewModels
             this.cachedService = cachedService;
             this.mapper = mapper;
             Shell = shell as CachedServiceShell;
+            packageBuilder=new ProtoPackageBuilder();
 
             Tasks = new ReactiveList<DesktopTask>();
             SelectedTaskInstances = new ReactiveList<DesktopTaskInstance>();
@@ -100,9 +104,34 @@ namespace ReportServer.Desktop.ViewModels
             this.WhenAnyValue(s => s.SelectedOperInstance)
                 .Subscribe(x =>
                 {
+                    //.ForMember("DataSet",
+                    //    opt => opt.MapFrom(s =>
+                    //        JsonConvert.SerializeObject(OperationPackage.Parser.ParseFrom(s.DataSet))))
+
+                    var data = new DesktopOperInstance();
+
+                    if (x != null)
+                    {
+                        var fullInstance = cachedService
+                            .GetFullOperInstanceById(SelectedOperInstance.Id);
+
+                        data = mapper.Map<DesktopOperInstance>(fullInstance);
+
+                        if(fullInstance.DataSet!=null)
+                        data.DataSet = JsonConvert.SerializeObject(packageBuilder.GetPackageValues(
+                            OperationPackage.Parser.ParseFrom(fullInstance.DataSet)));
+                    }
+
+                    //if (x != null)
+                    //{
+                    //    var fi;
+                    //    data = mapper.Map<DesktopOperInstance>();
+                    //    data.DataSet = OperationPackage.Parser.ParseFrom(s.DataSet));
+                    //}
+
                     SelectedInstanceData = x == null
                         ? null
-                        : mapper.Map<DesktopOperInstance>(cachedService.GetFullOperInstanceById(SelectedOperInstance.Id));
+                        : data;
                 });
         }
 
