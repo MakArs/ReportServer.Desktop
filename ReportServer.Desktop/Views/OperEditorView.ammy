@@ -19,8 +19,8 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
         RowDefinition {Height: "Auto"}
       ]
 
-      @ViewLabel("Template parameters") 
-	  {Margin: "2 2 2 10"}
+      @ViewLabel("Template parameters") {
+	  Margin: "2 2 2 10"}
 
       Grid {
         Grid.Row: "1"

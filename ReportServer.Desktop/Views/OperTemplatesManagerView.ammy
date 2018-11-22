@@ -24,6 +24,7 @@ UserControl "ReportServer.Desktop.Views.OperTemplatesManagerView" {
       }
 	  
       Button {
+      
         Padding: "5"
         Command: bind Shell.CreateOperTemplateCommand
         "Add new operation template"

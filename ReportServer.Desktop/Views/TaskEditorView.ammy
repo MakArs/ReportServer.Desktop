@@ -14,12 +14,14 @@ UserControl
     HorizontalScrollBarVisibility: "Auto"
 
 	Grid { 	ColumnDefinitions: [
-			ColumnDefinition { Width: "0.5*" }
+			ColumnDefinition { Width: "0.9*" }
 			ColumnDefinition { Width: "auto" }
 			 ColumnDefinition {}]
 
 		Grid { Grid.Column: 0
 		  RowDefinitions: [
+			RowDefinition { Height: "Auto" }
+			RowDefinition { Height: "Auto" }
 			RowDefinition { Height: "Auto" }
 			RowDefinition { Height: "Auto" }
 			RowDefinition { Height: "Auto" }
@@ -47,7 +49,7 @@ UserControl
 			  "Get new instance"
 			}
 
-			@ViewLabel("Task parameters")
+			@ViewLabel("Task data")
 			{Grid.Column: "1"}
 
 		  }
@@ -93,8 +95,8 @@ UserControl
 			  Margin: "3"
 			  IsEnabled: bind HasSchedule
 			  ItemsSource: bind Schedules set [
-			  UpdateSourceTrigger: "PropertyChanged"
-			  ValidatesOnDataErrors: "True"]
+			  UpdateSourceTrigger: PropertyChanged
+			  ValidatesOnDataErrors: true]
 			  SelectedValuePath: "Id"
 			  DisplayMemberPath: "Name"
 			  SelectedValue: bind ScheduleId set [UpdateSourceTrigger: "PropertyChanged"]
@@ -108,15 +110,106 @@ UserControl
 			  ColumnDefinition { Width: "*" }
 			  ColumnDefinition { Width: "Auto" }
 			]
-		   @ViewLabel("Task operations")
+		   @ViewLabel("Parameters")
+		      Button {HorizontalAlignment: Right
+			  Command: bind AddParameterCommand
+			  Grid.Column: 1
+			  "Add parameter"}
+		   		}
+			
+			ListView { BorderThickness: "0"
+			Grid.Row: "3"
+			HorizontalAlignment: Stretch
+			MaxHeight: "350"
+			ScrollViewer.CanContentScroll: true
+			ItemsSource: bind TaskParameters set[UpdateSourceTrigger: PropertyChanged
+			ValidatesOnDataErrors: true]
+			ItemTemplate: DataTemplate {
+			
+			  Border {
+				BorderThickness: "1"
+				BorderBrush: "#F5F5F5"
+				Grid {
+				  Height: "auto"
+				  ColumnDefinitions: [
+			        ColumnDefinition { Width: "Auto" }
+					ColumnDefinition { }
+					ColumnDefinition { Width: "Auto" }
+					ColumnDefinition { Width: "Auto" }
+					ColumnDefinition { }
+					ColumnDefinition { Width: "Auto" }
+				  ]
+
+				  TextBlock {
+					Background: "White"
+					Margin: "10 0 5 0"
+					Text: "Parameter name"}
+
+				 Border {
+				 Grid.Column: 1
+				BorderThickness: "1"
+				BorderBrush: "#F5F5F5"
+			@InputTextBox("Name")
+			{
+			BorderThickness: 0
+		    TextBoxHelper.Watermark: "Enter parameter name starting with @RepPar"
+		    HorizontalAlignment: "Stretch"}
+			}
+				 
+				 Button { 
+				 Command: "{Binding  RelativeSource={RelativeSource AncestorType={x:Type ListView}},  Path=DataContext.ClipBoardFillCommand}"
+				 CommandParameter: bind Name
+				 Content: PackIconMaterial { Kind: "ContentCopy" } 
+				 Grid.Column:2 }
+
+				 TextBlock {
+				 Margin: "10 0 5 0"
+					Padding: "5"
+					Grid.Column: "3"
+					Text: "Parameter value"
+				  }
+
+				  Border {Grid.Column: 4
+				BorderThickness: "1"
+				BorderBrush: "#F5F5F5"
+				  @InputTextBox("Value")
+			{
+			BorderThickness: 0
+		    TextBoxHelper.Watermark: "Enter parameter value"
+		    HorizontalAlignment: "Stretch"}
+			}
+
+			 Button {
+					Grid.Column: "5"
+					Command: "{Binding  RelativeSource={RelativeSource AncestorType={x:Type ListView}},  Path=DataContext.RemoveParameterCommand}"
+					CommandParameter: bind
+					Content: PackIconMaterial { Kind: "CloseOctagon" }  
+					Width: "40"
+					Margin: "2"
+				  }
+				}
+			  }
+			}
+			}
+
+		  Grid { Margin: "0 15 0 0"
+		   Grid.Row: "4"
+		   
+		   ColumnDefinitions: [
+			  ColumnDefinition { Width: "*" }
+			  ColumnDefinition { Width: "Auto" }
+			  ColumnDefinition { Width: "Auto" }
+			]
+		   @ViewLabel("Operations")
 
 		   Button {HorizontalAlignment: "Right"
 			  Command: bind OpenTemplatesListCommand
+			  Grid.Column: 1
 			  "Add from existing"
 			  Grid.Row: "2"}
 
 			   Button {
-			   Grid.Column: 1
+			   Grid.Column: 2
 			  Command: bind CreateOperConfigCommand
 			  "Add new config"
 			  Grid.Row: "2"
@@ -125,12 +218,13 @@ UserControl
 
 		 ListView {
 			BorderThickness: "0"
-			Grid.Row: "3"
+			Grid.Row: "5"
 			"dd:DragDrop.IsDragSource": "True"
 			"dd:DragDrop.IsDropTarget": "True"
 			"dd:DragDrop.UseDefaultEffectDataTemplate": "True"
 			HorizontalAlignment: "Stretch"
-			MaxHeight: "600"
+			MaxHeight: "350"
+
 			 
 			ScrollViewer.CanContentScroll: "True"
 			ItemsSource: bind BindedOpers set[UpdateSourceTrigger: PropertyChanged]
@@ -186,7 +280,7 @@ UserControl
 		  }
 		  
 		 Grid {
-			Grid.Row: "4"
+			Grid.Row: "6"
 			Margin: "0 0 0 50"
 			ColumnDefinitions: [
 			  ColumnDefinition { }
@@ -197,15 +291,13 @@ UserControl
 			  Orientation: "Horizontal"
 			  Button {
 				Command: bind SaveChangesCommand
-				Height: "25"
-				Width: "100"
 				"Save"
+				Width: 100
 			  }
 			  Button {
 				Command: bind CancelCommand
-				Height: "25"
-				Width: "100"
 				"Cancel"
+				Width: 100
 			  }
 			}
 		  }
@@ -215,6 +307,7 @@ UserControl
 		 Flyout{
 	 Grid.Column: "0"
 	 Grid.ColumnSpan: 3
+	 Panel.ZIndex: 1
 	 Position: "Top"
 	 BorderBrush: "{DynamicResource AccentBaseColorBrush}"
 	 BorderThickness: 4
@@ -236,7 +329,6 @@ UserControl
 		  	ColumnDefinitions: [
 			  ColumnDefinition { Width: "Auto" }
 			  ColumnDefinition { }
-			//  ColumnDefinition { Width: "Auto" }
 			]
 		  @ViewLabel("Available operation templates")
 
@@ -244,14 +336,10 @@ UserControl
 		  {Grid.Column: 1
 		  BorderThickness: 0
 		    TextBoxHelper.Watermark: "Enter search string here"
-		    TextBoxHelper.ClearTextButton: "True"
-		    HorizontalAlignment: "Stretch"}
-
-		  /*PackIconMaterial { Kind: "magnify" 
-		  Grid.Column: 2
-		  Margin: "5"}*/
-
+		    TextBoxHelper.ClearTextButton: true
+		    HorizontalAlignment: Stretch}
 		  }
+
 				ListBox {
 				BorderThickness: "0"
 				Grid.Row: "1"
@@ -293,8 +381,6 @@ UserControl
 			  HorizontalAlignment: Right
 			  Button {
 				Command: bind CloseTemplatesListCommand
-				Height: "25"
-				Width: "100"
 				"Cancel"
 			  }
 			  Button {
@@ -302,8 +388,6 @@ UserControl
 				CommandParameter: bind SelectedTemplate
 				IsEnabled: bind SelectedTemplate 
 				convert(selt)=>selt!=null
-				Height: "25"
-				Width: "100"
 				"Edit"
 			  }
 			   Button {
@@ -311,8 +395,6 @@ UserControl
 				CommandParameter: bind SelectedTemplate
 				IsEnabled: bind SelectedTemplate 
 				convert (selt) => selt!=null
-				Height: "25"
-				Width: "100"
 				"Add full"
 			  }
 			}
@@ -384,13 +466,10 @@ UserControl
         }
       }
 
-	   Button {
-	  Grid.Row: 2
-				Command: bind AddOperationCommand
-				Height: "25"
-				Width: "100"
-				"Add"
-			  }
+	  Button {
+	  Command: bind AddOperationCommand
+	  	Grid.Row: 2
+		"Add"}
 
 	 PropertyGrid.PropertyGrid {
 	    BorderThickness: 0

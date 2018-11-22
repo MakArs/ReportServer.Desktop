@@ -1,7 +1,62 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using ReactiveUI.Fody.Helpers;
+using ReportServer.Desktop.Views.WpfResources;
+using Ui.Wpf.Common.ViewModels;
 
 namespace ReportServer.Desktop.Entities
 {
+    public class TaskParameter : ViewModelBase, IDataErrorInfo
+    {
+        [Reactive] public string Name { get; set; }
+        public object Value { get; set; }
+        [Reactive] public bool IsDuplicate { get; set; }
+        public bool HasErrors { get; set; }
+
+        public TaskParameter()
+        {
+            validator = new TaskParameterValidator();
+        }
+
+        public new string Error
+        {
+            get
+            {
+                var results = validator?.Validate(this);
+
+                if (results != null && results.Errors.Any())
+                {
+                    var errors = string.Join(Environment.NewLine,
+                        results.Errors.Select(x => x.ErrorMessage).ToArray());
+                    return errors;
+                }
+
+                return string.Empty;
+            }
+        }
+
+        public new string this[string columnName]
+        {
+            get
+            {
+                if (columnName == "Value")
+                    return "";
+
+                var errs = validator?
+                    .Validate(this).Errors;
+
+                HasErrors = errs?.Any() ?? false;
+
+                if (errs != null)
+                    return validator != null
+                        ? string.Join("; ", errs.Select(e => e.ErrorMessage))
+                        : "";
+                return "";
+            }
+        }
+    }
+
     public class ApiOperTemplate
     {
         public int Id { get; set; }
@@ -38,6 +93,7 @@ namespace ReportServer.Desktop.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Parameters { get; set; }
         public int? ScheduleId { get; set; }
         public ApiOperation[] BindedOpers { get; set; }
     }

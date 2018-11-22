@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using CronExpressionDescriptor;
 using FluentValidation;
+using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.ViewModels;
 
 namespace ReportServer.Desktop.Views.WpfResources
@@ -12,6 +14,25 @@ namespace ReportServer.Desktop.Views.WpfResources
             RuleFor(red => red.Name)
                 .Must(name => !string.IsNullOrEmpty(name))
                 .WithMessage("Name cannot be empty");
+
+            RuleFor(red => red.TaskParameters)
+                .Must(pairs => pairs
+                    .All(pair => pair.Name.StartsWith("@RepPar")))
+                .WithMessage("Parameter name must starting with @RepPar");
+        }
+    }
+
+    public class TaskParameterValidator : AbstractValidator<TaskParameter>
+    {
+        public TaskParameterValidator()
+        {
+            RuleFor(par => par.IsDuplicate)
+                .Must(isd => isd == false)
+                .WithMessage("Task can not contain parameters with same names");
+
+            RuleFor(par => par.Name)
+                .Must(name => name.StartsWith("@RepPar"))
+                .WithMessage("Parameter name must starting with @RepPar");
         }
     }
 

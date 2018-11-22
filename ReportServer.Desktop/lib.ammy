@@ -233,6 +233,8 @@ mixin Fade_OnBinding(binding, bindingValue) for Style {
   ]
 }
 
+
+
 mixin MergeDictionary (source) for ResourceDictionary {
   combine MergedDictionaries: ResourceDictionary { Source: $source }
 }
@@ -296,3 +298,6 @@ mixin DataGridMix(source,selected) for DataGrid
   HorizontalGridLinesBrush: "Gray"
   VerticalGridLinesBrush: "Gray"
 }
+
+
+
