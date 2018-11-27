@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Data;
 using Autofac;
-using ReactiveUI;
+using DynamicData;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using Ui.Wpf.Common;
@@ -16,8 +16,8 @@ namespace ReportServer.Desktop.Views.WpfResources
 
     public class RecepGroupsSource : IItemsSource
     {
-        private ReactiveList<ApiRecepientGroup> groups { get; set; } =
-            new ReactiveList<ApiRecepientGroup>();
+        private SourceList<ApiRecepientGroup> groups { get; set; } =
+            new SourceList<ApiRecepientGroup>();
 
         public static IContainer Container;
 
@@ -27,11 +27,11 @@ namespace ReportServer.Desktop.Views.WpfResources
 
             var cach = Container.Resolve<ICachedService>();
             lock (this)
-                groups.PublishCollection(cach.RecepientGroups);
+                groups.ClearAndAddRange(cach.RecepientGroups.Items);
 
             coll.Add(0,"None");
 
-            foreach (var rgr in groups)
+            foreach (var rgr in groups.Items)
                 coll.Add(rgr.Id, rgr.Name);
 
             return coll;
@@ -40,8 +40,8 @@ namespace ReportServer.Desktop.Views.WpfResources
 
     public class TelegramChannelsSource : IItemsSource
     {
-        private ReactiveList<ApiTelegramChannel> channels { get; set; } =
-            new ReactiveList<ApiTelegramChannel>();
+        private SourceList<ApiTelegramChannel> channels { get; set; } =
+            new SourceList<ApiTelegramChannel>();
 
         public static IContainer Container;
 
@@ -51,9 +51,9 @@ namespace ReportServer.Desktop.Views.WpfResources
 
             var cach = Container.Resolve<ICachedService>();
             lock (this)
-                channels.PublishCollection(cach.TelegramChannels);
+                channels.ClearAndAddRange(cach.TelegramChannels.Items);
 
-            foreach (var chn in channels)
+            foreach (var chn in channels.Items)
                 coll.Add(chn.Id, chn.Name);
 
             return coll;

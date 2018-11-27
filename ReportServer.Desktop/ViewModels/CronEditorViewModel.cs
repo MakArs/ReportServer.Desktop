@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
@@ -7,6 +8,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CronExpressionDescriptor;
+using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -31,15 +33,16 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public bool IsValid { get; set; }
         [Reactive] public string Name { get; set; }
 
-        public ReactiveList<CronCategory> Categories { get; set; }
-        public ReactiveCommand SaveChangesCommand { get; set; }
-        public ReactiveCommand CancelCommand { get; set; }
+        private readonly SourceList<CronCategory> categories;
+        public ReadOnlyObservableCollection<CronCategory> Categories { get; set; }
+        public ReactiveCommand<Unit, Unit> SaveChangesCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> CancelCommand { get; set; }
 
         public CronEditorViewModel(ICachedService cachedService, IShell shell)
         {
             this.shell = shell as CachedServiceShell;
             this.cachedService = cachedService;
-            Categories = new ReactiveList<CronCategory> {ChangeTrackingEnabled = true};
+            categories = new SourceList<CronCategory>();
             IsValid = true;
             validator = new CronEditorValidator();
 
@@ -61,22 +64,15 @@ namespace ReportServer.Desktop.ViewModels
                 Close();
             });
 
-
-            this.WhenAnyObservable(conncr => conncr.Categories.ItemChanged)
-                .Subscribe(_ => CreateCronString());
-
-            this.WhenAnyObservable(conncr => conncr.Categories.Changed)
-                .Subscribe(_ => CreateCronString());
-
             for (int i = 0; i < 5; i++)
-                Categories.Add(new CronCategory(i));
+                categories.Add(new CronCategory(i));
 
             this.WhenAnyValue(conncr => conncr.FullExpression)
                 .Where(value => !string.IsNullOrEmpty(value))
                 .Subscribe(_ => UpdateCategories());
 
-            this.WhenAnyObservable(s => s.AllErrors.Changed)
-                .Subscribe(_ => IsValid = !AllErrors.Any());
+            this.WhenAnyObservable(s => s.AllErrors.CountChanged)
+                .Subscribe(_ => IsValid = !AllErrors.Items.Any());
         }
 
         public void UpdateCategories()
@@ -84,22 +80,18 @@ namespace ReportServer.Desktop.ViewModels
             if (FullExpression == currentExpression)
                 return;
 
-            Categories.ChangeTrackingEnabled = false;
-
-            var categories = new[] {"*", "*", "*", "*", "*"};
+            var categoriesArray = new[] {"*", "*", "*", "*", "*"};
 
             var categorieExpressions =
                 FullExpression.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
             for (int i = 0; i < categorieExpressions.Length; i++)
             {
-                categories[i] = categorieExpressions[i];
+                categoriesArray[i] = categorieExpressions[i];
             }
 
             for (int i = 0; i < 5; i++)
-                Categories[i].FillExpressionParts(categories[i]);
-
-            Categories.ChangeTrackingEnabled = true;
+                categories.Items.ToList()[i].FillExpressionParts(categoriesArray[i]);
 
             try
             {
@@ -115,7 +107,7 @@ namespace ReportServer.Desktop.ViewModels
         public void CreateCronString()
         {
             currentExpression = string.Join(" ",
-                Categories.Select(category => category.GetCategoryExpression()));
+                categories.Items.Select(category => category.GetCategoryExpression()));
 
             FullExpression = currentExpression;
 
@@ -150,6 +142,20 @@ namespace ReportServer.Desktop.ViewModels
                 }
             }
 
+            categories.Connect()
+                .Bind(out var categs)
+                .Subscribe(_ =>
+                {
+                    CreateCronString();
+                });
+
+            categories.Connect()
+                .WhenAnyPropertyChanged()
+                .Subscribe(_ =>
+                {
+                    CreateCronString();
+                });
+
             void Changed(object sender, PropertyChangedEventArgs e)
             {
                 IsDirty = true;
@@ -158,6 +164,8 @@ namespace ReportServer.Desktop.ViewModels
             }
 
             PropertyChanged += Changed;
+
+            Categories = categs;
         }
 
         public async Task Save()
@@ -181,30 +189,38 @@ namespace ReportServer.Desktop.ViewModels
     public class CronCategory : ViewModelBase
     {
         public TimeType DescriprionType { get; set; }
-        public ReactiveList<CronCategoryPart> ExpressionParts { get; set; }
-        public ReactiveCommand AddCategoryCommand { get; set; }
+        private readonly SourceList<CronCategoryPart> expressionParts;
+        public ReadOnlyObservableCollection<CronCategoryPart> ExpressionParts { get; set; }
+        public ReactiveCommand<Unit, Unit> AddCategoryCommand { get; set; }
         public ReactiveCommand<CronCategoryPart, Unit> RemoveCategoryCommand { get; set; }
 
         public CronCategory(int type)
         {
-            ExpressionParts = new ReactiveList<CronCategoryPart>
-                {new CronCategoryPart("*")};
-            ExpressionParts.ChangeTrackingEnabled = true;
+            expressionParts = new SourceList<CronCategoryPart>();
+
+            expressionParts.Add(new CronCategoryPart("*"));
+
+             expressionParts.Connect()
+                .Bind(out var parts)
+                .Subscribe();
+
+            ExpressionParts = parts;
 
             DescriprionType = (TimeType) type;
 
             AddCategoryCommand = ReactiveCommand.Create(() =>
-                ExpressionParts.Add(new CronCategoryPart("")));
+                expressionParts.Add(new CronCategoryPart("")));
 
             RemoveCategoryCommand = ReactiveCommand.Create<CronCategoryPart>(
                 parseCategory =>
-                    ExpressionParts.Remove(parseCategory));
+                    expressionParts.Remove(parseCategory));
 
-            this.WhenAnyObservable(ce => ce.ExpressionParts.Changed)
-                .Subscribe(_ => this.RaisePropertyChanged());
-
-            this.WhenAnyObservable(ce => ce.ExpressionParts.ItemChanged)
-                .Subscribe(_ => this.RaisePropertyChanged());
+            expressionParts.Connect()
+                .WhenAnyPropertyChanged()
+                .Subscribe(_ =>
+                {
+                    this.RaisePropertyChanged();
+                });
         }
 
         public void FillExpressionParts(string expression)
@@ -212,15 +228,15 @@ namespace ReportServer.Desktop.ViewModels
 
             var parts = expression.Split(',').Select(part => new CronCategoryPart(part));
 
-            foreach (var existingpart in ExpressionParts)
+            foreach (var existingpart in expressionParts.Items)
                 existingpart.Dispose();
 
-            ExpressionParts.PublishCollection(parts);
+            expressionParts.ClearAndAddRange(parts);
         }
 
         public string GetCategoryExpression()
         {
-            var expressions = ExpressionParts.Select(part => part.GetPartxpression());
+            var expressions = expressionParts.Items.Select(part => part.GetPartxpression());
 
             return string.Join(",", expressions);
         }
@@ -228,8 +244,9 @@ namespace ReportServer.Desktop.ViewModels
 
     public class CronCategoryPart : ReactiveObject, IDisposable
     {
-        [Reactive] public ParsingCategory ParsingCategory { get; set; }
         private CompositeDisposable disposables;
+
+        [Reactive] public ParsingCategory ParsingCategory { get; set; }
         [Reactive] public string Value { get; set; }
         [Reactive] public bool HasStep { get; set; }
         [Reactive] public int? Step { get; set; }

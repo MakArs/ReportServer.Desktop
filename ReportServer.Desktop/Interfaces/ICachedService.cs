@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DynamicData;
 using ReactiveUI;
 using ReportServer.Desktop.Entities;
 
@@ -8,12 +9,12 @@ namespace ReportServer.Desktop.Interfaces
 {
     public interface ICachedService
     {
-        ReactiveList<ApiOperTemplate> OperTemplates { get; set; }
-        ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
-        ReactiveList<ApiTelegramChannel> TelegramChannels { get; set; }
-        ReactiveList<ApiSchedule> Schedules { get; set; }
-        ReactiveList<ApiTask> Tasks { get; set; }
-        ReactiveList<ApiOperation> Operations { get; set; }
+        SourceList<ApiOperTemplate> OperTemplates { get; set; }
+        SourceList<ApiRecepientGroup> RecepientGroups { get; set; }
+        SourceList<ApiTelegramChannel> TelegramChannels { get; set; }
+        SourceList<ApiSchedule> Schedules { get; set; }
+        SourceList<ApiTask> Tasks { get; set; }
+        SourceList<ApiOperation> Operations { get; set; }
         Dictionary<string, Type> DataImporters { get; set; }
         Dictionary<string, Type> DataExporters { get; set; }
 

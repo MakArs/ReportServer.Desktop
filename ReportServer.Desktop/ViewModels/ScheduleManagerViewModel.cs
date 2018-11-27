@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI;
@@ -18,11 +20,12 @@ namespace ReportServer.Desktop.ViewModels
         private readonly ICachedService cachedService;
         public CachedServiceShell Shell { get; }
 
-        public ReactiveList<ApiSchedule> Schedules { get; set; }
+        public ReadOnlyObservableCollection<ApiSchedule> Schedules { get; set; }
+
         [Reactive] public ApiSchedule SelectedSchedule { get; set; }
 
-        public ReactiveCommand EditScheduleCommand { get; set; }
-        public ReactiveCommand DeleteCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> EditScheduleCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> DeleteCommand { get; set; }
 
         public ScheduleManagerViewModel(ICachedService cachedService, IShell shell)
         {
@@ -47,21 +50,21 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
-            Shell.AddVMCommand("File", "Delete",
-                    "DeleteCommand", this)
-                .SetHotKey(ModifierKeys.None, Key.Delete);
 
             Shell.AddVMCommand("Edit", "Change schedule",
                 "EditScheduleCommand", this);
+            Shell.AddVMCommand("Edit", "Delete sched",
+                    "DeleteCommand", this)
+                .SetHotKey(ModifierKeys.None, Key.Delete);
 
-            Schedules = cachedService.Schedules;
+            Schedules = cachedService.Schedules.SpawnCollection();
         }
 
         public async Task Delete()
         {
             if (SelectedSchedule != null)
             {
-                var tasksWithSchedule = cachedService.Tasks
+                var tasksWithSchedule = cachedService.Tasks.Items
                     .Where(task => task.ScheduleId == SelectedSchedule.Id)
                     .ToList();
 
@@ -81,6 +84,5 @@ namespace ReportServer.Desktop.ViewModels
                 cachedService.RefreshSchedules();
             }
         }
-
     }
 }

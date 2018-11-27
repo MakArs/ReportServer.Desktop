@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -28,7 +30,7 @@ namespace ReportServer.Desktop.ViewModels
         private Dictionary<string, Type> DataExporters { get; set; }
 
         public int? Id { get; set; }
-        public ReactiveList<string> OperTemplates { get; set; }
+        public SourceList<string> OperTemplates { get; set; }
         [Reactive] public OperMode Mode { get; set; }
         [Reactive] public string ImplementationType { get; set; }
         [Reactive] public string Name { get; set; }
@@ -37,8 +39,8 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public bool IsDirty { get; set; }
         [Reactive] public bool IsValid { get; set; }
 
-        public ReactiveCommand SaveChangesCommand { get; set; }
-        public ReactiveCommand CancelCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> SaveChangesCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> CancelCommand { get; set; }
 
         public OperEditorViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
         {
@@ -48,7 +50,7 @@ namespace ReportServer.Desktop.ViewModels
             IsValid = true;
             validator = new OperEditorValidator();
 
-            OperTemplates = new ReactiveList<string>();
+            OperTemplates = new SourceList<string>();
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
                 isd => isd == true);
@@ -75,7 +77,7 @@ namespace ReportServer.Desktop.ViewModels
                         ? DataExporters.Select(pair => pair.Key)
                         : DataImporters.Select(pair => pair.Key);
 
-                    OperTemplates.PublishCollection(templates);
+                    OperTemplates.ClearAndAddRange(templates);
                     ImplementationType = OperTemplates.First();
                 });
 
@@ -92,8 +94,8 @@ namespace ReportServer.Desktop.ViewModels
                     mapper.Map(cachedService, Configuration);
                 });
 
-            this.WhenAnyObservable(s => s.AllErrors.Changed)
-                .Subscribe(_ => IsValid = !AllErrors.Any());
+            this.WhenAnyObservable(s => s.AllErrors.CountChanged)
+                .Subscribe(_ => IsValid = !AllErrors.Items.Any());
         }
 
         public void Initialize(ViewRequest viewRequest)

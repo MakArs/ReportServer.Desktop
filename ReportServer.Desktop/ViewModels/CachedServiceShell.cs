@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Reactive;
+using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -17,10 +18,10 @@ namespace ReportServer.Desktop.ViewModels
     {
         private readonly ICachedService cachedService;
 
-        public ReactiveCommand RefreshCommand { get; set; }
-        public ReactiveCommand CreateTaskCommand { get; set; }
-        public ReactiveCommand CreateOperTemplateCommand { get; set; }
-        public ReactiveCommand CreateScheduleCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> RefreshCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> CreateTaskCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> CreateOperTemplateCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> CreateScheduleCommand { get; set; }
 
         public CachedServiceShell(ICachedService cachedService)
         {

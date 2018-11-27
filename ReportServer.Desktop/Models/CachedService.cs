@@ -5,10 +5,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DynamicData;
 using Gerakul.HttpUtils.Core;
 using Gerakul.HttpUtils.Json;
 using Newtonsoft.Json;
-using ReactiveUI;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using Ui.Wpf.Common;
@@ -19,23 +19,23 @@ namespace ReportServer.Desktop.Models
     {
         private ISimpleHttpClient client;
 
-        public ReactiveList<ApiOperTemplate> OperTemplates { get; set; }
-        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
-        public ReactiveList<ApiTelegramChannel> TelegramChannels { get; set; }
-        public ReactiveList<ApiSchedule> Schedules { get; set; }
-        public ReactiveList<ApiTask> Tasks { get; set; }
-        public ReactiveList<ApiOperation> Operations { get; set; }
+        public SourceList<ApiOperTemplate> OperTemplates { get; set; }
+        public SourceList<ApiRecepientGroup> RecepientGroups { get; set; }
+        public SourceList<ApiTelegramChannel> TelegramChannels { get; set; }
+        public SourceList<ApiSchedule> Schedules { get; set; }
+        public SourceList<ApiTask> Tasks { get; set; }
+        public SourceList<ApiOperation> Operations { get; set; }
         public Dictionary<string, Type> DataImporters { get; set; }
         public Dictionary<string, Type> DataExporters { get; set; }
 
         public CachedService()
         {
-            OperTemplates = new ReactiveList<ApiOperTemplate>();
-            RecepientGroups = new ReactiveList<ApiRecepientGroup>();
-            TelegramChannels = new ReactiveList<ApiTelegramChannel>();
-            Schedules = new ReactiveList<ApiSchedule>();
-            Tasks = new ReactiveList<ApiTask>();
-            Operations = new ReactiveList<ApiOperation>();
+            OperTemplates = new SourceList<ApiOperTemplate>();
+            RecepientGroups = new SourceList<ApiRecepientGroup>();
+            TelegramChannels = new SourceList<ApiTelegramChannel>();
+            Schedules = new SourceList<ApiSchedule>();
+            Tasks = new SourceList<ApiTask>();
+            Operations = new SourceList<ApiOperation>();
         }
 
         public bool Init(string serviceUri)
@@ -70,34 +70,34 @@ namespace ReportServer.Desktop.Models
 
         public void RefreshOperTemplates()
         {
-            OperTemplates.PublishCollection(client.Get<List<ApiOperTemplate>>("opertemplates/"));
+            OperTemplates.ClearAndAddRange(client.Get<List<ApiOperTemplate>>("opertemplates/"));
         }
 
         public void RefreshRecepientGroups()
         {
-            RecepientGroups.PublishCollection(
+            RecepientGroups.ClearAndAddRange(
                 client.Get<List<ApiRecepientGroup>>("recepientgroups/"));
         }
 
         public void RefreshTelegramChannels()
         {
-            TelegramChannels.PublishCollection(
+            TelegramChannels.ClearAndAddRange(
                 client.Get<List<ApiTelegramChannel>>("telegrams/"));
         }
 
         public void RefreshSchedules()
         {
-            Schedules.PublishCollection(client.Get<List<ApiSchedule>>("schedules/"));
+            Schedules.ClearAndAddRange(client.Get<List<ApiSchedule>>("schedules/"));
         }
 
         public void RefreshTasks()
         {
-            Tasks.PublishCollection(client.Get<List<ApiTask>>("tasks"));
+            Tasks.ClearAndAddRange(client.Get<List<ApiTask>>("tasks"));
         }
 
         public void RefreshOperations()
         {
-            Operations.PublishCollection(client.Get<List<ApiOperation>>("opertemplates/taskopers"));
+            Operations.ClearAndAddRange(client.Get<List<ApiOperation>>("opertemplates/taskopers"));
         }
 
         public void RefreshData()
@@ -225,7 +225,7 @@ namespace ReportServer.Desktop.Models
         {
             var task = Task.Factory.StartNew(() => client.Send<string>(HttpMethod.Get, path));
             task.Wait();
-
+            
             var responseCode = task.Result.Result.Response.StatusCode;
 
             if (responseCode != HttpStatusCode.OK)

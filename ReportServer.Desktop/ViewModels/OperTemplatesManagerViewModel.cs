@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -18,11 +21,11 @@ namespace ReportServer.Desktop.ViewModels
         private readonly ICachedService cachedService;
         public CachedServiceShell Shell { get; }
 
-        public ReactiveList<ApiOperTemplate> OperTemplates { get; set; }
+        public ReadOnlyObservableCollection<ApiOperTemplate> OperTemplates { get; set; }
         [Reactive] public ApiOperTemplate SelectedOperTemplate { get; set; }
 
-        public ReactiveCommand EditOperCommand { get; set; }
-        public ReactiveCommand DeleteCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> EditOperCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> DeleteCommand { get; set; }
 
         public OperTemplatesManagerViewModel(ICachedService cachedService, IShell shell)
         {
@@ -47,14 +50,14 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
-            Shell.AddVMCommand("File", "Delete",
+            Shell.AddVMCommand("Edit", "Delete optempl",
                     "DeleteCommand", this)
                 .SetHotKey(ModifierKeys.None, Key.Delete);
 
             Shell.AddVMCommand("Edit", "Change oper template",
                 "EditOperCommand", this);
 
-            OperTemplates = cachedService.OperTemplates;
+            OperTemplates = cachedService.OperTemplates.SpawnCollection();
         }
 
         public async Task Delete()
@@ -62,7 +65,7 @@ namespace ReportServer.Desktop.ViewModels
             if (SelectedOperTemplate != null)
 
             {
-                var taskOpers = cachedService.Operations
+                var taskOpers = cachedService.Operations.Items
                     .ToList();
 
                 if (taskOpers.Any())

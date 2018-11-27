@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Views.WpfResources;
@@ -209,7 +210,7 @@ namespace ReportServer.Desktop.Entities
 
         [DisplayName("Using columns")]
         [Description("Set here names of columns which will be used")]
-        public ReactiveList<string> ColumnList { get; set; }
+        public SourceList<string> ColumnList { get; set; }
 
         [DisplayName("First data row")]
         [Description("First row in selected columns that will be read")]

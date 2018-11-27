@@ -12,7 +12,6 @@ using ReportServer.Desktop.Models;
 using ReportServer.Desktop.ViewModels;
 using ReportServer.Desktop.Views;
 using ReportServer.Desktop.Views.WpfResources;
-using ReportService;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 using MainWindow = Ui.Wpf.Common.MainWindow;
@@ -132,14 +131,13 @@ namespace ReportServer.Desktop
                 .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
 
             CreateMap<ApiOperInstance, DesktopOperInstance>()
-                .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State))
-               ;
+                .ForMember("State", opt => opt.MapFrom(s => (InstanceState) s.State));
 
             CreateMap<TaskEditorViewModel, ApiTask>()
                 .ForMember("ScheduleId", opt =>
                     opt.MapFrom(s => s.ScheduleId > 0 ? s.ScheduleId : null))
                 .ForMember("Parameters",opt=>opt.MapFrom(s =>
-                   JsonConvert.SerializeObject(s.TaskParameters
+                   JsonConvert.SerializeObject(s.TaskParameters.Items
                     .ToDictionary(param => param.Name, param => param.Value))))
                 .ForMember("BindedOpers", opt => opt.Ignore());
 
@@ -150,7 +148,6 @@ namespace ReportServer.Desktop
 
             CreateMap<ApiRecepientGroup, RecepientEditorViewModel>();
             CreateMap<RecepientEditorViewModel, ApiRecepientGroup>();
-
 
             CreateMap<CachedService, IOperationConfig>();
 

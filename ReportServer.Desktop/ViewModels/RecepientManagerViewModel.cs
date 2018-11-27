@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive;
 using System.Windows.Input;
 using Autofac;
 using AutoMapper;
+using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -19,14 +22,14 @@ namespace ReportServer.Desktop.ViewModels
         private readonly ICachedService cachedService;
         private readonly IShell shell;
 
-        public ReactiveList<ApiRecepientGroup> RecepientGroups { get; set; }
+        public ReadOnlyObservableCollection<ApiRecepientGroup> RecepientGroups { get; set; }
         [Reactive] public ApiRecepientGroup SelectedGroup { get; set; }
 
         [Reactive] public RecepientEditorViewModel EditorViewModel { get; set; }
 
-        public ReactiveCommand EditGroupCommand { get; set; }
-        public ReactiveCommand CreateGroupCommand { get; set; }
-        public ReactiveCommand SaveChangesCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> EditGroupCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> SaveChangesCommand { get; set; }
 
         public RecepientManagerViewModel(ICachedService cachedService, IShell shell)
         {
@@ -63,7 +66,7 @@ namespace ReportServer.Desktop.ViewModels
             shell.AddVMCommand("Edit", "Change recepient group",
                 "EditGroupCommand", this);
 
-            RecepientGroups = cachedService.RecepientGroups;
+            RecepientGroups = cachedService.RecepientGroups.SpawnCollection();
         }
     }
 
@@ -81,8 +84,8 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public bool IsValid { get; set; }
         [Reactive] public bool IsOpened { get; set; }
 
-        public ReactiveCommand SaveChangesCommand { get; set; }
-        public ReactiveCommand CancelCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> SaveChangesCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> CancelCommand { get; set; }
 
         public RecepientEditorViewModel(ICachedService cachedService, IMapper mapper,
                                         ApiRecepientGroup group)
@@ -101,10 +104,13 @@ namespace ReportServer.Desktop.ViewModels
 
             SaveChangesCommand = ReactiveCommand.Create(Save, canSave);
 
-            CancelCommand = ReactiveCommand.Create(() => IsOpened = false);
+            CancelCommand = ReactiveCommand.Create(() =>
+            {
+                IsOpened = false;
+            });
 
-            this.WhenAnyObservable(s => s.AllErrors.Changed)
-                .Subscribe(_ => IsValid = !AllErrors.Any());
+            this.WhenAnyObservable(s => s.AllErrors.CountChanged)
+                .Subscribe(_ => IsValid = !AllErrors.Items.Any());
 
             IsOpened = true;
 

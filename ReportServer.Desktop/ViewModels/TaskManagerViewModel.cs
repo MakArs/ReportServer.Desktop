@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -22,21 +25,22 @@ namespace ReportServer.Desktop.ViewModels
     {
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
-        private readonly ProtoPackageBuilder packageBuilder;
         public CachedServiceShell Shell { get; }
 
-        public ReactiveList<DesktopTask> Tasks { get; set; }
-        public ReactiveList<DesktopTaskInstance> SelectedTaskInstances { get; set; }
-        public ReactiveList<DesktopOperInstance> OperInstances { get; set; }
+        [Reactive]public ReadOnlyObservableCollection<DesktopTask> Tasks { get; set; }
+        private readonly SourceList<DesktopTaskInstance> selectedTaskInstances;
+        [Reactive] public ReadOnlyObservableCollection<DesktopTaskInstance> SelectedTaskInstances { get; set; }
+        private readonly SourceList<DesktopOperInstance> operInstances;
+        [Reactive] public ReadOnlyObservableCollection<DesktopOperInstance> OperInstances { get; set; }
 
         [Reactive] public DesktopTask SelectedTask { get; set; }
         [Reactive] public DesktopTaskInstance SelectedTaskInstance { get; set; }
         [Reactive] public DesktopOperInstance SelectedOperInstance { get; set; }
         [Reactive] public DesktopOperInstance SelectedInstanceData { get; set; }
 
-        public ReactiveCommand OpenPage { get; set; }
-        public ReactiveCommand EditTaskCommand { get; set; }
-        public ReactiveCommand DeleteCommand { get; set; }
+        public ReactiveCommand<string, Unit> OpenPage { get; set; }
+        public ReactiveCommand<Unit, Unit> EditTaskCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> DeleteCommand { get; set; }
 
         public TaskManagerViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
         {
@@ -44,11 +48,10 @@ namespace ReportServer.Desktop.ViewModels
             this.cachedService = cachedService;
             this.mapper = mapper;
             Shell = shell as CachedServiceShell;
-            packageBuilder=new ProtoPackageBuilder();
+            var packageBuilder = new ProtoPackageBuilder();
 
-            Tasks = new ReactiveList<DesktopTask>();
-            SelectedTaskInstances = new ReactiveList<DesktopTaskInstance>();
-            OperInstances = new ReactiveList<DesktopOperInstance>();
+            selectedTaskInstances = new SourceList<DesktopTaskInstance>();
+            operInstances = new SourceList<DesktopOperInstance>();
 
             IObservable<bool> canOpenInstancePage = this //todo:some check for is viewdataset?"
                 .WhenAnyValue(t => t.SelectedInstanceData,
@@ -67,8 +70,8 @@ namespace ReportServer.Desktop.ViewModels
                     {
                         ViewId = name,
                         Task = cachedService
-                            .Tasks.FirstOrDefault(task => task.Id == id),
-                        TaskOpers = cachedService.Operations.Where(to => to.TaskId == id).ToList()
+                            .Tasks.Items.FirstOrDefault(task => task.Id == id),
+                        TaskOpers = cachedService.Operations.Items.Where(to => to.TaskId == id).ToList()
                     },
                     new UiShowOptions {Title = name});
             });
@@ -76,13 +79,6 @@ namespace ReportServer.Desktop.ViewModels
             DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
                 await Delete());
 
-            this.WhenAnyObservable(s => s.Tasks.Changed)
-                .Subscribe(x =>
-                {
-                    SelectedTask = null;
-                    SelectedTaskInstances.Clear();
-                    OperInstances.Clear();
-                });
 
             this.WhenAnyValue(s => s.SelectedTask)
                 .Where(x => x != null)
@@ -92,10 +88,10 @@ namespace ReportServer.Desktop.ViewModels
                 .Subscribe(x =>
                 {
                     if (x == null)
-                        OperInstances.Clear();
+                        operInstances.Clear();
                     else
                     {
-                        OperInstances.PublishCollection(
+                        operInstances.ClearAndAddRange(
                             cachedService.GetOperInstancesByTaskInstanceId(x.Id)
                                 .Select(mapper.Map<DesktopOperInstance>));
                     }
@@ -104,10 +100,6 @@ namespace ReportServer.Desktop.ViewModels
             this.WhenAnyValue(s => s.SelectedOperInstance)
                 .Subscribe(x =>
                 {
-                    //.ForMember("DataSet",
-                    //    opt => opt.MapFrom(s =>
-                    //        JsonConvert.SerializeObject(OperationPackage.Parser.ParseFrom(s.DataSet))))
-
                     var data = new DesktopOperInstance();
 
                     if (x != null)
@@ -121,14 +113,7 @@ namespace ReportServer.Desktop.ViewModels
                         data.DataSet = JsonConvert.SerializeObject(packageBuilder.GetPackageValues(
                             OperationPackage.Parser.ParseFrom(fullInstance.DataSet)));
                     }
-
-                    //if (x != null)
-                    //{
-                    //    var fi;
-                    //    data = mapper.Map<DesktopOperInstance>();
-                    //    data.DataSet = OperationPackage.Parser.ParseFrom(s.DataSet));
-                    //}
-
+                    
                     SelectedInstanceData = x == null
                         ? null
                         : data;
@@ -137,31 +122,57 @@ namespace ReportServer.Desktop.ViewModels
 
         private void LoadInstanceCompactsByTaskId(int taskId)
         {
-            SelectedTaskInstances
-                .PublishCollection(cachedService.GetInstancesByTaskId(taskId)
+            selectedTaskInstances
+                .ClearAndAddRange(cachedService.GetInstancesByTaskId(taskId)
                     .Select(ti => mapper.Map<DesktopTaskInstance>(ti)));
         }
 
         private void RefreshTaskList()
         {
-            Tasks.PublishCollection(cachedService.Tasks.Select(task => new DesktopTask
-            {
-                Id = task.Id,
-                Name = task.Name,
-                Schedule = cachedService.Schedules
-                    .FirstOrDefault(sched => sched.Id == task.ScheduleId)?.Schedule,
+            cachedService.Tasks
+                .Connect()
+                .Transform(task => new DesktopTask
+                {
+                    Id = task.Id,
+                    Name = task.Name,
+                    Schedule = cachedService.Schedules.Items
+                        .FirstOrDefault(sched => sched.Id == task.ScheduleId)?.Schedule,
 
-                Operations = string.Join("=>", cachedService.Operations
-                    .Where(oper => oper.TaskId == task.Id)
-                    .Select(oper => new
-                    {
-                        oper.Number,
-                        oper.Name
-                    })
-                    .OrderBy(pair => pair.Number)
-                    .Select(pair => pair.Name)
-                    .ToList())
-            }));
+                    Operations = string.Join("=>", cachedService.Operations
+                        .Items.Where(oper => oper.TaskId == task.Id)
+                        .Select(oper => new
+                        {
+                            oper.Number,
+                            oper.Name
+                        })
+                        .OrderBy(pair => pair.Number)
+                        .Select(pair => pair.Name)
+                        .ToList())
+                })
+                .Bind(out var temp)
+                .Subscribe();
+
+            cachedService.Tasks.Connect()
+                .Subscribe(_ =>
+                {
+                    SelectedTask = null;
+                    selectedTaskInstances.Clear();
+                    operInstances.Clear();
+                });
+
+            selectedTaskInstances.Connect()
+                .Bind(out var tempti)
+                .Subscribe();
+
+            SelectedTaskInstances = tempti;
+
+            operInstances.Connect()
+                .Bind(out var tempoi)
+                .Subscribe();
+
+            OperInstances = tempoi;
+
+            Tasks = temp;
         }
 
         public void Initialize(ViewRequest viewRequest)
@@ -191,10 +202,7 @@ namespace ReportServer.Desktop.ViewModels
                     "DeleteCommand", this)
                 .SetHotKey(ModifierKeys.None, Key.Delete);
 
-            this.WhenAnyObservable(tmvm => tmvm.cachedService.Tasks.Changed)
-                .Subscribe(_ => RefreshTaskList());
-
-            this.WhenAnyObservable(tmvm => tmvm.cachedService.Tasks.ItemChanged)
+            this.WhenAnyObservable(tmvm => tmvm.cachedService.Tasks.CountChanged)
                 .Subscribe(_ => RefreshTaskList());
         }
 

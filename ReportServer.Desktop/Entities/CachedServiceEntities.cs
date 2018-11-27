@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common.ViewModels;
