@@ -137,14 +137,15 @@ namespace ReportServer.Desktop
                 .ForMember("ScheduleId", opt =>
                     opt.MapFrom(s => s.ScheduleId > 0 ? s.ScheduleId : null))
                 .ForMember("Parameters",opt=>opt.MapFrom(s =>
-                   JsonConvert.SerializeObject(s.TaskParameters.Items
+                   JsonConvert.SerializeObject(s.TaskParameters
                     .ToDictionary(param => param.Name, param => param.Value))))
                 .ForMember("BindedOpers", opt => opt.Ignore());
 
             CreateMap<ApiOperation, DesktopOperation>();
             CreateMap<DesktopOperation, ApiOperation>();
 
-            CreateMap<ApiTask, TaskEditorViewModel>();
+            CreateMap<ApiTask, TaskEditorViewModel>()
+                .ForMember("BindedOpers", opt => opt.Ignore());
 
             CreateMap<ApiRecepientGroup, RecepientEditorViewModel>();
             CreateMap<RecepientEditorViewModel, ApiRecepientGroup>();

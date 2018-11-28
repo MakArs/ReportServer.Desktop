@@ -65,17 +65,6 @@ namespace ReportServer.Desktop.ViewModels
             if (SelectedOperTemplate != null)
 
             {
-                var taskOpers = cachedService.Operations.Items
-                    .ToList();
-
-                if (taskOpers.Any())
-                {
-                    var bindedTasks = string.Join(", ", taskOpers.Select(to => to.TaskId));
-                    await Shell.ShowMessageAsync(
-                        $"You can't delete this operation. It is used in tasks {bindedTasks}");
-                    return;
-                }
-
                 if (!await Shell.ShowWarningAffirmativeDialogAsync
                     ($"Do you really want to delete operation {SelectedOperTemplate.Name}?"))
                     return;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
@@ -9,6 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using AutoMapper;
 using DynamicData;
+using DynamicData.Binding;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -24,28 +26,28 @@ namespace ReportServer.Desktop.ViewModels
 {
     public class
         TaskEditorViewModel : ViewModelBase,
-                              IInitializableViewModel //todo:find some optimal interception between taskeditor and opereditor vms
+                              IInitializableViewModel 
     {
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
         private readonly CachedServiceShell shell;
 
-        //Fields to map
         public int Id { get; set; }
         [Reactive] public string Name { get; set; }
         [Reactive] public int? ScheduleId { get; set; }
-        [Reactive] public SourceList<DesktopOperation> BindedOpers { get; set; }
 
-        //viewing properties
         [Reactive] public bool IsDirty { get; set; }
         [Reactive] public bool IsValid { get; set; }
         [Reactive] public bool HasSchedule { get; set; }
         [Reactive] public bool TemplatesListOpened { get; set; }
         [Reactive] public string OperationsSearchString { get; set; }
 
-        public SourceList<TaskParameter> TaskParameters { get; set; }
-        public SourceList<ApiSchedule> Schedules { get; set; }
-        public SourceList<ApiOperTemplate> OperTemplates { get; set; }
+        private readonly SourceList<DesktopOperation> bindedOpers;
+        private readonly SourceList<TaskParameter> taskParameters;
+        public ReadOnlyObservableCollection<TaskParameter> TaskParameters { get; set; }
+        public ObservableCollectionExtended<DesktopOperation> BindedOpers { get; set; }
+        public ReadOnlyObservableCollection<ApiSchedule> Schedules { get; set; }
+        public ObservableCollectionExtended<ApiOperTemplate> OperTemplates { get; set; }
         private Dictionary<string, Type> DataImporters { get; set; }
         private Dictionary<string, Type> DataExporters { get; set; }
         public SourceList<string> ImplementationTypes { get; set; }
@@ -78,13 +80,9 @@ namespace ReportServer.Desktop.ViewModels
             IsValid = true;
             this.shell = shell as CachedServiceShell;
 
-            //var t = MahApps.Metro.IconPacks.PackIconMaterialKind.ContentCopy
+            taskParameters = new SourceList<TaskParameter>();
 
-                TaskParameters = new SourceList<TaskParameter>();
-
-            BindedOpers = new SourceList<DesktopOperation>();
-            Schedules = new SourceList<ApiSchedule>();
-            OperTemplates = new SourceList<ApiOperTemplate>();
+            bindedOpers = new SourceList<DesktopOperation>();
             DataImporters = cachedService.DataImporters;
             DataExporters = cachedService.DataExporters;
             ImplementationTypes = new SourceList<string>();
@@ -105,12 +103,12 @@ namespace ReportServer.Desktop.ViewModels
                         await cachedService.GetCurrentTaskViewById(Id)));
 
             RemoveOperationCommand = ReactiveCommand.Create<DesktopOperation>(to =>
-                BindedOpers.Remove(to));
+                bindedOpers.Remove(to));
 
             RemoveParameterCommand = ReactiveCommand
-                .Create<TaskParameter>(par => TaskParameters.Remove(par));
+                .Create<TaskParameter>(par => taskParameters.Remove(par));
 
-            AddParameterCommand =ReactiveCommand.Create(() => TaskParameters.Add(new TaskParameter
+            AddParameterCommand =ReactiveCommand.Create(() => taskParameters.Add(new TaskParameter
             {
                 Name = "@RepPar"
             }));
@@ -136,14 +134,12 @@ namespace ReportServer.Desktop.ViewModels
             this.ObservableForProperty(s => s.OperationsSearchString)
                 .Subscribe(sstr =>
                 {
-                    List<ApiOperTemplate> opers;
-                    lock (this)
-                        opers = cachedService.OperTemplates.Items.Where(oper =>
-                                oper.Name.IndexOf(sstr.Value, StringComparison.OrdinalIgnoreCase) >=
-                                0)
-                            .ToList();
+                    OperTemplates.Clear();
 
-                    OperTemplates.ClearAndAddRange(opers);
+                    cachedService.OperTemplates.Connect().Filter(oper =>
+                            oper.Name.IndexOf(sstr.Value, StringComparison.OrdinalIgnoreCase) >=
+                            0)
+                        .Bind(OperTemplates).Subscribe();
                 });
 
             this.ObservableForProperty(s => s.Mode)
@@ -170,15 +166,10 @@ namespace ReportServer.Desktop.ViewModels
                     mapper.Map(cachedService, SelectedOperationConfig);
                 });
 
-            this.WhenAnyObservable(s => s.AllErrors.CountChanged)
-                .Subscribe(_ => IsValid = !AllErrors.Items.Any());
-
-            this.WhenAnyObservable(s => s.TaskParameters.CountChanged)
+            this.WhenAnyObservable(s => s.taskParameters.CountChanged)
                 .Subscribe(_ =>
                     UpdateParametersList());
             
-            //this.WhenAnyObservable(s => s.TaskParameters.ItemsAdded)
-            //    .Subscribe(_ => UpdateParametersList());
         }
 
         private async Task Cancel()
@@ -206,9 +197,9 @@ namespace ReportServer.Desktop.ViewModels
                 SelectedOperation.Id = 0;
                 SelectedOperation.TaskId = Id;
                 if(!string.IsNullOrEmpty(Type)) SelectedOperation.ImplementationType = Type;
-                BindedOpers.Add(SelectedOperation);
+                bindedOpers.Add(SelectedOperation);
             }
-
+            
             ClearSelections();
         }
 
@@ -216,7 +207,7 @@ namespace ReportServer.Desktop.ViewModels
         {
             var oper = mapper.Map<DesktopOperation>(template);
             oper.TaskId = Id;
-            BindedOpers.Add(oper);
+            bindedOpers.Add(oper);
         }
 
         private async Task SelectOperation(DesktopOperation operation)
@@ -314,9 +305,12 @@ namespace ReportServer.Desktop.ViewModels
             shell.AddVMCommand("Edit", "Add new operation",
                 "CreateOperConfigCommand", this);
 
-            Schedules.ClearAndAddRange(cachedService.Schedules.Items);
+            Schedules=cachedService.Schedules.SpawnCollection();
 
-            OperTemplates.ClearAndAddRange(cachedService.OperTemplates.Items);
+            OperTemplates=new ObservableCollectionExtended<ApiOperTemplate>();
+
+            cachedService.OperTemplates.Connect()
+                .Bind(OperTemplates).Subscribe();
 
             if (viewRequest is TaskEditorRequest request)
             {
@@ -324,11 +318,11 @@ namespace ReportServer.Desktop.ViewModels
                 HasSchedule = ScheduleId > 0;
 
                 if (request.TaskOpers != null)
-                    BindedOpers.ClearAndAddRange(request.TaskOpers.OrderBy(to => to.Number)
+                    bindedOpers.ClearAndAddRange(request.TaskOpers.OrderBy(to => to.Number)
                         .Select(to => mapper.Map<DesktopOperation>(to)));
 
                 if (!string.IsNullOrEmpty(request.Task.Parameters))
-                    TaskParameters.ClearAndAddRange(JsonConvert
+                    taskParameters.ClearAndAddRange(JsonConvert
                         .DeserializeObject<Dictionary<string, object>>(request.Task.Parameters)
                         .Select(pair => new TaskParameter
                         {
@@ -351,17 +345,26 @@ namespace ReportServer.Desktop.ViewModels
                 Title += '*';
             }
 
-            PropertyChanged += Changed;
+            AllErrors.Connect()
+                .Subscribe(_ => IsValid = !AllErrors.Items.Any());
 
             this.ObservableForProperty(s => s.HasSchedule)
                 .Subscribe(hassch =>
-                    ScheduleId = hassch.Value ? Schedules.Items.FirstOrDefault()?.Id : null);
+                    ScheduleId = hassch.Value ? Schedules.FirstOrDefault()?.Id : null);
 
-            this.WhenAnyObservable(tevm => tevm.TaskParameters.CountChanged)
+            taskParameters.Connect()
+                .Bind(out var tpars)
                 .Subscribe(_ => this.RaisePropertyChanged());
 
-            this.WhenAnyObservable(tevm => tevm.BindedOpers.CountChanged)
-                .Subscribe(_ => this.RaisePropertyChanged());
+            TaskParameters = tpars;
+
+            BindedOpers = new ObservableCollectionExtended<DesktopOperation>();
+
+            bindedOpers.Connect().Bind(BindedOpers)
+                .Subscribe();
+
+
+            PropertyChanged += Changed;
         } //init vm
 
         private async Task Save()
@@ -373,17 +376,17 @@ namespace ReportServer.Desktop.ViewModels
                 : "Create this task?"))
                 return;
 
-            var bindedOpers = BindedOpers.Items.ToList();
+            var opersToSave = BindedOpers.ToList();
             
-            foreach (var oper in bindedOpers)
-                oper.Number = bindedOpers.IndexOf(oper) + 1;
+            foreach (var oper in opersToSave)
+                oper.Number = opersToSave.IndexOf(oper) + 1;
 
             var editedTask = new ApiTask();
             
             mapper.Map(this, editedTask);
 
             editedTask.BindedOpers =
-                bindedOpers.Select(oper => mapper.Map<ApiOperation>(oper)).ToArray();
+                opersToSave.Select(oper => mapper.Map<ApiOperation>(oper)).ToArray();
 
             cachedService.CreateOrUpdateTask(editedTask);
 
@@ -393,7 +396,7 @@ namespace ReportServer.Desktop.ViewModels
 
         private void UpdateParametersList()
         {
-            var taskParams = TaskParameters.Items.ToList();
+            var taskParams = taskParameters.Items.ToList();
             foreach (var dim in taskParams)
             {
                 dim.IsDuplicate = false;

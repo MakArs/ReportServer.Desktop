@@ -17,7 +17,7 @@ namespace ReportServer.Desktop.Views.WpfResources
 
             RuleFor(red => red.TaskParameters)
                 .Must(pairs => pairs
-                    .Items.All(pair => pair.Name.StartsWith("@RepPar")))
+                    .All(pair => pair.Name.StartsWith("@RepPar")))
                 .WithMessage("Parameter name must starting with @RepPar");
         }
     }

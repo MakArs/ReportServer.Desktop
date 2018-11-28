@@ -193,7 +193,7 @@ UserControl "ReportServer.Desktop.Views.CronEditorView" {
                   Command: "{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}, Path=DataContext.RemoveCategoryCommand}"
                   Width: "45"
                   CommandParameter: bind
-                  "-"
+                  Content:"-"
                 }
               }
             }

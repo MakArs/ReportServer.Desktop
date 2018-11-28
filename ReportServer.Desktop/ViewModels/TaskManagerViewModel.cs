@@ -166,11 +166,7 @@ namespace ReportServer.Desktop.ViewModels
 
             SelectedTaskInstances = tempti;
 
-            operInstances.Connect()
-                .Bind(out var tempoi)
-                .Subscribe();
-
-            OperInstances = tempoi;
+            OperInstances = operInstances.SpawnCollection();
 
             Tasks = temp;
         }

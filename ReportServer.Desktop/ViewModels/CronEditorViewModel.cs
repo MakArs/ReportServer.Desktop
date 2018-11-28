@@ -70,9 +70,6 @@ namespace ReportServer.Desktop.ViewModels
             this.WhenAnyValue(conncr => conncr.FullExpression)
                 .Where(value => !string.IsNullOrEmpty(value))
                 .Subscribe(_ => UpdateCategories());
-
-            this.WhenAnyObservable(s => s.AllErrors.CountChanged)
-                .Subscribe(_ => IsValid = !AllErrors.Items.Any());
         }
 
         public void UpdateCategories()
@@ -133,7 +130,10 @@ namespace ReportServer.Desktop.ViewModels
                 Id = request.Schedule.Id;
 
                 if (Id == 0)
+                {
+                    CreateCronString();
                     Name = "New schedule";
+                }
 
                 else
                 {
@@ -144,24 +144,21 @@ namespace ReportServer.Desktop.ViewModels
 
             categories.Connect()
                 .Bind(out var categs)
-                .Subscribe(_ =>
-                {
-                    CreateCronString();
-                });
-
-            categories.Connect()
                 .WhenAnyPropertyChanged()
                 .Subscribe(_ =>
                 {
                     CreateCronString();
                 });
-
+            
             void Changed(object sender, PropertyChangedEventArgs e)
             {
                 IsDirty = true;
                 if (Title.Last() != '*')
                     Title += '*';
             }
+
+            AllErrors.Connect()
+                .Subscribe(_ => IsValid = !AllErrors.Items.Any());
 
             PropertyChanged += Changed;
 
@@ -202,7 +199,11 @@ namespace ReportServer.Desktop.ViewModels
 
              expressionParts.Connect()
                 .Bind(out var parts)
-                .Subscribe();
+                 .WhenAnyPropertyChanged()
+                .Subscribe(_ =>
+                 {
+                     this.RaisePropertyChanged();
+                 });
 
             ExpressionParts = parts;
 
@@ -214,13 +215,6 @@ namespace ReportServer.Desktop.ViewModels
             RemoveCategoryCommand = ReactiveCommand.Create<CronCategoryPart>(
                 parseCategory =>
                     expressionParts.Remove(parseCategory));
-
-            expressionParts.Connect()
-                .WhenAnyPropertyChanged()
-                .Subscribe(_ =>
-                {
-                    this.RaisePropertyChanged();
-                });
         }
 
         public void FillExpressionParts(string expression)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
@@ -30,7 +31,8 @@ namespace ReportServer.Desktop.ViewModels
         private Dictionary<string, Type> DataExporters { get; set; }
 
         public int? Id { get; set; }
-        public SourceList<string> OperTemplates { get; set; }
+        public ReadOnlyObservableCollection<string> OperTemplates { get; set; }
+
         [Reactive] public OperMode Mode { get; set; }
         [Reactive] public string ImplementationType { get; set; }
         [Reactive] public string Name { get; set; }
@@ -50,7 +52,7 @@ namespace ReportServer.Desktop.ViewModels
             IsValid = true;
             validator = new OperEditorValidator();
 
-            OperTemplates = new SourceList<string>();
+            var operTemplates = new SourceList<string>();
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
                 isd => isd == true);
@@ -77,8 +79,11 @@ namespace ReportServer.Desktop.ViewModels
                         ? DataExporters.Select(pair => pair.Key)
                         : DataImporters.Select(pair => pair.Key);
 
-                    OperTemplates.ClearAndAddRange(templates);
-                    ImplementationType = OperTemplates.First();
+                    operTemplates.ClearAndAddRange(templates);
+
+                    OperTemplates = operTemplates.SpawnCollection();
+
+                    ImplementationType = operTemplates.First();
                 });
 
             this.ObservableForProperty(s => s.ImplementationType)
