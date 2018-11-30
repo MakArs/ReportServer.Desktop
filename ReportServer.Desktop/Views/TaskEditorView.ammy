@@ -117,12 +117,14 @@ UserControl
 			  "Add parameter"}
 		   		}
 			
-			ListView { BorderThickness: "0"
-			Grid.Row: "3"
+			ListView { BorderThickness: 0
+			Grid.Row: 3
 			HorizontalAlignment: Stretch
-			MaxHeight: "350"
+			MaxHeight: 350
+			Width: "Auto"
+			Focusable: false
 			ScrollViewer.CanContentScroll: true
-			ItemsSource: bind TaskParameters set[UpdateSourceTrigger: PropertyChanged
+			ItemsSource: bind TaskParameters set[UpdateSourceTrigger: Default
 			ValidatesOnDataErrors: true]
 			ItemTemplate: DataTemplate {
 			
@@ -132,12 +134,12 @@ UserControl
 				Grid {
 				  Height: "auto"
 				  ColumnDefinitions: [
-			        ColumnDefinition { Width: "Auto" }
+			        ColumnDefinition { Width: Auto}
 					ColumnDefinition { }
-					ColumnDefinition { Width: "Auto" }
-					ColumnDefinition { Width: "Auto" }
-					ColumnDefinition { }
-					ColumnDefinition { Width: "Auto" }
+					ColumnDefinition { Width: Auto}
+					ColumnDefinition { Width: Auto}
+					ColumnDefinition {}
+					ColumnDefinition { Width: Auto }
 				  ]
 
 				  TextBlock {
@@ -146,6 +148,7 @@ UserControl
 					Text: "Parameter name"}
 
 				 Border {
+				 MaxWidth: 305
 				 Grid.Column: 1
 				BorderThickness: "1"
 				BorderBrush: "#F5F5F5"
@@ -171,12 +174,13 @@ UserControl
 
 				  Border {Grid.Column: 4
 				BorderThickness: "1"
+				MaxWidth: 305
 				BorderBrush: "#F5F5F5"
 				  @InputTextBox("Value")
 			{
+			MaxWidth: 305
 			BorderThickness: 0
-		    TextBoxHelper.Watermark: "Enter parameter value"
-		    HorizontalAlignment: "Stretch"}
+		    TextBoxHelper.Watermark: "Enter parameter value"}
 			}
 
 			 Button {

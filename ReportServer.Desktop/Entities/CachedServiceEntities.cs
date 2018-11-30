@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common.ViewModels;
@@ -13,7 +12,7 @@ namespace ReportServer.Desktop.Entities
         [Reactive] public string Name { get; set; }
         public object Value { get; set; }
         [Reactive] public bool IsDuplicate { get; set; }
-        public bool HasErrors { get; set; }
+        [Reactive] public bool HasErrors { get; set; }
 
         public TaskParameter()
         {

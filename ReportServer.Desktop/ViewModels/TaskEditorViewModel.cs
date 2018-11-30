@@ -7,6 +7,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using AutoMapper;
 using DynamicData;
@@ -26,7 +27,7 @@ namespace ReportServer.Desktop.ViewModels
 {
     public class
         TaskEditorViewModel : ViewModelBase,
-                              IInitializableViewModel 
+            IInitializableViewModel
     {
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
@@ -44,7 +45,7 @@ namespace ReportServer.Desktop.ViewModels
 
         private readonly SourceList<DesktopOperation> bindedOpers;
         private readonly SourceList<TaskParameter> taskParameters;
-        public ReadOnlyObservableCollection<TaskParameter> TaskParameters { get; set; }
+        public ObservableCollectionExtended<TaskParameter> TaskParameters { get; set; }
         public ObservableCollectionExtended<DesktopOperation> BindedOpers { get; set; }
         public ReadOnlyObservableCollection<ApiSchedule> Schedules { get; set; }
         public ObservableCollectionExtended<ApiOperTemplate> OperTemplates { get; set; }
@@ -57,7 +58,7 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public ApiOperTemplate SelectedTemplate { get; set; }
         [Reactive] public object SelectedOperationConfig { get; set; }
 
-        public ReactiveCommand<Unit,Unit> SaveChangesCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> SaveChangesCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CancelCommand { get; set; }
         public ReactiveCommand<ApiOperTemplate, Unit> SelectTemplateCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CloseTemplatesListCommand { get; set; }
@@ -108,7 +109,7 @@ namespace ReportServer.Desktop.ViewModels
             RemoveParameterCommand = ReactiveCommand
                 .Create<TaskParameter>(par => taskParameters.Remove(par));
 
-            AddParameterCommand =ReactiveCommand.Create(() => taskParameters.Add(new TaskParameter
+            AddParameterCommand = ReactiveCommand.Create(() => taskParameters.Add(new TaskParameter
             {
                 Name = "@RepPar"
             }));
@@ -121,10 +122,7 @@ namespace ReportServer.Desktop.ViewModels
 
             OpenTemplatesListCommand = ReactiveCommand.CreateFromTask(OpenTemplatesList);
 
-            CloseTemplatesListCommand = ReactiveCommand.Create(() =>
-            {
-                TemplatesListOpened = false;
-            });
+            CloseTemplatesListCommand = ReactiveCommand.Create(() => { TemplatesListOpened = false; });
 
             SelectTemplateCommand = ReactiveCommand.Create<ApiOperTemplate>(SelectTemplate);
 
@@ -166,10 +164,6 @@ namespace ReportServer.Desktop.ViewModels
                     mapper.Map(cachedService, SelectedOperationConfig);
                 });
 
-            this.WhenAnyObservable(s => s.taskParameters.CountChanged)
-                .Subscribe(_ =>
-                    UpdateParametersList());
-            
         }
 
         private async Task Cancel()
@@ -189,17 +183,17 @@ namespace ReportServer.Desktop.ViewModels
 
             SelectedOperation.Config = JsonConvert.SerializeObject(SelectedOperationConfig);
 
-            if (SelectedOperation.Id == null) 
+            if (SelectedOperation.Id == null)
             {
                 /*if u already added operation to binded list,
                  next time redacting only config will be changed;
                  */
                 SelectedOperation.Id = 0;
                 SelectedOperation.TaskId = Id;
-                if(!string.IsNullOrEmpty(Type)) SelectedOperation.ImplementationType = Type;
+                if (!string.IsNullOrEmpty(Type)) SelectedOperation.ImplementationType = Type;
                 bindedOpers.Add(SelectedOperation);
             }
-            
+
             ClearSelections();
         }
 
@@ -305,9 +299,9 @@ namespace ReportServer.Desktop.ViewModels
             shell.AddVMCommand("Edit", "Add new operation",
                 "CreateOperConfigCommand", this);
 
-            Schedules=cachedService.Schedules.SpawnCollection();
+            Schedules = cachedService.Schedules.SpawnCollection();
 
-            OperTemplates=new ObservableCollectionExtended<ApiOperTemplate>();
+            OperTemplates = new ObservableCollectionExtended<ApiOperTemplate>();
 
             cachedService.OperTemplates.Connect()
                 .Bind(OperTemplates).Subscribe();
@@ -352,17 +346,53 @@ namespace ReportServer.Desktop.ViewModels
                 .Subscribe(hassch =>
                     ScheduleId = hassch.Value ? Schedules.FirstOrDefault()?.Id : null);
 
-            taskParameters.Connect()
-                .Bind(out var tpars)
-                .Subscribe(_ => this.RaisePropertyChanged());
+            taskParameters.Connect() //todo: real-time updating of duplicates indicators
+                .WhenAnyPropertyChanged("Name")
+                .Subscribe(_ =>
+                {
+                    foreach (var dim in TaskParameters)
+                        dim.IsDuplicate = false;
 
-            TaskParameters = tpars;
+                    var duplicatgroups = TaskParameters
+                        .GroupBy(dim => dim.Name)
+                        .Where(g => g.Count() > 1)
+                        .ToList();
+
+                    foreach (var group in duplicatgroups)
+                    {
+                        foreach (var dim in group)
+                        {
+                            dim.IsDuplicate = true;
+                            dim.HasErrors = true;
+                        }
+                    }
+
+                    this.RaisePropertyChanged(nameof(TaskParameters));
+                });
+
+            taskParameters.Connect()
+                .WhenAnyPropertyChanged("HasErrors")
+                .Subscribe(_ =>
+                {
+                    IsValid = !AllErrors.Items.Any() &&
+                              !TaskParameters.Any(param => param.HasErrors);
+                });
+
+            TaskParameters = new ObservableCollectionExtended<TaskParameter>();
+
+            taskParameters.Connect()
+                .Bind(TaskParameters)
+                .Skip(1)
+                .Subscribe(_ =>
+                {
+                    UpdateParametersList();
+                    this.RaisePropertyChanged(nameof(TaskParameters));
+                });
 
             BindedOpers = new ObservableCollectionExtended<DesktopOperation>();
 
             bindedOpers.Connect().Bind(BindedOpers)
                 .Subscribe();
-
 
             PropertyChanged += Changed;
         } //init vm
@@ -377,12 +407,12 @@ namespace ReportServer.Desktop.ViewModels
                 return;
 
             var opersToSave = BindedOpers.ToList();
-            
+
             foreach (var oper in opersToSave)
                 oper.Number = opersToSave.IndexOf(oper) + 1;
 
             var editedTask = new ApiTask();
-            
+
             mapper.Map(this, editedTask);
 
             editedTask.BindedOpers =
@@ -396,31 +426,24 @@ namespace ReportServer.Desktop.ViewModels
 
         private void UpdateParametersList()
         {
-            var taskParams = taskParameters.Items.ToList();
-            foreach (var dim in taskParams)
+            using (TaskParameters.SuspendNotifications())
             {
-                dim.IsDuplicate = false;
-                dim.RaisePropertyChanged(nameof(dim.Name));
-            }
-
-            var duplicatgroups = taskParams
-                .GroupBy(dim => dim.Name)
-                .Where(g => g.Count() > 1)
-                .ToList();
-
-            foreach (var group in duplicatgroups)
-            {
-                foreach (var dim in group)
+                foreach (var dim in TaskParameters)
                 {
-                    dim.IsDuplicate = true;
-                    dim.RaisePropertyChanged(nameof(dim.Name));
+                    dim.IsDuplicate = false;
+                }
+
+                var duplicatgroups = TaskParameters
+                    .GroupBy(dim => dim.Name)
+                    .Where(g => g.Count() > 1)
+                    .ToList();
+
+                foreach (var group in duplicatgroups)
+                {
+                    foreach (var dim in group)
+                        dim.IsDuplicate = true;
                 }
             }
-
-            var е = new SourceList<int>();
-            
-            IsValid = !AllErrors.Items.Any() &&
-                      taskParams.Count(pair => pair.HasErrors) == 0;
         }
     }
 }

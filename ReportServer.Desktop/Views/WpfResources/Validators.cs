@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using CronExpressionDescriptor;
 using FluentValidation;
 using ReportServer.Desktop.Entities;
@@ -14,11 +13,6 @@ namespace ReportServer.Desktop.Views.WpfResources
             RuleFor(red => red.Name)
                 .Must(name => !string.IsNullOrEmpty(name))
                 .WithMessage("Name cannot be empty");
-
-            RuleFor(red => red.TaskParameters)
-                .Must(pairs => pairs
-                    .All(pair => pair.Name.StartsWith("@RepPar")))
-                .WithMessage("Parameter name must starting with @RepPar");
         }
     }
 
