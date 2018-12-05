@@ -25,7 +25,7 @@ namespace ReportServer.Desktop.Entities
         public int? Id { get; set; }
         public int TaskId { get; set; }
         public int Number { get; set; }
-        public string Name { get; set; }
+        [Reactive]public string Name { get; set; }
         public string ImplementationType { get; set; }
         [Reactive] public bool IsDefault { get; set; }
         public string Config { get; set; }
@@ -315,6 +315,7 @@ namespace ReportServer.Desktop.Entities
     {
         InProcess = 1,
         Success = 2,
-        Failed = 3
+        Failed = 3,
+        Canceled = 4
     }
 }

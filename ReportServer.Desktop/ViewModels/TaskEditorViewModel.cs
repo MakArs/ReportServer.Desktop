@@ -7,7 +7,6 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using AutoMapper;
 using DynamicData;
@@ -51,12 +50,14 @@ namespace ReportServer.Desktop.ViewModels
         public ObservableCollectionExtended<ApiOperTemplate> OperTemplates { get; set; }
         private Dictionary<string, Type> DataImporters { get; set; }
         private Dictionary<string, Type> DataExporters { get; set; }
-        public SourceList<string> ImplementationTypes { get; set; }
+        private readonly SourceList<string> implementationTypes;
+        public ReadOnlyObservableCollection<string> ImplementationTypes { get; set; }
         [Reactive] public OperMode Mode { get; set; }
         [Reactive] public string Type { get; set; }
         [Reactive] public DesktopOperation SelectedOperation { get; set; }
         [Reactive] public ApiOperTemplate SelectedTemplate { get; set; }
         [Reactive] public object SelectedOperationConfig { get; set; }
+        [Reactive] public string SelectedOperationName { get; set; }
 
         public ReactiveCommand<Unit, Unit> SaveChangesCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CancelCommand { get; set; }
@@ -86,7 +87,7 @@ namespace ReportServer.Desktop.ViewModels
             bindedOpers = new SourceList<DesktopOperation>();
             DataImporters = cachedService.DataImporters;
             DataExporters = cachedService.DataExporters;
-            ImplementationTypes = new SourceList<string>();
+            implementationTypes = new SourceList<string>();
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty, tvm => tvm.IsValid,
                 (isd, isv) => isd == true && isv == true);
@@ -104,7 +105,11 @@ namespace ReportServer.Desktop.ViewModels
                         await cachedService.GetCurrentTaskViewById(Id)));
 
             RemoveOperationCommand = ReactiveCommand.Create<DesktopOperation>(to =>
-                bindedOpers.Remove(to));
+            {
+                if (SelectedOperation.Id == to.Id)
+                    ClearSelections();
+                bindedOpers.Remove(to);
+            });
 
             RemoveParameterCommand = ReactiveCommand
                 .Create<TaskParameter>(par => taskParameters.Remove(par));
@@ -147,8 +152,8 @@ namespace ReportServer.Desktop.ViewModels
                         ? DataExporters.Select(pair => pair.Key)
                         : DataImporters.Select(pair => pair.Key);
 
-                    ImplementationTypes.ClearAndAddRange(templates);
-                    Type = ImplementationTypes.Items.FirstOrDefault();
+                    implementationTypes.ClearAndAddRange(templates);
+                    Type = implementationTypes.Items.FirstOrDefault();
                 });
 
             this.ObservableForProperty(s => s.Type)
@@ -163,6 +168,7 @@ namespace ReportServer.Desktop.ViewModels
                     SelectedOperationConfig = Activator.CreateInstance(operType);
                     mapper.Map(cachedService, SelectedOperationConfig);
                 });
+
 
         }
 
@@ -180,8 +186,8 @@ namespace ReportServer.Desktop.ViewModels
 
         private void AddOperation()
         {
-
             SelectedOperation.Config = JsonConvert.SerializeObject(SelectedOperationConfig);
+            SelectedOperation.Name = SelectedOperationName;
 
             if (SelectedOperation.Id == null)
             {
@@ -221,6 +227,8 @@ namespace ReportServer.Desktop.ViewModels
                 ? cachedService.DataExporters[SelectedOperation.ImplementationType]
                 : cachedService.DataImporters[SelectedOperation.ImplementationType];
 
+            SelectedOperationName = SelectedOperation.Name;
+
             SelectedOperationConfig = JsonConvert
                 .DeserializeObject(SelectedOperation.Config, type);
         }
@@ -231,6 +239,7 @@ namespace ReportServer.Desktop.ViewModels
                 TemplatesListOpened = false;
             Mode = 0;
             Type = null;
+            SelectedOperationName = null;
             SelectedTemplate = null;
             SelectedOperation = null;
             SelectedOperationConfig = null; //todo:find the way for risepropertychanged
@@ -253,8 +262,9 @@ namespace ReportServer.Desktop.ViewModels
                 Name = "New Operation"
             };
 
+            SelectedOperationName = "New Operation";
+
             Mode = OperMode.Importer;
-            //this.RaisePropertyChanged(nameof(Mode));
         }
 
         private async Task OpenTemplatesList()
@@ -281,6 +291,8 @@ namespace ReportServer.Desktop.ViewModels
 
             SelectedOperationConfig = JsonConvert
                 .DeserializeObject(templ.ConfigTemplate, type);
+
+            SelectedOperationName = templ.Name;
 
             OperationsSearchString = "";
 
@@ -389,11 +401,13 @@ namespace ReportServer.Desktop.ViewModels
                     this.RaisePropertyChanged(nameof(TaskParameters));
                 });
 
+            ImplementationTypes = implementationTypes.SpawnCollection();
+
             BindedOpers = new ObservableCollectionExtended<DesktopOperation>();
 
             bindedOpers.Connect().Bind(BindedOpers)
                 .Subscribe();
-
+         
             PropertyChanged += Changed;
         } //init vm
 
@@ -402,7 +416,7 @@ namespace ReportServer.Desktop.ViewModels
             if (!IsValid || !IsDirty) return;
 
             if (!await shell.ShowWarningAffirmativeDialogAsync(Id > 0
-                ? "Save these task parameters?"
+                ? "Save these task settings?"
                 : "Create this task?"))
                 return;
 

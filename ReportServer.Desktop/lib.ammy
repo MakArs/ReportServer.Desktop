@@ -271,7 +271,7 @@ alias InputTextBox(bindedvalue)
 {  TextBox { TextWrapping: NoWrap
 				Background: "White"
 				HorizontalAlignment: Stretch
-				HorizontalScrollBarVisibility: Auto
+				//HorizontalScrollBarVisibility: Auto
 				AcceptsReturn: "False"
 				TextAlignment: "Left"
 				Text: bind $bindedvalue set[UpdateSourceTrigger: "PropertyChanged"

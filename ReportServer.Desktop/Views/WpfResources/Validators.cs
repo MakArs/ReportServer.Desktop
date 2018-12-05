@@ -13,6 +13,10 @@ namespace ReportServer.Desktop.Views.WpfResources
             RuleFor(red => red.Name)
                 .Must(name => !string.IsNullOrEmpty(name))
                 .WithMessage("Name cannot be empty");
+
+            RuleFor(red => red.SelectedOperationName)
+                .Must(name => name!="")
+                .WithMessage("Name cannot be empty");
         }
     }
 

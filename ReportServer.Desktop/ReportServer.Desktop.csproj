@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Costura.Fody.3.1.6\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.1.6\build\Costura.Fody.props')" />
-  <Import Project="..\packages\ReactiveUI.Fody.9.3.5\build\ReactiveUI.Fody.props" Condition="Exists('..\packages\ReactiveUI.Fody.9.3.5\build\ReactiveUI.Fody.props')" />
+  <Import Project="..\packages\Costura.Fody.3.2.0\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.2.0\build\Costura.Fody.props')" />
+  <Import Project="..\packages\ReactiveUI.Fody.9.4.1\build\ReactiveUI.Fody.props" Condition="Exists('..\packages\ReactiveUI.Fody.9.4.1\build\ReactiveUI.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -31,11 +31,11 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>ReportServer.Desktop</ProductName>
     <PublisherName>Лаборатория умного вождения</PublisherName>
-    <MinimumRequiredVersion>2.3.2.3</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.3.3.4</MinimumRequiredVersion>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>3</ApplicationRevision>
-    <ApplicationVersion>2.3.2.3</ApplicationVersion>
+    <ApplicationRevision>4</ApplicationRevision>
+    <ApplicationVersion>2.3.3.4</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -87,8 +87,8 @@
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
-    <Reference Include="Costura, Version=3.1.6.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Costura.Fody.3.1.6\lib\net46\Costura.dll</HintPath>
+    <Reference Include="Costura, Version=3.2.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.3.2.0\lib\net46\Costura.dll</HintPath>
     </Reference>
     <Reference Include="CronExpressionDescriptor, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CronExpressionDescriptor.2.9.0\lib\netstandard2.0\CronExpressionDescriptor.dll</HintPath>
@@ -97,7 +97,7 @@
       <HintPath>..\packages\DynamicData.6.7.0.2529\lib\net46\DynamicData.dll</HintPath>
     </Reference>
     <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentValidation.8.0.100\lib\net45\FluentValidation.dll</HintPath>
+      <HintPath>..\packages\FluentValidation.8.0.101\lib\net45\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="Gerakul.HttpUtils.Core, Version=1.0.8.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Gerakul.HttpUtils.Core.1.0.8\lib\net46\Gerakul.HttpUtils.Core.dll</HintPath>
@@ -142,18 +142,18 @@
     <Reference Include="Monik.Client.Azure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Monik.Client.Azure.1.0.23\lib\net462\Monik.Client.Azure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Aero2" />
-    <Reference Include="ReactiveUI, Version=9.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ReactiveUI.9.3.5\lib\net461\ReactiveUI.dll</HintPath>
+    <Reference Include="ReactiveUI, Version=9.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReactiveUI.9.4.1\lib\net461\ReactiveUI.dll</HintPath>
     </Reference>
-    <Reference Include="ReactiveUI.Fody.Helpers, Version=9.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ReactiveUI.Fody.9.3.5\lib\net461\ReactiveUI.Fody.Helpers.dll</HintPath>
+    <Reference Include="ReactiveUI.Fody.Helpers, Version=9.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReactiveUI.Fody.9.4.1\lib\net461\ReactiveUI.Fody.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="ReactiveUI.WPF, Version=9.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ReactiveUI.WPF.9.3.5\lib\net461\ReactiveUI.WPF.dll</HintPath>
+    <Reference Include="ReactiveUI.WPF, Version=9.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReactiveUI.WPF.9.4.1\lib\net461\ReactiveUI.WPF.dll</HintPath>
     </Reference>
     <Reference Include="SevenZipSharp, Version=0.64.3890.29348, Culture=neutral, PublicKeyToken=20de82c62b055c88, processorArchitecture=MSIL">
       <HintPath>..\packages\SevenZipSharp.0.64\lib\SevenZipSharp.dll</HintPath>
@@ -517,12 +517,12 @@
     <Error Condition="!Exists('..\packages\SevenZipSharp.Interop.18.5.0\build\SevenZipSharp.Interop.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SevenZipSharp.Interop.18.5.0\build\SevenZipSharp.Interop.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets'))" />
     <Error Condition="!Exists('..\packages\Ammy.1.2.94\build\Ammy.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Ammy.1.2.94\build\Ammy.targets'))" />
-    <Error Condition="!Exists('..\packages\ReactiveUI.Fody.9.3.5\build\ReactiveUI.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ReactiveUI.Fody.9.3.5\build\ReactiveUI.Fody.props'))" />
-    <Error Condition="!Exists('..\packages\Fody.3.3.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.3.1\build\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Costura.Fody.3.1.6\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.1.6\build\Costura.Fody.props'))" />
+    <Error Condition="!Exists('..\packages\ReactiveUI.Fody.9.4.1\build\ReactiveUI.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ReactiveUI.Fody.9.4.1\build\ReactiveUI.Fody.props'))" />
+    <Error Condition="!Exists('..\packages\Fody.3.3.2\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.3.2\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Costura.Fody.3.2.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.2.0\build\Costura.Fody.props'))" />
   </Target>
   <Import Project="..\packages\SevenZipSharp.Interop.18.5.0\build\SevenZipSharp.Interop.targets" Condition="Exists('..\packages\SevenZipSharp.Interop.18.5.0\build\SevenZipSharp.Interop.targets')" />
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" />
   <Import Project="..\packages\Ammy.1.2.94\build\Ammy.targets" Condition="Exists('..\packages\Ammy.1.2.94\build\Ammy.targets')" />
-  <Import Project="..\packages\Fody.3.3.1\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.1\build\Fody.targets')" />
+  <Import Project="..\packages\Fody.3.3.2\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.2\build\Fody.targets')" />
 </Project>

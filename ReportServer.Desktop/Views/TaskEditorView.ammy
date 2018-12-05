@@ -255,7 +255,7 @@ UserControl
 				  TextBlock {
 					Padding: "5"
 					Grid.Column: "2"
-					Text: "{Binding Path=Name}"
+					Text: "{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"
 					
 			InputBindings: [
 							MouseBinding {
@@ -419,6 +419,7 @@ UserControl
 			RowDefinition {Height: "Auto"}
 			RowDefinition {Height: "Auto"}
 			RowDefinition {Height: "Auto"}
+			RowDefinition {Height: "Auto"}
 		  ]
 
 	Grid {
@@ -460,24 +461,36 @@ UserControl
           ItemsSource: bind ImplementationTypes
         }
 
-		@ContentLabel("Name","2") 
+      }
+	  Grid {
+			Grid.Row: "1"
+			ColumnDefinitions: [
+			  ColumnDefinition { Width: "Auto" }
+			  ColumnDefinition { Width: "Auto" }
+			]
+			
+	  	@ContentLabel("Name","1") 
 
-		@InputTextBox("SelectedOperation.Name") 
+		@InputTextBox("SelectedOperationName") 
 		{ Grid.Column: "1"
-          Grid.Row: "2"
+          Grid.Row: "1"
           Margin: "3"
+		  HorizontalAlignment: "Left"
           Width: "250"
         }
-      }
+			}
 
 	  Button {
 	  Command: bind AddOperationCommand
-	  	Grid.Row: 2
+	  IsEnabled: bind SelectedOperationName
+	  convert (string name) => string.IsNullOrEmpty(name) ? false
+	  :true
+	  	Grid.Row: 3
 		"Add"}
 
 	 PropertyGrid.PropertyGrid {
 	    BorderThickness: 0
-		 Grid.Row: 1
+		 Grid.Row: 2
         ShowSearchBox: false
         HorizontalAlignment: Left
 		VerticalAlignment: Top
@@ -487,8 +500,8 @@ UserControl
         Margin: "2 2 2 10"
         ShowSummary: false
         Background: "#F5F5F5"
-        SelectedObjectName: bind Type set [StringFormat: "({0})"]
-        SelectedObjectTypeName: bind SelectedOperation.Name
+      //  SelectedObjectName: bind Type set [StringFormat: "({0})"]
+        SelectedObjectTypeName: bind SelectedOperation.ImplementationType
         SelectedObject: bind SelectedOperationConfig set[
 		UpdateSourceTrigger: PropertyChanged]
       }
