@@ -99,7 +99,7 @@ UserControl
 			  ValidatesOnDataErrors: true]
 			  SelectedValuePath: "Id"
 			  DisplayMemberPath: "Name"
-			  SelectedValue: bind ScheduleId set [UpdateSourceTrigger: "PropertyChanged"]
+			  SelectedValue: bind ScheduleId set [UpdateSourceTrigger: PropertyChanged]
 			}
 		  }
 
@@ -124,7 +124,7 @@ UserControl
 			Width: "Auto"
 			Focusable: false
 			ScrollViewer.CanContentScroll: true
-			ItemsSource: bind TaskParameters set[UpdateSourceTrigger: Default
+			ItemsSource: bind TaskParameters set[UpdateSourceTrigger: PropertyChanged
 			ValidatesOnDataErrors: true]
 			ItemTemplate: DataTemplate {
 			
@@ -487,10 +487,11 @@ UserControl
 	  :true
 	  	Grid.Row: 3
 		"Add"}
-
+		
 	 PropertyGrid.PropertyGrid {
 	    BorderThickness: 0
 		 Grid.Row: 2
+		UpdateTextBoxSourceOnEnterKey: true
         ShowSearchBox: false
         HorizontalAlignment: Left
 		VerticalAlignment: Top

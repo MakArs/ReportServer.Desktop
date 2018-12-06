@@ -22,13 +22,13 @@ namespace ReportServer.Desktop.Entities
 
     public class DesktopOperation : ReactiveObject
     {
-        public int? Id { get; set; }
-        public int TaskId { get; set; }
-        public int Number { get; set; }
-        [Reactive]public string Name { get; set; }
-        public string ImplementationType { get; set; }
+        [Reactive] public int? Id { get; set; }
+        [Reactive] public int TaskId { get; set; }
+        [Reactive] public int Number { get; set; }
+        [Reactive] public string Name { get; set; }
+        [Reactive] public string ImplementationType { get; set; }
         [Reactive] public bool IsDefault { get; set; }
-        public string Config { get; set; }
+        [Reactive] public string Config { get; set; }
     }
 
     public class DesktopTaskInstance
@@ -70,9 +70,7 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string ConnectionString { get; set; }
 
-        [DisplayName("Table name")]
-        [Reactive]
-        public string TableName { get; set; }
+        [DisplayName("Table name")] [Reactive] public string TableName { get; set; }
 
         [DisplayName("Database operation timeout")]
         [DefaultValue(60)]
@@ -99,8 +97,7 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string ReportName { get; set; }
 
-        [Reactive]
-        public string Description { get; set; }
+        [Reactive] public string Description { get; set; }
 
         [DisplayName("Connection string")]
         [Reactive]

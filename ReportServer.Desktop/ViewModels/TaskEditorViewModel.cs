@@ -90,7 +90,7 @@ namespace ReportServer.Desktop.ViewModels
             implementationTypes = new SourceList<string>();
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty, tvm => tvm.IsValid,
-                (isd, isv) => isd == true && isv == true);
+                (isd, isv) => isd && isv);
 
             SaveChangesCommand = ReactiveCommand.CreateFromTask(async () => await Save(),
                 canSave);
@@ -121,7 +121,7 @@ namespace ReportServer.Desktop.ViewModels
 
             AddFullTemplateCommand = ReactiveCommand.Create<ApiOperTemplate>(AddFullTemplate);
 
-            AddOperationCommand = ReactiveCommand.Create(AddOperation);
+            AddOperationCommand = ReactiveCommand.CreateFromTask(AddOperation);
 
             CreateOperConfigCommand = ReactiveCommand.CreateFromTask(CreateOperConfig);
 
@@ -168,8 +168,6 @@ namespace ReportServer.Desktop.ViewModels
                     SelectedOperationConfig = Activator.CreateInstance(operType);
                     mapper.Map(cachedService, SelectedOperationConfig);
                 });
-
-
         }
 
         private async Task Cancel()
@@ -184,8 +182,12 @@ namespace ReportServer.Desktop.ViewModels
             Close();
         }
 
-        private void AddOperation()
+        private async Task AddOperation()
         {
+            if (!await shell.ShowWarningAffirmativeDialogAsync
+                ("Add edited template to task?"))
+                return;
+
             SelectedOperation.Config = JsonConvert.SerializeObject(SelectedOperationConfig);
             SelectedOperation.Name = SelectedOperationName;
 
@@ -405,9 +407,10 @@ namespace ReportServer.Desktop.ViewModels
 
             BindedOpers = new ObservableCollectionExtended<DesktopOperation>();
 
-            bindedOpers.Connect().Bind(BindedOpers)
+            bindedOpers.Connect()
+                .Bind(BindedOpers)
                 .Subscribe();
-         
+
             PropertyChanged += Changed;
         } //init vm
 

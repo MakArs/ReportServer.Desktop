@@ -233,6 +233,7 @@ ResourceDictionary {
       }
     }
   }
+
   DataTemplate {
     DataType: RecepientEditorViewModel
     Grid {
