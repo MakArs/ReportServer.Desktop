@@ -205,6 +205,18 @@ namespace ReportServer.Desktop.Models
             client.Delete($"instances/{id}");
         }
 
+        public async Task<string> StopTaskByInstanceId(long taskInstanceId)
+        {
+            var apiAnswer = await client
+                .Send<string>(HttpMethod.Get, $"tasks/stop/{taskInstanceId}");
+            
+            var responseCode = apiAnswer.Response.StatusCode;
+
+            if (responseCode != HttpStatusCode.OK)
+                return "False";
+
+            return apiAnswer.Body;
+        }
 
         public void OpenPageInBrowser(string htmlPage) //maybe worker-model class for features?
         {

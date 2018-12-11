@@ -106,7 +106,7 @@ namespace ReportServer.Desktop.ViewModels
 
             RemoveOperationCommand = ReactiveCommand.Create<DesktopOperation>(to =>
             {
-                if (SelectedOperation.Id == to.Id)
+                if (SelectedOperation?.Id == to.Id)
                     ClearSelections();
                 bindedOpers.Remove(to);
             });

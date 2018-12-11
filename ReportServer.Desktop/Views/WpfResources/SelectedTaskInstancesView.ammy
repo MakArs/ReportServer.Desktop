@@ -1,4 +1,5 @@
 using ReportServer.Desktop.Views.WpfResources;
+using ReportServer.Desktop.Entities;
 
 UserControl "ReportServer.Desktop.Views.WpfResources.SelectedTaskInstancesView" {
   Resources: ResourceDictionary {
@@ -26,10 +27,26 @@ UserControl "ReportServer.Desktop.Views.WpfResources.SelectedTaskInstancesView" 
           Header: "Duration"
           Binding: "{Binding Duration, Converter={StaticResource IntMsToMinsConverter}}"
         }
-        DataGridTextColumn {
-          Header: "State"
-          Binding: bind State
-        }
+
+		DataGridTemplateColumn{
+			Header: "State"
+			DataGridTemplateColumn.CellTemplate: 
+			DataTemplate{
+			StackPanel { 
+				Orientation: Horizontal
+				Button { 
+				Command: "{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.StopTaskCommand}"
+				CommandParameter: bind Id
+				IsEnabled: true
+				Visibility: bind State
+				convert (InstanceState state)=>state==InstanceState.InProcess? Visibility.Visible
+			 : Visibility.Collapsed 
+				Margin: "2.5 2.5 10 2.5"
+				"Stop"}
+				TextBlock {Text: bind State }
+			}
+			}
+		}
       ]
     }
   }

@@ -41,6 +41,7 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand<string, Unit> OpenPage { get; set; }
         public ReactiveCommand<Unit, Unit> EditTaskCommand { get; set; }
         public ReactiveCommand<Unit, Unit> DeleteCommand { get; set; }
+        public ReactiveCommand<int, string> StopTaskCommand { get; set; }
 
         public TaskManagerViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
         {
@@ -79,6 +80,12 @@ namespace ReportServer.Desktop.ViewModels
             DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
                 await Delete());
 
+            StopTaskCommand = ReactiveCommand.CreateFromTask<int, string>(async par =>
+            {
+                var t= await this.cachedService.StopTaskByInstanceId(par);
+                LoadInstanceCompactsByTaskId(SelectedTask.Id);
+                return t;
+            });
 
             this.WhenAnyValue(s => s.SelectedTask)
                 .Where(x => x != null)

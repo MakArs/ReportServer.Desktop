@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DynamicData;
-using ReactiveUI;
 using ReportServer.Desktop.Entities;
 
 namespace ReportServer.Desktop.Interfaces
@@ -44,5 +43,6 @@ namespace ReportServer.Desktop.Interfaces
         void DeleteInstance(int id);
 
         void OpenPageInBrowser(string htmlPage);
+        Task<string> StopTaskByInstanceId(long taskInstanceId);
     }
 }
