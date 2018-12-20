@@ -151,7 +151,7 @@ namespace ReportServer.Desktop.Models
 
         public int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group)
         {
-            if (@group.Id == 0)
+            if (group.Id == 0)
                 return client.Post("recepientgroups/", group);
 
             client.Put($"recepientgroups/{group.Id}", group);

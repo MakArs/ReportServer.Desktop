@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using DynamicData;
+using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Views.WpfResources;
@@ -58,9 +58,9 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string PackageName { get; set; }
 
-        [DisplayName("Run if dataset is void")]
+        [DisplayName("Run if data package is void")]
         [Reactive]
-        public bool RunIfVoidDataSet { get; set; }
+        public bool RunIfVoidPackage { get; set; }
 
         [DisplayName("Create table if not exists")]
         [Reactive]
@@ -89,9 +89,9 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string PackageName { get; set; }
 
-        [DisplayName("Run if dataset is void")]
+        [DisplayName("Run if data package is void")]
         [Reactive]
-        public bool RunIfVoidDataSet { get; set; }
+        public bool RunIfVoidPackage { get; set; }
 
         [DisplayName("Report name")]
         [Reactive]
@@ -125,9 +125,9 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string PackageName { get; set; }
 
-        [DisplayName("Run if dataset is void")]
+        [DisplayName("Run if data package is void")]
         [Reactive]
-        public bool RunIfVoidDataSet { get; set; }
+        public bool RunIfVoidPackage { get; set; }
 
         [PropertyOrder(1)]
         [DisplayName("Html body")]
@@ -171,9 +171,9 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string PackageName { get; set; }
 
-        [DisplayName("Run if dataset is void")]
+        [DisplayName("Run if data package is void")]
         [Reactive]
-        public bool RunIfVoidDataSet { get; set; }
+        public bool RunIfVoidPackage { get; set; }
 
         [ItemsSource(typeof(TelegramChannelsSource))]
         [DisplayName("Telegram channel")]
@@ -207,7 +207,7 @@ namespace ReportServer.Desktop.Entities
 
         [DisplayName("Using columns")]
         [Description("Set here names of columns which will be used")]
-        public SourceList<string> ColumnList { get; set; }
+        public ObservableCollectionExtended<string> ColumnList { get; set; }
 
         [DisplayName("First data row")]
         [Description("First row in selected columns that will be read")]
@@ -246,6 +246,19 @@ namespace ReportServer.Desktop.Entities
         public int TimeOut { get; set; }
     }
 
+    public class CsvImporterConfig : IOperationConfig
+    {
+        [DisplayName("Package name")]
+        [Reactive]
+        public string PackageName { get; set; }
+
+        [DisplayName("File path")]
+        [Reactive]
+        public string FilePath { get; set; }
+
+        public int MaxRowCount;
+    }
+
     public class CustomDbImporterConfig : IOperationConfig
     {
     }
@@ -258,9 +271,9 @@ namespace ReportServer.Desktop.Entities
         public bool HasHtmlBody { get; set; }
 
 
-        [DisplayName("Run if dataset is void")]
+        [DisplayName("Run if data package is void")]
         [Reactive]
-        public bool RunIfVoidDataSet { get; set; }
+        public bool RunIfVoidPackage { get; set; }
 
         [PropertyOrder(2)]
         [DisplayName("Xlsx attachement")]
@@ -290,11 +303,11 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public int TelegramChannelId { get; set; }
 
-        [DisplayName("Run if dataset is void")]
+        [DisplayName("Run if data package is void")]
         [Reactive]
-        public bool RunIfVoidDataSet { get; set; }
+        public bool RunIfVoidPackage { get; set; }
     }
-
+    
     public enum OperMode : byte
     {
         Importer = 1,
