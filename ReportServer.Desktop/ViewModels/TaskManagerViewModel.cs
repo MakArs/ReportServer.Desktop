@@ -105,7 +105,7 @@ namespace ReportServer.Desktop.ViewModels
                 });
 
             this.WhenAnyValue(s => s.SelectedOperInstance)
-                .Subscribe(x =>
+                .Subscribe(async x =>
                 {
                     var data = new DesktopOperInstance();
 
@@ -116,9 +116,18 @@ namespace ReportServer.Desktop.ViewModels
 
                         data = mapper.Map<DesktopOperInstance>(fullInstance);
 
-                        if(fullInstance.DataSet!=null)
-                        data.DataSet = JsonConvert.SerializeObject(packageBuilder.GetPackageValues(
-                            OperationPackage.Parser.ParseFrom(fullInstance.DataSet)));
+                        if (fullInstance.DataSet != null)
+                        {
+                            try
+                            {
+                            data.DataSet = JsonConvert.SerializeObject(packageBuilder.GetPackageValues(
+                                OperationPackage.Parser.ParseFrom(fullInstance.DataSet)));
+                            }
+                            catch 
+                            {
+                              await  Shell.ShowMessageAsync("Exception occured during dataset decoding");
+                            }
+                        }
                     }
                     
                     SelectedInstanceData = x == null

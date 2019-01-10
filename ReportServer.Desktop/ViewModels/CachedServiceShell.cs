@@ -1,6 +1,9 @@
-﻿using System.Reactive;
+﻿using System;
+using System.Configuration;
+using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows;
+using Domain0.Api.Client;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
@@ -10,6 +13,7 @@ using ReportServer.Desktop.Models;
 using ReportServer.Desktop.Views;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
+using Application = System.Windows.Application;
 
 namespace ReportServer.Desktop.ViewModels
 {
@@ -17,15 +21,17 @@ namespace ReportServer.Desktop.ViewModels
     public class CachedServiceShell : Shell
     {
         private readonly ICachedService cachedService;
+        private readonly IAuthenticationContext authContext;
 
         public ReactiveCommand<Unit, Unit> RefreshCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateTaskCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateOperTemplateCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateScheduleCommand { get; set; }
 
-        public CachedServiceShell(ICachedService cachedService)
+        public CachedServiceShell(ICachedService cachedService, IAuthenticationContext context)
         {
             this.cachedService = cachedService;
+            authContext = context;
 
             RefreshCommand = ReactiveCommand.Create(this.cachedService.RefreshData);
 
@@ -52,26 +58,78 @@ namespace ReportServer.Desktop.ViewModels
                         ViewId = "Creating new operation template"
                     },
                     new UiShowOptions {Title = "Creating new operation template"}));
+        }
 
+        private async Task LoginDomain0()
+        {
+            var mainview = Application.Current.MainWindow as MetroWindow;
+
+            if (!await cachedService.Connect(ConfigurationManager.AppSettings["BaseServiceUrl"]))
+            {
+                await ShowMessageAsync("Cannot connect working service");
+                mainview.Close();
+            }
+
+            if (!authContext.IsLoggedIn)
+            {
+                var logintask = mainview.ShowLoginAsync(
+                    "Login",
+                    "Enter your login and password",
+                    new LoginDialogSettings
+                    {
+                        AffirmativeButtonText = "Login",
+                        NegativeButtonText = "Cancel",
+                        NegativeButtonVisibility = Visibility.Visible,
+                        UsernameWatermark = "phone(71231234567) or e-mail (example@example.example)",
+                        EnablePasswordPreview = true,
+                        RememberCheckBoxVisibility = Visibility.Visible,
+                    });
+
+                var loginData = await logintask;
+
+                if (loginData==null)
+                    Application.Current.MainWindow?.Close();
+
+                authContext.ShouldRemember = loginData.ShouldRemember;
+
+                if (long.TryParse(loginData.Username, out long phone))
+                {
+                    try
+                    {
+                        await authContext
+                            .LoginByPhone(phone, loginData.Password);
+                    }
+                    catch (Exception e)
+                    {
+                        await ShowMessageAsync(e.InnerException?.Message ?? e.Message);
+                    }
+                }
+
+                else
+                {
+                    try
+                    {
+                        await authContext
+                            .LoginByEmail(loginData.Username, loginData.Password);
+                    }
+                    catch (Exception e)
+                    {
+                        await ShowMessageAsync(e.InnerException?.Message ?? e.Message);
+                    }
+                }
+            }
         }
 
         public async Task InitCachedServiceAsync(int tries)
         {
             while (tries-- > 0)
             {
-                var mainview = Application.Current.MainWindow as MetroWindow;
+                await LoginDomain0();
 
-                var serviceUri = await mainview.ShowInputAsync(
-                    "Login",
-                    "Enter working Report service instance url",
-                    new MetroDialogSettings
-                    {
-                        DefaultText = "http://localhost:12345/",
-                        DefaultButtonFocus = MessageDialogResult.Affirmative
-                    });
-
-                if (!cachedService.Init(serviceUri))
+                if (!authContext.IsLoggedIn)
                     continue;
+
+                cachedService.Init(authContext.Token);
 
                 ShowView<TaskManagerView>(
                     options: new UiShowOptions {Title = "Task Manager", CanClose = false});

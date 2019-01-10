@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Domain0.Api.Client;
 using DynamicData;
 using Gerakul.HttpUtils.Core;
 using Gerakul.HttpUtils.Json;
@@ -18,6 +20,9 @@ namespace ReportServer.Desktop.Models
     public class CachedService : ICachedService
     {
         private ISimpleHttpClient client;
+        private readonly string baseApiPath = "/api/v2/";
+        private readonly string authScheme = "Bearer";
+        private string authToken;
 
         public SourceList<ApiOperTemplate> OperTemplates { get; set; }
         public SourceList<ApiRecepientGroup> RecepientGroups { get; set; }
@@ -28,7 +33,7 @@ namespace ReportServer.Desktop.Models
         public Dictionary<string, Type> DataImporters { get; set; }
         public Dictionary<string, Type> DataExporters { get; set; }
 
-        public CachedService()
+        public CachedService(IAuthenticationContext context)
         {
             OperTemplates = new SourceList<ApiOperTemplate>();
             RecepientGroups = new SourceList<ApiRecepientGroup>();
@@ -38,9 +43,25 @@ namespace ReportServer.Desktop.Models
             Operations = new SourceList<ApiOperation>();
         }
 
-        public bool Init(string serviceUri)
+        private Task AddAuthorization(HttpRequestMessage message)
         {
-            client = JsonHttpClient.Create(serviceUri + "/api/v2/");
+            message.Headers.Authorization =
+                new AuthenticationHeaderValue(authScheme, authToken);
+            
+            return Task.CompletedTask;
+        }
+
+        public async Task<bool> Connect(string serviceUri)
+        {
+            client = JsonHttpClient.Create(serviceUri + baseApiPath, AddAuthorization);
+            var result = await client.Send<string>(HttpMethod.Get, "/");
+
+            return result.Response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public  bool Init(string token)
+        {
+            authToken = token;
             try
             {
                 GetOperTemplates();
@@ -49,11 +70,11 @@ namespace ReportServer.Desktop.Models
             }
             catch (Exception)
             {
-                return true;
+                return false;
             }
         }
 
-        private void GetOperTemplates() 
+        private void GetOperTemplates()
         {
             DataImporters = client
                 .Get<Dictionary<string, string>>("opertemplates/registeredimporters/")
@@ -65,7 +86,7 @@ namespace ReportServer.Desktop.Models
                 .ToDictionary(pair => pair.Key,
                     pair => Type.GetType("ReportServer.Desktop.Entities." + pair.Value));
         }
-        
+
         #region RefreshLogics
 
         public void RefreshOperTemplates()
@@ -209,7 +230,7 @@ namespace ReportServer.Desktop.Models
         {
             var apiAnswer = await client
                 .Send<string>(HttpMethod.Get, $"tasks/stop/{taskInstanceId}");
-            
+
             var responseCode = apiAnswer.Response.StatusCode;
 
             if (responseCode != HttpStatusCode.OK)
@@ -237,7 +258,7 @@ namespace ReportServer.Desktop.Models
         {
             var task = Task.Factory.StartNew(() => client.Send<string>(HttpMethod.Get, path));
             task.Wait();
-            
+
             var responseCode = task.Result.Result.Response.StatusCode;
 
             if (responseCode != HttpStatusCode.OK)
@@ -281,7 +302,6 @@ namespace ReportServer.Desktop.Models
             if (responseCode != HttpStatusCode.OK)
                 throw new Exception($"Http return error {responseCode.ToString()}");
         }
-        
+
     }
 }
-//todo: baseaddress (config?)

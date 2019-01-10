@@ -256,7 +256,9 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string FilePath { get; set; }
 
-        public int MaxRowCount;
+        [ItemsSource(typeof(DelimitersSource))]
+        [Reactive]
+        public string Delimiter { get; set; }
     }
 
     public class CustomDbImporterConfig : IOperationConfig
@@ -327,5 +329,12 @@ namespace ReportServer.Desktop.Entities
         Success = 2,
         Failed = 3,
         Canceled = 4
+    }
+
+    public enum ServiceUserRole
+    {
+        Viewer,
+        Editor,
+        Developer
     }
 }

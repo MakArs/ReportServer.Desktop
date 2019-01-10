@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Autofac;
@@ -16,7 +17,7 @@ namespace ReportServer.Desktop.Views.WpfResources
 
     public class RecepGroupsSource : IItemsSource
     {
-        private SourceList<ApiRecepientGroup> groups { get; set; } =
+        private SourceList<ApiRecepientGroup> groups  =
             new SourceList<ApiRecepientGroup>();
 
         public static IContainer Container;
@@ -38,9 +39,44 @@ namespace ReportServer.Desktop.Views.WpfResources
         }
     }
 
+    public class DelimitersSource : IItemsSource
+    {
+        private SourceList<Delimiter> delimiters  =
+            new SourceList<Delimiter>();
+
+        private class Delimiter
+        {
+            public string Value;
+            public string Name;
+        }
+
+        public ItemCollection GetValues()
+        {
+            ItemCollection coll = new ItemCollection();
+
+            var delimitersList = new List<Delimiter>
+            {
+                new Delimiter {Value = ";", Name = "Semicolon"},
+                new Delimiter {Value = ",", Name = "Comma"},
+                // new Delimiter {Value = " ", Name = "Space"},
+                new Delimiter {Value = "\\t", Name = "Tabulation"},
+                new Delimiter {Value = "|", Name = "Pipe"},
+                new Delimiter {Value = ".", Name = "Dot"},
+                new Delimiter {Value = "\\r\\n", Name = "New line"},
+            };
+
+            delimiters.ClearAndAddRange(delimitersList);
+
+            foreach (var delim in delimitersList)
+                coll.Add(delim.Value,delim.Name);
+
+            return coll;
+        }
+    }
+
     public class TelegramChannelsSource : IItemsSource
     {
-        private SourceList<ApiTelegramChannel> channels { get; set; } =
+        private SourceList<ApiTelegramChannel> channels  =
             new SourceList<ApiTelegramChannel>();
 
         public static IContainer Container;

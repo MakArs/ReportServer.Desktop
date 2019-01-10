@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net.Http;
 using Autofac;
 using AutoMapper;
+using Domain0.Api.Client;
 using Monik.Client;
 using Monik.Common;
 using Newtonsoft.Json;
@@ -35,6 +37,16 @@ namespace ReportServer.Desktop
             builder
                 .RegisterType<CachedService>()
                 .As<ICachedService>()
+                .SingleInstance();
+
+            var context=  new AuthenticationContext(new Domain0ClientScope(new HttpClient()))
+            {
+                HostUrl = ConfigurationManager.AppSettings["BaseAuthUrl"],
+                ShouldRemember = true
+            };
+
+            builder.RegisterInstance(context)
+                .As<IAuthenticationContext>()
                 .SingleInstance();
 
             ConfigureView<TaskManagerViewModel, TaskManagerView>(builder);

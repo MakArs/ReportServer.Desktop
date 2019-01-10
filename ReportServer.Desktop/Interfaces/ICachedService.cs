@@ -17,7 +17,8 @@ namespace ReportServer.Desktop.Interfaces
         Dictionary<string, Type> DataImporters { get; set; }
         Dictionary<string, Type> DataExporters { get; set; }
 
-        bool Init(string serviceUri);
+        Task<bool> Connect(string serviceUri);
+        bool Init(string token);
         void RefreshOperTemplates();
         void RefreshRecepientGroups();
         void RefreshTelegramChannels();

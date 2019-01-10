@@ -60,33 +60,33 @@ namespace ReportServer.Desktop.Entities
         {
             var allContent = new List<DataSetContent>();
 
-            foreach (var set in package.DataSets)
-            {
-                var setHeaders = set.Columns.Select(col => col.Name).ToList();
-                var setRows = new List<List<object>>();
-
-                foreach (var row in set.Rows)
+                foreach (var set in package.DataSets)
                 {
-                    var rowValues = new List<object>();
+                    var setHeaders = set.Columns.Select(col => col.Name).ToList();
+                    var setRows = new List<List<object>>();
 
-                    for (int i = 0; i < set.Columns.Count; i++)
+                    foreach (var row in set.Rows)
                     {
-                        var colInfo = set.Columns[i];
-                        var varValue = row.Values[i];
+                        var rowValues = new List<object>();
 
-                        rowValues.Add(GetFromVariantValue(colInfo, varValue));
+                        for (int i = 0; i < set.Columns.Count; i++)
+                        {
+                            var colInfo = set.Columns[i];
+                            var varValue = row.Values[i];
+
+                            rowValues.Add(GetFromVariantValue(colInfo, varValue));
+                        }
+
+                        setRows.Add(rowValues);
                     }
 
-                    setRows.Add(rowValues);
+                    allContent.Add(new DataSetContent
+                    {
+                        Headers = setHeaders,
+                        Rows = setRows,
+                        Name = set.Name
+                    });
                 }
-
-                allContent.Add(new DataSetContent
-                {
-                    Headers = setHeaders,
-                    Rows = setRows,
-                    Name = set.Name
-                });
-            }
 
             return allContent;
         }
