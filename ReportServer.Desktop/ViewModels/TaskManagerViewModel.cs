@@ -78,14 +78,15 @@ namespace ReportServer.Desktop.ViewModels
             });
 
             DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
-                await Delete());
+                await Delete(), Shell.CanEdit);
+
 
             StopTaskCommand = ReactiveCommand.CreateFromTask<int, string>(async par =>
             {
                 var t= await this.cachedService.StopTaskByInstanceId(par);
                 LoadInstanceCompactsByTaskId(SelectedTask.Id);
                 return t;
-            });
+            }, Shell.CanEdit);
 
             this.WhenAnyValue(s => s.SelectedTask)
                 .Where(x => x != null)
@@ -195,24 +196,31 @@ namespace ReportServer.Desktop.ViewModels
                     "Shell.RefreshCommand", this)
                 .SetHotKey(ModifierKeys.None, Key.F5);
 
-            Shell.AddGlobalCommand("Edit", "New task",
-                    "Shell.CreateTaskCommand", this)
-                .SetHotKey(ModifierKeys.Control, Key.T);
+            if (Shell.Role == ServiceUserRole.Editor)
+            {
+                Shell.AddGlobalCommand("Edit", "New task",
+                        "Shell.CreateTaskCommand", this)
+                    .SetHotKey(ModifierKeys.Control, Key.T);
 
-            Shell.AddGlobalCommand("Edit", "New operation template",
-                    "Shell.CreateOperTemplateCommand", this)
-                .SetHotKey(ModifierKeys.Control, Key.O);
+                Shell.AddGlobalCommand("Edit", "New operation template",
+                        "Shell.CreateOperTemplateCommand", this)
+                    .SetHotKey(ModifierKeys.Control, Key.O);
 
-            Shell.AddGlobalCommand("Edit", "New schedule",
-                    "Shell.CreateScheduleCommand", this)
-                .SetHotKey(ModifierKeys.Control, Key.H);
+                Shell.AddGlobalCommand("Edit", "New schedule",
+                        "Shell.CreateScheduleCommand", this)
+                    .SetHotKey(ModifierKeys.Control, Key.H);
 
-            Shell.AddVMCommand("Edit", "Change task",
-                "EditTaskCommand", this);
+                Shell.AddVMCommand("Edit", "Change task",
+                    "EditTaskCommand", this);
 
-            Shell.AddVMCommand("File", "Delete",
-                    "DeleteCommand", this)
-                .SetHotKey(ModifierKeys.None, Key.Delete);
+                Shell.AddVMCommand("File", "Delete",
+                        "DeleteCommand", this)
+                    .SetHotKey(ModifierKeys.None, Key.Delete);
+            }
+
+            if (Shell.Role == ServiceUserRole.Viewer)
+                Shell.AddVMCommand("View", "View task",
+                    "EditTaskCommand", this);
 
             this.WhenAnyObservable(tmvm => tmvm.cachedService.Tasks.CountChanged)
                 .Subscribe(_ => RefreshTaskList());

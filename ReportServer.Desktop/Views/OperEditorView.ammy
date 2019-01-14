@@ -2,6 +2,7 @@ using MahApps.Metro.Controls.Dialogs;
 using ReportServer.Desktop.Views.WpfResources;
 using ReportServer.Desktop.Entities;
 using Xceed.Wpf.Toolkit;
+using ReportServer.Desktop.Entities;
 
 UserControl "ReportServer.Desktop.Views.OperEditorView" {
   "xmlns:entities": "clr-namespace:ReportServer.Desktop.Entities"
@@ -39,6 +40,8 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
 
 		@DefaultComboBox(bind  from  $resource OperModeEnum,bind Mode)
 		{
+		IsEnabled: bind Shell.Role
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor
           Grid.Column: "1"
           Width: "250"}
 		
@@ -47,6 +50,8 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
 
 		@DefaultComboBox(bind OperTemplates,bind ImplementationType)
 		{
+		IsEnabled: bind Shell.Role
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor
           Grid.Column: "1"
 		  Grid.Row: "1"
           Width: "250"}
@@ -55,6 +60,8 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
 
 		@InputTextBox("Name")
 		{		
+		IsEnabled: bind Shell.Role
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor
           Grid.Column: "1"
           Grid.Row: "2"
           Margin: "3"
@@ -94,6 +101,9 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
           Grid.Column: "1"
           Orientation: "Horizontal"
           Button {
+          Visibility:  bind Shell.Role
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
+			 : Visibility.Collapsed 
             Command: bind SaveChangesCommand
             IsEnabled: bind IsValid
             Height: "25"

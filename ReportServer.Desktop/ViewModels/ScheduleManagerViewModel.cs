@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CronExpressionDescriptor;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -42,22 +43,26 @@ namespace ReportServer.Desktop.ViewModels
                 Shell.ShowView<CronEditorView>(new CronEditorRequest
                         {Schedule = SelectedSchedule, ViewId = fullName},
                     new UiShowOptions {Title = fullName});
-            });
+            }, Shell.CanEdit);
 
             DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
-                await Delete());
+                await Delete(), Shell.CanEdit);
         }
 
         public void Initialize(ViewRequest viewRequest)
         {
-
-            Shell.AddVMCommand("Edit", "Change schedule",
-                "EditScheduleCommand", this);
-            Shell.AddVMCommand("Edit", "Delete sched",
-                    "DeleteCommand", this)
-                .SetHotKey(ModifierKeys.None, Key.Delete);
+            if (Shell.Role == ServiceUserRole.Editor)
+            {
+                Shell.AddVMCommand("Edit", "Change schedule",
+                    "EditScheduleCommand", this);
+                Shell.AddVMCommand("Edit", "Delete sched",
+                        "DeleteCommand", this)
+                    .SetHotKey(ModifierKeys.None, Key.Delete);
+            }
 
             Schedules = cachedService.Schedules.SpawnCollection();
+            Schedules.Select(sched => ExpressionDescriptor.GetDescription(sched.Schedule))
+                .ToList(); //some kind of magic for schedule description vizualisation
         }
 
         public async Task Delete()

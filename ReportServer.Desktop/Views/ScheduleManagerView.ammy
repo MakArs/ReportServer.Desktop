@@ -1,4 +1,6 @@
 using MahApps.Metro.Controls;
+using ReportServer.Desktop.Entities;
+using CronExpressionDescriptor;
 
 UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
   Resources: ResourceDictionary {
@@ -22,6 +24,9 @@ UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
         Margin: "2 2 0 2"
       }
       Button {
+         Visibility: bind Shell.Role
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
+			 : Visibility.Collapsed 
         Padding: "5"
         Command: "{Binding Shell.CreateScheduleCommand}"
         "Add new schedule"
@@ -55,8 +60,13 @@ UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
           Binding: "{Binding Name}"
         }
         DataGridTextColumn {
-          Header: "Schedule"
+          Header: "Schedule cron expression"
           Binding: "{Binding Schedule}"
+        }
+		 DataGridTextColumn {
+          Header: "Schedule"
+		  Binding: bind Schedule
+		  convert (string sched) => ExpressionDescriptor.GetDescription(sched)
         }
       ]
     }

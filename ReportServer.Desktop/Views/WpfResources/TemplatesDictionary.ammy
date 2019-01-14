@@ -17,6 +17,8 @@ ResourceDictionary {
   OperInstancesView Key="OperInstancesView" {  }
   SelectedInstanceFullView Key="SelectedInstanceFullView" {  }
   SelectedTaskInstancesView Key="SelectedTaskInstancesView" {  }
+  TaskIdAndRoleToVisMultiConverter Key="TaskIdAndRoleToVisMultiConverter" {  }
+  InstanceStateAndRoleToVisMultiConverter Key="InstanceStateAndRoleToVisMultiConverter" {  }
   TaskListView Key="TaskListView" {  }
   PackIconModern  Key="CursorHand" { Kind: "CursorHand" }
   ObjectDataProvider Key="ParsingEnum" {

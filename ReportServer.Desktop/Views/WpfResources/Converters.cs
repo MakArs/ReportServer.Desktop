@@ -26,6 +26,42 @@ namespace ReportServer.Desktop.Views.WpfResources
         }
     }
 
+    public abstract class BaseMultiConverter : MarkupExtension, IMultiValueConverter
+    {
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+
+        public abstract object Convert(object[] values, Type targetType, object parameter, CultureInfo culture);
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class TaskIdAndRoleToVisMultiConverter : BaseMultiConverter
+    {
+        public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+          return (ServiceUserRole) values[0] == ServiceUserRole.Editor && (int?) values[1] > 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+    }
+
+    public class InstanceStateAndRoleToVisMultiConverter : BaseMultiConverter
+    {
+        public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (ServiceUserRole) values[0] == ServiceUserRole.Editor &&
+                   (InstanceState) values[1] == InstanceState.InProcess
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+    }
+
     public class IntMsToMinsConverter : BaseConverter
     {
         public override object Convert(object value, Type targetType, object parameter,

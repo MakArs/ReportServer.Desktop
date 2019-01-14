@@ -6,7 +6,6 @@ using System.Reactive;
 using System.Windows.Input;
 using Autofac;
 using AutoMapper;
-using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -20,7 +19,7 @@ namespace ReportServer.Desktop.ViewModels
     public class RecepientManagerViewModel : ViewModelBase, IInitializableViewModel
     {
         private readonly ICachedService cachedService;
-        private readonly IShell shell;
+        public CachedServiceShell Shell { get; }
 
         public ReadOnlyObservableCollection<ApiRecepientGroup> RecepientGroups { get; set; }
         [Reactive] public ApiRecepientGroup SelectedGroup { get; set; }
@@ -35,41 +34,43 @@ namespace ReportServer.Desktop.ViewModels
         {
             CanClose = false;
             this.cachedService = cachedService;
-            this.shell = shell;
+            Shell = shell as CachedServiceShell;
 
             CreateGroupCommand = ReactiveCommand.Create(() =>
             {
-                EditorViewModel = this.shell.Container.Resolve<RecepientEditorViewModel>(
+                EditorViewModel = Shell.Container.Resolve<RecepientEditorViewModel>(
                     new NamedParameter("group", new ApiRecepientGroup()));
-            });
+            }, Shell.CanEdit);
 
             EditGroupCommand = ReactiveCommand.Create(() =>
             {
-                EditorViewModel = this.shell.Container.Resolve<RecepientEditorViewModel>(
+                EditorViewModel = Shell.Container.Resolve<RecepientEditorViewModel>(
                     new NamedParameter("group", SelectedGroup));
-            });
+            }, Shell.CanEdit);
 
             SaveChangesCommand = ReactiveCommand.Create(() =>
             {
                 if (EditorViewModel == null || EditorViewModel.IsOpened == false)
                     return;
                 EditorViewModel.Save();
-            });
+            }, Shell.CanEdit);
         }
 
         public void Initialize(ViewRequest viewRequest)
         {
-            shell.AddVMCommand("File", "Save",
-                    "SaveChangesCommand", this)
-                .SetHotKey(ModifierKeys.Control, Key.S);
+            if (Shell.Role == ServiceUserRole.Editor)
+            {
+                Shell.AddVMCommand("File", "Save",
+                        "SaveChangesCommand", this)
+                    .SetHotKey(ModifierKeys.Control, Key.S);
 
-            shell.AddVMCommand("Edit", "Change recepient group",
-                "EditGroupCommand", this);
+                Shell.AddVMCommand("Edit", "Change recepient group",
+                    "EditGroupCommand", this);
+            }
 
             RecepientGroups = cachedService.RecepientGroups.SpawnCollection();
         }
     }
-
 
     public class RecepientEditorViewModel : ViewModelBase
     {

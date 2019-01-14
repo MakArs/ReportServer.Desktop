@@ -30,8 +30,8 @@ namespace ReportServer.Desktop.ViewModels
     {
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
-        private readonly CachedServiceShell shell;
 
+        public CachedServiceShell Shell { get; }
         public int Id { get; set; }
         [Reactive] public string Name { get; set; }
         [Reactive] public int? ScheduleId { get; set; }
@@ -80,7 +80,7 @@ namespace ReportServer.Desktop.ViewModels
             this.mapper = mapper;
             validator = new TaskEditorValidator();
             IsValid = true;
-            this.shell = shell as CachedServiceShell;
+            Shell = shell as CachedServiceShell;
 
             taskParameters = new SourceList<TaskParameter>();
 
@@ -90,7 +90,7 @@ namespace ReportServer.Desktop.ViewModels
             implementationTypes = new SourceList<string>();
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty, tvm => tvm.IsValid,
-                (isd, isv) => isd && isv);
+                (isd, isv) => isd && isv).Concat(Shell.CanEdit);
 
             SaveChangesCommand = ReactiveCommand.CreateFromTask(async () => await Save(),
                 canSave);
@@ -109,27 +109,27 @@ namespace ReportServer.Desktop.ViewModels
                 if (SelectedOperation?.Id == to.Id)
                     ClearSelections();
                 bindedOpers.Remove(to);
-            });
+            }, Shell.CanEdit);
 
             RemoveParameterCommand = ReactiveCommand
-                .Create<TaskParameter>(par => taskParameters.Remove(par));
+                .Create<TaskParameter>(par => taskParameters.Remove(par), Shell.CanEdit);
 
             AddParameterCommand = ReactiveCommand.Create(() => taskParameters.Add(new TaskParameter
             {
                 Name = "@RepPar"
-            }));
+            }), Shell.CanEdit);
 
-            AddFullTemplateCommand = ReactiveCommand.Create<ApiOperTemplate>(AddFullTemplate);
+            AddFullTemplateCommand = ReactiveCommand.Create<ApiOperTemplate>(AddFullTemplate, Shell.CanEdit);
 
-            AddOperationCommand = ReactiveCommand.CreateFromTask(AddOperation);
+            AddOperationCommand = ReactiveCommand.CreateFromTask(AddOperation, Shell.CanEdit);
 
-            CreateOperConfigCommand = ReactiveCommand.CreateFromTask(CreateOperConfig);
+            CreateOperConfigCommand = ReactiveCommand.CreateFromTask(CreateOperConfig, Shell.CanEdit);
 
-            OpenTemplatesListCommand = ReactiveCommand.CreateFromTask(OpenTemplatesList);
+            OpenTemplatesListCommand = ReactiveCommand.CreateFromTask(OpenTemplatesList, Shell.CanEdit);
 
-            CloseTemplatesListCommand = ReactiveCommand.Create(() => { TemplatesListOpened = false; });
+            CloseTemplatesListCommand = ReactiveCommand.Create(() => { TemplatesListOpened = false; }, Shell.CanEdit);
 
-            SelectTemplateCommand = ReactiveCommand.Create<ApiOperTemplate>(SelectTemplate);
+            SelectTemplateCommand = ReactiveCommand.Create<ApiOperTemplate>(SelectTemplate, Shell.CanEdit);
 
             SelectOperationCommand = ReactiveCommand.CreateFromTask<DesktopOperation>
                 (SelectOperation);
@@ -174,7 +174,7 @@ namespace ReportServer.Desktop.ViewModels
         {
             if (IsDirty)
             {
-                if (!await shell.ShowWarningAffirmativeDialogAsync
+                if (!await Shell.ShowWarningAffirmativeDialogAsync
                     ("All unsaved changes will be lost. Close window?"))
                     return;
             }
@@ -184,7 +184,7 @@ namespace ReportServer.Desktop.ViewModels
 
         private async Task AddOperation()
         {
-            if (!await shell.ShowWarningAffirmativeDialogAsync
+            if (!await Shell.ShowWarningAffirmativeDialogAsync
                 ("Add edited template to task?"))
                 return;
 
@@ -216,7 +216,7 @@ namespace ReportServer.Desktop.ViewModels
         {
             if (SelectedOperationConfig != null)
             {
-                if (!await shell.ShowWarningAffirmativeDialogAsync
+                if (!await Shell.ShowWarningAffirmativeDialogAsync
                     ("All unsaved operation configuration changes will be lost. Close window?"))
                     return;
             }
@@ -249,9 +249,9 @@ namespace ReportServer.Desktop.ViewModels
 
         private async Task CreateOperConfig()
         {
-            if (SelectedOperationConfig != null)
+            if (SelectedOperationConfig != null && Shell.Role == ServiceUserRole.Editor)
             {
-                if (!await shell.ShowWarningAffirmativeDialogAsync
+                if (!await Shell.ShowWarningAffirmativeDialogAsync
                     ("All unsaved operation configuration changes will be lost. Close window?"))
                     return;
             }
@@ -271,11 +271,10 @@ namespace ReportServer.Desktop.ViewModels
 
         private async Task OpenTemplatesList()
         {
-            if (SelectedOperationConfig != null)
+            if (SelectedOperationConfig != null && Shell.Role == ServiceUserRole.Editor)
             {
-                if (!await shell.ShowWarningAffirmativeDialogAsync
+                if (!await Shell.ShowWarningAffirmativeDialogAsync
                     ("All unsaved operation configuration changes will be lost. Close window?"))
-
                     return;
             }
 
@@ -303,15 +302,18 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
-            shell.AddVMCommand("File", "Save",
-                    "SaveChangesCommand", this)
-                .SetHotKey(ModifierKeys.Control, Key.S);
+            if (Shell.Role == ServiceUserRole.Editor)
+            {
+                Shell.AddVMCommand("File", "Save",
+                        "SaveChangesCommand", this)
+                    .SetHotKey(ModifierKeys.Control, Key.S);
 
-            shell.AddVMCommand("Edit", "Add operation from existing templates",
-                "OpenTemplatesListCommand", this);
+                Shell.AddVMCommand("Edit", "Add operation from existing templates",
+                    "OpenTemplatesListCommand", this);
 
-            shell.AddVMCommand("Edit", "Add new operation",
-                "CreateOperConfigCommand", this);
+                Shell.AddVMCommand("Edit", "Add new operation",
+                    "CreateOperConfigCommand", this);
+            }
 
             Schedules = cachedService.Schedules.SpawnCollection();
 
@@ -348,7 +350,7 @@ namespace ReportServer.Desktop.ViewModels
 
             void Changed(object sender, PropertyChangedEventArgs e)
             {
-                if (IsDirty || e.PropertyName == "SelectedOperation") return;
+                if (Shell.Role == ServiceUserRole.Viewer || IsDirty || e.PropertyName == "SelectedOperation") return;
                 IsDirty = true;
                 Title += '*';
             }
@@ -418,7 +420,7 @@ namespace ReportServer.Desktop.ViewModels
         {
             if (!IsValid || !IsDirty) return;
 
-            if (!await shell.ShowWarningAffirmativeDialogAsync(Id > 0
+            if (!await Shell.ShowWarningAffirmativeDialogAsync(Id > 0
                 ? "Save these task settings?"
                 : "Create this task?"))
                 return;
@@ -464,3 +466,10 @@ namespace ReportServer.Desktop.ViewModels
         }
     }
 }
+
+//@ContentLabel("Schedule","0","1","0")
+
+//Visibility:  bind Shell.Role
+
+//convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
+//: Visibility.Collapsed 

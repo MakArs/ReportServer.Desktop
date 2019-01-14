@@ -1,4 +1,5 @@
 using System;
+using ReportServer.Desktop.Entities;
 
 UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
   "xmlns:sys": "clr-namespace:System;assembly=mscorlib"
@@ -22,6 +23,9 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
         Margin: "2 2 0 2"
       }
       Button {
+      Visibility: bind Shell.Role
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
+			 : Visibility.Collapsed 
         Padding: "5"
         Command: bind Shell.CreateTaskCommand
         "Add new task"

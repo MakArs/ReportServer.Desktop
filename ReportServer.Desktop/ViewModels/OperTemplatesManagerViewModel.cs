@@ -1,9 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
@@ -45,16 +43,22 @@ namespace ReportServer.Desktop.ViewModels
             });
 
             DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
-                await Delete());
+                await Delete(), Shell.CanEdit);
         }
 
         public void Initialize(ViewRequest viewRequest)
         {
-            Shell.AddVMCommand("Edit", "Delete optempl",
-                    "DeleteCommand", this)
-                .SetHotKey(ModifierKeys.None, Key.Delete);
+            if (Shell.Role == ServiceUserRole.Editor)
+            {
+                Shell.AddVMCommand("Edit", "Delete optempl",
+                        "DeleteCommand", this)
+                    .SetHotKey(ModifierKeys.None, Key.Delete);
 
-            Shell.AddVMCommand("Edit", "Change oper template",
+                Shell.AddVMCommand("Edit", "Change oper template",
+                    "EditOperCommand", this);
+            }
+
+            if (Shell.Role == ServiceUserRole.Viewer) Shell.AddVMCommand("View", "View oper template",
                 "EditOperCommand", this);
 
             OperTemplates = cachedService.OperTemplates.SpawnCollection();

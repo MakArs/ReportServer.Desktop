@@ -25,7 +25,7 @@ namespace ReportServer.Desktop.ViewModels
     {
         private readonly ICachedService cachedService;
         private readonly IMapper mapper;
-        private readonly CachedServiceShell shell;
+        public CachedServiceShell Shell { get; }
 
         private Dictionary<string, Type> DataImporters { get; set; }
         private Dictionary<string, Type> DataExporters { get; set; }
@@ -46,7 +46,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public OperEditorViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
         {
-            this.shell = shell as CachedServiceShell;
+            Shell = shell as CachedServiceShell;
             this.cachedService = cachedService;
             this.mapper = mapper;
             IsValid = true;
@@ -55,7 +55,7 @@ namespace ReportServer.Desktop.ViewModels
             var operTemplates = new SourceList<string>();
 
             var canSave = this.WhenAnyValue(tvm => tvm.IsDirty,
-                isd => isd == true);
+                isd => isd == true).Concat(Shell.CanEdit);
 
             SaveChangesCommand = ReactiveCommand.CreateFromTask(async () => await Save(),
                 canSave);
@@ -64,7 +64,7 @@ namespace ReportServer.Desktop.ViewModels
             {
                 if (IsDirty)
                 {
-                    if (!await this.shell.ShowWarningAffirmativeDialogAsync
+                    if (!await Shell.ShowWarningAffirmativeDialogAsync
                         ("All unsaved changes will be lost. Close window?"))
                         return;
                 }
@@ -105,13 +105,14 @@ namespace ReportServer.Desktop.ViewModels
 
         public void Initialize(ViewRequest viewRequest)
         {
-            shell.AddVMCommand("File", "Save",
+            if (Shell.Role == ServiceUserRole.Editor)
+                Shell.AddVMCommand("File", "Save",
                     "SaveChangesCommand", this)
                 .SetHotKey(ModifierKeys.Control, Key.S);
 
             void Changed(object sender, PropertyChangedEventArgs e)
             {
-                if (IsDirty) return;
+                if (IsDirty|| Shell.Role == ServiceUserRole.Viewer) return;
                 IsDirty = true;
                 Title += '*';
             }
@@ -152,7 +153,7 @@ namespace ReportServer.Desktop.ViewModels
         {
             if (!IsValid || !IsDirty) return;
 
-            if (!await shell.ShowWarningAffirmativeDialogAsync(Id > 0
+            if (!await Shell.ShowWarningAffirmativeDialogAsync(Id > 0
                 ? "Save these operation parameters?"
                 : "Create this operation?"))
                 return;

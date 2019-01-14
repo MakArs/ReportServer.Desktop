@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using ReportServer.Desktop.Entities;
 
 UserControl "ReportServer.Desktop.Views.OperTemplatesManagerView" {
   Resources: ResourceDictionary {
@@ -24,7 +25,9 @@ UserControl "ReportServer.Desktop.Views.OperTemplatesManagerView" {
       }
 	  
       Button {
-      
+      Visibility: bind Shell.Role
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
+			 : Visibility.Collapsed 
         Padding: "5"
         Command: bind Shell.CreateOperTemplateCommand
         "Add new operation template"

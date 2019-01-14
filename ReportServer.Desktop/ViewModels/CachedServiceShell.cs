@@ -7,6 +7,7 @@ using Domain0.Api.Client;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
@@ -23,6 +24,8 @@ namespace ReportServer.Desktop.ViewModels
         private readonly ICachedService cachedService;
         private readonly IAuthenticationContext authContext;
 
+        [Reactive] public ServiceUserRole Role { get; set; }
+        public IObservable<bool> CanEdit;
         public ReactiveCommand<Unit, Unit> RefreshCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateTaskCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateOperTemplateCommand { get; set; }
@@ -35,13 +38,15 @@ namespace ReportServer.Desktop.ViewModels
 
             RefreshCommand = ReactiveCommand.Create(this.cachedService.RefreshData);
 
+            CanEdit = this.WhenAnyValue(shl => shl.Role, role => role == ServiceUserRole.Editor);
+
             CreateTaskCommand = ReactiveCommand.Create(() =>
                 ShowView<TaskEditorView>(new TaskEditorRequest
                     {
                         ViewId = "Creating new Task",
                         Task = new ApiTask {Id = 0}
                     },
-                    new UiShowOptions {Title = "Creating new Task"}));
+                    new UiShowOptions {Title = "Creating new Task"}), CanEdit);
 
             CreateScheduleCommand = ReactiveCommand.Create(() =>
                 ShowView<CronEditorView>(new CronEditorRequest
@@ -49,7 +54,7 @@ namespace ReportServer.Desktop.ViewModels
                         ViewId = "Creating new Schedule",
                         Schedule = new ApiSchedule {Id = 0}
                     },
-                    new UiShowOptions {Title = "Creating new Schedule"}));
+                    new UiShowOptions {Title = "Creating new Schedule"}), CanEdit);
 
             CreateOperTemplateCommand = ReactiveCommand.Create(() =>
                 ShowView<OperEditorView>(new OperEditorRequest
@@ -57,7 +62,7 @@ namespace ReportServer.Desktop.ViewModels
                         Oper = new ApiOperTemplate {Id = 0},
                         ViewId = "Creating new operation template"
                     },
-                    new UiShowOptions {Title = "Creating new operation template"}));
+                    new UiShowOptions {Title = "Creating new operation template"}), CanEdit);
         }
 
         private async Task LoginDomain0()
@@ -129,7 +134,9 @@ namespace ReportServer.Desktop.ViewModels
                 if (!authContext.IsLoggedIn)
                     continue;
 
-                cachedService.Init(authContext.Token);
+               cachedService.Init(authContext.Token);
+
+               //Role = ServiceUserRole.Editor;
 
                 ShowView<TaskManagerView>(
                     options: new UiShowOptions {Title = "Task Manager", CanClose = false});
