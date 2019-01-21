@@ -35,7 +35,7 @@ namespace ReportServer.Desktop.Views.WpfResources
 
         public abstract object Convert(object[] values, Type targetType, object parameter, CultureInfo culture);
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public virtual object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
@@ -45,9 +45,16 @@ namespace ReportServer.Desktop.Views.WpfResources
     {
         public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-          return (ServiceUserRole) values[0] == ServiceUserRole.Editor && (int?) values[1] > 0
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            try
+            {
+                return (ServiceUserRole) values[0] == ServiceUserRole.Editor && (int?) values[1] > 0
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+            catch //todo: remove (second and other windows open with bug-2 arrays creating)
+            {
+                return Visibility.Collapsed;
+            }
         }
     }
 
@@ -59,6 +66,54 @@ namespace ReportServer.Desktop.Views.WpfResources
                    (InstanceState) values[1] == InstanceState.InProcess
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+        }
+    }
+
+    public class IsDefaultAndTextToTextBoxMultiConverter : BaseMultiConverter
+    {
+        public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values[0] is bool isChecked)
+                return isChecked ? "Default path" :
+                       values[1]?.ToString();
+
+            if (values[1] is bool isChecked2)
+                return isChecked2 ? "Default path" :
+                    values[0]?.ToString();
+            return null;
+        }
+
+        public override object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            if (targetTypes[0].GenericTypeArguments.First()==typeof(bool))
+            {
+                return value?.ToString() == "Default path" ? new object[] { true ,"Default path" } : new object[] { false, value?.ToString() };
+            }
+                return value?.ToString() == "Default path" ? new object[] { "Default path" ,true} : new object[]{ value?.ToString(), false};
+        }
+    }
+
+   public class InverseBoolConverter : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return !(bool)value;
+        }
+    }
+
+    public class BoolToDefaultTextConverter : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value ? "Default path" : Binding.DoNothing;
+        }
+    }
+
+    public class DefaultTextToBoolConverter : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value?.ToString() =="Default path";
         }
     }
 

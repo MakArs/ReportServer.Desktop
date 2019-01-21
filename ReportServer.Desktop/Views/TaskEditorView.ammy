@@ -247,9 +247,6 @@ UserControl
 			}
 
 		 ListView {
-		 IsEnabled:   bind Shell.Role
-		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? true
-			 : false
 			BorderThickness: "0"
 			Grid.Row: "5"
 			"dd:DragDrop.IsDragSource": "True"
@@ -276,11 +273,18 @@ UserControl
 					ColumnDefinition { Width: "Auto" }
 				  ]
 				  TextBlock {
+				     Visibility:  bind "DataContext.Shell.Role" from $ancestor<ListView>  
+			 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
+			 : Visibility.Collapsed 
 					Background: "White"
 					Margin: "10 0 0 0"
 					Text: "Use as default"
 				  }
-				  CheckBox { Grid.Column: "1",  IsChecked: bind IsDefault }
+				  CheckBox {
+				   Visibility:  bind "DataContext.Shell.Role" from $ancestor<ListView>  
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
+			 : Visibility.Collapsed 
+				  Grid.Column: "1",  IsChecked: bind IsDefault }
 				  TextBlock {
 					Padding: "5"
 					Grid.Column: "2"
@@ -294,7 +298,7 @@ UserControl
 							}]
 				  }
 				  Button {
-				   Visibility:  bind Shell.Role
+				    Visibility:  bind "DataContext.Shell.Role" from $ancestor<ListView>  
 		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
 			 : Visibility.Collapsed 
 					Grid.Column: "3"
@@ -303,7 +307,7 @@ UserControl
 					Margin: "2"
 				  }
 				  Button {
-				   Visibility:  bind Shell.Role
+				  Visibility:  bind "DataContext.Shell.Role" from $ancestor<ListView>  
 		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
 			 : Visibility.Collapsed 
 					Grid.Column: "4"

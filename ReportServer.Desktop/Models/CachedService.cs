@@ -54,12 +54,25 @@ namespace ReportServer.Desktop.Models
         public async Task<bool> Connect(string serviceUri)
         {
             client = JsonHttpClient.Create(serviceUri + baseApiPath, AddAuthorization);
-            var result = await client.Send<string>(HttpMethod.Get, "/");
 
-            return result.Response.StatusCode == HttpStatusCode.OK;
+            try
+            {
+                var result = await client.Send<string>(HttpMethod.Get, "/");
+
+                return result.Response.StatusCode == HttpStatusCode.OK;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public  bool Init(string token)
+        public async Task<ServiceUserRole> GetUserRole(string token)
+        {
+            return (await client.Send<ServiceUserRole>(HttpMethod.Get, $"/roles?token={token}")).Body; 
+        }
+
+        public bool Init(string token)
         {
             authToken = token;
             try

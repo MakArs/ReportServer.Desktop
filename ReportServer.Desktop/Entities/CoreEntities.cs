@@ -1,10 +1,19 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reactive.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Views.WpfResources;
+using Xceed.Wpf.Toolkit.PropertyGrid;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
+using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
+using Binding = System.Windows.Data.Binding;
+using CheckBox = System.Windows.Controls.CheckBox;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace ReportServer.Desktop.Entities
 {
@@ -51,8 +60,76 @@ namespace ReportServer.Desktop.Entities
         public string ErrorMessage { get; set; }
     }
 
+    public class PathEditor : ReactiveObject, ITypeEditor
+    {
+        [Reactive] public PropertyItem PathValue { get; set; }
+        [Reactive] public CheckBox CheckBoxIsDefault { get; set; }
+        [Reactive] public TextBox PathTextBox { get; set; }
+
+        public PathEditor()
+        {
+            this.WhenAnyValue(ped => ped.CheckBoxIsDefault.IsChecked)
+                .Where(val => val != null)
+                .Skip(1)
+                .Subscribe(val =>
+                    PathValue.Value = val == true ? "Default folder" : null);
+        }
+
+        public FrameworkElement ResolveEditor(PropertyItem propertyItem)
+        {
+            PathValue = propertyItem;
+            var grid = new Grid
+            {
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition {Width = new GridLength(3.5, GridUnitType.Star)},
+                    new ColumnDefinition {Width = new GridLength(2, GridUnitType.Star)},
+                    new ColumnDefinition {Width = new GridLength(0.5, GridUnitType.Star)}
+                },
+            };
+
+            PathTextBox = new TextBox
+            {
+                IsEnabled = true,
+                AcceptsReturn = false,
+                TextAlignment = TextAlignment.Left,
+                TextWrapping = TextWrapping.NoWrap,
+            };
+            Grid.SetColumn(PathTextBox, 0);
+            grid.Children.Add(PathTextBox);
+
+            TextBlock textBlockDefault = new TextBlock { Text = "Use default folder(for files from ssh)" };
+            Grid.SetColumn(textBlockDefault, 1);
+            grid.Children.Add(textBlockDefault);
+
+            CheckBoxIsDefault = new CheckBox();
+            Grid.SetColumn(CheckBoxIsDefault, 2);
+            grid.Children.Add(CheckBoxIsDefault);
+
+            var isDefaultBinding = new Binding("IsChecked")
+            {
+                Source = CheckBoxIsDefault,
+                Converter = new InverseBoolConverter()
+            };
+
+            BindingOperations.SetBinding(PathTextBox, UIElement.IsEnabledProperty, isDefaultBinding);
+
+            var textValueBinding =
+                new Binding("Value")
+                {
+                    Source = PathValue,
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
+            BindingOperations.SetBinding(PathTextBox, TextBox.TextProperty, textValueBinding);
+
+            return grid;
+        }
+    }
+
     public class DbExporterConfig : IOperationConfig
     {
+        [PropertyOrder(0)]
         [DisplayName("Package name")]
         [Description("Package which exporter needs for work")]
         [Reactive]
@@ -66,12 +143,17 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public bool CreateTable { get; set; }
 
+        [PropertyOrder(1)]
         [DisplayName("Connection string")]
         [Reactive]
         public string ConnectionString { get; set; }
 
-        [DisplayName("Table name")] [Reactive] public string TableName { get; set; }
+        [PropertyOrder(2)]
+        [DisplayName("Table name")]
+        [Reactive]
+        public string TableName { get; set; }
 
+        [PropertyOrder(3)]
         [DisplayName("Database operation timeout")]
         [DefaultValue(60)]
         [Reactive]
@@ -85,6 +167,7 @@ namespace ReportServer.Desktop.Entities
 
     public class B2BExporterConfig : IOperationConfig
     {
+        [PropertyOrder(0)]
         [DisplayName("Package name")]
         [Reactive]
         public string PackageName { get; set; }
@@ -93,24 +176,29 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public bool RunIfVoidPackage { get; set; }
 
+        [PropertyOrder(5)]
         [DisplayName("Report name")]
         [Reactive]
         public string ReportName { get; set; }
 
         [Reactive] public string Description { get; set; }
 
+        [PropertyOrder(1)]
         [DisplayName("Connection string")]
         [Reactive]
         public string ConnectionString { get; set; }
 
+        [PropertyOrder(2)]
         [DisplayName("Export table name")]
         [Reactive]
         public string ExportTableName { get; set; }
 
+        [PropertyOrder(3)]
         [DisplayName("Export instance table name")]
         [Reactive]
         public string ExportInstanceTableName { get; set; }
 
+        [PropertyOrder(4)]
         [DisplayName("Database operation timeout")]
         [DefaultValue(60)]
         [Reactive]
@@ -129,16 +217,17 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public bool RunIfVoidPackage { get; set; }
 
-        [PropertyOrder(1)]
+        [PropertyOrder(2)]
         [DisplayName("Html body")]
         [Reactive]
         public bool HasHtmlBody { get; set; }
 
-        [PropertyOrder(2)]
+        [PropertyOrder(3)]
         [DisplayName("Xlsx attachement")]
         [Reactive]
         public bool HasXlsxAttachment { get; set; }
 
+        [PropertyOrder(4)]
         [DisplayName("Json attachement")]
         [Reactive]
         public bool HasJsonAttachment { get; set; }
@@ -159,6 +248,7 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string ViewTemplate { get; set; }
 
+        [PropertyOrder(1)]
         [DisplayName("Report name")]
         [Description("Will be displayed in messages")]
         [Reactive]
@@ -167,6 +257,7 @@ namespace ReportServer.Desktop.Entities
 
     public class TelegramExporterConfig : IOperationConfig
     {
+        [PropertyOrder(0)]
         [DisplayName("Package name")]
         [Reactive]
         public string PackageName { get; set; }
@@ -180,6 +271,7 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public int TelegramChannelId { get; set; }
 
+        [PropertyOrder(1)]
         [DisplayName("Report name")]
         [Description("Will be displayed in messages")]
         [Reactive]
@@ -188,13 +280,21 @@ namespace ReportServer.Desktop.Entities
 
     public class ExcelImporterConfig : IOperationConfig
     {
+        [PropertyOrder(0)]
         [DisplayName("Package name")]
         [Reactive]
         public string PackageName { get; set; }
 
-        [DisplayName("Path to file")]
+        [PropertyOrder(1)]
+        [DisplayName("Path to file folder")]
         [Reactive]
-        public string FilePath { get; set; }
+        [Editor(typeof(PathEditor), typeof(PathEditor))]
+        public string FileFolder { get; set; }
+
+        [PropertyOrder(2)]
+        [DisplayName("File name")]
+        [Reactive]
+        public string FileName { get; set; }
 
         [DisplayName("Name of sheet in file")]
         [Reactive]
@@ -225,21 +325,49 @@ namespace ReportServer.Desktop.Entities
         public int MaxRowCount { get; set; }
     }
 
-    public class DbImporterConfig : IOperationConfig
+    public class SshImporterConfig : IOperationConfig
     {
+        [PropertyOrder(0)]
         [DisplayName("Package name")]
         [Reactive]
         public string PackageName { get; set; }
 
+        [DisplayName("Server host")]
+        [Reactive]
+        public string Host { get; set; }
+
+        [DisplayName("Server user login")]
+        [Reactive]
+        public string Login { get; set; }
+
+        [DisplayName("Server user password")]
+        [Reactive]
+        public string Password { get; set; }
+        
+        [DisplayName("File path at server")]
+        [Reactive]
+        public string FilePath { get; set; }
+    }
+    
+    public class DbImporterConfig : IOperationConfig
+    {
+        [PropertyOrder(0)]
+        [DisplayName("Package name")]
+        [Reactive]
+        public string PackageName { get; set; }
+
+        [PropertyOrder(1)]
         [DisplayName("Connection string")]
         [Reactive]
         public string ConnectionString { get; set; }
 
+        [PropertyOrder(2)]
         [DisplayName("Query")]
         [Editor(typeof(MultilineTextBoxEditor), typeof(MultilineTextBoxEditor))]
         [Reactive]
         public string Query { get; set; }
 
+        [PropertyOrder(3)]
         [DisplayName("Database operation timeout")]
         [DefaultValue(60)]
         [Reactive]
@@ -248,13 +376,21 @@ namespace ReportServer.Desktop.Entities
 
     public class CsvImporterConfig : IOperationConfig
     {
+        [PropertyOrder(0)]
         [DisplayName("Package name")]
         [Reactive]
         public string PackageName { get; set; }
 
-        [DisplayName("File path")]
+        [PropertyOrder(1)]
+        [DisplayName("Path to file folder")]
         [Reactive]
-        public string FilePath { get; set; }
+        [Editor(typeof(PathEditor), typeof(PathEditor))]
+        public string FileFolder { get; set; }
+
+        [PropertyOrder(2)]
+        [DisplayName("File name")]
+        [Reactive]
+        public string FileName { get; set; }
 
         [ItemsSource(typeof(DelimitersSource))]
         [Reactive]
@@ -267,21 +403,21 @@ namespace ReportServer.Desktop.Entities
 
     public class CustomEmailSenderConfig : IOperationConfig
     {
-        [PropertyOrder(1)]
+        [PropertyOrder(0)]
         [DisplayName("Html body")]
         [Reactive]
         public bool HasHtmlBody { get; set; }
-
 
         [DisplayName("Run if data package is void")]
         [Reactive]
         public bool RunIfVoidPackage { get; set; }
 
-        [PropertyOrder(2)]
+        [PropertyOrder(1)]
         [DisplayName("Xlsx attachement")]
         [Reactive]
         public bool HasXlsxAttachment { get; set; }
 
+        [PropertyOrder(2)]
         [DisplayName("Json attachement")]
         [Reactive]
         public bool HasJsonAttachment { get; set; }
@@ -335,6 +471,6 @@ namespace ReportServer.Desktop.Entities
     {
         Viewer,
         Editor,
-        Developer
+        NoRole
     }
 }

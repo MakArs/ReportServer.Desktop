@@ -134,10 +134,17 @@ namespace ReportServer.Desktop.ViewModels
                 if (!authContext.IsLoggedIn)
                     continue;
 
-               cachedService.Init(authContext.Token);
+                cachedService.Init(authContext.Token);
 
-               //Role = ServiceUserRole.Editor;
+                Role = await cachedService.GetUserRole(authContext.Token);
 
+                if (Role ==  ServiceUserRole.NoRole)
+                {
+                    authContext.Logout();
+                    await ShowMessageAsync("You have not enough rights for using service.Contact administrator to get it");
+                    continue;
+                }
+                
                 ShowView<TaskManagerView>(
                     options: new UiShowOptions {Title = "Task Manager", CanClose = false});
 

@@ -193,9 +193,6 @@ namespace ReportServer.Desktop.ViewModels
 
             if (SelectedOperation.Id == null)
             {
-                /*if u already added operation to binded list,
-                 next time redacting only config will be changed;
-                 */
                 SelectedOperation.Id = 0;
                 SelectedOperation.TaskId = Id;
                 if (!string.IsNullOrEmpty(Type)) SelectedOperation.ImplementationType = Type;
@@ -214,7 +211,7 @@ namespace ReportServer.Desktop.ViewModels
 
         private async Task SelectOperation(DesktopOperation operation)
         {
-            if (SelectedOperationConfig != null)
+            if (Shell.Role==ServiceUserRole.Editor && SelectedOperationConfig != null)
             {
                 if (!await Shell.ShowWarningAffirmativeDialogAsync
                     ("All unsaved operation configuration changes will be lost. Close window?"))
@@ -466,10 +463,3 @@ namespace ReportServer.Desktop.ViewModels
         }
     }
 }
-
-//@ContentLabel("Schedule","0","1","0")
-
-//Visibility:  bind Shell.Role
-
-//convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
-//: Visibility.Collapsed 
