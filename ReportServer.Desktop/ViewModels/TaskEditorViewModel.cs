@@ -44,9 +44,11 @@ namespace ReportServer.Desktop.ViewModels
 
         private readonly SourceList<DesktopOperation> bindedOpers;
         private readonly SourceList<TaskParameter> taskParameters;
-        public ObservableCollectionExtended<TaskParameter> TaskParameters { get; set; }
+        private readonly SourceList<string> incomingPackages;
         public ObservableCollectionExtended<DesktopOperation> BindedOpers { get; set; }
+        public ObservableCollectionExtended<TaskParameter> TaskParameters { get; set; }
         public ReadOnlyObservableCollection<ApiSchedule> Schedules { get; set; }
+        public ReadOnlyObservableCollection<string> IncomingPackages { get; set; }
         public ObservableCollectionExtended<ApiOperTemplate> OperTemplates { get; set; }
         private Dictionary<string, Type> DataImporters { get; set; }
         private Dictionary<string, Type> DataExporters { get; set; }
@@ -83,8 +85,9 @@ namespace ReportServer.Desktop.ViewModels
             Shell = shell as CachedServiceShell;
 
             taskParameters = new SourceList<TaskParameter>();
-
             bindedOpers = new SourceList<DesktopOperation>();
+            incomingPackages=new SourceList<string>();
+
             DataImporters = cachedService.DataImporters;
             DataExporters = cachedService.DataExporters;
             implementationTypes = new SourceList<string>();
@@ -168,6 +171,11 @@ namespace ReportServer.Desktop.ViewModels
                     SelectedOperationConfig = Activator.CreateInstance(operType);
                     mapper.Map(cachedService, SelectedOperationConfig);
                 });
+
+            this.WhenAnyValue(tvm => tvm.SelectedOperationConfig)
+                .Where(selop => selop!=null)
+                .Subscribe(conf =>
+               IncomingPackages = incomingPackages.SpawnCollection());
         }
 
         private async Task Cancel()
@@ -222,14 +230,9 @@ namespace ReportServer.Desktop.ViewModels
 
             SelectedOperation = operation;
 
-            var type = cachedService.DataExporters.ContainsKey(SelectedOperation.ImplementationType)
-                ? cachedService.DataExporters[SelectedOperation.ImplementationType]
-                : cachedService.DataImporters[SelectedOperation.ImplementationType];
-
             SelectedOperationName = SelectedOperation.Name;
 
-            SelectedOperationConfig = JsonConvert
-                .DeserializeObject(SelectedOperation.Config, type);
+            SelectedOperationConfig = DeserializeOperationConfigByType(SelectedOperation.ImplementationType, SelectedOperation.Config); 
         }
 
         private void ClearSelections()
@@ -283,18 +286,23 @@ namespace ReportServer.Desktop.ViewModels
         {
             SelectedOperation = mapper.Map<DesktopOperation>(templ);
 
-            var type = cachedService.DataExporters.ContainsKey(SelectedOperation.ImplementationType)
-                ? cachedService.DataExporters[SelectedOperation.ImplementationType]
-                : cachedService.DataImporters[SelectedOperation.ImplementationType];
-
-            SelectedOperationConfig = JsonConvert
-                .DeserializeObject(templ.ConfigTemplate, type);
+            SelectedOperationConfig = DeserializeOperationConfigByType(templ.ImplementationType,templ.ConfigTemplate);
 
             SelectedOperationName = templ.Name;
 
             OperationsSearchString = "";
 
             TemplatesListOpened = false;
+        }
+
+        private object DeserializeOperationConfigByType(string implementationType,string configTemplate)
+        {
+            var type = cachedService.DataExporters.ContainsKey(implementationType)
+                ? DataExporters[implementationType]
+                : DataImporters[implementationType];
+
+            return JsonConvert
+                .DeserializeObject(configTemplate, type);
         }
 
         public void Initialize(ViewRequest viewRequest)
@@ -325,8 +333,10 @@ namespace ReportServer.Desktop.ViewModels
                 HasSchedule = ScheduleId > 0;
 
                 if (request.TaskOpers != null)
+                {
                     bindedOpers.ClearAndAddRange(request.TaskOpers.OrderBy(to => to.Number)
                         .Select(to => mapper.Map<DesktopOperation>(to)));
+                }
 
                 if (!string.IsNullOrEmpty(request.Task.Parameters))
                     taskParameters.ClearAndAddRange(JsonConvert
@@ -409,6 +419,18 @@ namespace ReportServer.Desktop.ViewModels
             bindedOpers.Connect()
                 .Bind(BindedOpers)
                 .Subscribe();
+
+            bindedOpers.Connect()
+                .Subscribe(_ =>
+                {
+                    var packages = bindedOpers.Items.Where(oper => DataImporters.ContainsKey(oper.ImplementationType))
+                        .Select(oper =>
+                            (DeserializeOperationConfigByType(oper.ImplementationType, oper.Config) as
+                                IPackagedImporterConfig)
+                            ?.PackageName).Where(name => !string.IsNullOrEmpty(name)).Distinct().ToList();
+
+                    incomingPackages.ClearAndAddRange(packages);
+                });
 
             PropertyChanged += Changed;
         } //init vm

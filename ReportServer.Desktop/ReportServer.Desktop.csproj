@@ -34,8 +34,8 @@
     <MinimumRequiredVersion>2.3.4.8</MinimumRequiredVersion>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>8</ApplicationRevision>
-    <ApplicationVersion>2.3.4.8</ApplicationVersion>
+    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationVersion>2.3.4.9</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -339,6 +339,7 @@
     <None Include="Views\ScheduleManagerView.g.xaml">
       <DependentUpon>ScheduleManagerView.ammy</DependentUpon>
     </None>
+    <None Include="Views\WpfResources\IncomingPackagesControl.ammy" />
     <None Include="Views\WpfResources\OperInstancesView.ammy" />
     <None Include="Views\WpfResources\OperInstancesView.g.xaml">
       <DependentUpon>OperInstancesView.ammy</DependentUpon>
@@ -394,6 +395,9 @@
     </Compile>
     <Compile Include="Views\ScheduleManagerView.xaml.cs">
       <DependentUpon>ScheduleManagerView.ammy</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WpfResources\IncomingPackagesControl.ammy.cs">
+      <DependentUpon>IncomingPackagesControl.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\WpfResources\NumericTextBoxBehavior.cs" />
     <Compile Include="BootsTrap.cs" />
@@ -487,6 +491,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>OperTemplatesManagerView.ammy</DependentUpon>
+    </Page>
+    <Page Include="Views\WpfResources\IncomingPackagesControl.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>IncomingPackagesControl.ammy</DependentUpon>
     </Page>
     <Page Include="Views\WpfResources\TemplatesDictionary.g.xaml">
       <SubType>Designer</SubType>

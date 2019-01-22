@@ -1,19 +1,11 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Reactive.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Views.WpfResources;
-using Xceed.Wpf.Toolkit.PropertyGrid;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
-using Binding = System.Windows.Data.Binding;
-using CheckBox = System.Windows.Controls.CheckBox;
-using TextBox = System.Windows.Controls.TextBox;
 
 namespace ReportServer.Desktop.Entities
 {
@@ -21,6 +13,11 @@ namespace ReportServer.Desktop.Entities
     {
     }
 
+    public interface IPackagedImporterConfig
+    {
+        string PackageName { get; set; }
+    }
+    
     public class DesktopTask : ReactiveObject
     {
         public int Id { get; set; }
@@ -60,78 +57,16 @@ namespace ReportServer.Desktop.Entities
         public string ErrorMessage { get; set; }
     }
 
-    public class PathEditor : ReactiveObject, ITypeEditor
-    {
-        [Reactive] public PropertyItem PathValue { get; set; }
-        [Reactive] public CheckBox CheckBoxIsDefault { get; set; }
-        [Reactive] public TextBox PathTextBox { get; set; }
-
-        public PathEditor()
-        {
-            this.WhenAnyValue(ped => ped.CheckBoxIsDefault.IsChecked)
-                .Where(val => val != null)
-                .Skip(1)
-                .Subscribe(val =>
-                    PathValue.Value = val == true ? "Default folder" : null);
-        }
-
-        public FrameworkElement ResolveEditor(PropertyItem propertyItem)
-        {
-            PathValue = propertyItem;
-            var grid = new Grid
-            {
-                ColumnDefinitions =
-                {
-                    new ColumnDefinition {Width = new GridLength(3.5, GridUnitType.Star)},
-                    new ColumnDefinition {Width = new GridLength(2, GridUnitType.Star)},
-                    new ColumnDefinition {Width = new GridLength(0.5, GridUnitType.Star)}
-                },
-            };
-
-            PathTextBox = new TextBox
-            {
-                IsEnabled = true,
-                AcceptsReturn = false,
-                TextAlignment = TextAlignment.Left,
-                TextWrapping = TextWrapping.NoWrap,
-            };
-            Grid.SetColumn(PathTextBox, 0);
-            grid.Children.Add(PathTextBox);
-
-            TextBlock textBlockDefault = new TextBlock { Text = "Use default folder(for files from ssh)" };
-            Grid.SetColumn(textBlockDefault, 1);
-            grid.Children.Add(textBlockDefault);
-
-            CheckBoxIsDefault = new CheckBox();
-            Grid.SetColumn(CheckBoxIsDefault, 2);
-            grid.Children.Add(CheckBoxIsDefault);
-
-            var isDefaultBinding = new Binding("IsChecked")
-            {
-                Source = CheckBoxIsDefault,
-                Converter = new InverseBoolConverter()
-            };
-
-            BindingOperations.SetBinding(PathTextBox, UIElement.IsEnabledProperty, isDefaultBinding);
-
-            var textValueBinding =
-                new Binding("Value")
-                {
-                    Source = PathValue,
-                    Mode = BindingMode.TwoWay,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                };
-            BindingOperations.SetBinding(PathTextBox, TextBox.TextProperty, textValueBinding);
-
-            return grid;
-        }
-    }
-
     public class DbExporterConfig : IOperationConfig
     {
+        [Editor(typeof(FontComboBoxEditor), typeof(FontComboBoxEditor))]
+        [Reactive]
+        public ObservableCollection<string> IncomingPackages { get; set; }
+
         [PropertyOrder(0)]
         [DisplayName("Package name")]
         [Description("Package which exporter needs for work")]
+        [Editor(typeof(IncomingPackagesControl), typeof(IncomingPackagesControl))]
         [Reactive]
         public string PackageName { get; set; }
 
@@ -169,6 +104,7 @@ namespace ReportServer.Desktop.Entities
     {
         [PropertyOrder(0)]
         [DisplayName("Package name")]
+        [Editor(typeof(IncomingPackagesControl), typeof(IncomingPackagesControl))]
         [Reactive]
         public string PackageName { get; set; }
 
@@ -210,6 +146,7 @@ namespace ReportServer.Desktop.Entities
     {
         [PropertyOrder(0)]
         [DisplayName("Package name")]
+        [Editor(typeof(IncomingPackagesControl), typeof(IncomingPackagesControl))]
         [Reactive]
         public string PackageName { get; set; }
 
@@ -259,6 +196,7 @@ namespace ReportServer.Desktop.Entities
     {
         [PropertyOrder(0)]
         [DisplayName("Package name")]
+        [Editor(typeof(IncomingPackagesControl), typeof(IncomingPackagesControl))]
         [Reactive]
         public string PackageName { get; set; }
 
@@ -278,7 +216,7 @@ namespace ReportServer.Desktop.Entities
         public string ReportName { get; set; }
     }
 
-    public class ExcelImporterConfig : IOperationConfig
+    public class ExcelImporterConfig : IOperationConfig, IPackagedImporterConfig
     {
         [PropertyOrder(0)]
         [DisplayName("Package name")]
@@ -307,7 +245,7 @@ namespace ReportServer.Desktop.Entities
 
         [DisplayName("Using columns")]
         [Description("Set here names of columns which will be used")]
-        public ObservableCollectionExtended<string> ColumnList { get; set; }
+        public ObservableCollection<string> ColumnList { get; set; }
 
         [DisplayName("First data row")]
         [Description("First row in selected columns that will be read")]
@@ -343,13 +281,13 @@ namespace ReportServer.Desktop.Entities
         [DisplayName("Server user password")]
         [Reactive]
         public string Password { get; set; }
-        
+
         [DisplayName("File path at server")]
         [Reactive]
         public string FilePath { get; set; }
     }
-    
-    public class DbImporterConfig : IOperationConfig
+
+    public class DbImporterConfig : IOperationConfig, IPackagedImporterConfig
     {
         [PropertyOrder(0)]
         [DisplayName("Package name")]
@@ -374,7 +312,7 @@ namespace ReportServer.Desktop.Entities
         public int TimeOut { get; set; }
     }
 
-    public class CsvImporterConfig : IOperationConfig
+    public class CsvImporterConfig : IOperationConfig, IPackagedImporterConfig
     {
         [PropertyOrder(0)]
         [DisplayName("Package name")]
@@ -445,7 +383,7 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public bool RunIfVoidPackage { get; set; }
     }
-    
+
     public enum OperMode : byte
     {
         Importer = 1,

@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Autofac;
-using DynamicData;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
-using Ui.Wpf.Common;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
@@ -14,12 +16,8 @@ using ItemCollection = Xceed.Wpf.Toolkit.PropertyGrid.Attributes.ItemCollection;
 
 namespace ReportServer.Desktop.Views.WpfResources
 {
-
     public class RecepGroupsSource : IItemsSource
     {
-        private SourceList<ApiRecepientGroup> groups  =
-            new SourceList<ApiRecepientGroup>();
-
         public static IContainer Container;
 
         public ItemCollection GetValues()
@@ -27,12 +25,16 @@ namespace ReportServer.Desktop.Views.WpfResources
             ItemCollection coll = new ItemCollection();
 
             var cach = Container.Resolve<ICachedService>();
+
+            var groups =
+                new List<ApiRecepientGroup>();
+
             lock (this)
-                groups.ClearAndAddRange(cach.RecepientGroups.Items);
+                groups.AddRange(cach.RecepientGroups.Items);
 
-            coll.Add(0,"None");
+            coll.Add(0, "None");
 
-            foreach (var rgr in groups.Items)
+            foreach (var rgr in groups)
                 coll.Add(rgr.Id, rgr.Name);
 
             return coll;
@@ -41,9 +43,6 @@ namespace ReportServer.Desktop.Views.WpfResources
 
     public class DelimitersSource : IItemsSource
     {
-        private SourceList<Delimiter> delimiters  =
-            new SourceList<Delimiter>();
-
         private class Delimiter
         {
             public string Value;
@@ -64,9 +63,7 @@ namespace ReportServer.Desktop.Views.WpfResources
                 new Delimiter {Value = ".", Name = "Dot"},
                 new Delimiter {Value = "\\r\\n", Name = "New line"},
             };
-
-            delimiters.ClearAndAddRange(delimitersList);
-
+            
             foreach (var delim in delimitersList)
                 coll.Add(delim.Value,delim.Name);
 
@@ -76,23 +73,90 @@ namespace ReportServer.Desktop.Views.WpfResources
 
     public class TelegramChannelsSource : IItemsSource
     {
-        private SourceList<ApiTelegramChannel> channels  =
-            new SourceList<ApiTelegramChannel>();
-
         public static IContainer Container;
 
         public ItemCollection GetValues()
         {
             ItemCollection coll = new ItemCollection();
 
+            var channels =
+                new List<ApiTelegramChannel>();
             var cach = Container.Resolve<ICachedService>();
-            lock (this)
-                channels.ClearAndAddRange(cach.TelegramChannels.Items);
 
-            foreach (var chn in channels.Items)
+            lock (this)
+                channels.AddRange(cach.TelegramChannels.Items);
+
+            foreach (var chn in channels)
                 coll.Add(chn.Id, chn.Name);
 
             return coll;
+        }
+    }
+
+    public class PathEditor : ReactiveObject, ITypeEditor
+    {
+        [Reactive] public PropertyItem PathValue { get; set; }
+        [Reactive] public CheckBox CheckBoxIsDefault { get; set; }
+        [Reactive] public TextBox PathTextBox { get; set; }
+
+        public PathEditor()
+        {
+            this.WhenAnyValue(ped => ped.CheckBoxIsDefault.IsChecked)
+                .Where(val => val != null)
+                .Skip(1)
+                .Subscribe(val =>
+                    PathValue.Value = val == true ? "Default folder" : null);
+        }
+
+        public FrameworkElement ResolveEditor(PropertyItem propertyItem)
+        {
+            PathValue = propertyItem;
+            var grid = new Grid
+            {
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition {Width = new GridLength(3.5, GridUnitType.Star)},
+                    new ColumnDefinition {Width = new GridLength(2, GridUnitType.Star)},
+                    new ColumnDefinition {Width = new GridLength(0.5, GridUnitType.Star)}
+                },
+            };
+
+            PathTextBox = new TextBox
+            {
+                IsEnabled = true,
+                AcceptsReturn = false,
+                TextAlignment = TextAlignment.Left,
+                TextWrapping = TextWrapping.NoWrap,
+            };
+            Grid.SetColumn(PathTextBox, 0);
+            grid.Children.Add(PathTextBox);
+
+            TextBlock textBlockDefault = new TextBlock { Text = "Use default folder(for files from ssh)" };
+            Grid.SetColumn(textBlockDefault, 1);
+            grid.Children.Add(textBlockDefault);
+
+            CheckBoxIsDefault = new CheckBox();
+            Grid.SetColumn(CheckBoxIsDefault, 2);
+            grid.Children.Add(CheckBoxIsDefault);
+
+            var isDefaultBinding = new Binding("IsChecked")
+            {
+                Source = CheckBoxIsDefault,
+                Converter = new InverseBoolConverter()
+            };
+
+            BindingOperations.SetBinding(PathTextBox, UIElement.IsEnabledProperty, isDefaultBinding);
+
+            var textValueBinding =
+                new Binding("Value")
+                {
+                    Source = PathValue,
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
+            BindingOperations.SetBinding(PathTextBox, TextBox.TextProperty, textValueBinding);
+
+            return grid;
         }
     }
 

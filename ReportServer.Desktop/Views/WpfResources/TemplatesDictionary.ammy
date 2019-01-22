@@ -3,6 +3,7 @@ using MahApps.Metro.IconPacks;
 using ReportServer.Desktop.ViewModels;
 using ReportServer.Desktop.Views.WpfResources;
 using ReportServer.Desktop.Entities;
+using Xceed.Wpf.Toolkit;
 
 ResourceDictionary {
   IntMsToMinsConverter Key="IntMsToMinsConverter" {  }
@@ -309,7 +310,7 @@ ResourceDictionary {
       TextBox {
         Grid.Row: "2"
         Grid.Column: "1"
-        Text: "{Binding AddressesBcc,UpdateSourceTrigger=PropertyChanged,             ValidatesOnDataErrors=True}"
+        Text: "{Binding AddressesBcc,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
         TextBoxHelper.Watermark: "Enter e-mail addresses separated by semicolons for blind copy sending"
         TextBoxHelper.ClearTextButton: "True"
         Width: "500"
@@ -350,4 +351,4 @@ ResourceDictionary {
     }
   }
   DataTemplate { DataType: ApiOperTemplate }
-}
+  }

@@ -1,0 +1,14 @@
+﻿using ReportServer.Desktop.Views.WpfResources;
+
+UserControl "ReportServer.Desktop.Views.WpfResources.IncomingPackagesControl" {
+// UserControl "xctk:EditorTemplateDefinition.EditingTemplate"{ 
+Resources: ResourceDictionary {
+    Source: "TemplatesDictionary.g.xaml"
+  }
+      		ComboBox {
+		Name:"Box"
+		ItemsSource: bind DataContext.IncomingPackages from $ancestor<ReportServer.Desktop.Views.TaskEditorView> 
+       // SelectedItem: Value 
+        SelectedItem: bind "DataContext.SelectedOperationConfig.PackageName" from $ancestor<ReportServer.Desktop.Views.TaskEditorView> 
+		}	
+}
