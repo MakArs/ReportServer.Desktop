@@ -460,7 +460,7 @@ namespace ReportServer.Desktop.ViewModels
 
             Close();
             cachedService.RefreshData();
-        } //save to base
+        } //saving to base
 
         private void UpdateParametersList()
         {

@@ -36,6 +36,8 @@ namespace ReportServer.Desktop.ViewModels
             this.cachedService = cachedService;
             authContext = context;
 
+            
+
             RefreshCommand = ReactiveCommand.Create(this.cachedService.RefreshData);
 
             CanEdit = this.WhenAnyValue(shl => shl.Role, role => role == ServiceUserRole.Editor);
