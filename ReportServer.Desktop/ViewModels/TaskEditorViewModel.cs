@@ -17,8 +17,10 @@ using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
+using ReportServer.Desktop.Views;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
+using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
 
@@ -271,6 +273,8 @@ namespace ReportServer.Desktop.ViewModels
 
         private async Task OpenTemplatesList()
         {
+            
+
             if (SelectedOperationConfig != null && Shell.Role == ServiceUserRole.Editor)
             {
                 if (!await Shell.ShowWarningAffirmativeDialogAsync

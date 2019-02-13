@@ -1,0 +1,24 @@
+﻿using ReportServer.Desktop.ViewModels;
+using Ui.Wpf.Common;
+using Ui.Wpf.Common.ShowOptions;
+using Ui.Wpf.Common.ViewModels;
+
+namespace ReportServer.Desktop.Views.WpfResources
+{
+    public partial class RecepientEditorView : IView
+    {
+        public RecepientEditorView(RecepientEditorViewModel viewModel)
+        {
+            ViewModel = viewModel;
+            DataContext = ViewModel;
+            InitializeComponent();
+        }
+
+        public void Configure(UiShowOptions options)
+        {
+            ViewModel.Title = options.Title;
+        }
+
+        public IViewModel ViewModel { get; set; }
+    }
+}

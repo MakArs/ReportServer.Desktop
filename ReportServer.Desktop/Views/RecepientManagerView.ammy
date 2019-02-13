@@ -69,18 +69,6 @@ UserControl "ReportServer.Desktop.Views.RecepientManagerView" {
           Binding: bind AddressesBcc
         }
       ]
-    }
-    Flyout {
-      Grid.RowSpan: "2"
-      IsOpen: bind EditorViewModel.IsOpened
-      Background: "White"
-      CloseButtonVisibility: "Hidden"
-      Position: "Top"
-      Width: "auto"
-      Height: "{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}, Path=ActualHeight}"
-      Theme: "Light"
-      IsModal: "True"
-      Content: bind EditorViewModel
-    }
+    }  
   }
 }

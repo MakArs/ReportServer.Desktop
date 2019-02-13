@@ -54,7 +54,7 @@ namespace ReportServer.Desktop.Views.WpfResources
 
             RuleFor(red => red.Addresses)
                 .Must(addresses => !string.IsNullOrEmpty(addresses))
-                .WithMessage("This field cannot be empty");
+                .WithMessage("Addresses cannot be empty");
         }
     }
 

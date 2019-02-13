@@ -19,4 +19,9 @@ namespace ReportServer.Desktop.Models
     {
         public ApiSchedule Schedule { get; set; }
     }
+
+    public class RecepientEditorRequest : ViewRequest
+    {
+        public ApiRecepientGroup Group { get; set; }
+    }
 }

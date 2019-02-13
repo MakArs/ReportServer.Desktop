@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using Autofac;
@@ -63,7 +62,7 @@ namespace ReportServer.Desktop
 
             ConfigureView<ScheduleManagerViewModel, ScheduleManagerView>(builder);
 
-            builder.RegisterType<RecepientEditorViewModel>();
+            ConfigureView<RecepientEditorViewModel, RecepientEditorView>(builder);
 
             #region monik
 
