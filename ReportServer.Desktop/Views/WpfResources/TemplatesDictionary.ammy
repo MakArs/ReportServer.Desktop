@@ -236,6 +236,5 @@ ResourceDictionary {
       }
     }
   }
-
   DataTemplate { DataType: ApiOperTemplate }
   }

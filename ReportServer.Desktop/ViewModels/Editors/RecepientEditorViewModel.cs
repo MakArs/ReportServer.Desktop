@@ -12,7 +12,7 @@ using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.ViewModels
+namespace ReportServer.Desktop.ViewModels.Editors
 {
     public class RecepientEditorViewModel : ViewModelBase, IInitializableViewModel
     {

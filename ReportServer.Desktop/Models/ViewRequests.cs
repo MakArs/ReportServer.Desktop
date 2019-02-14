@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Reactive;
+using ReactiveUI;
 using ReportServer.Desktop.Entities;
+using ReportServer.Desktop.ViewModels.Editors;
 using Ui.Wpf.Common;
 
 namespace ReportServer.Desktop.Models
@@ -23,5 +26,10 @@ namespace ReportServer.Desktop.Models
     public class RecepientEditorRequest : ViewRequest
     {
         public ApiRecepientGroup Group { get; set; }
+    }
+
+    public class OperTemplatesListRequest : ViewRequest
+    {
+        public TaskEditorViewModel TaskEditor { get; set; }
     }
 }

@@ -19,7 +19,7 @@ using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.ViewModels
+namespace ReportServer.Desktop.ViewModels.General
 {
     public class TaskManagerViewModel : ViewModelBase, IInitializableViewModel
     {

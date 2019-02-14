@@ -16,7 +16,7 @@ using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Application = System.Windows.Application;
 
-namespace ReportServer.Desktop.ViewModels
+namespace ReportServer.Desktop.ViewModels.General
 {
 
     public class CachedServiceShell : Shell

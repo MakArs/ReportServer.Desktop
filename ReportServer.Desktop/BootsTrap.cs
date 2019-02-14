@@ -11,6 +11,8 @@ using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
 using ReportServer.Desktop.ViewModels;
+using ReportServer.Desktop.ViewModels.Editors;
+using ReportServer.Desktop.ViewModels.General;
 using ReportServer.Desktop.Views;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
@@ -63,7 +65,9 @@ namespace ReportServer.Desktop
             ConfigureView<ScheduleManagerViewModel, ScheduleManagerView>(builder);
 
             ConfigureView<RecepientEditorViewModel, RecepientEditorView>(builder);
-
+            
+            ConfigureView<OperTemplatesListViewModel,OperTemplatesListView>(builder);
+           
             #region monik
 
             var logSender = new AzureSender(

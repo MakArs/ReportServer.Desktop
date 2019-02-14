@@ -10,7 +10,7 @@ using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.ViewModels
+namespace ReportServer.Desktop.ViewModels.General
 {
     public class RecepientManagerViewModel : ViewModelBase, IInitializableViewModel
     {
@@ -22,7 +22,7 @@ namespace ReportServer.Desktop.ViewModels
 
         public ReactiveCommand<Unit, Unit> EditGroupCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; set; }
-      
+
         public RecepientManagerViewModel(ICachedService cachedService, IShell shell)
         {
             CanClose = false;
@@ -48,11 +48,10 @@ namespace ReportServer.Desktop.ViewModels
 
             EditGroupCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-               await Shell.ShowChildWindowView<RecepientEditorView, Unit>(
+                await Shell.ShowChildWindowView<RecepientEditorView, Unit>(
                     new RecepientEditorRequest
                         {Group = SelectedGroup},
                     editorOptions);
-
             }, Shell.CanEdit);
         }
 

@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using ReportServer.Desktop.ViewModels;
+using ReportServer.Desktop.ViewModels.General;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 

@@ -352,6 +352,7 @@
     <None Include="Views\TaskEditorView.g.xaml">
       <DependentUpon>TaskEditorView.ammy</DependentUpon>
     </None>
+    <None Include="Views\WpfResources\OperTemplatesListView.ammy" />
     <None Include="Views\WpfResources\RecepientEditorView.ammy" />
     <None Include="Views\WpfResources\SelectedInstanceFullView.ammy" />
     <None Include="Views\WpfResources\SelectedInstanceFullView.g.xaml">
@@ -377,16 +378,17 @@
     <Compile Include="Entities\OperationConfigs.cs" />
     <Compile Include="Entities\OperationPackage.cs" />
     <Compile Include="Entities\ProtoPackageBuilder.cs" />
-    <Compile Include="ViewModels\CronEditorViewModel.cs" />
+    <Compile Include="ViewModels\Editors\CronEditorViewModel.cs" />
     <Compile Include="Models\ViewRequests.cs" />
-    <Compile Include="ViewModels\CachedServiceShell.cs" />
-    <Compile Include="ViewModels\RecepientEditorViewModel.cs" />
-    <Compile Include="ViewModels\RecepientManagerViewModel.cs" />
-    <Compile Include="ViewModels\OperEditorViewModel.cs" />
-    <Compile Include="ViewModels\OperTemplatesManagerViewModel.cs" />
-    <Compile Include="ViewModels\ScheduleManagerViewModel.cs" />
-    <Compile Include="ViewModels\TaskEditorViewModel.cs" />
-    <Compile Include="ViewModels\TaskManagerViewModel.cs" />
+    <Compile Include="ViewModels\Editors\OperTemplatesListViewModel.cs" />
+    <Compile Include="ViewModels\General\CachedServiceShell.cs" />
+    <Compile Include="ViewModels\Editors\RecepientEditorViewModel.cs" />
+    <Compile Include="ViewModels\General\RecepientManagerViewModel.cs" />
+    <Compile Include="ViewModels\Editors\OperEditorViewModel.cs" />
+    <Compile Include="ViewModels\General\OperTemplatesManagerViewModel.cs" />
+    <Compile Include="ViewModels\General\ScheduleManagerViewModel.cs" />
+    <Compile Include="ViewModels\Editors\TaskEditorViewModel.cs" />
+    <Compile Include="ViewModels\General\TaskManagerViewModel.cs" />
     <Compile Include="Views\CronEditorView.xaml.cs">
       <DependentUpon>CronEditorView.ammy</DependentUpon>
     </Compile>
@@ -408,6 +410,9 @@
       <DependentUpon>OperInstancesView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\WpfResources\ManualPropertyGrid.cs" />
+    <Compile Include="Views\WpfResources\OperTemplatesListView.ammy.cs">
+      <DependentUpon>OperTemplatesListView.ammy</DependentUpon>
+    </Compile>
     <Compile Include="Views\WpfResources\PropertyGridHelpers.cs" />
     <Compile Include="Views\WpfResources\Converters.cs" />
     <Compile Include="Entities\CoreEntities.cs" />
@@ -502,6 +507,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>IncomingPackagesControl.ammy</DependentUpon>
+    </Page>
+    <Page Include="Views\WpfResources\OperTemplatesListView.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>OperTemplatesListView.ammy</DependentUpon>
     </Page>
     <Page Include="Views\WpfResources\RecepientEditorView.g.xaml">
       <SubType>Designer</SubType>

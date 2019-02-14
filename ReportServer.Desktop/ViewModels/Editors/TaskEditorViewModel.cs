@@ -17,14 +17,13 @@ using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
-using ReportServer.Desktop.Views;
+using ReportServer.Desktop.ViewModels.General;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
-
-namespace ReportServer.Desktop.ViewModels
+namespace ReportServer.Desktop.ViewModels.Editors
 {
     public class
         TaskEditorViewModel : ViewModelBase,
@@ -41,8 +40,6 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public bool IsDirty { get; set; }
         [Reactive] public bool IsValid { get; set; }
         [Reactive] public bool HasSchedule { get; set; }
-        [Reactive] public bool TemplatesListOpened { get; set; }
-        [Reactive] public string OperationsSearchString { get; set; }
 
         private readonly SourceList<DesktopOperation> bindedOpers;
         private readonly SourceList<TaskParameter> taskParameters;
@@ -51,7 +48,6 @@ namespace ReportServer.Desktop.ViewModels
         public ObservableCollectionExtended<TaskParameter> TaskParameters { get; set; }
         public ReadOnlyObservableCollection<ApiSchedule> Schedules { get; set; }
         public ReadOnlyObservableCollection<string> IncomingPackages { get; set; }
-        public ObservableCollectionExtended<ApiOperTemplate> OperTemplates { get; set; }
         private Dictionary<string, Type> DataImporters { get; set; }
         private Dictionary<string, Type> DataExporters { get; set; }
         private readonly SourceList<string> implementationTypes;
@@ -59,14 +55,11 @@ namespace ReportServer.Desktop.ViewModels
         [Reactive] public OperMode Mode { get; set; }
         [Reactive] public string Type { get; set; }
         [Reactive] public DesktopOperation SelectedOperation { get; set; }
-        [Reactive] public ApiOperTemplate SelectedTemplate { get; set; }
         [Reactive] public object SelectedOperationConfig { get; set; }
         [Reactive] public string SelectedOperationName { get; set; }
 
         public ReactiveCommand<Unit, Unit> SaveChangesCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CancelCommand { get; set; }
-        public ReactiveCommand<ApiOperTemplate, Unit> SelectTemplateCommand { get; set; }
-        public ReactiveCommand<Unit, Unit> CloseTemplatesListCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateOperConfigCommand { get; set; }
         public ReactiveCommand<Unit, Unit> OpenTemplatesListCommand { get; set; }
         public ReactiveCommand<string, Unit> ClipBoardFillCommand { get; set; }
@@ -74,7 +67,6 @@ namespace ReportServer.Desktop.ViewModels
         public ReactiveCommand<TaskParameter, Unit> RemoveParameterCommand { get; set; }
         public ReactiveCommand<Unit, Unit> AddOperationCommand { get; set; }
         public ReactiveCommand<Unit, Unit> AddParameterCommand { get; set; }
-        public ReactiveCommand<ApiOperTemplate, Unit> AddFullTemplateCommand { get; set; }
         public ReactiveCommand<Unit, Unit> OpenCurrentTaskViewCommand { get; set; }
         public ReactiveCommand<DesktopOperation, Unit> SelectOperationCommand { get; set; }
 
@@ -88,7 +80,7 @@ namespace ReportServer.Desktop.ViewModels
 
             taskParameters = new SourceList<TaskParameter>();
             bindedOpers = new SourceList<DesktopOperation>();
-            incomingPackages=new SourceList<string>();
+            incomingPackages = new SourceList<string>();
 
             DataImporters = cachedService.DataImporters;
             DataExporters = cachedService.DataExporters;
@@ -124,31 +116,26 @@ namespace ReportServer.Desktop.ViewModels
                 Name = "@RepPar"
             }), Shell.CanEdit);
 
-            AddFullTemplateCommand = ReactiveCommand.Create<ApiOperTemplate>(AddFullTemplate, Shell.CanEdit);
-
             AddOperationCommand = ReactiveCommand.CreateFromTask(AddOperation, Shell.CanEdit);
+
 
             CreateOperConfigCommand = ReactiveCommand.CreateFromTask(CreateOperConfig, Shell.CanEdit);
 
-            OpenTemplatesListCommand = ReactiveCommand.CreateFromTask(OpenTemplatesList, Shell.CanEdit);
+            OpenTemplatesListCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SelectedOperationConfig != null && Shell.Role == ServiceUserRole.Editor)
+                {
+                    if (!await Shell.ShowWarningAffirmativeDialogAsync
+                        ("All unsaved operation configuration changes will be lost. Close window?"))
+                        return;
+                }
 
-            CloseTemplatesListCommand = ReactiveCommand.Create(() => { TemplatesListOpened = false; }, Shell.CanEdit);
+                await SelectOperFromTemplates();
 
-            SelectTemplateCommand = ReactiveCommand.Create<ApiOperTemplate>(SelectTemplate, Shell.CanEdit);
+            }, Shell.CanEdit);
 
             SelectOperationCommand = ReactiveCommand.CreateFromTask<DesktopOperation>
                 (SelectOperation);
-
-            this.ObservableForProperty(s => s.OperationsSearchString)
-                .Subscribe(sstr =>
-                {
-                    OperTemplates.Clear();
-
-                    cachedService.OperTemplates.Connect().Filter(oper =>
-                            oper.Name.IndexOf(sstr.Value, StringComparison.OrdinalIgnoreCase) >=
-                            0)
-                        .Bind(OperTemplates).Subscribe();
-                });
 
             this.ObservableForProperty(s => s.Mode)
                 .Subscribe(mode =>
@@ -175,9 +162,9 @@ namespace ReportServer.Desktop.ViewModels
                 });
 
             this.WhenAnyValue(tvm => tvm.SelectedOperationConfig)
-                .Where(selop => selop!=null)
+                .Where(selop => selop != null)
                 .Subscribe(conf =>
-               IncomingPackages = incomingPackages.SpawnCollection());
+                    IncomingPackages = incomingPackages.SpawnCollection());
         }
 
         private async Task Cancel()
@@ -211,17 +198,10 @@ namespace ReportServer.Desktop.ViewModels
 
             ClearSelections();
         }
-
-        private void AddFullTemplate(ApiOperTemplate template)
-        {
-            var oper = mapper.Map<DesktopOperation>(template);
-            oper.TaskId = Id;
-            bindedOpers.Add(oper);
-        }
-
+        
         private async Task SelectOperation(DesktopOperation operation)
         {
-            if (Shell.Role==ServiceUserRole.Editor && SelectedOperationConfig != null)
+            if (Shell.Role == ServiceUserRole.Editor && SelectedOperationConfig != null)
             {
                 if (!await Shell.ShowWarningAffirmativeDialogAsync
                     ("All unsaved operation configuration changes will be lost. Close window?"))
@@ -234,17 +214,15 @@ namespace ReportServer.Desktop.ViewModels
 
             SelectedOperationName = SelectedOperation.Name;
 
-            SelectedOperationConfig = DeserializeOperationConfigByType(SelectedOperation.ImplementationType, SelectedOperation.Config); 
+            SelectedOperationConfig =
+                DeserializeOperationConfigByType(SelectedOperation.ImplementationType, SelectedOperation.Config);
         }
 
         private void ClearSelections()
         {
-            if (TemplatesListOpened)
-                TemplatesListOpened = false;
             Mode = 0;
             Type = null;
             SelectedOperationName = null;
-            SelectedTemplate = null;
             SelectedOperation = null;
             SelectedOperationConfig = null; //todo:find the way for risepropertychanged
         }
@@ -271,35 +249,64 @@ namespace ReportServer.Desktop.ViewModels
             Mode = OperMode.Importer;
         }
 
-        private async Task OpenTemplatesList()
+        private async Task SelectOperFromTemplates()
         {
-            
-
-            if (SelectedOperationConfig != null && Shell.Role == ServiceUserRole.Editor)
+            var editorOptions = new UiShowChildWindowOptions
             {
-                if (!await Shell.ShowWarningAffirmativeDialogAsync
-                    ("All unsaved operation configuration changes will be lost. Close window?"))
-                    return;
-            }
+                IsModal = true,
+                AllowMove = true,
+                CanClose = true,
+                ShowTitleBar = true,
+                Title = "Select operation template",
+                Width = 700
+            };
 
-            ClearSelections();
-            TemplatesListOpened = true;
+            await Shell.ShowChildWindowView<OperTemplatesListView, Unit>(
+                new OperTemplatesListRequest
+                    {TaskEditor = this},
+                editorOptions);
         }
 
-        private void SelectTemplate(ApiOperTemplate templ)
+        public void ParseTemplate(ApiOperTemplate templ)
         {
             SelectedOperation = mapper.Map<DesktopOperation>(templ);
 
-            SelectedOperationConfig = DeserializeOperationConfigByType(templ.ImplementationType,templ.ConfigTemplate);
+            SelectedOperationConfig =
+                DeserializeOperationConfigByType(templ.ImplementationType, templ.ConfigTemplate);
 
             SelectedOperationName = templ.Name;
-
-            OperationsSearchString = "";
-
-            TemplatesListOpened = false;
         }
 
-        private object DeserializeOperationConfigByType(string implementationType,string configTemplate)
+        public void AddFullTemplate(ApiOperTemplate template)
+        {
+            var oper = mapper.Map<DesktopOperation>(template);
+            oper.TaskId = Id;
+            bindedOpers.Add(oper);
+        }
+
+        private void UpdateParametersList()
+        {
+            using (TaskParameters.SuspendNotifications())
+            {
+                foreach (var dim in TaskParameters)
+                {
+                    dim.IsDuplicate = false;
+                }
+
+                var duplicatgroups = TaskParameters
+                    .GroupBy(dim => dim.Name)
+                    .Where(g => g.Count() > 1)
+                    .ToList();
+
+                foreach (var group in duplicatgroups)
+                {
+                    foreach (var dim in group)
+                        dim.IsDuplicate = true;
+                }
+            }
+        }
+
+        private object DeserializeOperationConfigByType(string implementationType, string configTemplate)
         {
             var type = cachedService.DataExporters.ContainsKey(implementationType)
                 ? DataExporters[implementationType]
@@ -325,11 +332,6 @@ namespace ReportServer.Desktop.ViewModels
             }
 
             Schedules = cachedService.Schedules.SpawnCollection();
-
-            OperTemplates = new ObservableCollectionExtended<ApiOperTemplate>();
-
-            cachedService.OperTemplates.Connect()
-                .Bind(OperTemplates).Subscribe();
 
             if (viewRequest is TaskEditorRequest request)
             {
@@ -465,27 +467,5 @@ namespace ReportServer.Desktop.ViewModels
             Close();
             cachedService.RefreshData();
         } //saving to base
-
-        private void UpdateParametersList()
-        {
-            using (TaskParameters.SuspendNotifications())
-            {
-                foreach (var dim in TaskParameters)
-                {
-                    dim.IsDuplicate = false;
-                }
-
-                var duplicatgroups = TaskParameters
-                    .GroupBy(dim => dim.Name)
-                    .Where(g => g.Count() > 1)
-                    .ToList();
-
-                foreach (var group in duplicatgroups)
-                {
-                    foreach (var dim in group)
-                        dim.IsDuplicate = true;
-                }
-            }
-        }
     }
 }

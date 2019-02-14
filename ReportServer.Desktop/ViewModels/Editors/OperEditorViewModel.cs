@@ -15,11 +15,12 @@ using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
+using ReportServer.Desktop.ViewModels.General;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.ViewModels
+namespace ReportServer.Desktop.ViewModels.Editors
 {
     public class OperEditorViewModel : ViewModelBase, IInitializableViewModel
     {

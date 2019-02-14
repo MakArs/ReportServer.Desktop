@@ -1,17 +1,17 @@
-﻿using ReportServer.Desktop.ViewModels.General;
+﻿using ReportServer.Desktop.ViewModels.Editors;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
 
-namespace ReportServer.Desktop.Views
+namespace ReportServer.Desktop.Views.WpfResources
 {
-    public partial class RecepientManagerView : IView
+    public partial class OperTemplatesListView : IView
     {
-        public RecepientManagerView(RecepientManagerViewModel viewModel)
+        public OperTemplatesListView(OperTemplatesListViewModel viewModel)
         {
-            InitializeComponent();
             ViewModel = viewModel;
             DataContext = ViewModel;
+            InitializeComponent();
         }
 
         public void Configure(UiShowOptions options)
