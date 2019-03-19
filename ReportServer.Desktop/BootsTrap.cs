@@ -77,7 +77,7 @@ namespace ReportServer.Desktop
             builder.RegisterInstance(logSender)
                 .As<IMonikSender>();
 
-            var monikSettings = new ClientSettings()
+            var monikSettings = new ClientSettings
             {
                 SourceName = "ReportServer",
                 InstanceName = ConfigurationManager.AppSettings["InstanceName"],

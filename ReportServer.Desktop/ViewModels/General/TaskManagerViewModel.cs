@@ -83,6 +83,9 @@ namespace ReportServer.Desktop.ViewModels.General
 
             StopTaskCommand = ReactiveCommand.CreateFromTask<int, string>(async par =>
             {
+                if (!await Shell.ShowWarningAffirmativeDialogAsync("Really cancel task execution?"))
+                    return "False";
+
                 var t= await this.cachedService.StopTaskByInstanceId(par);
                 LoadInstanceCompactsByTaskId(SelectedTask.Id);
                 return t;
@@ -153,7 +156,7 @@ namespace ReportServer.Desktop.ViewModels.General
                     Id = task.Id,
                     Name = task.Name,
                     Schedule = cachedService.Schedules.Items
-                        .FirstOrDefault(sched => sched.Id == task.ScheduleId)?.Schedule,
+                        .FirstOrDefault(sched => sched.Id == task.ScheduleId)?.Name,
 
                     Operations = string.Join("=>", cachedService.Operations
                         .Items.Where(oper => oper.TaskId == task.Id)
