@@ -53,12 +53,12 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
         }
         DataGridTextColumn {
           Header: "Name"
-          Width: "0.5*"
+          Width: "0.6*"
           Binding: bind Name
         }
         DataGridTextColumn {
           Header: "Schedule"
-          Width: "0.25*"
+          Width: "0.35*"
           Binding: bind Schedule
         }
         DataGridTextColumn {

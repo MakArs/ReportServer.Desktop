@@ -61,10 +61,18 @@ namespace ReportServer.Desktop.ViewModels.General
             OpenPage = ReactiveCommand.Create<string>
                 (cachedService.OpenPageInBrowser, canOpenInstancePage);
 
-            EditTaskCommand = ReactiveCommand.Create(() =>
+            EditTaskCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (SelectedTask == null) return;
                 var id = SelectedTask.Id;
+
+                cachedService.RefreshData();
+                if (cachedService
+                        .Tasks.Items.FirstOrDefault(task => task.Id == id) == null)
+                {
+                    await Shell.ShowMessageAsync("Task not longer exists");
+                    return;
+                }
 
                 var name = $"Task {id} editor";
                 Shell.ShowView<TaskEditorView>(new TaskEditorRequest
