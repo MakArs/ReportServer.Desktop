@@ -109,31 +109,36 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string PackageName { get; set; }
 
+        [PropertyOrder(2)]
+        [DisplayName("Display execution date in name")]
+        [Reactive]
+        public bool DateInName { get; set; }
+
         [DisplayName("Run if data package is void")]
         [Reactive]
         public bool RunIfVoidPackage { get; set; }
 
-        [PropertyOrder(2)]
+        [PropertyOrder(3)]
         [DisplayName("Html body")]
         [Reactive]
         public bool HasHtmlBody { get; set; }
 
-        [PropertyOrder(3)]
+        [PropertyOrder(4)]
         [DisplayName("Xlsx attachement")]
         [Reactive]
         public bool HasXlsxAttachment { get; set; }
 
-        [PropertyOrder(4)]
+        [PropertyOrder(5)]
         [DisplayName("Use all package data sets")]
         [Reactive]
         public bool UseAllSetsXlsx { get; set; }
 
-        [PropertyOrder(5)]
+        [PropertyOrder(6)]
         [DisplayName("Json attachement")]
         [Reactive]
         public bool HasJsonAttachment { get; set; }
 
-        [PropertyOrder(6)]
+        [PropertyOrder(7)]
         [DisplayName("Use all package data sets")]
         [Reactive]
         public bool UseAllSetsJson { get; set; }
@@ -198,12 +203,17 @@ namespace ReportServer.Desktop.Entities
         public string PackageName { get; set; }
 
         [PropertyOrder(1)]
+        [DisplayName("Display execution date in names of created files")]
+        [Reactive]
+        public bool DateInName { get; set; }
+
+        [PropertyOrder(2)]
         [DisplayName("Path to file folder")]
         [Reactive]
         [Editor(typeof(PathEditor), typeof(PathEditor))]
         public string FileFolder { get; set; }
 
-        [PropertyOrder(2)]
+        [PropertyOrder(3)]
         [DisplayName("File name")]
         [Reactive]
         public string FileName { get; set; }
@@ -212,22 +222,22 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public bool RunIfVoidPackage { get; set; }
 
-        [PropertyOrder(3)]
+        [PropertyOrder(4)]
         [DisplayName("Save package as xlsx file")]
         [Reactive]
         public bool ConvertPackageToXlsx { get; set; }
 
-        [PropertyOrder(4)]
+        [PropertyOrder(5)]
         [DisplayName("Save package as json file")]
         [Reactive]
         public bool ConvertPackageToJson { get; set; }
 
-        [PropertyOrder(5)]
+        [PropertyOrder(6)]
         [DisplayName("Save package as csv file")]
         [Reactive]
         public bool ConvertPackageToCsv { get; set; }
 
-        [PropertyOrder(6)]
+        [PropertyOrder(7)]
         [DisplayName("Use all package data sets")]
         [Reactive]
         public bool UseAllSets { get; set; }

@@ -31,11 +31,11 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>ReportServer.Desktop</ProductName>
     <PublisherName>Лаборатория умного вождения</PublisherName>
-    <MinimumRequiredVersion>2.3.5.4</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.3.5.7</MinimumRequiredVersion>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>6</ApplicationRevision>
-    <ApplicationVersion>2.3.5.6</ApplicationVersion>
+    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationVersion>2.3.5.7</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
