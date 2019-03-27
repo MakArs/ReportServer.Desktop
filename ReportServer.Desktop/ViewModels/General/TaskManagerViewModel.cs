@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using DynamicData;
+using DynamicData.Binding;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -18,7 +19,6 @@ using ReportService;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
-
 namespace ReportServer.Desktop.ViewModels.General
 {
     public class TaskManagerViewModel : ViewModelBase, IInitializableViewModel
@@ -27,7 +27,7 @@ namespace ReportServer.Desktop.ViewModels.General
         private readonly IMapper mapper;
         public CachedServiceShell Shell { get; }
 
-        [Reactive]public ReadOnlyObservableCollection<DesktopTask> Tasks { get; set; }
+        [Reactive] public ReadOnlyObservableCollection<DesktopTask> Tasks { get; set; }
         private readonly SourceList<DesktopTaskInstance> selectedTaskInstances;
         [Reactive] public ReadOnlyObservableCollection<DesktopTaskInstance> SelectedTaskInstances { get; set; }
         private readonly SourceList<DesktopOperInstance> operInstances;
@@ -42,6 +42,7 @@ namespace ReportServer.Desktop.ViewModels.General
         public ReactiveCommand<Unit, Unit> EditTaskCommand { get; set; }
         public ReactiveCommand<Unit, Unit> DeleteCommand { get; set; }
         public ReactiveCommand<int, string> StopTaskCommand { get; set; }
+        public ReactiveCommand<DesktopTask, Unit> RunTaskCommand { get; set; }
 
         public TaskManagerViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
         {
@@ -91,12 +92,30 @@ namespace ReportServer.Desktop.ViewModels.General
 
             StopTaskCommand = ReactiveCommand.CreateFromTask<int, string>(async par =>
             {
-                if (!await Shell.ShowWarningAffirmativeDialogAsync("Really cancel task execution?"))
+                if (!await Shell.ShowWarningAffirmativeDialogAsync("Сancel task execution?"))
                     return "False";
 
-                var t= await this.cachedService.StopTaskByInstanceId(par);
+                var t = await this.cachedService.StopTaskByInstanceId(par);
                 LoadInstanceCompactsByTaskId(SelectedTask.Id);
                 return t;
+            }, Shell.CanEdit);
+
+            RunTaskCommand = ReactiveCommand.CreateFromTask<DesktopTask>(async par =>
+            {
+                var workingInstances = await cachedService.GetWorkingTaskInstancesById(par.Id);
+                if (workingInstances.Count > 0)
+                    await Shell.ShowMessageAsync(
+                        $"This task already has working instances ({string.Join(", ", workingInstances)}). " +
+                        "You can try to execute it later");
+                else
+                {
+                    if (await Shell.ShowWarningAffirmativeDialogAsync($"Do you want to execute task {par.Name}?"))
+                        return;
+
+                    var res = await cachedService.StartTaskById(par.Id);
+                    await Shell.ShowMessageAsync(res, "Task execution");
+                }
+
             }, Shell.CanEdit);
 
             this.WhenAnyValue(s => s.SelectedTask)
@@ -132,16 +151,16 @@ namespace ReportServer.Desktop.ViewModels.General
                         {
                             try
                             {
-                            data.DataSet = JsonConvert.SerializeObject(packageBuilder.GetPackageValues(
-                                OperationPackage.Parser.ParseFrom(fullInstance.DataSet)));
+                                data.DataSet = JsonConvert.SerializeObject(packageBuilder.GetPackageValues(
+                                    OperationPackage.Parser.ParseFrom(fullInstance.DataSet)));
                             }
-                            catch 
+                            catch
                             {
-                              await  Shell.ShowMessageAsync("Exception occured during dataset decoding");
+                                await Shell.ShowMessageAsync("Exception occured during dataset decoding");
                             }
                         }
                     }
-                    
+
                     SelectedInstanceData = x == null
                         ? null
                         : data;
@@ -152,7 +171,7 @@ namespace ReportServer.Desktop.ViewModels.General
         {
             selectedTaskInstances
                 .ClearAndAddRange(cachedService.GetInstancesByTaskId(taskId)
-                    .Select(ti => mapper.Map<DesktopTaskInstance>(ti)));
+                    .Select(ti => mapper.Map<DesktopTaskInstance>(ti)).OrderByDescending(inst => inst.StartTime));
         }
 
         private void RefreshTaskList()
@@ -242,7 +261,7 @@ namespace ReportServer.Desktop.ViewModels.General
             if (SelectedTaskInstance != null)
             {
                 if (!await Shell.ShowWarningAffirmativeDialogAsync
-                    ("Do you really want to delete this task instance?")) return;
+                    ("Do you want to delete this task instance?")) return;
 
                 cachedService.DeleteInstance(SelectedTaskInstance.Id);
                 LoadInstanceCompactsByTaskId(SelectedTask.Id);
@@ -252,7 +271,7 @@ namespace ReportServer.Desktop.ViewModels.General
             if (SelectedTask != null)
             {
                 if (!await Shell.ShowWarningAffirmativeDialogAsync
-                    ($"Do you really want to delete task {SelectedTask.Name} and all it's instances?")
+                    ($"Do you want to delete task {SelectedTask.Name} and all it's instances?")
                 ) return;
 
                 cachedService.DeleteTask(SelectedTask.Id);

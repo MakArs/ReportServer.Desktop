@@ -10,10 +10,21 @@ UserControl "ReportServer.Desktop.Views.WpfResources.SelectedTaskInstancesView" 
       RowDefinition {Height: "40"}
       RowDefinition {}
     ]
+
+	
     @ViewLabel("Selected task instances list")
+
+	Button { "Run task" 
+	HorizontalAlignment: Right
+	Command: bind RunTaskCommand
+	CommandParameter: bind SelectedTask
+	Visibility: bind SelectedTask 
+	convert (DesktopTask task)=>task!=null? Visibility.Visible
+	:Visibility.Collapsed }
+
     DataGrid {
       #DataGridMix(bind SelectedTaskInstances,bind SelectedTaskInstance)
-      Grid.Row: "1"
+	  Grid.Row: "1"
       InputBindings: KeyBinding {
         Key: "Delete"
         Command: "ApplicationCommands.NotACommand"

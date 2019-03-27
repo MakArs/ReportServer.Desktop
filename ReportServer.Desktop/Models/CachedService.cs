@@ -47,7 +47,7 @@ namespace ReportServer.Desktop.Models
         {
             message.Headers.Authorization =
                 new AuthenticationHeaderValue(authScheme, authToken);
-            
+
             return Task.CompletedTask;
         }
 
@@ -69,7 +69,7 @@ namespace ReportServer.Desktop.Models
 
         public async Task<ServiceUserRole> GetUserRole(string token)
         {
-            return (await client.Send<ServiceUserRole>(HttpMethod.Get, $"/roles?token={token}")).Body; 
+            return (await client.Send<ServiceUserRole>(HttpMethod.Get, $"/roles?token={token}")).Body;
         }
 
         public bool Init(string token)
@@ -239,6 +239,18 @@ namespace ReportServer.Desktop.Models
             client.Delete($"instances/{id}");
         }
 
+        public async Task<string> StartTaskById(long taskId)
+        {
+            var apiAnswer = await client.Send<string>(HttpMethod.Get, $"tasks/run-{taskId}");
+            return apiAnswer.Body;
+        }
+
+        public async Task<List<long>> GetWorkingTaskInstancesById(long taskId)
+        {
+            var apiAnswer = await client.Send<string>(HttpMethod.Get, $"tasks/working-{taskId}");
+            return JsonConvert.DeserializeObject<List<long>>(apiAnswer.Body);
+        }
+
         public async Task<string> StopTaskByInstanceId(long taskInstanceId)
         {
             var apiAnswer = await client
@@ -315,6 +327,5 @@ namespace ReportServer.Desktop.Models
             if (responseCode != HttpStatusCode.OK)
                 throw new Exception($"Http return error {responseCode.ToString()}");
         }
-
     }
 }

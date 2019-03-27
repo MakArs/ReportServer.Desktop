@@ -32,7 +32,9 @@ namespace ReportServer.Desktop.Interfaces
         List<ApiOperInstance> GetOperInstancesByTaskInstanceId(int taskInstanceId);
         ApiOperInstance GetFullOperInstanceById(int id);
         Task<string> GetCurrentTaskViewById(int taskId);
-        
+        Task<string> StartTaskById(long taskId);
+        Task<List<long>> GetWorkingTaskInstancesById(long taskId);
+
         int? CreateOrUpdateOper(ApiOperTemplate operTemplate);
         int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group);
         int? CreateOrUpdateTelegramChannel(ApiTelegramChannel channel);
