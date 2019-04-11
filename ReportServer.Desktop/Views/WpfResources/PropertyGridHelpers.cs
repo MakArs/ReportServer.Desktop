@@ -159,6 +159,75 @@ namespace ReportServer.Desktop.Views.WpfResources
             return grid;
         }
     }
+    
+    public class ClearIntervalEditor : ReactiveObject, ITypeEditor
+    {
+        [Reactive] public PropertyItem ClearInterval { get; set; }
+        [Reactive] public CheckBox CheckBoxClear { get; set; }
+        [Reactive] public TextBox ValueTextBox { get; set; }
+
+        public ClearIntervalEditor()
+        {
+            this.WhenAnyValue(ped => ped.CheckBoxClear.IsChecked)
+                .Where(val => val != null)
+                .Skip(1)
+                .Subscribe(val =>
+                {
+                    if (val == false)
+                        ClearInterval.Value = 0;
+                });
+        }
+
+        public FrameworkElement ResolveEditor(PropertyItem propertyItem)
+        {
+            ClearInterval = propertyItem;
+            var grid = new Grid
+            {
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition {Width = new GridLength(0.5, GridUnitType.Star)},
+                    new ColumnDefinition {Width = new GridLength(5.5, GridUnitType.Star)}
+                },
+            };
+
+            ValueTextBox = new TextBox
+            {
+                IsEnabled = true,
+                AcceptsReturn = false,
+                TextAlignment = TextAlignment.Left,
+                TextWrapping = TextWrapping.NoWrap,
+            };
+            Grid.SetColumn(ValueTextBox, 1);
+            grid.Children.Add(ValueTextBox);
+            
+            CheckBoxClear = new CheckBox
+            {
+                IsChecked = (int)propertyItem.Value!=0
+            };
+
+            Grid.SetColumn(CheckBoxClear, 0);
+            grid.Children.Add(CheckBoxClear);
+
+            var clearBinding = new Binding("IsChecked")
+            {
+                Source = CheckBoxClear,
+               // Converter = new InverseBoolConverter()
+            };
+
+            BindingOperations.SetBinding(ValueTextBox, UIElement.IsEnabledProperty, clearBinding);
+
+            var textValueBinding =
+                new Binding("Value")
+                {
+                    Source = ClearInterval,
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
+            BindingOperations.SetBinding(ValueTextBox, TextBox.TextProperty, textValueBinding);
+
+            return grid;
+        }
+    }
 
     public class MultilineTextBoxEditor : ITypeEditor
     {
