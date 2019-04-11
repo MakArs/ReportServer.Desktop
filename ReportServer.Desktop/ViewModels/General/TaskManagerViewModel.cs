@@ -109,10 +109,11 @@ namespace ReportServer.Desktop.ViewModels.General
                         "You can try to execute it later");
                 else
                 {
-                    if (await Shell.ShowWarningAffirmativeDialogAsync($"Do you want to execute task {par.Name}?"))
+                    if (!await Shell.ShowWarningAffirmativeDialogAsync($"Do you want to execute task {par.Name}?"))
                         return;
 
                     var res = await cachedService.StartTaskById(par.Id);
+                    LoadInstanceCompactsByTaskId(SelectedTask.Id);
                     await Shell.ShowMessageAsync(res, "Task execution");
                 }
 

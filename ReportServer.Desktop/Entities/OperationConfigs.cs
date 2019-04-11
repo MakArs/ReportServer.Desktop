@@ -3,7 +3,6 @@ using System.ComponentModel;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Views.WpfResources;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
 
 namespace ReportServer.Desktop.Entities
 {
@@ -18,10 +17,6 @@ namespace ReportServer.Desktop.Entities
 
     public class DbExporterConfig : IOperationConfig
     {
-        [Editor(typeof(FontComboBoxEditor), typeof(FontComboBoxEditor))]
-        [Reactive]
-        public ObservableCollection<string> IncomingPackages { get; set; }
-
         [PropertyOrder(0)]
         [DisplayName("Package name")]
         [Description("Package which exporter needs for work")]
@@ -242,6 +237,12 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public bool UseAllSets { get; set; }
 
+        [PropertyOrder(8)]
+        [DisplayName("Package file name")]
+        [Description("Will be displayed for files maked from package")]
+        [Reactive]
+        public string PackageRename { get; set; }
+
         [DisplayName("Server host")]
         [Reactive]
         public string Host { get; set; }
@@ -257,6 +258,12 @@ namespace ReportServer.Desktop.Entities
         [DisplayName("Folder at server")]
         [Reactive]
         public string FolderPath { get; set; }
+
+        [DisplayName("Clear interval")]
+        [Description("Delete all files older than this number in days on execute")]
+        [Reactive]
+        [Editor(typeof(ClearIntervalEditor), typeof(ClearIntervalEditor))]
+        public int ClearInterval { get; set; }
     }
 
     public class ExcelImporterConfig : IOperationConfig, IPackagedImporterConfig
@@ -308,11 +315,6 @@ namespace ReportServer.Desktop.Entities
 
     public class SshImporterConfig : IOperationConfig
     {
-        [PropertyOrder(0)]
-        [DisplayName("Package name")]
-        [Reactive]
-        public string PackageName { get; set; }
-
         [DisplayName("Server host")]
         [Reactive]
         public string Host { get; set; }
@@ -338,17 +340,24 @@ namespace ReportServer.Desktop.Entities
         public string PackageName { get; set; }
 
         [PropertyOrder(1)]
+        [Description("List of semi-colon separated dataset names for query results " +
+                     "(successively assigned to the resulting sets)")]
+        [DisplayName("Dataset names list")]
+        [Reactive]
+        public string DataSetNames { get; set; }
+
+        [PropertyOrder(2)]
         [DisplayName("Connection string")]
         [Reactive]
         public string ConnectionString { get; set; }
 
-        [PropertyOrder(2)]
+        [PropertyOrder(3)]
         [DisplayName("Query")]
         [Editor(typeof(MultilineTextBoxEditor), typeof(MultilineTextBoxEditor))]
         [Reactive]
         public string Query { get; set; }
 
-        [PropertyOrder(3)]
+        [PropertyOrder(4)]
         [DisplayName("Database operation timeout")]
         [DefaultValue(60)]
         [Reactive]
@@ -363,12 +372,17 @@ namespace ReportServer.Desktop.Entities
         public string PackageName { get; set; }
 
         [PropertyOrder(1)]
+        [DisplayName("Dataset name")]
+        [Reactive]
+        public string DataSetName { get; set; }
+
+        [PropertyOrder(2)]
         [DisplayName("Path to file folder")]
         [Reactive]
         [Editor(typeof(PathEditor), typeof(PathEditor))]
         public string FileFolder { get; set; }
 
-        [PropertyOrder(2)]
+        [PropertyOrder(3)]
         [DisplayName("File name")]
         [Reactive]
         public string FileName { get; set; }

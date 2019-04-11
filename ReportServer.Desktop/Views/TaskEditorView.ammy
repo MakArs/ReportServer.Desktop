@@ -445,6 +445,7 @@ UserControl
         Margin: "2 2 2 10"
         ShowSummary: false
         Background: "#F5F5F5"
+		ShowDescriptionByTooltip: true
       //  SelectedObjectName: bind Type set [StringFormat: "({0})"]
         SelectedObjectTypeName: bind SelectedOperation.ImplementationType
         SelectedObject: bind SelectedOperationConfig set[

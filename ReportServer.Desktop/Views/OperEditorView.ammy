@@ -83,6 +83,7 @@ UserControl "ReportServer.Desktop.Views.OperEditorView" {
         ShowSummary: "False"
         Background: "#F5F5F5"
         SelectedObjectName: ""
+		ShowDescriptionByTooltip: true
         SelectedObjectTypeName: "Template configuration"
         Visibility: "{Binding Configuration,Converter={StaticResource NullToVisibility}}"
         SelectedObject: bind Configuration set[
