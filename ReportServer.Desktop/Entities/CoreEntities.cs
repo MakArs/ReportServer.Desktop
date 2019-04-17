@@ -68,6 +68,7 @@ namespace ReportServer.Desktop.Entities
     {
         Viewer,
         Editor,
+        StopRunner,//executor?
         NoRole
     }
 }

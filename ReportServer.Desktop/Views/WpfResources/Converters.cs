@@ -62,7 +62,8 @@ namespace ReportServer.Desktop.Views.WpfResources
     {
         public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return (ServiceUserRole) values[0] == ServiceUserRole.Editor &&
+            return ((ServiceUserRole) values[0] == ServiceUserRole.Editor ||
+                    (ServiceUserRole) values[0] == ServiceUserRole.StopRunner) &&
                    (InstanceState) values[1] == InstanceState.InProcess
                 ? Visibility.Visible
                 : Visibility.Collapsed;

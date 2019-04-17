@@ -98,7 +98,7 @@ namespace ReportServer.Desktop.ViewModels.General
                 var t = await this.cachedService.StopTaskByInstanceId(par);
                 LoadInstanceCompactsByTaskId(SelectedTask.Id);
                 return t;
-            }, Shell.CanEdit);
+            }, Shell.CanStopRun);
 
             RunTaskCommand = ReactiveCommand.CreateFromTask<DesktopTask>(async par =>
             {
@@ -117,7 +117,7 @@ namespace ReportServer.Desktop.ViewModels.General
                     await Shell.ShowMessageAsync(res, "Task execution");
                 }
 
-            }, Shell.CanEdit);
+            }, Shell.CanStopRun);
 
             this.WhenAnyValue(s => s.SelectedTask)
                 .Where(x => x != null)

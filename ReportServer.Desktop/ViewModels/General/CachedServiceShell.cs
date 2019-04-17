@@ -26,6 +26,7 @@ namespace ReportServer.Desktop.ViewModels.General
 
         [Reactive] public ServiceUserRole Role { get; set; }
         public IObservable<bool> CanEdit;
+        public IObservable<bool> CanStopRun;
         public ReactiveCommand<Unit, Unit> RefreshCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateTaskCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateOperTemplateCommand { get; set; }
@@ -41,6 +42,9 @@ namespace ReportServer.Desktop.ViewModels.General
             RefreshCommand = ReactiveCommand.Create(this.cachedService.RefreshData);
 
             CanEdit = this.WhenAnyValue(shl => shl.Role, role => role == ServiceUserRole.Editor);
+
+            CanStopRun = this.WhenAnyValue(shl => shl.Role, role => role == ServiceUserRole.Editor ||
+                                                                    role == ServiceUserRole.StopRunner);
 
             CreateTaskCommand = ReactiveCommand.Create(() =>
                 ShowView<TaskEditorView>(new TaskEditorRequest
