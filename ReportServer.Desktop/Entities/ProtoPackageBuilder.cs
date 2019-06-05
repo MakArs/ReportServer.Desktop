@@ -43,7 +43,7 @@ namespace ReportServer.Desktop.Entities
 
                 case ScalarType.DateTime:
                     return DateTimeOffset
-                        .FromUnixTimeSeconds(value.DateTime);
+                        .FromUnixTimeSeconds(value.DateTimeValue);
 
                 case ScalarType.DateTimeOffset:
                     return DateTimeOffset

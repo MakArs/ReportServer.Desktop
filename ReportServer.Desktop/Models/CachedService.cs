@@ -241,7 +241,7 @@ namespace ReportServer.Desktop.Models
 
         public async Task<string> StartTaskById(long taskId)
         {
-            var apiAnswer = await client.Send<string>(HttpMethod.Get, $"tasks/run-{taskId}");
+            var apiAnswer = await client.Send<string>(HttpMethod.Get, $"tasks/run/{taskId}");
             return apiAnswer.Body;
         }
 
