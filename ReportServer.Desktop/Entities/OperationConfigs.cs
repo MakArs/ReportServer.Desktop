@@ -206,7 +206,7 @@ namespace ReportServer.Desktop.Entities
         [DisplayName("Path to file folder")]
         [Reactive]
         [Editor(typeof(PathEditor), typeof(PathEditor))]
-        public string FileFolder { get; set; }
+        public string SourceFileFolder { get; set; }
 
         [PropertyOrder(3)]
         [DisplayName("File name")]
@@ -265,6 +265,85 @@ namespace ReportServer.Desktop.Entities
         [Editor(typeof(ClearIntervalEditor), typeof(ClearIntervalEditor))]
         public int ClearInterval { get; set; }
     }
+
+
+    public class FtpExporterConfig : IOperationConfig
+    {
+        [PropertyOrder(0)]
+        [DisplayName("Package name")]
+        [Editor(typeof(IncomingPackagesControl), typeof(IncomingPackagesControl))]
+        [Reactive]
+        public string PackageName { get; set; }
+
+        [PropertyOrder(1)]
+        [DisplayName("Display execution date in names of created files")]
+        [Reactive]
+        public bool DateInName { get; set; }
+
+        [PropertyOrder(2)]
+        [DisplayName("Path to file folder")]
+        [Reactive]
+        [Editor(typeof(PathEditor), typeof(PathEditor))]
+        public string SourceFileFolder { get; set; }
+
+        [PropertyOrder(3)]
+        [DisplayName("File name")]
+        [Reactive]
+        public string FileName { get; set; }
+
+        [DisplayName("Run if data package is void")]
+        [Reactive]
+        public bool RunIfVoidPackage { get; set; }
+
+        [PropertyOrder(4)]
+        [DisplayName("Save package as xlsx file")]
+        [Reactive]
+        public bool ConvertPackageToXlsx { get; set; }
+
+        [PropertyOrder(5)]
+        [DisplayName("Save package as json file")]
+        [Reactive]
+        public bool ConvertPackageToJson { get; set; }
+
+        [PropertyOrder(6)]
+        [DisplayName("Save package as csv file")]
+        [Reactive]
+        public bool ConvertPackageToCsv { get; set; }
+
+        [PropertyOrder(7)]
+        [DisplayName("Use all package data sets")]
+        [Reactive]
+        public bool UseAllSets { get; set; }
+
+        [PropertyOrder(8)]
+        [DisplayName("Package file name")]
+        [Description("Will be displayed for files maked from package")]
+        [Reactive]
+        public string PackageRename { get; set; }
+
+        [DisplayName("Server host")]
+        [Reactive]
+        public string Host { get; set; }
+
+        [DisplayName("Server user login")]
+        [Reactive]
+        public string Login { get; set; }
+
+        [DisplayName("Server user password")]
+        [Reactive]
+        public string Password { get; set; }
+
+        [DisplayName("Folder at server")]
+        [Reactive]
+        public string FolderPath { get; set; }
+
+        [DisplayName("Clear interval")]
+        [Description("Delete all files older than this number in days on execute")]
+        [Reactive]
+        [Editor(typeof(ClearIntervalEditor), typeof(ClearIntervalEditor))]
+        public int ClearInterval { get; set; }
+    }
+
 
     public class ExcelImporterConfig : IOperationConfig, IPackagedImporterConfig
     {

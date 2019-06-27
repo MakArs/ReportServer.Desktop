@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
-using ReportServer.Desktop.ViewModels;
 using ReportServer.Desktop.ViewModels.Editors;
 using ReportServer.Desktop.ViewModels.General;
 using ReportServer.Desktop.Views;

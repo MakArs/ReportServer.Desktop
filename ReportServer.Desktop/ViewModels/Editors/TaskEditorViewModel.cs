@@ -96,7 +96,7 @@ namespace ReportServer.Desktop.ViewModels.Editors
 
             ClipBoardFillCommand = ReactiveCommand.Create<string>(Clipboard.SetText);
 
-            OpenCurrentTaskViewCommand = ReactiveCommand
+            OpenCurrentTaskViewCommand = ReactiveCommand //todo: make without interface blocking 
                 .CreateFromTask(async () =>
                     cachedService.OpenPageInBrowser(
                         await cachedService.GetCurrentTaskViewById(Id)));
