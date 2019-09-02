@@ -363,6 +363,12 @@ namespace ReportServer.Desktop.Entities
         [Reactive]
         public string FileName { get; set; }
 
+        [PropertyOrder(3)]
+        [Description("List of semi-colon separated column numbers on which it is needed to group data")]
+        [DisplayName("Group columns list")]
+        [Reactive]
+        public string GroupNumbers { get; set; }
+
         [DisplayName("Name of sheet in file")]
         [Reactive]
         public string ScheetName { get; set; }
@@ -437,6 +443,12 @@ namespace ReportServer.Desktop.Entities
         public string Query { get; set; }
 
         [PropertyOrder(4)]
+        [Description("List of semi-colon separated column numbers on which it is needed to group data")]
+        [DisplayName("Group columns list")]
+        [Reactive]
+        public string GroupNumbers { get; set; }
+
+        [PropertyOrder(5)]
         [DisplayName("Database operation timeout")]
         [DefaultValue(60)]
         [Reactive]
@@ -465,6 +477,12 @@ namespace ReportServer.Desktop.Entities
         [DisplayName("File name")]
         [Reactive]
         public string FileName { get; set; }
+
+        [PropertyOrder(4)]
+        [Description("List of semi-colon separated column numbers on which it is needed to group data")]
+        [DisplayName("Group columns list")]
+        [Reactive]
+        public string GroupNumbers { get; set; }
 
         [ItemsSource(typeof(DelimitersSource))]
         [Reactive]

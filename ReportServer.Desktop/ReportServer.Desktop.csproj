@@ -31,11 +31,11 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>ReportServer.Desktop</ProductName>
     <PublisherName>Лаборатория умного вождения</PublisherName>
-    <MinimumRequiredVersion>2.3.6.1</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.3.7.1</MinimumRequiredVersion>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>2.3.6.1</ApplicationVersion>
+    <ApplicationVersion>2.3.7.1</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -347,6 +347,7 @@
       <DependentUpon>ScheduleManagerView.ammy</DependentUpon>
     </None>
     <None Include="Views\WpfResources\IncomingPackagesControl.ammy" />
+    <None Include="Views\WpfResources\MultiGroupControl.ammy" />
     <None Include="Views\WpfResources\OperInstancesView.ammy" />
     <None Include="Views\WpfResources\OperInstancesView.g.xaml">
       <DependentUpon>OperInstancesView.ammy</DependentUpon>
@@ -410,6 +411,9 @@
     </Compile>
     <Compile Include="Views\WpfResources\IncomingPackagesControl.ammy.cs">
       <DependentUpon>IncomingPackagesControl.ammy</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WpfResources\MultiGroupControl.ammy.cs">
+      <DependentUpon>MultiGroupControl.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\WpfResources\NumericTextBoxBehavior.cs" />
     <Compile Include="BootsTrap.cs" />
@@ -514,6 +518,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>IncomingPackagesControl.ammy</DependentUpon>
+    </Page>
+    <Page Include="Views\WpfResources\MultiGroupControl.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>MultiGroupControl.ammy</DependentUpon>
     </Page>
     <Page Include="Views\WpfResources\OperTemplatesListView.g.xaml">
       <SubType>Designer</SubType>
