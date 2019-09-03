@@ -396,6 +396,10 @@ namespace ReportServer.Desktop.Entities
         [Description("Max count of rows that will be read")]
         [Reactive]
         public int MaxRowCount { get; set; }
+
+        [DisplayName("Send error if package is empty")]
+        [Reactive]
+        public bool SendVoidPackageError { get; set; }
     }
 
     public class SshImporterConfig : IOperationConfig
@@ -453,6 +457,10 @@ namespace ReportServer.Desktop.Entities
         [DefaultValue(60)]
         [Reactive]
         public int TimeOut { get; set; }
+
+        [DisplayName("Send error if package is empty")]
+        [Reactive]
+        public bool SendVoidPackageError { get; set; }
     }
 
     public class CsvImporterConfig : IOperationConfig, IPackagedImporterConfig
@@ -487,6 +495,10 @@ namespace ReportServer.Desktop.Entities
         [ItemsSource(typeof(DelimitersSource))]
         [Reactive]
         public string Delimiter { get; set; }
+
+        [DisplayName("Send error if package is empty")]
+        [Reactive]
+        public bool SendVoidPackageError { get; set; }
     }
 
     public class CustomDbImporterConfig : IOperationConfig
