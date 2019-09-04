@@ -70,7 +70,7 @@ namespace ReportServer.Desktop
             #region monik
 
             var logSender = new AzureSender(
-                ConfigurationManager.AppSettings["monikendpoint"],
+                ConfigurationManager.AppSettings["MonikEndpoint"],
                 "incoming");
 
             builder.RegisterInstance(logSender)
@@ -79,7 +79,7 @@ namespace ReportServer.Desktop
             var monikSettings = new ClientSettings
             {
                 SourceName = "ReportServer",
-                InstanceName = ConfigurationManager.AppSettings["InstanceName"],
+                InstanceName = ConfigurationManager.AppSettings["MonikInstanceName"],
                 AutoKeepAliveEnable = true
             };
 
