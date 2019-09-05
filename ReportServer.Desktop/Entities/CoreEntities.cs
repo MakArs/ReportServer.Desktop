@@ -10,6 +10,7 @@ namespace ReportServer.Desktop.Entities
         [Reactive] public string Name { get; set; }
         [Reactive] public string Operations { get; set; }
         [Reactive] public string Schedule { get; set; }
+        [Reactive] public string GroupName { get; set; }
     }
 
     public class DesktopOperation : ReactiveObject
