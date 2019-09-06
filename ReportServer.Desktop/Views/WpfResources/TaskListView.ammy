@@ -3,8 +3,16 @@ using ReportServer.Desktop.Entities;
 
 UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
   "xmlns:sys": "clr-namespace:System;assembly=mscorlib"
-  Resources: ResourceDictionary {
-    Source: "TemplatesDictionary.g.xaml"
+  Resources:  ResourceDictionary {
+    MergedDictionaries: [
+      ResourceDictionary {
+        Source: "TemplatesDictionary.g.xaml"
+      }
+    ]
+    CollectionViewSource Key="TasksView" {
+      Source: "{Binding Path=Tasks}"
+      GroupDescriptions: PropertyGroupDescription { PropertyName: "GroupName" }
+    }
   }
   Grid {
     RowDefinitions: [
@@ -33,7 +41,7 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
     }
     DataGrid {
       Grid.Row: "1"
-      #DataGridMix(bind Tasks,bind SelectedTask)
+      #DataGridMix(bind from $resource TasksView, bind SelectedTask)
       RowHeight: "{x:Static sys:Double.NaN}"
       InputBindings: [
         MouseBinding {
@@ -72,6 +80,40 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
           }
         }
       ]
+      GroupStyle: GroupStyle {
+        ContainerStyle: Style {
+          TargetType: GroupItem
+          Setter { Property: "Margin",  Value: "0,0,0,5" }
+          Setter {
+            Property: "Template"
+            Value: ControlTemplate {
+              TargetType: GroupItem
+              Expander {
+                IsExpanded: true
+                Background: resource dyn "AccentColorBrush"
+                BorderBrush: resource dyn "AccentColorBrush3"
+                Foreground: resource dyn "BlackBrush"
+                BorderThickness: "1,1,1,5"
+                Header: DockPanel {
+                  TextBlock {
+                    HorizontalAlignment: "Left"
+                    FontWeight: "Bold"
+                    Text: bind Name
+                    Margin: "5,0,0,0"
+                  }
+                  TextBlock {
+                    HorizontalAlignment: "Left"
+                    FontWeight: "Bold"
+                    Text: bind ItemCount set [ StringFormat: "(Count: {0})" ]
+                    Margin: "5,0,0,0"
+                  }
+                }
+                Content: ItemsPresenter { }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -175,6 +176,14 @@ namespace ReportServer.Desktop.ViewModels.General
                     .Select(ti => mapper.Map<DesktopTaskInstance>(ti)).OrderByDescending(inst => inst.StartTime));
         }
 
+        private static string ParseGroupName(string name)
+        {
+            var match = Regex.Match(name, @"\[(?<groupName>.*?)\].*");
+            return match.Success
+                ? match.Groups["groupName"].Value
+                : "[Default]";
+        }
+
         private void RefreshTaskList()
         {
             cachedService.Tasks
@@ -183,6 +192,7 @@ namespace ReportServer.Desktop.ViewModels.General
                 {
                     Id = task.Id,
                     Name = task.Name,
+                    GroupName = ParseGroupName(task.Name),
                     Schedule = cachedService.Schedules.Items
                         .FirstOrDefault(sched => sched.Id == task.ScheduleId)?.Name,
 
