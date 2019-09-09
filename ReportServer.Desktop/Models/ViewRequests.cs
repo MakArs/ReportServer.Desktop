@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Reactive;
-using ReactiveUI;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.ViewModels.Editors;
 using Ui.Wpf.Common;

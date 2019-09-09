@@ -350,6 +350,9 @@
     <PackageReference Include="CronExpressionDescriptor" Version="2.9.0" />
     <PackageReference Include="Domain0.Api.Client" Version="1.0.10" />
     <PackageReference Include="Domain0.Client.AuthContext" Version="1.0.10" />
+    <PackageReference Include="DynamicData">
+      <Version>6.13.1</Version>
+    </PackageReference>
     <PackageReference Include="Fody">
       <Version>4.0.2</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
