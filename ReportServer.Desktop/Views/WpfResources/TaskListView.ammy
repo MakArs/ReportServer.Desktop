@@ -23,10 +23,11 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
       Grid.ColumnSpan: "4"
       ColumnDefinitions: [
         ColumnDefinition {Width: "Auto"}
+		ColumnDefinition {Width: "Auto"}
         ColumnDefinition {}
       ]
       Label {
-        Grid.Column: "1"
+        Grid.Column: "2"
         Content: "Current tasks list"
         Margin: "2 2 0 2"
       }
@@ -37,6 +38,15 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
         Padding: "5"
         Command: bind Shell.CreateTaskCommand
         "Add new task"
+      }
+	   Button {
+      Visibility: bind Shell.Role
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
+			 : Visibility.Collapsed 
+		Grid.Column: "1"
+        Padding: "5"
+        Command: bind CopyTaskCommand
+        "Copy selected task"
       }
     }
     DataGrid {

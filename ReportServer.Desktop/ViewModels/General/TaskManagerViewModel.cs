@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using DynamicData;
-using DynamicData.Binding;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -20,6 +19,7 @@ using ReportService;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
 using Ui.Wpf.Common.ViewModels;
+
 namespace ReportServer.Desktop.ViewModels.General
 {
     public class TaskManagerViewModel : ViewModelBase, IInitializableViewModel
@@ -41,6 +41,7 @@ namespace ReportServer.Desktop.ViewModels.General
 
         public ReactiveCommand<string, Unit> OpenPage { get; set; }
         public ReactiveCommand<Unit, Unit> EditTaskCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> CopyTaskCommand { get; set; }
         public ReactiveCommand<Unit, Unit> DeleteCommand { get; set; }
         public ReactiveCommand<int, string> StopTaskCommand { get; set; }
         public ReactiveCommand<DesktopTask, Unit> RunTaskCommand { get; set; }
@@ -86,6 +87,42 @@ namespace ReportServer.Desktop.ViewModels.General
                     },
                     new UiShowOptions {Title = name});
             });
+
+            var canCopy = this.WhenAnyValue(tvm => tvm.SelectedTask, stsk => stsk?.Id>0)
+                .Concat(Shell.CanEdit);
+
+            CopyTaskCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SelectedTask == null) return;
+                var id = SelectedTask.Id;
+
+                cachedService.RefreshData();
+
+                if (cachedService
+                        .Tasks.Items.FirstOrDefault(task => task.Id == id) is var selectedTask && selectedTask == null)
+                {
+                    await Shell.ShowMessageAsync("Task not longer exists");
+                    return;
+                }
+
+                var name = $"Task {id} copy";
+
+                selectedTask.Id = 0;
+
+                var taskOpers = cachedService.Operations.Items.Where(to => to.TaskId == id)
+                    .ToList();
+                taskOpers.ForEach(oper => oper.Id = 0);
+
+                var copyRequest = new TaskEditorRequest
+                {
+                    ViewId = name,
+                    Task = selectedTask,
+                    TaskOpers = taskOpers
+                };
+
+                Shell.ShowView<TaskEditorView>(copyRequest,
+                    new UiShowOptions {Title = name});
+            }, canCopy);
 
             DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
                 await Delete(), Shell.CanEdit);
