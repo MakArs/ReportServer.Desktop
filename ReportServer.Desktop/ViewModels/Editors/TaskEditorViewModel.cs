@@ -198,7 +198,7 @@ namespace ReportServer.Desktop.ViewModels.Editors
 
             ClearSelections();
         }
-        
+
         private async Task SelectOperation(DesktopOperation operation)
         {
             if (Shell.Role == ServiceUserRole.Editor && SelectedOperationConfig != null)
@@ -352,13 +352,18 @@ namespace ReportServer.Desktop.ViewModels.Editors
                             Name = pair.Key,
                             Value = pair.Value
                         }));
-            }
 
-            if (Id == 0)
-            {
-                HasSchedule = true;
-                ScheduleId = Schedules.First()?.Id;
-                Name = "New task";
+                if (request.ViewId == "Creating new Task")
+                {
+                    HasSchedule = true;
+                    ScheduleId = Schedules.First()?.Id;
+                    Name = "New task";
+                }
+
+                if (request.ViewId.Contains("copy"))
+                {
+                    Name = request.ViewId;
+                }
             }
 
             void Changed(object sender, PropertyChangedEventArgs e)
