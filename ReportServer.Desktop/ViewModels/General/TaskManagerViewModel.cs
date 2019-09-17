@@ -28,6 +28,8 @@ namespace ReportServer.Desktop.ViewModels.General
         private readonly IMapper mapper;
         public CachedServiceShell Shell { get; }
 
+        [Reactive] public string TaskNameSearchString { get; set; }
+        [Reactive] public string TaskIdSearchString { get; set; }
         [Reactive] public ReadOnlyObservableCollection<DesktopTask> Tasks { get; set; }
         private readonly SourceList<DesktopTaskInstance> selectedTaskInstances;
         [Reactive] public ReadOnlyObservableCollection<DesktopTaskInstance> SelectedTaskInstances { get; set; }
@@ -88,7 +90,7 @@ namespace ReportServer.Desktop.ViewModels.General
                     new UiShowOptions {Title = name});
             });
 
-            var canCopy = this.WhenAnyValue(tvm => tvm.SelectedTask, stsk => stsk?.Id>0)
+            var canCopy = this.WhenAnyValue(tvm => tvm.SelectedTask, stsk => stsk?.Id > 0)
                 .Concat(Shell.CanEdit);
 
             CopyTaskCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -157,6 +159,12 @@ namespace ReportServer.Desktop.ViewModels.General
 
             }, Shell.CanStopRun);
 
+            this.ObservableForProperty(s => s.TaskNameSearchString)
+                .Subscribe(sstr => RefreshTaskList(nameTemplate: sstr.Value));
+
+            this.ObservableForProperty(s => s.TaskIdSearchString)
+                .Subscribe(idstr => RefreshTaskList( idstr.Value));
+
             this.WhenAnyValue(s => s.SelectedTask)
                 .Where(x => x != null)
                 .Subscribe(x => LoadInstanceCompactsByTaskId(x.Id));
@@ -221,10 +229,15 @@ namespace ReportServer.Desktop.ViewModels.General
                 : "[Default]";
         }
 
-        private void RefreshTaskList()
+        private void RefreshTaskList(string idTemplate = null, string nameTemplate = null)
         {
             cachedService.Tasks
                 .Connect()
+                .Filter(task => string.IsNullOrEmpty(idTemplate) || task.Id.ToString().Contains(idTemplate.ToString() ?? "No value"))
+                .Filter(task =>
+                    string.IsNullOrEmpty(nameTemplate) ||
+                    task.Name.IndexOf(nameTemplate, StringComparison.OrdinalIgnoreCase) >=
+                    0)
                 .Transform(task => new DesktopTask
                 {
                     Id = task.Id,
@@ -246,6 +259,8 @@ namespace ReportServer.Desktop.ViewModels.General
                 })
                 .Bind(out var temp)
                 .Subscribe();
+
+            // temp = temp.Where();
 
             cachedService.Tasks.Connect()
                 .Subscribe(_ =>

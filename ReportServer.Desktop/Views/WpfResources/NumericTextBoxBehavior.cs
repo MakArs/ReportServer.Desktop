@@ -18,7 +18,7 @@ namespace ReportServer.Desktop.Views.WpfResources
 
         public TextBoxInputBehavior()
         {
-            InputMode               = TextBoxInputMode.None;
+            InputMode = TextBoxInputMode.None;
             JustPositivDecimalInput = false;
         }
 
@@ -26,7 +26,7 @@ namespace ReportServer.Desktop.Views.WpfResources
         {
             base.OnAttached();
             AssociatedObject.PreviewTextInput += AssociatedObjectPreviewTextInput;
-            AssociatedObject.PreviewKeyDown   += AssociatedObjectPreviewKeyDown;
+            AssociatedObject.PreviewKeyDown += AssociatedObjectPreviewKeyDown;
 
             DataObject.AddPastingHandler(AssociatedObject, Pasting);
         }
@@ -35,7 +35,7 @@ namespace ReportServer.Desktop.Views.WpfResources
         {
             base.OnDetaching();
             AssociatedObject.PreviewTextInput -= AssociatedObjectPreviewTextInput;
-            AssociatedObject.PreviewKeyDown   -= AssociatedObjectPreviewKeyDown;
+            AssociatedObject.PreviewKeyDown -= AssociatedObjectPreviewKeyDown;
 
             DataObject.RemovePastingHandler(AssociatedObject, Pasting);
         }
@@ -109,7 +109,11 @@ namespace ReportServer.Desktop.Views.WpfResources
                 case TextBoxInputMode.None:
                     return true;
                 case TextBoxInputMode.DigitInput:
-                    return CheckIsDigit(input) && input.Length<7 && (Convert.ToInt32(input) > 0);
+                    return CheckIsDigit(input) && input.Length < 7 && Convert.ToInt32(input) > 0;
+
+                case TextBoxInputMode.NullableDigitInput:
+                    return string.IsNullOrEmpty(input) ||
+                           (CheckIsDigit(input) && input.Length < 7 && Convert.ToInt32(input) >= 0);
 
                 case TextBoxInputMode.DecimalInput:
                     decimal d;
@@ -135,8 +139,6 @@ namespace ReportServer.Desktop.Views.WpfResources
                     var result = decimal.TryParse(input, ValidNumberStyles, new CultureInfo("en-US"), out d);
                     return result;
 
-
-
                 default: throw new ArgumentException("Unknown TextBoxInputMode");
 
             }
@@ -152,40 +154,7 @@ namespace ReportServer.Desktop.Views.WpfResources
     {
         None,
         DecimalInput,
-        DigitInput
+        DigitInput,
+        NullableDigitInput
     }
 }
-//public class NumericTextBoxBehavior: Behavior<TextBox>
-    //{
-    //    protected override void OnAttached()
-    //    {
-    //        base.OnAttached();
-    //        AssociatedObject.TextChanged += textBoxNumeric_TextChanged;
-    //    }
-
-    //    private void textBoxNumeric_TextChanged(object sender, TextChangedEventArgs e)
-    //    {
-    //        TextBox textBox = sender as TextBox;
-    //        Int32 selectionStart = textBox.SelectionStart;
-    //        String newText = String.Empty;
-    //        int count = 0;
-    //        foreach (Char c in textBox.Text)
-    //        {
-    //            if (Char.IsDigit(c) || Char.IsControl(c) || (c == '.' && count == 0))
-    //            {
-    //                newText += c;
-    //                if (c == '.')
-    //                    count += 1;
-    //            }
-    //        }
-
-    //        textBox.Text = newText;
-    //        textBox.SelectionStart = selectionStart <= textBox.Text.Length ? selectionStart : textBox.Text.Length;
-    //    }
-
-    //    protected override void OnDetaching()
-    //    {
-    //        base.OnDetaching();
-    //        AssociatedObject.TextChanged -= textBoxNumeric_TextChanged;
-    //    }
-    //}

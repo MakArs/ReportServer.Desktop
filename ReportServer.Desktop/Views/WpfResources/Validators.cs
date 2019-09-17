@@ -2,7 +2,6 @@
 using CronExpressionDescriptor;
 using FluentValidation;
 using ReportServer.Desktop.Entities;
-using ReportServer.Desktop.ViewModels;
 using ReportServer.Desktop.ViewModels.Editors;
 
 namespace ReportServer.Desktop.Views.WpfResources
