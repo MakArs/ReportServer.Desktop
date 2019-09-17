@@ -189,7 +189,7 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
             Value: ControlTemplate {
               TargetType: GroupItem
               Expander {              
-                IsExpanded: false
+                IsExpanded: true
                 Background: resource dyn "AccentColorBrush"
                 BorderBrush: resource dyn "AccentColorBrush3"
                 Foreground: resource dyn "BlackBrush"
