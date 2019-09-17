@@ -182,18 +182,18 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
       ]
       GroupStyle: GroupStyle {
         ContainerStyle: Style {
-          TargetType: GroupItem
+          TargetType: GroupItem		
           Setter { Property: "Margin",  Value: "0,0,0,3" }
           Setter {
             Property: "Template"
             Value: ControlTemplate {
               TargetType: GroupItem
-              Expander {
-                IsExpanded: true
+              Expander {              
+                IsExpanded: false
                 Background: resource dyn "AccentColorBrush"
                 BorderBrush: resource dyn "AccentColorBrush3"
                 Foreground: resource dyn "BlackBrush"
-                BorderThickness: "1,1,1,3"
+                BorderThickness: "1,1,1,1"
                 Header: DockPanel {
                   TextBlock {
                     HorizontalAlignment: "Left"
