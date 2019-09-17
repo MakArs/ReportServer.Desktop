@@ -15,7 +15,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/baselight.xaml" />
                 <!-- theme resource -->
                 <!-- change "BaseLight" to the theme you want -->
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Olive.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/olive.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="Padding" Value="5"/>
