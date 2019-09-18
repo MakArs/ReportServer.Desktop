@@ -24,13 +24,16 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
     ]
     Grid {
       Grid.ColumnSpan: "4"
+	  Background: 	"#F5F5F5"
       ColumnDefinitions: [
         ColumnDefinition {Width: "Auto"}
+		ColumnDefinition {Width: "Auto"}
+		ColumnDefinition {Width: "Auto"}
 		ColumnDefinition {Width: "Auto"}
         ColumnDefinition {}
       ]
       Label {
-        Grid.Column: "2"
+        Grid.Column: "4"
         Content: "Current tasks list"
         Margin: "2 2 0 2"
       }
@@ -50,6 +53,19 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
         Padding: "5"
         Command: bind CopyTaskCommand
         "Copy selected task"
+      }
+
+	  Label {
+        Grid.Column: "2"
+        Content: "Expand all groups"
+        Margin: "2 2 0 2"
+      }
+	    ToggleSwitchButton {
+		Grid.Column: "3"
+        Padding: "3"
+		IsChecked: bind DataContext.AllGroupsExpanded from $ancestor<UserControl>set [
+				UpdateSourceTrigger:PropertyChanged]    
+		
       }
     }
     DataGrid {  
@@ -97,8 +113,8 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
 			Text: bind DataContext.TaskIdSearchString from $ancestor<UserControl> set[UpdateSourceTrigger: "PropertyChanged"
 					ValidatesOnDataErrors: "True"]	
 					
-		 Interaction.Behaviors:TextBoxInputBehavior {
-						InputMode: NullableDigitInput}
+		 Interaction.Behaviors: TextBoxInputBehavior {
+					InputMode: NullableDigitInput}
 
 			HorizontalAlignment: Right
 			Width: 90
@@ -189,7 +205,9 @@ UserControl "ReportServer.Desktop.Views.WpfResources.TaskListView" {
             Value: ControlTemplate {
               TargetType: GroupItem
               Expander {              
-                IsExpanded: true
+                IsExpanded: bind DataContext.AllGroupsExpanded from $ancestor<UserControl>  set [
+				UpdateSourceTrigger:Explicit
+				Mode: TwoWay]
                 Background: resource dyn "AccentColorBrush"
                 BorderBrush: resource dyn "AccentColorBrush3"
                 Foreground: resource dyn "BlackBrush"

@@ -30,6 +30,7 @@ namespace ReportServer.Desktop.ViewModels.General
 
         [Reactive] public string TaskNameSearchString { get; set; }
         [Reactive] public string TaskIdSearchString { get; set; }
+        [Reactive] public bool AllGroupsExpanded { get; set; }
         [Reactive] public ReadOnlyObservableCollection<DesktopTask> Tasks { get; set; }
         private readonly SourceList<DesktopTaskInstance> selectedTaskInstances;
         [Reactive] public ReadOnlyObservableCollection<DesktopTaskInstance> SelectedTaskInstances { get; set; }
@@ -42,6 +43,7 @@ namespace ReportServer.Desktop.ViewModels.General
         [Reactive] public DesktopOperInstance SelectedInstanceData { get; set; }
 
         public ReactiveCommand<string, Unit> OpenPage { get; set; }
+        //public ReactiveCommand<Unit, Unit> SwitchExpandCommand { get; set; }
         public ReactiveCommand<Unit, Unit> EditTaskCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CopyTaskCommand { get; set; }
         public ReactiveCommand<Unit, Unit> DeleteCommand { get; set; }
@@ -55,7 +57,7 @@ namespace ReportServer.Desktop.ViewModels.General
             this.mapper = mapper;
             Shell = shell as CachedServiceShell;
             var packageBuilder = new ProtoPackageBuilder();
-
+            
             selectedTaskInstances = new SourceList<DesktopTaskInstance>();
             operInstances = new SourceList<DesktopOperInstance>();
 
@@ -63,6 +65,8 @@ namespace ReportServer.Desktop.ViewModels.General
                 .WhenAnyValue(t => t.SelectedInstanceData,
                     si => !string.IsNullOrEmpty(si?.DataSet));
 
+            //SwitchExpandCommand = ReactiveCommand.Create(() => { AllGroupsExpanded = !AllGroupsExpanded; });
+        
             OpenPage = ReactiveCommand.Create<string>
                 (cachedService.OpenPageInBrowser, canOpenInstancePage);
 
@@ -160,10 +164,10 @@ namespace ReportServer.Desktop.ViewModels.General
             }, Shell.CanStopRun);
 
             this.ObservableForProperty(s => s.TaskNameSearchString)
-                .Subscribe(sstr => RefreshTaskList(nameTemplate: sstr.Value));
+                .Subscribe(sstr => RefreshTaskList(TaskIdSearchString, sstr.Value));
 
             this.ObservableForProperty(s => s.TaskIdSearchString)
-                .Subscribe(idstr => RefreshTaskList( idstr.Value));
+                .Subscribe(idstr => RefreshTaskList(idstr.Value, TaskNameSearchString));
 
             this.WhenAnyValue(s => s.SelectedTask)
                 .Where(x => x != null)
@@ -233,7 +237,9 @@ namespace ReportServer.Desktop.ViewModels.General
         {
             cachedService.Tasks
                 .Connect()
-                .Filter(task => string.IsNullOrEmpty(idTemplate) || task.Id.ToString().Contains(idTemplate.ToString() ?? "No value"))
+                .Filter(task =>
+                    string.IsNullOrEmpty(idTemplate) ||
+                    task.Id.ToString().Contains(idTemplate.ToString() ?? "No value"))
                 .Filter(task =>
                     string.IsNullOrEmpty(nameTemplate) ||
                     task.Name.IndexOf(nameTemplate, StringComparison.OrdinalIgnoreCase) >=
@@ -317,6 +323,8 @@ namespace ReportServer.Desktop.ViewModels.General
 
             this.WhenAnyObservable(tmvm => tmvm.cachedService.Tasks.CountChanged)
                 .Subscribe(_ => RefreshTaskList());
+
+            AllGroupsExpanded = true;
         }
 
         private async Task Delete()

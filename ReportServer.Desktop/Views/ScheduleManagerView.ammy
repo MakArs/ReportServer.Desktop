@@ -11,6 +11,7 @@ UserControl "ReportServer.Desktop.Views.ScheduleManagerView" {
       RowDefinition {Height: "40"}
       RowDefinition {}
     ]
+	Background: 	"#F5F5F5"
 
     Grid {
       Grid.ColumnSpan: "4"

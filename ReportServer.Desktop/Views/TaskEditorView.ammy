@@ -38,6 +38,7 @@ UserControl
 	  
 		 Grid {
 			Margin: "2 2 2 10"
+			Background: 	"#F5F5F5"
 			ColumnDefinitions: [
 			  ColumnDefinition { Width: "Auto" }
 			  ColumnDefinition { }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows;
@@ -150,9 +151,6 @@ namespace ReportServer.Desktop.ViewModels.General
                     await ShowMessageAsync("You have not enough rights for using service.Contact administrator to get it");
                     continue;
                 }
-                
-                ShowView<TaskManagerView>(
-                    options: new UiShowOptions {Title = "Task Manager", CanClose = false});
 
                 ShowView<OperTemplatesManagerView>(
                     options: new UiShowOptions
@@ -166,6 +164,9 @@ namespace ReportServer.Desktop.ViewModels.General
 
                 ShowView<ScheduleManagerView>(
                     options: new UiShowOptions {Title = "Schedule Manager", CanClose = false});
+                
+                ShowView<TaskManagerView>(
+                    options: new UiShowOptions {Title = "Task Manager", CanClose = false});
 
                 return;
             }

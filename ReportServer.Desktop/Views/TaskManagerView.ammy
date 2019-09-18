@@ -4,8 +4,6 @@ using ReportServer.Desktop.Views.WpfResources;
 UserControl "ReportServer.Desktop.Views.TaskManagerView" {
   MinHeight: "800"
   MinWidth: "1200"
-  BorderThickness: "1.5"
-  BorderBrush: "{DynamicResource AccentColorBrush}"
   Grid {
     RowDefinitions: [
       RowDefinition {}
