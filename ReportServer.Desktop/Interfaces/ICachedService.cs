@@ -28,10 +28,10 @@ namespace ReportServer.Desktop.Interfaces
         void RefreshOperations();
         void RefreshData();
 
-        List<ApiTaskInstance> GetInstancesByTaskId(int taskId);
-        List<ApiOperInstance> GetOperInstancesByTaskInstanceId(int taskInstanceId);
-        ApiOperInstance GetFullOperInstanceById(int id);
-        Task<string> GetCurrentTaskViewById(int taskId);
+        List<ApiTaskInstance> GetInstancesByTaskId(long taskId);
+        List<ApiOperInstance> GetOperInstancesByTaskInstanceId(long taskInstanceId);
+        ApiOperInstance GetFullOperInstanceById(long id);
+        Task<string> GetCurrentTaskViewById(long taskId);
         Task<string> StartTaskById(long taskId);
         Task<List<long>> GetWorkingTaskInstancesById(long taskId);
 
@@ -39,12 +39,12 @@ namespace ReportServer.Desktop.Interfaces
         int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group);
         int? CreateOrUpdateTelegramChannel(ApiTelegramChannel channel);
         int? CreateOrUpdateSchedule(ApiSchedule schedule);
-        int? CreateOrUpdateTask(ApiTask task);
+        long? CreateOrUpdateTask(ApiTask task);
 
         void DeleteOperTemplate(int id);
         void DeleteSchedule(int id);
-        void DeleteTask(int id);
-        void DeleteInstance(int id);
+        void DeleteTask(long id);
+        void DeleteInstance(long id);
 
         void OpenPageInBrowser(string htmlPage);
         Task<string> StopTaskByInstanceId(long taskInstanceId);

@@ -146,22 +146,22 @@ namespace ReportServer.Desktop.Models
 
         #endregion
 
-        public List<ApiTaskInstance> GetInstancesByTaskId(int taskId)
+        public List<ApiTaskInstance> GetInstancesByTaskId(long taskId)
         {
             return client.Get<List<ApiTaskInstance>>($"tasks/{taskId}/instances");
         }
 
-        public List<ApiOperInstance> GetOperInstancesByTaskInstanceId(int taskInstanceId)
+        public List<ApiOperInstance> GetOperInstancesByTaskInstanceId(long taskInstanceId)
         {
             return client.Get<List<ApiOperInstance>>($"instances/{taskInstanceId}/operinstances");
         }
 
-        public ApiOperInstance GetFullOperInstanceById(int id)
+        public ApiOperInstance GetFullOperInstanceById(long id)
         {
             return client.Get<ApiOperInstance>($"instances/operinstances/{id}");
         }
 
-        public async Task<string> GetCurrentTaskViewById(int taskId) //currently doesn't work
+        public async Task<string> GetCurrentTaskViewById(long taskId) //currently doesn't work
         {
             var apiAnswer = await client
                 .Send<string>(HttpMethod.Get, $"tasks/{taskId}/currentviews");
@@ -210,7 +210,7 @@ namespace ReportServer.Desktop.Models
             return schedule.Id;
         }
 
-        public int? CreateOrUpdateTask(ApiTask task)
+        public long? CreateOrUpdateTask(ApiTask task)
         {
             if (task.Id == 0)
                 return client.Post("tasks/", task);
@@ -229,12 +229,12 @@ namespace ReportServer.Desktop.Models
             client.Delete($"schedules/{id}");
         }
 
-        public void DeleteTask(int id)
+        public void DeleteTask(long id)
         {
             client.Delete($"tasks/{id}");
         }
 
-        public void DeleteInstance(int id)
+        public void DeleteInstance(long id)
         {
             client.Delete($"instances/{id}");
         }

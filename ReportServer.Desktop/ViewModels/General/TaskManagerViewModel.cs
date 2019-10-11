@@ -218,7 +218,7 @@ namespace ReportServer.Desktop.ViewModels.General
                 });
         }
 
-        private void LoadInstanceCompactsByTaskId(int taskId)
+        private void LoadInstanceCompactsByTaskId(long taskId)
         {
             selectedTaskInstances
                 .ClearAndAddRange(cachedService.GetInstancesByTaskId(taskId)
