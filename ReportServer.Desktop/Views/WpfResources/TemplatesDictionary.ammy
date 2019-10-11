@@ -80,6 +80,12 @@ ResourceDictionary {
 	#Setter("FontSize","12")
   }
 
+  Style{
+    TargetType: ComboBox
+	//BasedOn: resource "MetroComboBox"
+	#Setter("HorizontalAlignment","Stretch")
+  }
+
   Style {
     TargetType: Button
 

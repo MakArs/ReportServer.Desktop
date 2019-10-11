@@ -44,8 +44,10 @@ namespace ReportServer.Desktop.ViewModels.Editors
         private readonly SourceList<DesktopOperation> bindedOpers;
         private readonly SourceList<TaskParameter> taskParameters;
         private readonly SourceList<string> incomingPackages;
+        private readonly SourceList<DesktopTaskDependence> taskDependencies;
         public ObservableCollectionExtended<DesktopOperation> BindedOpers { get; set; }
         public ObservableCollectionExtended<TaskParameter> TaskParameters { get; set; }
+        public ObservableCollectionExtended<DesktopTaskDependence> TaskDependencies { get; set; }
         public ReadOnlyObservableCollection<ApiSchedule> Schedules { get; set; }
         public ReadOnlyObservableCollection<string> IncomingPackages { get; set; }
         private Dictionary<string, Type> DataImporters { get; set; }
@@ -57,7 +59,6 @@ namespace ReportServer.Desktop.ViewModels.Editors
         [Reactive] public DesktopOperation SelectedOperation { get; set; }
         [Reactive] public object SelectedOperationConfig { get; set; }
         [Reactive] public string SelectedOperationName { get; set; }
-
         public ReactiveCommand<Unit, Unit> SaveChangesCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CancelCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateOperConfigCommand { get; set; }
@@ -65,8 +66,10 @@ namespace ReportServer.Desktop.ViewModels.Editors
         public ReactiveCommand<string, Unit> ClipBoardFillCommand { get; set; }
         public ReactiveCommand<DesktopOperation, Unit> RemoveOperationCommand { get; set; }
         public ReactiveCommand<TaskParameter, Unit> RemoveParameterCommand { get; set; }
+        public ReactiveCommand<DesktopTaskDependence, Unit> RemoveDependenceCommand { get; set; }
         public ReactiveCommand<Unit, Unit> AddOperationCommand { get; set; }
         public ReactiveCommand<Unit, Unit> AddParameterCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> AddDependenceCommand { get; set; }
         public ReactiveCommand<Unit, Unit> OpenCurrentTaskViewCommand { get; set; }
         public ReactiveCommand<DesktopOperation, Unit> SelectOperationCommand { get; set; }
 
@@ -79,6 +82,7 @@ namespace ReportServer.Desktop.ViewModels.Editors
             Shell = shell as CachedServiceShell;
 
             taskParameters = new SourceList<TaskParameter>();
+            taskDependencies=new SourceList<DesktopTaskDependence>();
             bindedOpers = new SourceList<DesktopOperation>();
             incomingPackages = new SourceList<string>();
 
@@ -111,10 +115,25 @@ namespace ReportServer.Desktop.ViewModels.Editors
             RemoveParameterCommand = ReactiveCommand
                 .Create<TaskParameter>(par => taskParameters.Remove(par), Shell.CanEdit);
 
+            RemoveDependenceCommand = ReactiveCommand
+                .Create<DesktopTaskDependence>(dep => taskDependencies.Remove(dep), Shell.CanEdit);
+
             AddParameterCommand = ReactiveCommand.Create(() => taskParameters.Add(new TaskParameter
             {
                 Name = "@RepPar"
             }), Shell.CanEdit);
+
+            AddDependenceCommand = ReactiveCommand.Create(() =>
+            {
+                cachedService.Tasks
+                    .Connect()
+                    .Transform(mapper.Map<DesktopTaskNameId>)
+                    .Bind(out var tasks)
+                    .Subscribe();
+
+                var dependence = new DesktopTaskDependence {Tasks = tasks};
+                taskDependencies.Add(dependence);
+            }, Shell.CanEdit);
 
             AddOperationCommand = ReactiveCommand.CreateFromTask(AddOperation, Shell.CanEdit);
 
@@ -344,6 +363,28 @@ namespace ReportServer.Desktop.ViewModels.Editors
                         .Select(to => mapper.Map<DesktopOperation>(to)));
                 }
 
+                if (request.Task.DependsOn != null)
+                    taskDependencies.ClearAndAddRange(request.Task.DependsOn
+                        .Select(dep =>
+                        {
+                            cachedService.Tasks
+                                .Connect()
+                                .Transform(mapper.Map<DesktopTaskNameId>)
+                                .Bind(out var tasks)
+                                .Subscribe();
+
+                            var desktopDep= mapper.Map<DesktopTaskDependence>(dep);
+                            desktopDep.Tasks = tasks;
+
+                            return desktopDep;
+                        }));
+
+                if(request.DependsOn != null)
+                {
+                    taskDependencies.ClearAndAddRange(request
+                    .DependsOn.OrderBy(dep=>dep.TaskId));
+                }
+
                 if (!string.IsNullOrEmpty(request.Task.Parameters))
                     taskParameters.ClearAndAddRange(JsonConvert
                         .DeserializeObject<Dictionary<string, object>>(request.Task.Parameters)
@@ -352,6 +393,21 @@ namespace ReportServer.Desktop.ViewModels.Editors
                             Name = pair.Key,
                             Value = pair.Value
                         }));
+
+                TaskDependencies=new ObservableCollectionExtended<DesktopTaskDependence>();
+
+                taskDependencies.Connect()
+                    .Bind(TaskDependencies)
+                    .Subscribe(_=>this
+                        .RaisePropertyChanged(nameof(TaskDependencies)));
+
+                taskDependencies.Connect()
+                    .WhenAnyPropertyChanged("TaskId", "MaxSecondsPassed")
+                    .Subscribe(_ =>
+                    {
+                        this
+                            .RaisePropertyChanged(nameof(TaskDependencies));
+                    });
 
                 if (request.ViewId == "Creating new Task")
                 {
@@ -404,6 +460,10 @@ namespace ReportServer.Desktop.ViewModels.Editors
                     this.RaisePropertyChanged(nameof(TaskParameters));
                 });
 
+            taskParameters.Connect() 
+                .WhenAnyPropertyChanged("Value")
+                .Subscribe(_ => this.RaisePropertyChanged(nameof(TaskParameters)));
+
             taskParameters.Connect()
                 .WhenAnyPropertyChanged("HasErrors")
                 .Subscribe(_ =>
@@ -423,13 +483,16 @@ namespace ReportServer.Desktop.ViewModels.Editors
                     this.RaisePropertyChanged(nameof(TaskParameters));
                 });
 
+            
             ImplementationTypes = implementationTypes.SpawnCollection();
 
             BindedOpers = new ObservableCollectionExtended<DesktopOperation>();
 
             bindedOpers.Connect()
                 .Bind(BindedOpers)
-                .Subscribe();
+                .Subscribe(_=> this.RaisePropertyChanged(nameof(bindedOpers)));
+
+
 
             bindedOpers.Connect()
                 .Subscribe(_ =>
@@ -441,6 +504,7 @@ namespace ReportServer.Desktop.ViewModels.Editors
                             ?.PackageName).Where(name => !string.IsNullOrEmpty(name)).Distinct().ToList();
 
                     incomingPackages.ClearAndAddRange(packages);
+                    this.RaisePropertyChanged(nameof(bindedOpers));
                 });
 
             PropertyChanged += Changed;
@@ -463,6 +527,11 @@ namespace ReportServer.Desktop.ViewModels.Editors
             var editedTask = new ApiTask();
 
             mapper.Map(this, editedTask);
+
+            editedTask.DependsOn = TaskDependencies.Count == 0
+                ? null
+                : TaskDependencies.Select(dep => mapper.Map<ApiTaskDependence>(dep))
+                    .ToArray();
 
             editedTask.BindedOpers =
                 opersToSave.Select(oper => mapper.Map<ApiOperation>(oper)).ToArray();

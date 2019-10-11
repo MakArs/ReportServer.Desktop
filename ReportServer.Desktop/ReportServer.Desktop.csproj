@@ -149,6 +149,8 @@
     <Compile Include="Entities\OperationConfigs.cs" />
     <Compile Include="Entities\OperationPackage.cs" />
     <Compile Include="Entities\ProtoPackageBuilder.cs" />
+    <Compile Include="Entities\DesktopTaskDependence.cs" />
+    <Compile Include="Entities\ApiTaskDependence.cs" />
     <Compile Include="ViewModels\Editors\CronEditorViewModel.cs" />
     <Compile Include="Models\ViewRequests.cs" />
     <Compile Include="ViewModels\Editors\OperTemplatesListViewModel.cs" />
@@ -172,10 +174,11 @@
     <Compile Include="Views\ScheduleManagerView.xaml.cs">
       <DependentUpon>ScheduleManagerView.ammy</DependentUpon>
     </Compile>
+    <Compile Include="Views\WpfResources\ComboboxSearcher.cs" />
     <Compile Include="Views\WpfResources\IncomingPackagesControl.ammy.cs">
       <DependentUpon>IncomingPackagesControl.ammy</DependentUpon>
     </Compile>
-    <Compile Include="Views\WpfResources\NumericTextBoxBehavior.cs" />
+    <Compile Include="Views\WpfResources\TextBoxInputBehavior.cs" />
     <Compile Include="BootsTrap.cs" />
     <Compile Include="Views\WpfResources\OperInstancesView.xaml.cs">
       <DependentUpon>OperInstancesView.ammy</DependentUpon>

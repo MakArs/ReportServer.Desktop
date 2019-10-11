@@ -5,11 +5,14 @@ using ReportServer.Desktop.Views.WpfResources;
 using MahApps.Metro.IconPacks;
 using MahApps.Metro.Controls;
 using ReportServer.Desktop.Entities;
+using System.Windows.Interactivity;
 
 UserControl
 "ReportServer.Desktop.Views.TaskEditorView" {
 
-  Resources: ResourceDictionary { Source: "WpfResources/TemplatesDictionary.g.xaml" }
+  Resources: ResourceDictionary { 
+  Source: "WpfResources/TemplatesDictionary.g.xaml" }
+  "xmlns:c": "clr-namespace:ReportServer.Desktop.Views.WpfResources"
  "xmlns:dd": "clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
   ScrollViewer {VerticalScrollBarVisibility: "Auto"
     HorizontalScrollBarVisibility: "Auto"
@@ -21,6 +24,8 @@ UserControl
 
 		Grid { Grid.Column: 0
 		  RowDefinitions: [
+			RowDefinition { Height: "Auto" }
+			RowDefinition { Height: "Auto" }
 			RowDefinition { Height: "Auto" }
 			RowDefinition { Height: "Auto" }
 			RowDefinition { Height: "Auto" }
@@ -107,13 +112,143 @@ UserControl
 			  UpdateSourceTrigger: PropertyChanged
 			  ValidatesOnDataErrors: true]
 			  SelectedValuePath: "Id"
+			  IsTextSearchEnabled: false	
+			  StaysOpenOnEdit:true
+			  IsEditable:true
 			  DisplayMemberPath: "Name"
 			  SelectedValue: bind ScheduleId set [UpdateSourceTrigger: PropertyChanged]
+			  "c:ComboboxSearcher.PropertyFilter":"Name"
 			}
 		  }
 
+		    Grid { Margin: "0 15 0 0"
+		   Grid.Row: 2
+		   
+		   ColumnDefinitions: [
+			  ColumnDefinition { Width: "*" }
+			  ColumnDefinition { Width: "Auto" }
+			]
+		   @ViewLabel("Dependencies")
+		      Button {HorizontalAlignment: Right
+			  Command: bind AddDependenceCommand
+			   Visibility:  bind Shell.Role
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
+			 : Visibility.Collapsed 
+			  Grid.Column: 1
+			  "Add dependence"}
+		   		}
+			
+			ListView { BorderThickness: 0
+			Grid.Row: 3
+			IsEnabled:   bind Shell.Role
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? true
+			 : false
+			HorizontalAlignment: Stretch
+			MaxHeight: 350
+			Width: "Auto"
+			Focusable: false
+			ScrollViewer.CanContentScroll: true
+			ItemsSource: bind TaskDependencies set[UpdateSourceTrigger: PropertyChanged
+			ValidatesOnDataErrors: true]
+			ItemTemplate: DataTemplate {
+			
+			Border {
+				BorderThickness: "1"
+				BorderBrush: "#F5F5F5"
+				Grid {
+				  Height: "auto"
+				  ColumnDefinitions: [
+			        ColumnDefinition { Width: Auto}
+					ColumnDefinition { }
+					ColumnDefinition { Width: Auto}
+					ColumnDefinition {}
+					ColumnDefinition { Width: Auto }]
+
+				  TextBlock {
+					Background: "White"
+					Margin: "10 0 5 0"
+					Text: "Task"}
+
+			Border {
+			MaxWidth: 350
+			Grid.Column: 1
+			BorderThickness: "1"
+			BorderBrush: "#F5F5F5"
+			
+		/*	MahApps.Metro.Controls.SplitButton {
+				Grid.Column: "1"
+			  Grid.Row: "1"
+			  Width: "340"
+			  Margin: "3"
+			  ItemsSource: bind DataContext.Tasks from $ancestor<ListView> set [
+			  UpdateSourceTrigger: PropertyChanged]
+			  SelectedValuePath:  "Id"
+			  DisplayMemberPath: "Name"
+			  IsTextSearchEnabled: true	
+			  SelectedValue: bind TaskId
+			 "c:ComboboxSearcher.PropertyFilter":"Name"
+			 // StaysOpenOnEdit:true
+			 // IsEditable:true			  
+			}*/
+
+			ComboBox { 			
+			Grid.Column: "1"
+			  Grid.Row: "1"
+			  Width: "340"
+			  Margin: "3"
+			  ItemsSource: bind Tasks set [
+			  UpdateSourceTrigger: PropertyChanged]
+			  SelectedValuePath:  "Id"
+			  DisplayMemberPath: "Name"
+			  IsTextSearchEnabled: true	
+			  SelectedValue: bind TaskId
+			  StaysOpenOnEdit:true
+			  IsEditable:true				  
+			  IsTextSearchCaseSensitive: false
+			  IsSynchronizedWithCurrentItem: false
+		      "c:ComboboxSearcher.PropertyFilter":"Name"
+			  }
+			}
+			
+			TextBlock {
+				 Margin: "10 0 5 0"
+					Padding: "5"
+					Grid.Column: "2"
+					Text: "Max elapsed"
+				  }
+
+				  Border {Grid.Column: 3
+				BorderThickness: "1"
+				MaxWidth: 340
+				BorderBrush: "#F5F5F5"
+			
+			@InputTextBox("MaxSecondsPassed")
+			{
+			Interaction.Behaviors: TextBoxInputBehavior {
+					InputMode: NullableDigitInput}
+			MaxWidth: 340
+			BorderThickness: 0
+		    TextBoxHelper.Watermark: "Time (seconds) from last successeful execution"}
+			}
+
+			 Button {
+			  Visibility:  bind "DataContext.Shell.Role" from $ancestor<ListView>  
+		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? Visibility.Visible
+			 : Visibility.Collapsed 
+					Grid.Column: "4"
+					Command: bind DataContext.RemoveDependenceCommand from $ancestor<ListView> 
+					CommandParameter: bind
+					Content: PackIconMaterial { Kind: "CloseOctagon" }  
+					Width: "40"
+					Margin: "2"
+				  }
+				}
+			  }
+			}
+			}
+			
 		  Grid { Margin: "0 15 0 0"
-		   Grid.Row: "2"
+		   Grid.Row: 4
 		   
 		   ColumnDefinitions: [
 			  ColumnDefinition { Width: "*" }
@@ -130,7 +265,7 @@ UserControl
 		   		}
 			
 			ListView { BorderThickness: 0
-			Grid.Row: 3
+			Grid.Row: 5
 			IsEnabled:   bind Shell.Role
 		 convert (ServiceUserRole type) => type==ServiceUserRole.Editor? true
 			 : false
@@ -218,7 +353,7 @@ UserControl
 			}
 
 		  Grid { Margin: "0 15 0 0"
-		   Grid.Row: "4"
+		   Grid.Row: "6"
 		   
 		   ColumnDefinitions: [
 			  ColumnDefinition { Width: "*" }
@@ -249,7 +384,7 @@ UserControl
 
 		 ListView {
 			BorderThickness: "0"
-			Grid.Row: "5"
+			Grid.Row: "7"
 			"dd:DragDrop.IsDragSource": "True"
 			"dd:DragDrop.IsDropTarget": "True"
 			"dd:DragDrop.UseDefaultEffectDataTemplate": "True"
@@ -324,7 +459,7 @@ UserControl
 		  }
 		  
 		 Grid {
-			Grid.Row: "6"
+			Grid.Row: "8"
 			Margin: "0 0 0 50"
 			ColumnDefinitions: [
 			  ColumnDefinition { }
@@ -350,6 +485,7 @@ UserControl
 		  }
   
 }		
+
 	     GridSplitter {
         Grid.Column: "1"
         HorizontalAlignment: "Center"

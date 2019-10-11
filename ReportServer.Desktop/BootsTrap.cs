@@ -39,7 +39,7 @@ namespace ReportServer.Desktop
                 .As<ICachedService>()
                 .SingleInstance();
 
-            var context=  new AuthenticationContext(new Domain0ClientScope(new HttpClient()))
+            var context = new AuthenticationContext(new Domain0ClientScope(new HttpClient()))
             {
                 HostUrl = ConfigurationManager.AppSettings["BaseAuthUrl"],
                 ShouldRemember = true
@@ -64,9 +64,9 @@ namespace ReportServer.Desktop
             ConfigureView<ScheduleManagerViewModel, ScheduleManagerView>(builder);
 
             ConfigureView<RecepientEditorViewModel, RecepientEditorView>(builder);
-            
-            ConfigureView<OperTemplatesListViewModel,OperTemplatesListView>(builder);
-           
+
+            ConfigureView<OperTemplatesListViewModel, OperTemplatesListView>(builder);
+
             #region monik
 
             var logSender = new AzureSender(
@@ -154,13 +154,22 @@ namespace ReportServer.Desktop
                     ? null
                     : JsonConvert.SerializeObject(s.TaskParameters
                         .ToDictionary(param => param.Name, param => param.Value))))
-                .ForMember("BindedOpers", opt => opt.Ignore());
+                .ForMember("BindedOpers", opt => opt.Ignore())
+                .ForMember("DependsOn", opt => opt.Ignore());
+
+            CreateMap<ApiTaskDependence, DesktopTaskDependence>();
+            CreateMap<DesktopTaskDependence, ApiTaskDependence>();
 
             CreateMap<ApiOperation, DesktopOperation>();
             CreateMap<DesktopOperation, ApiOperation>();
 
             CreateMap<ApiTask, TaskEditorViewModel>()
+                //.ForMember("DependsOn", opt => opt.MapFrom((s,d)=>))
                 .ForMember("BindedOpers", opt => opt.Ignore());
+
+            CreateMap<ApiTask, DesktopTaskNameId>()
+                .ForMember("Name", opt => opt.MapFrom(s =>
+                    s.Name + " (" + s.Id + ")"));
 
             CreateMap<ApiRecepientGroup, RecepientEditorViewModel>();
             CreateMap<RecepientEditorViewModel, ApiRecepientGroup>();

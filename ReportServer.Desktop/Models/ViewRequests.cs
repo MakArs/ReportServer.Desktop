@@ -9,6 +9,7 @@ namespace ReportServer.Desktop.Models
     {
         public ApiTask Task { get; set; }
         public List<ApiOperation> TaskOpers { get; set; }
+        public List<DesktopTaskDependence> DependsOn { get; set; }
     }
 
     public class OperEditorRequest : ViewRequest
