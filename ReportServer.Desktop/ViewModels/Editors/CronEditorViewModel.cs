@@ -180,7 +180,7 @@ namespace ReportServer.Desktop.ViewModels.Editors
 
             cachedService.CreateOrUpdateSchedule(editedSchedule);
             Close();
-            cachedService.RefreshData();
+            cachedService.RefreshSchedules();
         }
     }
 

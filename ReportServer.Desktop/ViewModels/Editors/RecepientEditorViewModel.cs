@@ -70,7 +70,7 @@ namespace ReportServer.Desktop.ViewModels.Editors
                 editedGroup.AddressesBcc = null;
 
             cachedService.CreateOrUpdateRecepientGroup(editedGroup);
-            cachedService.RefreshData();
+            cachedService.RefreshRecepientGroups();
             Close();
         }
 

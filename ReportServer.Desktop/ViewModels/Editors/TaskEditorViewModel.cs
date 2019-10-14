@@ -510,13 +510,37 @@ namespace ReportServer.Desktop.ViewModels.Editors
             PropertyChanged += Changed;
         } //init vm
 
-        private async Task Save()
+        private async Task<bool> CheckCanSave()
         {
-            if (!IsValid || !IsDirty) return;
+            if (!IsValid || !IsDirty) return false;
 
             if (!await Shell.ShowWarningAffirmativeDialogAsync(Id > 0
                 ? "Save these task settings?"
                 : "Create this task?"))
+                return false;
+
+            //var dependenciesTaskExist = true;
+
+            //cachedService.RefreshTasks();
+
+            //foreach (var dependence in TaskDependencies)
+            //{
+            //    if (cachedService.Tasks.Items.All(task => task.Id != dependence.TaskId))
+            //    {
+            //        await Shell.ShowMessageAsync($"Task not longer exists: {dependence.TaskId}");
+            //        dependenciesTaskExist = false;
+            //    }
+            //}
+
+            //if (!dependenciesTaskExist)
+            //    return false; //todo:check for tasks for dependencies exist
+
+            return true;
+        }
+
+        private async Task Save()
+        {
+            if(!await CheckCanSave())
                 return;
 
             var opersToSave = BindedOpers.ToList();

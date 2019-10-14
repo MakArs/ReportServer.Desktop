@@ -125,7 +125,7 @@ namespace ReportServer.Desktop.Views.WpfResources
         {
             var milliseconds = (int?) value ?? 0;
 
-            if (milliseconds == 0) return null;
+            if (milliseconds == 0) return "0 с";
 
             return $"{milliseconds / 60000} м {(milliseconds % 60000) / 1000.0:f0} с";
         }

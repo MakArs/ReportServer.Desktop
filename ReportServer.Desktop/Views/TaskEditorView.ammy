@@ -174,23 +174,7 @@ UserControl
 			Grid.Column: 1
 			BorderThickness: "1"
 			BorderBrush: "#F5F5F5"
-			
-		/*	MahApps.Metro.Controls.SplitButton {
-				Grid.Column: "1"
-			  Grid.Row: "1"
-			  Width: "340"
-			  Margin: "3"
-			  ItemsSource: bind DataContext.Tasks from $ancestor<ListView> set [
-			  UpdateSourceTrigger: PropertyChanged]
-			  SelectedValuePath:  "Id"
-			  DisplayMemberPath: "Name"
-			  IsTextSearchEnabled: true	
-			  SelectedValue: bind TaskId
-			 "c:ComboboxSearcher.PropertyFilter":"Name"
-			 // StaysOpenOnEdit:true
-			 // IsEditable:true			  
-			}*/
-
+	
 			ComboBox { 			
 			Grid.Column: "1"
 			  Grid.Row: "1"
