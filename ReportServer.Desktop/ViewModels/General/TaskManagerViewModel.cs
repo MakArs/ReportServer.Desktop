@@ -47,7 +47,7 @@ namespace ReportServer.Desktop.ViewModels.General
         public ReactiveCommand<Unit, Unit> EditTaskCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CopyTaskCommand { get; set; }
         public ReactiveCommand<Unit, Unit> DeleteCommand { get; set; }
-        public ReactiveCommand<int, string> StopTaskCommand { get; set; }
+        public ReactiveCommand<long, string> StopTaskCommand { get; set; }
         public ReactiveCommand<DesktopTask, Unit> RunTaskCommand { get; set; }
 
         public TaskManagerViewModel(ICachedService cachedService, IMapper mapper, IShell shell)
@@ -134,7 +134,7 @@ namespace ReportServer.Desktop.ViewModels.General
                 await Delete(), Shell.CanEdit);
 
 
-            StopTaskCommand = ReactiveCommand.CreateFromTask<int, string>(async par =>
+            StopTaskCommand = ReactiveCommand.CreateFromTask<long, string>(async par =>
             {
                 if (!await Shell.ShowWarningAffirmativeDialogAsync("Сancel task execution?"))
                     return "False";
