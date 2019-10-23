@@ -44,6 +44,7 @@ namespace ReportServer.Desktop.ViewModels.Editors
         private readonly SourceList<DesktopOperation> bindedOpers;
         private readonly SourceList<TaskParameter> taskParameters;
         private readonly SourceList<string> incomingPackages;
+        private readonly SourceList<DesktopTaskNameId> tasks;
         private readonly SourceList<DesktopTaskDependence> taskDependencies;
         public ObservableCollectionExtended<DesktopOperation> BindedOpers { get; set; }
         public ObservableCollectionExtended<TaskParameter> TaskParameters { get; set; }
@@ -82,9 +83,10 @@ namespace ReportServer.Desktop.ViewModels.Editors
             Shell = shell as CachedServiceShell;
 
             taskParameters = new SourceList<TaskParameter>();
-            taskDependencies=new SourceList<DesktopTaskDependence>();
+            taskDependencies = new SourceList<DesktopTaskDependence>();
             bindedOpers = new SourceList<DesktopOperation>();
             incomingPackages = new SourceList<string>();
+            tasks = new SourceList<DesktopTaskNameId>();
 
             DataImporters = cachedService.DataImporters;
             DataExporters = cachedService.DataExporters;
@@ -123,15 +125,20 @@ namespace ReportServer.Desktop.ViewModels.Editors
                 Name = "@RepPar"
             }), Shell.CanEdit);
 
-            AddDependenceCommand = ReactiveCommand.Create(() =>
+            AddDependenceCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                cachedService.Tasks
+                if (tasks.Count == 0)
+                {
+                    await Shell.ShowMessageAsync("No any existing tasks in service");
+                    return;
+                }
+
+                tasks
                     .Connect()
-                    .Transform(mapper.Map<DesktopTaskNameId>)
-                    .Bind(out var tasks)
+                    .Bind(out var cachedTasks)
                     .Subscribe();
 
-                var dependence = new DesktopTaskDependence {Tasks = tasks};
+                var dependence = new DesktopTaskDependence {Tasks = cachedTasks, TaskId = cachedTasks.First().Id};
                 taskDependencies.Add(dependence);
             }, Shell.CanEdit);
 
@@ -350,6 +357,9 @@ namespace ReportServer.Desktop.ViewModels.Editors
                     "CreateOperConfigCommand", this);
             }
 
+            tasks.ClearAndAddRange(cachedService.Tasks.Items
+                .Select(task => mapper.Map<DesktopTaskNameId>(task)));
+
             Schedules = cachedService.Schedules.SpawnCollection();
 
             if (viewRequest is TaskEditorRequest request)
@@ -367,22 +377,21 @@ namespace ReportServer.Desktop.ViewModels.Editors
                     taskDependencies.ClearAndAddRange(request.Task.DependsOn
                         .Select(dep =>
                         {
-                            cachedService.Tasks
+                            tasks
                                 .Connect()
-                                .Transform(mapper.Map<DesktopTaskNameId>)
-                                .Bind(out var tasks)
+                                .Bind(out var cachedTasks)
                                 .Subscribe();
 
-                            var desktopDep= mapper.Map<DesktopTaskDependence>(dep);
-                            desktopDep.Tasks = tasks;
+                            var desktopDep = mapper.Map<DesktopTaskDependence>(dep);
+                            desktopDep.Tasks = cachedTasks;
 
                             return desktopDep;
                         }));
 
-                if(request.DependsOn != null)
+                if (request.DependsOn != null)
                 {
                     taskDependencies.ClearAndAddRange(request
-                    .DependsOn.OrderBy(dep=>dep.TaskId));
+                        .DependsOn.OrderBy(dep => dep.TaskId));
                 }
 
                 if (!string.IsNullOrEmpty(request.Task.Parameters))
@@ -394,19 +403,18 @@ namespace ReportServer.Desktop.ViewModels.Editors
                             Value = pair.Value
                         }));
 
-                TaskDependencies=new ObservableCollectionExtended<DesktopTaskDependence>();
+                TaskDependencies = new ObservableCollectionExtended<DesktopTaskDependence>();
 
                 taskDependencies.Connect()
                     .Bind(TaskDependencies)
-                    .Subscribe(_=>this
-                        .RaisePropertyChanged(nameof(TaskDependencies)));
+                    .Subscribe(_ => this.RaisePropertyChanged(nameof(TaskDependencies)));
 
                 taskDependencies.Connect()
                     .WhenAnyPropertyChanged("TaskId", "MaxSecondsPassed")
                     .Subscribe(_ =>
                     {
-                        this
-                            .RaisePropertyChanged(nameof(TaskDependencies));
+                        this.RaisePropertyChanged(nameof(TaskDependencies));
+                        IsValid = !AllErrors.Items.Any() && taskDependencies.Items.All(dep => dep.TaskId > 0);
                     });
 
                 if (request.ViewId == "Creating new Task")
@@ -460,7 +468,7 @@ namespace ReportServer.Desktop.ViewModels.Editors
                     this.RaisePropertyChanged(nameof(TaskParameters));
                 });
 
-            taskParameters.Connect() 
+            taskParameters.Connect()
                 .WhenAnyPropertyChanged("Value")
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(TaskParameters)));
 
@@ -483,14 +491,14 @@ namespace ReportServer.Desktop.ViewModels.Editors
                     this.RaisePropertyChanged(nameof(TaskParameters));
                 });
 
-            
+
             ImplementationTypes = implementationTypes.SpawnCollection();
 
             BindedOpers = new ObservableCollectionExtended<DesktopOperation>();
 
             bindedOpers.Connect()
                 .Bind(BindedOpers)
-                .Subscribe(_=> this.RaisePropertyChanged(nameof(bindedOpers)));
+                .Subscribe(_ => this.RaisePropertyChanged(nameof(bindedOpers)));
 
 
 
@@ -519,28 +527,31 @@ namespace ReportServer.Desktop.ViewModels.Editors
                 : "Create this task?"))
                 return false;
 
-            //var dependenciesTaskExist = true;
 
-            //cachedService.RefreshTasks();
+            cachedService.RefreshTasks();
 
-            //foreach (var dependence in TaskDependencies)
-            //{
-            //    if (cachedService.Tasks.Items.All(task => task.Id != dependence.TaskId))
-            //    {
-            //        await Shell.ShowMessageAsync($"Task not longer exists: {dependence.TaskId}");
-            //        dependenciesTaskExist = false;
-            //    }
-            //}
+            var deletedTasksList = new List<long>();
 
-            //if (!dependenciesTaskExist)
-            //    return false; //todo:check for tasks for dependencies exist
+            foreach (var dependence in taskDependencies.Items)
+                if (cachedService.Tasks.Items.All(task => task.Id != dependence.TaskId))
+                    deletedTasksList.Add(dependence.TaskId);
+
+            if (deletedTasksList.Count > 0)
+            {
+                await Shell.ShowMessageAsync($"Tasks not longer exists: {string.Join(", ", deletedTasksList)}");
+
+                taskDependencies.RemoveMany(taskDependencies.Items
+                    .Where(dep => deletedTasksList.Contains(dep.TaskId)));
+
+                return false;
+            }
 
             return true;
         }
 
         private async Task Save()
         {
-            if(!await CheckCanSave())
+            if (!await CheckCanSave())
                 return;
 
             var opersToSave = BindedOpers.ToList();
@@ -552,9 +563,9 @@ namespace ReportServer.Desktop.ViewModels.Editors
 
             mapper.Map(this, editedTask);
 
-            editedTask.DependsOn = TaskDependencies.Count == 0
+            editedTask.DependsOn = taskDependencies.Count == 0
                 ? null
-                : TaskDependencies.Select(dep => mapper.Map<ApiTaskDependence>(dep))
+                : taskDependencies.Items.Select(dep => mapper.Map<ApiTaskDependence>(dep))
                     .ToArray();
 
             editedTask.BindedOpers =

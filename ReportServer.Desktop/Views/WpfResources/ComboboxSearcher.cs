@@ -22,10 +22,7 @@ namespace ReportServer.Desktop.Views.WpfResources
 
                         var itemsViewOriginal =
                             (CollectionView) CollectionViewSource.GetDefaultView(control.ItemsSource);
-
-                        var ihash = itemsViewOriginal.GetHashCode();
-                        Debug.WriteLine(ihash);
-
+                        
                         var oldText = control.Text;
 
                         control.SelectedItem = null;
