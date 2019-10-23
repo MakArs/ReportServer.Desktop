@@ -1,2 +1,2 @@
 # ReportServer.Desktop
-Desktop App for reports editting
+Desktop App for reports edition
