@@ -361,7 +361,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Gerakul.HttpUtils.Json" Version="1.0.8" />
+    <PackageReference Include="Gerakul.HttpUtils.Json" Version="1.0.9" />
     <PackageReference Include="gong-wpf-dragdrop" Version="1.1.0" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="2.3.0" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.0.3" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
@@ -57,7 +58,7 @@ namespace ReportServer.Desktop.ViewModels.General
             this.mapper = mapper;
             Shell = shell as CachedServiceShell;
             var packageBuilder = new ProtoPackageBuilder();
-            
+
             selectedTaskInstances = new SourceList<DesktopTaskInstance>();
             operInstances = new SourceList<DesktopOperInstance>();
 
@@ -66,7 +67,7 @@ namespace ReportServer.Desktop.ViewModels.General
                     si => !string.IsNullOrEmpty(si?.DataSet));
 
             //SwitchExpandCommand = ReactiveCommand.Create(() => { AllGroupsExpanded = !AllGroupsExpanded; });
-        
+
             OpenPage = ReactiveCommand.Create<string>
                 (cachedService.OpenPageInBrowser, canOpenInstancePage);
 
@@ -85,13 +86,13 @@ namespace ReportServer.Desktop.ViewModels.General
 
                 var name = $"Task {id} editor";
                 Shell.ShowView<TaskEditorView>(new TaskEditorRequest
-                    {
-                        ViewId = name,
-                        Task = cachedService
+                {
+                    ViewId = name,
+                    Task = cachedService
                             .Tasks.Items.FirstOrDefault(task => task.Id == id),
-                        TaskOpers = cachedService.Operations.Items.Where(to => to.TaskId == id).ToList()
-                    },
-                    new UiShowOptions {Title = name});
+                    TaskOpers = cachedService.Operations.Items.Where(to => to.TaskId == id).ToList()
+                },
+                    new UiShowOptions { Title = name });
             });
 
             var canCopy = this.WhenAnyValue(tvm => tvm.SelectedTask, stsk => stsk?.Id > 0)
@@ -127,7 +128,7 @@ namespace ReportServer.Desktop.ViewModels.General
                 };
 
                 Shell.ShowView<TaskEditorView>(copyRequest,
-                    new UiShowOptions {Title = name});
+                    new UiShowOptions { Title = name });
             }, canCopy);
 
             DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -180,9 +181,7 @@ namespace ReportServer.Desktop.ViewModels.General
                         operInstances.Clear();
                     else
                     {
-                        operInstances.ClearAndAddRange(
-                            cachedService.GetOperInstancesByTaskInstanceId(x.Id)
-                                .Select(mapper.Map<DesktopOperInstance>));
+                        operInstances.ClearAndAddRange(GetNamedOperInstancesByTaskInstanceId(x.Id));
                     }
                 });
 
@@ -197,6 +196,9 @@ namespace ReportServer.Desktop.ViewModels.General
                             .GetFullOperInstanceById(SelectedOperInstance.Id);
 
                         data = mapper.Map<DesktopOperInstance>(fullInstance);
+
+                        data.OperName = cachedService.Operations.Items
+                            .FirstOrDefault(op => op.Id == fullInstance.OperationId)?.Name;
 
                         if (fullInstance.DataSet != null)
                         {
@@ -216,6 +218,17 @@ namespace ReportServer.Desktop.ViewModels.General
                         ? null
                         : data;
                 });
+        }
+
+        private IEnumerable<DesktopOperInstance> GetNamedOperInstancesByTaskInstanceId(long id)
+        {
+            var instances = cachedService.GetOperInstancesByTaskInstanceId(id)
+                                  .Select(mapper.Map<DesktopOperInstance>).ToList();
+
+            instances.ForEach(apiinst => apiinst.OperName = cachedService.Operations.Items
+               .FirstOrDefault(op => op.Id == apiinst.OperationId)?.Name);
+
+            return instances;
         }
 
         private void LoadInstanceCompactsByTaskId(long taskId)

@@ -21,7 +21,7 @@ namespace ReportServer.Desktop.Interfaces
         bool Init(string token);
         Task<ServiceUserRole> GetUserRole(string token);
         void RefreshOperTemplates();
-        void RefreshRecepientGroups();
+        void RefreshRecipientGroups();
         void RefreshTelegramChannels();
         void RefreshSchedules();
         void RefreshTasks();
@@ -36,7 +36,7 @@ namespace ReportServer.Desktop.Interfaces
         Task<List<long>> GetWorkingTaskInstancesById(long taskId);
 
         int? CreateOrUpdateOper(ApiOperTemplate operTemplate);
-        int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group);
+        int? CreateOrUpdateRecipientGroup(ApiRecepientGroup group);
         int? CreateOrUpdateTelegramChannel(ApiTelegramChannel channel);
         int? CreateOrUpdateSchedule(ApiSchedule schedule);
         long? CreateOrUpdateTask(ApiTask task);

@@ -20,7 +20,7 @@ namespace ReportServer.Desktop.Models
     public class CachedService : ICachedService
     {
         private ISimpleHttpClient client;
-        private readonly string baseApiPath = "/api/v2/";
+        private readonly string baseApiPath = "api/v3/";
         private readonly string authScheme = "Bearer";
         private string authToken;
 
@@ -32,7 +32,7 @@ namespace ReportServer.Desktop.Models
         public SourceList<ApiOperation> Operations { get; set; }
         public Dictionary<string, Type> DataImporters { get; set; }
         public Dictionary<string, Type> DataExporters { get; set; }
-
+        
         public CachedService(IAuthenticationContext context)
         {
             OperTemplates = new SourceList<ApiOperTemplate>();
@@ -69,7 +69,7 @@ namespace ReportServer.Desktop.Models
 
         public async Task<ServiceUserRole> GetUserRole(string token)
         {
-            return (await client.Send<ServiceUserRole>(HttpMethod.Get, $"/roles?token={token}")).Body;
+            return (await client.Send<ServiceUserRole>(HttpMethod.Get, $"/roles")).Body;
         }
 
         public bool Init(string token)
@@ -107,16 +107,16 @@ namespace ReportServer.Desktop.Models
             OperTemplates.ClearAndAddRange(client.Get<List<ApiOperTemplate>>("opertemplates/"));
         }
 
-        public void RefreshRecepientGroups()
+        public void RefreshRecipientGroups()
         {
             RecepientGroups.ClearAndAddRange(
-                client.Get<List<ApiRecepientGroup>>("recepientgroups/"));
+                client.Get<List<ApiRecepientGroup>>("recipientgroups/"));
         }
 
         public void RefreshTelegramChannels()
         {
             TelegramChannels.ClearAndAddRange(
-                client.Get<List<ApiTelegramChannel>>("telegrams/"));
+                client.Get<List<ApiTelegramChannel>>("telegramchannels/"));
         }
 
         public void RefreshSchedules()
@@ -137,7 +137,7 @@ namespace ReportServer.Desktop.Models
         public void RefreshData()
         {
             RefreshOperTemplates();
-            RefreshRecepientGroups();
+            RefreshRecipientGroups();
             RefreshTelegramChannels();
             RefreshSchedules();
             RefreshOperations();
@@ -183,21 +183,21 @@ namespace ReportServer.Desktop.Models
             return operTemplateTemplate.Id;
         }
 
-        public int? CreateOrUpdateRecepientGroup(ApiRecepientGroup group)
+        public int? CreateOrUpdateRecipientGroup(ApiRecepientGroup group)
         {
             if (group.Id == 0)
-                return client.Post("recepientgroups/", group);
+                return client.Post("recipientgroups/", group);
 
-            client.Put($"recepientgroups/{group.Id}", group);
+            client.Put($"recipientgroups/{group.Id}", group);
             return group.Id;
         }
 
         public int? CreateOrUpdateTelegramChannel(ApiTelegramChannel channel)
         {
             if (channel.Id == 0)
-                return client.Post("telegrams/", channel);
+                return client.Post("telegramchannels/", channel);
 
-            client.Put($"telegrams/{channel.Id}", channel);
+            client.Put($"telegramchannels/{channel.Id}", channel);
             return channel.Id;
         }
 
@@ -236,7 +236,7 @@ namespace ReportServer.Desktop.Models
 
         public void DeleteInstance(long id)
         {
-            client.Delete($"instances/{id}");
+            client.Delete($"instances/taskinstances/{id}");
         }
 
         public async Task<string> StartTaskById(long taskId)
