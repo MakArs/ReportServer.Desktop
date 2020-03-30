@@ -1,0 +1,68 @@
+<UserControl x:Class="ReportServer.Desktop.Views.WpfResources.SelectedTaskInstancesView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:ReportServer.Desktop.AmmyExpression" >
+  <UserControl.Resources>
+    <ResourceDictionary Source="TemplatesDictionary.xaml"/>
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="40"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+    <Label HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontWeight="DemiBold" Background="#F5F5F5" Margin="0" Content="Selected task instances list"/>
+    <Button HorizontalAlignment="Right">Run task
+      <Button.Command>
+        <Binding Path="RunTaskCommand"/>
+      </Button.Command>
+      <Button.CommandParameter>
+        <Binding Path="SelectedTask"/>
+      </Button.CommandParameter>
+      <Button.Visibility>
+        <Binding Path="SelectedTask" Converter="{x:Static ns0:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;7&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;binary op=&quot;NotEqual&quot;&gt;&lt;parameter name=&quot;task&quot; type=&quot;ReportServer.Desktop.Entities.DesktopTask&quot; /&gt;&lt;null&gt;&lt;typeinfo typename=&quot;System.Object&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/null&gt;&lt;/binary&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;task&quot; type=&quot;ReportServer.Desktop.Entities.DesktopTask&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+      </Button.Visibility>
+    </Button>
+    <DataGrid ColumnWidth="*" HorizontalAlignment="Stretch" RowBackground="#F5F5F5" Background="White" MinRowHeight="25" AutoGenerateColumns="False" GridLinesVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" IsReadOnly="True" HorizontalGridLinesBrush="Gray" VerticalGridLinesBrush="Gray" Grid.Row="1">
+      <DataGrid.ItemsSource>
+        <Binding Path="SelectedTaskInstances"/>
+      </DataGrid.ItemsSource>
+      <DataGrid.SelectedItem>
+        <Binding Path="SelectedTaskInstance"/>
+      </DataGrid.SelectedItem>
+      <DataGrid.InputBindings>
+        <KeyBinding Key="Delete" Command="ApplicationCommands.NotACommand"/>
+      </DataGrid.InputBindings>
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Start time">
+          <DataGridTextColumn.Binding>
+            <Binding Path="StartTime" StringFormat="dd.MM.yy HH:mm"/>
+          </DataGridTextColumn.Binding>
+        </DataGridTextColumn>
+        <DataGridTextColumn Header="Duration" Binding="{Binding Duration, Converter={StaticResource IntMsToMinsConverter}}"/>
+        <DataGridTemplateColumn Header="State">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal">
+                <Button Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.StopTaskCommand}" Margin="2.5 2.5 10 2.5">
+                  <Button.CommandParameter>
+                    <Binding Path="Id"/>
+                  </Button.CommandParameter>
+                  <Button.Visibility>
+                    <MultiBinding Converter="{StaticResource InstanceStateAndRoleToVisMultiConverter}">
+                      <MultiBinding.Bindings>
+                        <Binding Path="DataContext.Shell.Role" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}"/>
+                        <Binding Path="State"/>
+                      </MultiBinding.Bindings>
+                    </MultiBinding>
+                  </Button.Visibility>Stop
+                </Button>
+                <TextBlock>
+                  <TextBlock.Text>
+                    <Binding Path="State"/>
+                  </TextBlock.Text>
+                </TextBlock>
+              </StackPanel>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

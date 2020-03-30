@@ -1,0 +1,96 @@
+<UserControl x:Class="ReportServer.Desktop.Views.WpfResources.OperTemplatesListView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" xmlns:ns1="clr-namespace:ReportServer.Desktop.AmmyExpression" >
+  <Grid Height="500">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+      <Label HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontWeight="DemiBold" Background="#F5F5F5" Margin="0" Content="Available operation templates"/>
+      <TextBox TextWrapping="NoWrap" Background="White" HorizontalAlignment="Stretch" AcceptsReturn="False" TextAlignment="Left" Grid.Column="1" BorderThickness="0" ns0:TextBoxHelper.Watermark="Enter search string here" ns0:TextBoxHelper.ClearTextButton="True">
+        <TextBox.Text>
+          <Binding Path="OperationsSearchString" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"/>
+        </TextBox.Text>
+      </TextBox>
+    </Grid>
+    <ListBox BorderThickness="0" Grid.Row="1" HorizontalAlignment="Stretch" ScrollViewer.CanContentScroll="True">
+      <ListBox.ItemsSource>
+        <Binding Path="OperTemplates"/>
+      </ListBox.ItemsSource>
+      <ListBox.SelectedItem>
+        <Binding Path="SelectedTemplate"/>
+      </ListBox.SelectedItem>
+      <ListBox.ItemContainerStyle>
+        <Style TargetType="ListBoxItem" BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
+          <Setter Property="Padding" Value="0"/>
+        </Style>
+      </ListBox.ItemContainerStyle>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Border BorderThickness="1" BorderBrush="#F5F5F5">
+            <Grid Height="auto">
+              <Grid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick">
+                  <MouseBinding.Command>
+                    <Binding Path="DataContext.SelectTemplateCommand" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBox}}"/>
+                  </MouseBinding.Command>
+                  <MouseBinding.CommandParameter>
+                    <Binding/>
+                  </MouseBinding.CommandParameter>
+                </MouseBinding>
+              </Grid.InputBindings>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <TextBlock Padding="5">
+                <TextBlock.Text>
+                  <Binding Path="Name"/>
+                </TextBlock.Text>
+              </TextBlock>
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <StackPanel Grid.Row="2" Margin="0 25 0 25" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button>
+        <Button.Command>
+          <Binding Path="CancelCommand"/>
+        </Button.Command>Cancel
+      </Button>
+      <Button>
+        <Button.Command>
+          <Binding Path="SelectTemplateCommand"/>
+        </Button.Command>
+        <Button.CommandParameter>
+          <Binding Path="SelectedTemplate"/>
+        </Button.CommandParameter>
+        <Button.IsEnabled>
+          <Binding Path="SelectedTemplate" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;6&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;binary op=&quot;NotEqual&quot;&gt;&lt;parameter name=&quot;selt&quot; type=&quot;System.Object&quot; /&gt;&lt;null&gt;&lt;typeinfo typename=&quot;System.Object&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/null&gt;&lt;/binary&gt;&lt;parameter name=&quot;selt&quot; type=&quot;System.Object&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+        </Button.IsEnabled>
+        <Button.Visibility>
+          <Binding Path="Shell.Role" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;0&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;binary op=&quot;Equal&quot;&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;prim val=&quot;ReportServer.Desktop.Entities.ServiceUserRole.Editor&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/binary&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+        </Button.Visibility>Edit
+      </Button>
+      <Button>
+        <Button.Command>
+          <Binding Path="AddFullTemplateCommand"/>
+        </Button.Command>
+        <Button.CommandParameter>
+          <Binding Path="SelectedTemplate"/>
+        </Button.CommandParameter>
+        <Button.IsEnabled>
+          <Binding Path="SelectedTemplate" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;6&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;binary op=&quot;NotEqual&quot;&gt;&lt;parameter name=&quot;selt&quot; type=&quot;System.Object&quot; /&gt;&lt;null&gt;&lt;typeinfo typename=&quot;System.Object&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/null&gt;&lt;/binary&gt;&lt;parameter name=&quot;selt&quot; type=&quot;System.Object&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+        </Button.IsEnabled>Add full
+        <Button.Visibility>
+          <Binding Path="Shell.Role" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;0&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;binary op=&quot;Equal&quot;&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;prim val=&quot;ReportServer.Desktop.Entities.ServiceUserRole.Editor&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/binary&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+        </Button.Visibility>
+      </Button>
+    </StackPanel>
+  </Grid>
+</UserControl>
