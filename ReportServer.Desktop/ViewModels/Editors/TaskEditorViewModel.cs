@@ -411,11 +411,7 @@ namespace ReportServer.Desktop.ViewModels.Editors
 
                 taskDependencies.Connect()
                     .WhenAnyPropertyChanged("TaskId", "MaxSecondsPassed")
-                    .Subscribe(_ =>
-                    {
-                        this.RaisePropertyChanged(nameof(TaskDependencies));
-                        IsValid = !AllErrors.Items.Any() && taskDependencies.Items.All(dep => dep.TaskId > 0);
-                    });
+                    .Subscribe(_ => this.RaisePropertyChanged(nameof(TaskDependencies)));
 
                 if (request.ViewId == "Creating new Task")
                 {

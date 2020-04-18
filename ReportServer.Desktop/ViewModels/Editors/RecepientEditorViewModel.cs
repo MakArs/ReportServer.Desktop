@@ -69,8 +69,8 @@ namespace ReportServer.Desktop.ViewModels.Editors
             if (string.IsNullOrEmpty(AddressesBcc))
                 editedGroup.AddressesBcc = null;
 
-            cachedService.CreateOrUpdateRecepientGroup(editedGroup);
-            cachedService.RefreshRecepientGroups();
+            cachedService.CreateOrUpdateRecipientGroup(editedGroup);
+            cachedService.RefreshRecipientGroups();
             Close();
         }
 
