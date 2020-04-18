@@ -1,0 +1,31 @@
+<UserControl x:Class="ReportServer.Desktop.Views.WpfResources.RecepientEditorView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" >
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="500"/>
+    </Grid.ColumnDefinitions>
+    <Label Background="White" HorizontalAlignment="Left" Margin="18 3 3 3" Content="Name"/>
+    <TextBox Grid.Column="1" Text="{Binding Name,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ns0:TextBoxHelper.Watermark="Enter group name here" ns0:TextBoxHelper.ClearTextButton="True" TextWrapping="NoWrap" AcceptsReturn="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+    <Label Grid.Row="1" Background="White" HorizontalAlignment="Left" Margin="18 3 3 3" Content="Addresses"/>
+    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Addresses,UpdateSourceTrigger=PropertyChanged,             ValidatesOnDataErrors=True}" ns0:TextBoxHelper.Watermark="Enter e-mail addresses of recepients separated by semicolons" ns0:TextBoxHelper.ClearTextButton="True" TextWrapping="NoWrap" AcceptsReturn="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+    <Label Grid.Row="2" Background="White" HorizontalAlignment="Left" Margin="18 3 3 3" Content="Blind copy addresses"/>
+    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding AddressesBcc,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" ns0:TextBoxHelper.Watermark="Enter e-mail addresses separated by semicolons for blind copy sending" ns0:TextBoxHelper.ClearTextButton="True" TextWrapping="NoWrap" AcceptsReturn="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+    <Grid Row="3" Column="1" Margin="0 20 0 20">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition Width="0.7*"/>
+      </Grid.ColumnDefinitions>
+      <StackPanel Grid.Column="1" Orientation="Horizontal">
+        <Button Command="{Binding SaveChangesCommand}" IsEnabled="{Binding IsValid}" Height="25" Width="100">Save</Button>
+        <Button Command="{Binding CancelCommand}" Height="25" Width="100" Margin="0 0 10 0">Cancel</Button>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</UserControl>

@@ -1,0 +1,41 @@
+<UserControl x:Class="ReportServer.Desktop.Views.WpfResources.OperInstancesView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
+  <UserControl.Resources>
+    <ResourceDictionary Source="TemplatesDictionary.xaml"/>
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="40"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+    <Label HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontWeight="DemiBold" Background="#F5F5F5" Margin="0" Content="Operation instances list"/>
+    <DataGrid ColumnWidth="*" HorizontalAlignment="Stretch" RowBackground="#F5F5F5" Background="White" MinRowHeight="25" AutoGenerateColumns="False" GridLinesVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" IsReadOnly="True" HorizontalGridLinesBrush="Gray" VerticalGridLinesBrush="Gray" Grid.Row="1">
+      <DataGrid.ItemsSource>
+        <Binding Path="OperInstances"/>
+      </DataGrid.ItemsSource>
+      <DataGrid.SelectedItem>
+        <Binding Path="SelectedOperInstance"/>
+      </DataGrid.SelectedItem>
+      <DataGrid.InputBindings>
+        <KeyBinding Key="Delete" Command="ApplicationCommands.NotACommand"/>
+      </DataGrid.InputBindings>
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Operation name">
+          <DataGridTextColumn.Binding>
+            <Binding Path="OperName"/>
+          </DataGridTextColumn.Binding>
+        </DataGridTextColumn>
+        <DataGridTextColumn Header="Start time">
+          <DataGridTextColumn.Binding>
+            <Binding Path="StartTime" StringFormat="dd.MM.yy HH:mm"/>
+          </DataGridTextColumn.Binding>
+        </DataGridTextColumn>
+        <DataGridTextColumn Header="Duration" Binding="{Binding Duration, Converter={StaticResource IntMsToMinsConverter}}"/>
+        <DataGridTextColumn Header="State">
+          <DataGridTextColumn.Binding>
+            <Binding Path="State"/>
+          </DataGridTextColumn.Binding>
+        </DataGridTextColumn>
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

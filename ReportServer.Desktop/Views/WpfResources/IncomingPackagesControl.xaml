@@ -1,0 +1,10 @@
+<UserControl x:Class="ReportServer.Desktop.Views.WpfResources.IncomingPackagesControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:ReportServer.Desktop.Views" >
+  <ComboBox>
+    <ComboBox.ItemsSource>
+      <Binding Path="DataContext.IncomingPackages" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:TaskEditorView}}"/>
+    </ComboBox.ItemsSource>
+    <ComboBox.SelectedItem>
+      <Binding Path="DataContext.SelectedOperationConfig.PackageName" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:TaskEditorView}}"/>
+    </ComboBox.SelectedItem>
+  </ComboBox>
+</UserControl>

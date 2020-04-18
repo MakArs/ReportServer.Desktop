@@ -1,0 +1,64 @@
+<UserControl x:Class="ReportServer.Desktop.Views.RecepientManagerView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:ReportServer.Desktop.AmmyExpression">
+  <UserControl.Resources>
+    <ResourceDictionary Source="WpfResources/TemplatesDictionary.xaml"/>
+  </UserControl.Resources>
+  <Grid Background="#F5F5F5">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="40"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+    <Grid ColumnSpan="4">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+      <Button Padding="5">
+        <Button.Visibility>
+          <Binding Path="Shell.Role" Converter="{x:Static ns0:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;0&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;binary op=&quot;Equal&quot;&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;prim val=&quot;ReportServer.Desktop.Entities.ServiceUserRole.Editor&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/binary&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+        </Button.Visibility>
+        <Button.Command>
+          <Binding Path="CreateGroupCommand"/>
+        </Button.Command>Add new recepient group
+      </Button>
+      <Label HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontWeight="DemiBold" Background="#F5F5F5" Margin="2 2 0 2" Content="Current recepient groups list" Grid.Column="1"/>
+    </Grid>
+    <DataGrid Grid.Row="1" ColumnWidth="*" HorizontalAlignment="Stretch" RowBackground="#F5F5F5" Background="White" MinRowHeight="25" AutoGenerateColumns="False" GridLinesVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" IsReadOnly="True" HorizontalGridLinesBrush="Gray" VerticalGridLinesBrush="Gray">
+      <DataGrid.ItemsSource>
+        <Binding Path="RecepientGroups"/>
+      </DataGrid.ItemsSource>
+      <DataGrid.SelectedItem>
+        <Binding Path="SelectedGroup"/>
+      </DataGrid.SelectedItem>
+      <DataGrid.InputBindings>
+        <MouseBinding MouseAction="LeftDoubleClick">
+          <MouseBinding.Command>
+            <Binding Path="EditGroupCommand"/>
+          </MouseBinding.Command>
+        </MouseBinding>
+        <KeyBinding Key="Delete" Command="ApplicationCommands.NotACommand"/>
+      </DataGrid.InputBindings>
+      <DataGrid.Columns>
+        <DataGridTextColumn Width="0.1*" Header="Id">
+          <DataGridTextColumn.Binding>
+            <Binding Path="Id"/>
+          </DataGridTextColumn.Binding>
+        </DataGridTextColumn>
+        <DataGridTextColumn Width="0.3*" Header="Name">
+          <DataGridTextColumn.Binding>
+            <Binding Path="Name"/>
+          </DataGridTextColumn.Binding>
+        </DataGridTextColumn>
+        <DataGridTextColumn Header="Addresses">
+          <DataGridTextColumn.Binding>
+            <Binding Path="Addresses"/>
+          </DataGridTextColumn.Binding>
+        </DataGridTextColumn>
+        <DataGridTextColumn Header="Blind copy addresses">
+          <DataGridTextColumn.Binding>
+            <Binding Path="AddressesBcc"/>
+          </DataGridTextColumn.Binding>
+        </DataGridTextColumn>
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

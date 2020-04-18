@@ -1,6 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -8,7 +6,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>ReportServer.Desktop</RootNamespace>
     <AssemblyName>ReportServer.Desktop</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -38,6 +36,7 @@
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+	<UseWpf>true</UseWpf>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -63,320 +62,38 @@
   <PropertyGroup>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="PresentationFramework.Aero2" />
-    <Reference Include="System" />
-    <Reference Include="System.Activities" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Windows" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-  </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <None Include="Views\CronEditorView.ammy" />
-    <None Include="Views\CronEditorView.g.xaml">
-      <DependentUpon>CronEditorView.ammy</DependentUpon>
-    </None>
-    <None Include="Views\OperTemplatesManagerView.ammy" />
-    <None Include="Views\RecepientManagerView.ammy" />
-    <None Include="Views\RecepientManagerView.g.xaml">
-      <DependentUpon>RecepientManagerView.ammy</DependentUpon>
-    </None>
-    <None Include="Views\ScheduleManagerView.ammy" />
-    <None Include="Views\ScheduleManagerView.g.xaml">
-      <DependentUpon>ScheduleManagerView.ammy</DependentUpon>
-    </None>
-    <None Include="Views\WpfResources\IncomingPackagesControl.ammy" />
-    <None Include="Views\WpfResources\OperInstancesView.ammy" />
-    <None Include="Views\WpfResources\OperInstancesView.g.xaml">
-      <DependentUpon>OperInstancesView.ammy</DependentUpon>
-    </None>
-    <None Include="Views\OperEditorView.ammy" />
-    <None Include="Views\OperEditorView.g.xaml">
-      <DependentUpon>OperEditorView.ammy</DependentUpon>
-    </None>
-    <None Include="Views\TaskEditorView.ammy" />
-    <None Include="Views\TaskEditorView.g.xaml">
-      <DependentUpon>TaskEditorView.ammy</DependentUpon>
-    </None>
-    <None Include="Views\WpfResources\OperTemplatesListView.ammy" />
-    <None Include="Views\WpfResources\RecepientEditorView.ammy" />
-    <None Include="Views\WpfResources\SelectedInstanceFullView.ammy" />
-    <None Include="Views\WpfResources\SelectedInstanceFullView.g.xaml">
-      <DependentUpon>SelectedInstanceFullView.ammy</DependentUpon>
-    </None>
-    <None Include="Views\WpfResources\SelectedTaskInstancesView.ammy" />
-    <None Include="Views\WpfResources\SelectedTaskInstancesView.g.xaml">
-      <DependentUpon>SelectedTaskInstancesView.ammy</DependentUpon>
-    </None>
-    <None Include="Views\TaskManagerView.ammy" />
-    <None Include="Views\TaskManagerView.g.xaml">
-      <DependentUpon>TaskManagerView.ammy</DependentUpon>
-    </None>
-    <None Include="Views\WpfResources\TaskListView.ammy" />
-    <None Include="Views\WpfResources\TaskListView.g.xaml">
-      <DependentUpon>TaskListView.ammy</DependentUpon>
-    </None>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Entities\CachedServiceEntities.cs" />
-    <Compile Include="Entities\OperationConfigs.cs" />
-    <Compile Include="Entities\OperationPackage.cs" />
-    <Compile Include="Entities\ProtoPackageBuilder.cs" />
-    <Compile Include="Entities\DesktopTaskDependence.cs" />
-    <Compile Include="Entities\ApiTaskDependence.cs" />
-    <Compile Include="ViewModels\Editors\CronEditorViewModel.cs" />
-    <Compile Include="Models\ViewRequests.cs" />
-    <Compile Include="ViewModels\Editors\OperTemplatesListViewModel.cs" />
-    <Compile Include="ViewModels\General\CachedServiceShell.cs" />
-    <Compile Include="ViewModels\Editors\RecepientEditorViewModel.cs" />
-    <Compile Include="ViewModels\General\RecepientManagerViewModel.cs" />
-    <Compile Include="ViewModels\Editors\OperEditorViewModel.cs" />
-    <Compile Include="ViewModels\General\OperTemplatesManagerViewModel.cs" />
-    <Compile Include="ViewModels\General\ScheduleManagerViewModel.cs" />
-    <Compile Include="ViewModels\Editors\TaskEditorViewModel.cs" />
-    <Compile Include="ViewModels\General\TaskManagerViewModel.cs" />
-    <Compile Include="Views\CronEditorView.xaml.cs">
-      <DependentUpon>CronEditorView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\OperTemplatesManagerView.ammy.cs">
-      <DependentUpon>OperTemplatesManagerView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\RecepientManagerView.xaml.cs">
-      <DependentUpon>RecepientManagerView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ScheduleManagerView.xaml.cs">
-      <DependentUpon>ScheduleManagerView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WpfResources\ComboboxSearcher.cs" />
-    <Compile Include="Views\WpfResources\IncomingPackagesControl.ammy.cs">
-      <DependentUpon>IncomingPackagesControl.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WpfResources\TextBoxInputBehavior.cs" />
-    <Compile Include="BootsTrap.cs" />
-    <Compile Include="Views\WpfResources\OperInstancesView.xaml.cs">
-      <DependentUpon>OperInstancesView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WpfResources\ManualPropertyGrid.cs" />
-    <Compile Include="Views\WpfResources\OperTemplatesListView.ammy.cs">
-      <DependentUpon>OperTemplatesListView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WpfResources\PropertyGridHelpers.cs" />
-    <Compile Include="Views\WpfResources\Converters.cs" />
-    <Compile Include="Entities\CoreEntities.cs" />
-    <Compile Include="Interfaces\ICachedService.cs" />
-    <Compile Include="Views\OperEditorView.xaml.cs">
-      <DependentUpon>OperEditorView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\TaskEditorView.xaml.cs">
-      <DependentUpon>TaskEditorView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WpfResources\RecepientEditorView.ammy.cs">
-      <DependentUpon>RecepientEditorView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WpfResources\SelectedInstanceFullView.xaml.cs">
-      <DependentUpon>SelectedInstanceFullView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WpfResources\SelectedTaskInstancesView.xaml.cs">
-      <DependentUpon>SelectedTaskInstancesView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\TaskManagerView.xaml.cs">
-      <DependentUpon>TaskManagerView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WpfResources\TaskListView.xaml.cs">
-      <DependentUpon>TaskListView.ammy</DependentUpon>
-    </Compile>
-    <None Include="Views\WpfResources\TemplatesDictionary.ammy" />
-    <None Include="Views\WpfResources\TemplatesDictionary.g.xaml">
-      <DependentUpon>TemplatesDictionary.ammy</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Views\WpfResources\Validators.cs" />
-    <Compile Include="Models\CachedService.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <None Include="lib.ammy" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FodyWeavers.xml">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.6.2">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.2 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Views\OperTemplatesManagerView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>OperTemplatesManagerView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\WpfResources\IncomingPackagesControl.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>IncomingPackagesControl.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\WpfResources\OperTemplatesListView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>OperTemplatesListView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\WpfResources\RecepientEditorView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>RecepientEditorView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\WpfResources\TemplatesDictionary.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>TemplatesDictionary.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\WpfResources\TaskListView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>TaskListView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\WpfResources\OperInstancesView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>OperInstancesView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\WpfResources\SelectedInstanceFullView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>SelectedInstanceFullView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\WpfResources\SelectedTaskInstancesView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>SelectedTaskInstancesView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\TaskManagerView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>TaskManagerView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\CronEditorView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>CronEditorView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\RecepientManagerView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>RecepientManagerView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\ScheduleManagerView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>ScheduleManagerView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\OperEditorView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>OperEditorView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\TaskEditorView.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>TaskEditorView.ammy</DependentUpon>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Ammy" Version="1.2.94" />
-    <PackageReference Include="Ammy.WPF" Version="1.2.94" />
-    <PackageReference Include="Autofac" Version="4.9.2" />
+    <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="AutoMapper" Version="8.1.1" />
-    <PackageReference Include="Castle.Core" Version="4.3.1" />
-    <PackageReference Include="Costura.Fody" Version="3.3.2" />
-    <PackageReference Include="CronExpressionDescriptor" Version="2.9.0" />
-    <PackageReference Include="Domain0.Api.Client" Version="1.0.10" />
-    <PackageReference Include="Domain0.Client.AuthContext" Version="1.0.10" />
+    <PackageReference Include="Castle.Core" Version="4.4.0" />
+    <PackageReference Include="Costura.Fody" Version="4.1.0" />
+    <PackageReference Include="CronExpressionDescriptor" Version="2.15.0" />
+    <PackageReference Include="Domain0.Api.Client" Version="1.1.1" />
+    <PackageReference Include="Domain0.Client.AuthContext" Version="1.2.0-beta.1" />
     <PackageReference Include="DynamicData">
-      <Version>6.13.1</Version>
+      <Version>6.14.10</Version>
     </PackageReference>
     <PackageReference Include="Fody">
-      <Version>4.0.2</Version>
+      <Version>6.1.1</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Gerakul.HttpUtils.Json" Version="1.0.9" />
-    <PackageReference Include="gong-wpf-dragdrop" Version="1.1.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks" Version="2.3.0" />
-    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.0.3" />
+    <PackageReference Include="gong-wpf-dragdrop" Version="2.2.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="3.6.0" />
+    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.4.0" />
     <PackageReference Include="Microsoft.Bcl.Build" Version="1.0.21" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="4.5.1" />
-    <PackageReference Include="Monik.Client.Azure" Version="1.0.24" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="ReactiveUI.Fody" Version="9.10.1" />
-    <PackageReference Include="SevenZipSharp.Interop" Version="18.5.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.4.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.7" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.19" />
+    <PackageReference Include="Monik.Client.Azure" Version="1.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="ReactiveUI.Fody" Version="11.3.1" />
+    <PackageReference Include="Squid-Box.SevenZipSharp" Version="1.2.265" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
     <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.2" />
-    <PackageReference Include="System.Windows.Interactivity.WPF" Version="2.0.20525" />
-    <PackageReference Include="Ui.Wpf.Common" Version="1.0.25" />
-    <PackageReference Include="WindowsAzure.ServiceBus" Version="5.1.0" />
+    <PackageReference Include="Ui.Wpf.Common" Version="2.0.0" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+
 </Project>

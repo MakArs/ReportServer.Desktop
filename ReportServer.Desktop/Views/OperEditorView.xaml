@@ -1,0 +1,90 @@
+<UserControl x:Class="ReportServer.Desktop.Views.OperEditorView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:Xceed.Wpf.Toolkit.PropertyGrid;assembly=Xceed.Wpf.Toolkit"  xmlns:entities="clr-namespace:ReportServer.Desktop.Entities" xmlns:ns1="clr-namespace:ReportServer.Desktop.AmmyExpression" >
+  <UserControl.Resources>
+    <ResourceDictionary Source="WpfResources/TemplatesDictionary.xaml"/>
+  </UserControl.Resources>
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Label HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontWeight="DemiBold" Background="#F5F5F5" Margin="2 2 2 10" Content="Template parameters"/>
+      <Grid Row="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Label Background="White" Margin="18 3 3 3" Content="Mode" Grid.Column="0" Grid.Row="0" Height="auto"/>
+        <ComboBox Margin="3" HorizontalAlignment="Left" Grid.Column="1" Width="250">
+          <ComboBox.SelectedItem>
+            <Binding Path="Mode"/>
+          </ComboBox.SelectedItem>
+          <ComboBox.ItemsSource>
+            <Binding Source="{StaticResource OperModeEnum}"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.IsEnabled>
+            <Binding Path="Shell.Role" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;2&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;binary op=&quot;Equal&quot;&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;prim val=&quot;ReportServer.Desktop.Entities.ServiceUserRole.Editor&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/binary&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+          </ComboBox.IsEnabled>
+        </ComboBox>
+        <Label Background="White" Margin="18 3 3 3" Content="Type" Grid.Column="0" Grid.Row="1" Height="auto"/>
+        <ComboBox Margin="3" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="1" Width="250">
+          <ComboBox.SelectedItem>
+            <Binding Path="ImplementationType"/>
+          </ComboBox.SelectedItem>
+          <ComboBox.ItemsSource>
+            <Binding Path="OperTemplates"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.IsEnabled>
+            <Binding Path="Shell.Role" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;2&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;binary op=&quot;Equal&quot;&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;prim val=&quot;ReportServer.Desktop.Entities.ServiceUserRole.Editor&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/binary&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+          </ComboBox.IsEnabled>
+        </ComboBox>
+        <Label Background="White" Margin="18 3 3 3" Content="Name" Grid.Column="0" Grid.Row="2" Height="auto"/>
+        <TextBox TextWrapping="NoWrap" Background="White" HorizontalAlignment="Stretch" AcceptsReturn="False" TextAlignment="Left" Grid.Column="1" Grid.Row="2" Margin="3" Width="250" HorizontalContentAlignment="Left">
+          <TextBox.Text>
+            <Binding Path="Name" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"/>
+          </TextBox.Text>
+          <TextBox.IsEnabled>
+            <Binding Path="Shell.Role" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;2&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;binary op=&quot;Equal&quot;&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;prim val=&quot;ReportServer.Desktop.Entities.ServiceUserRole.Editor&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/binary&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+          </TextBox.IsEnabled>
+        </TextBox>
+      </Grid>
+      <ns0:PropertyGrid Grid.ColumnSpan="2" Grid.Row="2" ShowSearchBox="False" HorizontalAlignment="Left" ShowDescriptionByTooltip="True" ShowSortOptions="False" Width="800" MaxHeight="750" Margin="2 2 2 10" ShowSummary="False" Background="#F5F5F5" SelectedObjectName="" SelectedObjectTypeName="Template configuration" Visibility="{Binding Configuration,Converter={StaticResource NullToVisibility}}">
+        <ns0:PropertyGrid.SelectedObject>
+          <Binding Path="Configuration" UpdateSourceTrigger="PropertyChanged"/>
+        </ns0:PropertyGrid.SelectedObject>
+      </ns0:PropertyGrid>
+      <Grid Row="3" Margin="0 0 0 50">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="0.4*"/>
+          <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1" Orientation="Horizontal">
+          <Button Height="25" Width="100">
+            <Button.Visibility>
+              <Binding Path="Shell.Role" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;0&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;binary op=&quot;Equal&quot;&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;prim val=&quot;ReportServer.Desktop.Entities.ServiceUserRole.Editor&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/binary&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;type&quot; type=&quot;ReportServer.Desktop.Entities.ServiceUserRole&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+            </Button.Visibility>
+            <Button.Command>
+              <Binding Path="SaveChangesCommand"/>
+            </Button.Command>
+            <Button.IsEnabled>
+              <Binding Path="IsValid"/>
+            </Button.IsEnabled>Save
+          </Button>
+          <Button Height="25" Width="100">
+            <Button.Command>
+              <Binding Path="CancelCommand"/>
+            </Button.Command>Cancel
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </ScrollViewer>
+</UserControl>

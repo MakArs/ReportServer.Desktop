@@ -2,6 +2,7 @@
 using ReportServer.Desktop.ViewModels.General;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
+using Ui.Wpf.Common.DockingManagers;
 
 namespace ReportServer.Desktop
 {
@@ -15,10 +16,11 @@ namespace ReportServer.Desktop
                 new BootsTrap(),
                 new UiShowStartWindowOptions
                 {
-                    Title = "ReportServer.Desktop",
-                    ToolPaneWidth = 100
+                    Title = "ReportServer.Desktop"
+             
                 });
-
+            
+            
             (shell as CachedServiceShell)?.InitCachedServiceAsync(3);
         }
     }

@@ -7,15 +7,15 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Colors.xaml" />
 
                 <!-- accent resource -->
                 <!-- change "Cobalt" to the accent color you want -->
 
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/baselight.xaml" />
+               <!-- <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/baselight.xaml" />-->
                 <!-- theme resource -->
                 <!-- change "BaseLight" to the theme you want -->
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/olive.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component//Styles/Themes/Light.Olive.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="Padding" Value="5"/>
