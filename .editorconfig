@@ -144,8 +144,8 @@ file_header_template = Licensed to the .NET Foundation under one or more agreeme
 
 # CSharp code style settings:
 [*.cs]
-csharp_keep_existing_arrangement = true
-# csharp_max_initializer_elements_on_line = 1
+# csharp_keep_existing_arrangement = true
+csharp_max_initializer_elements_on_line = 1
 
 # Newline settings
 csharp_new_line_before_open_brace = all
