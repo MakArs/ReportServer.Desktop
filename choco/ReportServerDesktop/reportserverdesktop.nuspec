@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>reportserverdesktop</id>
+    <version>$version$</version>
+    <title>ReportServer Desktop Client</title>
+    <authors>MakArs</authors>
+    <owners>MakArs</owners>
+    <licenseUrl>https://github.com/MakArs/ReportServer.Desktop/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/MakArs/ReportServer.Desktop</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      ReportServer Desktop Client is an application for interaction with ReportServer service API
+      Makes easy to control and access reporting tasks and schedules
+    </description>
+    <summary>Desktop application to access ReportServer API</summary>
+    <releaseNotes>https://github.com/MakArs/ReportServer.Desktop/releases</releaseNotes>
+  </metadata>
+  <files>
+    <file src="..\..\ReportServer.Desktop\bin\Release\netcoreapp3.1\win-x64\publish\**\*.*" target="" />
+    <file src="ReportServer.Desktop.exe.gui" />
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
