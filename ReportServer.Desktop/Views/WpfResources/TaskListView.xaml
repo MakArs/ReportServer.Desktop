@@ -141,7 +141,7 @@
               <Setter Property="Template">
                 <Setter.Value>
                   <ControlTemplate TargetType="{x:Type GroupItem}">
-                    <Expander Background="{DynamicResource AccentColorBrush}" BorderBrush="{DynamicResource AccentColorBrush3}" Foreground="{DynamicResource BlackBrush}" BorderThickness="1,1,1,1">
+                    <Expander Background="{DynamicResource MahApps.Brushes.Accent}" BorderBrush="{DynamicResource MahApps.Brushes.Accent3}" Foreground="{DynamicResource MahApps.Brushes.Black}" BorderThickness="1,1,1,1">
                       <Expander.IsExpanded>
                         <Binding Path="DataContext.AllGroupsExpanded" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type UserControl}}" UpdateSourceTrigger="Explicit" Mode="TwoWay"/>
                       </Expander.IsExpanded>

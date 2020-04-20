@@ -5,7 +5,7 @@
       <RowDefinition Height="Auto"/>
       <RowDefinition/>
     </Grid.RowDefinitions>
-    <ns0:TaskListView Control.BorderThickness="1" Control.BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
+    <ns0:TaskListView Control.BorderThickness="1" Control.BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"/>
     <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="3" ShowsPreview="False" VerticalAlignment="Center"/>
     <Grid Row="2">
       <Grid.ColumnDefinitions>
@@ -15,11 +15,11 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition/>
       </Grid.ColumnDefinitions>
-      <ns0:SelectedTaskInstancesView Control.BorderThickness="1" Control.BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
+      <ns0:SelectedTaskInstancesView Control.BorderThickness="1" Control.BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"/>
       <GridSplitter Grid.Column="1" HorizontalAlignment="Center" Width="3" ShowsPreview="False" VerticalAlignment="Stretch"/>
-      <ns0:OperInstancesView Grid.Column="2" BorderThickness="1" BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
+      <ns0:OperInstancesView Grid.Column="2" BorderThickness="1" BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"/>
       <GridSplitter Grid.Column="3" HorizontalAlignment="Center" Width="3" ShowsPreview="False" VerticalAlignment="Stretch"/>
-      <ns0:SelectedInstanceFullView Grid.Column="4" UIElement.Visibility="{Binding SelectedInstanceData,Converter={StaticResource NullToVisibility}}" Control.BorderThickness="1" Control.BorderBrush="{DynamicResource AccentBaseColorBrush}"/>
+      <ns0:SelectedInstanceFullView Grid.Column="4" UIElement.Visibility="{Binding SelectedInstanceData,Converter={StaticResource NullToVisibility}}" Control.BorderThickness="1" Control.BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"/>
     </Grid>
   </Grid>
 </UserControl>
