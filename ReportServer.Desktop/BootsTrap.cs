@@ -4,8 +4,6 @@ using System.Net.Http;
 using Autofac;
 using AutoMapper;
 using Domain0.Api.Client;
-using Monik.Client;
-using Monik.Common;
 using Newtonsoft.Json;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
@@ -16,7 +14,6 @@ using ReportServer.Desktop.Views;
 using ReportServer.Desktop.Views.WpfResources;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
-using MainWindow = Ui.Wpf.Common.MainWindow;
 
 namespace ReportServer.Desktop
 {
@@ -66,32 +63,6 @@ namespace ReportServer.Desktop
             ConfigureView<RecepientEditorViewModel, RecepientEditorView>(builder);
 
             ConfigureView<OperTemplatesListViewModel, OperTemplatesListView>(builder);
-
-            #region monik
-
-            var logSender = new AzureSender(
-                ConfigurationManager.AppSettings["MonikEndpoint"],
-                "incoming");
-
-            builder.RegisterInstance(logSender)
-                .As<IMonikSender>();
-
-            var monikSettings = new ClientSettings
-            {
-                SourceName = "ReportServer",
-                InstanceName = ConfigurationManager.AppSettings["MonikInstanceName"],
-                AutoKeepAliveEnable = true
-            };
-
-            builder.RegisterInstance(monikSettings)
-                .As<IMonikSettings>();
-
-            builder
-                .RegisterType<MonikClient>()
-                .As<IMonik>()
-                .SingleInstance();
-
-            #endregion
 
             #region mapper
 
