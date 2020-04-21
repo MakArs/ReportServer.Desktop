@@ -53,7 +53,9 @@ namespace ReportServer.Desktop.Models
 
         public async Task<bool> Connect(string serviceUri)
         {
-            client = JsonHttpClient.Create(serviceUri + baseApiPath, AddAuthorization);
+            client = JsonHttpClient.Create(
+                new Uri(new Uri(serviceUri), baseApiPath).ToString(),
+                AddAuthorization);
 
             try
             {

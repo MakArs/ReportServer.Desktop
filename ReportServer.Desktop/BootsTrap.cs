@@ -1,9 +1,8 @@
-﻿using System.Configuration;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Linq;
 using Autofac;
 using AutoMapper;
 using Domain0.Api.Client;
+using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
@@ -23,26 +22,29 @@ namespace ReportServer.Desktop
         {
             var builder = new ContainerBuilder();
 
+            builder.Register(c => new AppConfigStorage())
+                .As<IAppConfigStorage>()
+                .SingleInstance();
+            
             builder.RegisterType<CachedServiceShell>()
                 .As<IShell>()
                 .SingleInstance();
 
             builder
                 .RegisterType<MainWindow>()
-                .As<IDockWindow>();
+                .As<IDockWindow>()
+                .SingleInstance();
+
+            builder.RegisterInstance(DialogCoordinator.Instance)
+                .As<IDialogCoordinator>()
+                .SingleInstance();
 
             builder
                 .RegisterType<CachedService>()
                 .As<ICachedService>()
                 .SingleInstance();
 
-            var context = new AuthenticationContext(new Domain0ClientScope(new HttpClient()))
-            {
-                HostUrl = ConfigurationManager.AppSettings["BaseAuthUrl"],
-                ShouldRemember = true
-            };
-
-            builder.RegisterInstance(context)
+            builder.RegisterInstance(new AuthenticationContext(enableAutoRefreshTimer: true))
                 .As<IAuthenticationContext>()
                 .SingleInstance();
 

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Configuration;
-using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows;
+using Autofac;
 using Domain0.Api.Client;
-using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -13,9 +11,9 @@ using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
 using ReportServer.Desktop.Models;
 using ReportServer.Desktop.Views;
+using ReportServer.Desktop.Views.Dialogs;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ShowOptions;
-using Application = System.Windows.Application;
 
 namespace ReportServer.Desktop.ViewModels.General
 {
@@ -24,6 +22,8 @@ namespace ReportServer.Desktop.ViewModels.General
     {
         private readonly ICachedService cachedService;
         private readonly IAuthenticationContext authContext;
+        private readonly IDialogCoordinator _dialogCoordinator;
+        private readonly IAppConfigStorage _appConfigStorage;
 
         [Reactive] public ServiceUserRole Role { get; set; }
         public IObservable<bool> CanEdit;
@@ -33,12 +33,16 @@ namespace ReportServer.Desktop.ViewModels.General
         public ReactiveCommand<Unit, Unit> CreateOperTemplateCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CreateScheduleCommand { get; set; }
 
-        public CachedServiceShell(ICachedService cachedService, IAuthenticationContext context)
+        public CachedServiceShell(
+            ICachedService cachedService, 
+            IAuthenticationContext context, 
+            IDialogCoordinator dialogCoordinator,
+            IAppConfigStorage appConfigStorage)
         {
             this.cachedService = cachedService;
             authContext = context;
-
-            
+            _dialogCoordinator = dialogCoordinator;
+            _appConfigStorage = appConfigStorage;
 
             RefreshCommand = ReactiveCommand.Create(this.cachedService.RefreshData);
 
@@ -72,39 +76,36 @@ namespace ReportServer.Desktop.ViewModels.General
                     new UiShowOptions {Title = "Creating new operation template"}), CanEdit);
         }
 
-        private async Task LoginDomain0()
+        private async Task ConnectAndLogin()
         {
-            var mainview = Application.Current.MainWindow as MetroWindow;
-
-            if (!await cachedService.Connect(ConfigurationManager.AppSettings["BaseServiceUrl"]))
-            {
-                await ShowMessageAsync("Cannot connect working service");
-                mainview.Close();
-            }
-
             if (!authContext.IsLoggedIn)
             {
-                var logintask = mainview.ShowLoginAsync(
-                    "Login",
-                    "Enter your login and password",
-                    new LoginDialogSettings
-                    {
-                        AffirmativeButtonText = "Login",
-                        NegativeButtonText = "Cancel",
-                        NegativeButtonVisibility = Visibility.Visible,
-                        UsernameWatermark = "phone(71231234567) or e-mail (example@example.example)",
-                        EnablePasswordPreview = true,
-                        RememberCheckBoxVisibility = Visibility.Visible,
-                    });
+                var config = await _appConfigStorage.Load();
+                var loginData = await ShowLoginDialog(config);
 
-                var loginData = await logintask;
+                if (loginData == null)
+                {
+                    ShutDown();
+                    return;
+                }
 
-                if (loginData==null)
-                    Application.Current.MainWindow?.Close();
+                config.ServiceUrl = loginData.ServiceUrl;
+                config.AuthUrl = loginData.AuthUrl;
+                config.Username = loginData.Username;
+                config.ShouldRemember = loginData.ShouldRemember;
 
+                await _appConfigStorage.Save(config);
+
+                if (!await cachedService.Connect(config.ServiceUrl))
+                {
+                    await ShowMessageAsync("Cannot connect to working service");
+                    return;
+                }
+
+                authContext.HostUrl = loginData.AuthUrl;
                 authContext.ShouldRemember = loginData.ShouldRemember;
 
-                if (long.TryParse(loginData.Username, out long phone))
+                if (long.TryParse(loginData.Username, out var phone))
                 {
                     try
                     {
@@ -132,11 +133,41 @@ namespace ReportServer.Desktop.ViewModels.General
             }
         }
 
+        private async Task<LoginWithUrlsDialogData> ShowLoginDialog(AppConfig config)
+        {
+            var settings = new LoginWithUrlsDialogSettings
+            {
+                InitialServiceUrl = config.ServiceUrl,
+                InitialAuthUrl = config.AuthUrl,
+                InitialUsername = config.Username,
+                AnimateShow = true,
+                AnimateHide = true,
+                AffirmativeButtonText = "Login",
+                NegativeButtonText = "Cancel",
+                NegativeButtonVisibility = Visibility.Visible,
+                UsernameWatermark = "phone(71231234567) or e-mail (example@example.example)",
+                EnablePasswordPreview = true,
+                RememberCheckBoxVisibility = Visibility.Visible,
+                RememberCheckBoxChecked = config.ShouldRemember,
+            };
+
+            var loginDialog = new LoginWithUrlsDialog(null, settings)
+            {
+                Title = "Login",
+                Message = "Enter your login and password",
+            };
+            await _dialogCoordinator.ShowMetroDialogAsync(this, loginDialog);
+            var result = await loginDialog.WaitForButtonPressAsync();
+            await _dialogCoordinator.HideMetroDialogAsync(this, loginDialog);
+
+            return result;
+        }
+
         public async Task InitCachedServiceAsync(int tries)
         {
             while (tries-- > 0)
             {
-                await LoginDomain0();
+                await ConnectAndLogin();
 
                 if (!authContext.IsLoggedIn)
                     continue;
@@ -160,7 +191,7 @@ namespace ReportServer.Desktop.ViewModels.General
                     });
 
                 ShowView<RecepientManagerView>(
-                    options: new UiShowOptions {Title = "Recepient Manager", CanClose = false});
+                    options: new UiShowOptions {Title = "Recipient Manager", CanClose = false});
 
                 ShowView<ScheduleManagerView>(
                     options: new UiShowOptions {Title = "Schedule Manager", CanClose = false});
@@ -171,26 +202,21 @@ namespace ReportServer.Desktop.ViewModels.General
                 return;
             }
 
-            Application.Current.MainWindow?.Close();
+            ShutDown();
         }
 
         public async Task<bool> ShowWarningAffirmativeDialogAsync(
             string question, string title = "Warning",
             MessageDialogStyle dialogStyle = MessageDialogStyle.AffirmativeAndNegative)
         {
-            var mainview = Application.Current.MainWindow as MetroWindow;
-
-            var dialogResult = await mainview.ShowMessageAsync(title,
-                question
-                , dialogStyle);
+            var dialogResult = await _dialogCoordinator.ShowMessageAsync(this, title, question, dialogStyle);
             return dialogResult == MessageDialogResult.Affirmative;
         }
 
-        public async Task ShowMessageAsync(string text, string title = "Warning")
-        {
-            var mainview = Application.Current.MainWindow as MetroWindow;
+        public Task ShowMessageAsync(string text, string title = "Warning")
+            => _dialogCoordinator.ShowMessageAsync(this, title, text);
 
-            await mainview.ShowMessageAsync(title, text);
-        }
+        private void ShutDown() 
+            => (Container.Resolve<IDockWindow>() as Window)?.Close();
     }
 }
