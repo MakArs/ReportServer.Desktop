@@ -1,13 +1,14 @@
-﻿<Application x:Class="ReportServer.Desktop.App"
-                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ReportServer.Desktop">
+﻿<Application x:Class="ReportServer.Desktop.App" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:local="clr-namespace:ReportServer.Desktop">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Olive.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/ReportServer.Desktop;component/Themes/AvalonDockStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="Padding" Value="5"/>

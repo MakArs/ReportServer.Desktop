@@ -5,12 +5,5 @@ Install with Chocolatey
 ```bat
 choco source add -n=totopolis -s="https://www.myget.org/F/totopolis/"
 choco install reportserverdesktop
-```
-Edit configuration file
-```bat
-vim %ChocolateyInstall%\lib\reportserverdesktop\ReportServer.Desktop.dll.config
-```
-Run application
-```bat
 ReportServer.Desktop.exe
 ```
