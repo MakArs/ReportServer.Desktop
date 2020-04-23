@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:ReportServer.Desktop.Views.WpfResources" xmlns:ns1="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:ns2="clr-namespace:ReportServer.Desktop.Entities" xmlns:ns3="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls">
   <ns0:IntMsToMinsConverter x:Key="IntMsToMinsConverter"/>
+  <ns0:CronToStringConverter x:Key="CronToStringConverter"/>
   <ns0:NullToVisibility x:Key="NullToVisibility"/>
   <ns0:IntToVisiblity x:Key="IntToVisiblity"/>
   <ns0:ReportTypeToVisiblity x:Key="ReportTypeToVisiblity"/>

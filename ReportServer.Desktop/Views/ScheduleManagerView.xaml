@@ -34,11 +34,7 @@
         <DataGridTextColumn Width="0.1*" Header="Id" Binding="{Binding Id}"/>
         <DataGridTextColumn Width="0.3*" Header="Name" Binding="{Binding Name}"/>
         <DataGridTextColumn Header="Schedule cron expression" Binding="{Binding Schedule}"/>
-        <DataGridTextColumn Header="Schedule">
-          <DataGridTextColumn.Binding>
-            <Binding Path="Schedule" Converter="{x:Static ns0:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;1&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;staticcall method=&quot;GetDescription&quot;&gt;&lt;typeinfo typename=&quot;CronExpressionDescriptor.ExpressionDescriptor&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;parameter name=&quot;sched&quot; type=&quot;System.String&quot; /&gt;&lt;/staticcall&gt;&lt;parameter name=&quot;sched&quot; type=&quot;System.String&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
-          </DataGridTextColumn.Binding>
-        </DataGridTextColumn>
+        <DataGridTextColumn Header="Schedule" Binding="{Binding Schedule,  Converter={StaticResource CronToStringConverter}}"/>
       </DataGrid.Columns>
     </DataGrid>
   </Grid>

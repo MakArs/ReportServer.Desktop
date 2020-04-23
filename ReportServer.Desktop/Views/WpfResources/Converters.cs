@@ -110,6 +110,21 @@ namespace ReportServer.Desktop.Views.WpfResources
         }
     }
 
+    public class CronToStringConverter : BaseConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+               return CronExpressionDescriptor.ExpressionDescriptor.GetDescription(value?.ToString());
+            }
+            catch
+            { 
+                return "Error occurred while decrypting cron expression"; 
+            }
+        }
+    }
+
     public class DefaultTextToBoolConverter : BaseConverter
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
