@@ -76,62 +76,45 @@ namespace ReportServer.Desktop.ViewModels.General
                     new UiShowOptions {Title = "Creating new operation template"}), CanEdit);
         }
 
-        private async Task ConnectAndLogin()
+        private async Task LoginAndConnect(AppConfig config)
         {
-            if (!authContext.IsLoggedIn)
+            var loginData = await ShowLoginDialog(config);
+
+            if (loginData == null)
             {
-                var config = await _appConfigStorage.Load();
-                var loginData = await ShowLoginDialog(config);
+                ShutDown();
+                return;
+            }
 
-                if (loginData == null)
-                {
-                    ShutDown();
-                    return;
-                }
+            config.ServiceUrl = loginData.ServiceUrl;
+            config.AuthUrl = loginData.AuthUrl;
+            config.Username = loginData.Username;
+            config.ShouldRemember = loginData.ShouldRemember;
 
-                config.ServiceUrl = loginData.ServiceUrl;
-                config.AuthUrl = loginData.AuthUrl;
-                config.Username = loginData.Username;
-                config.ShouldRemember = loginData.ShouldRemember;
+            await _appConfigStorage.Save(config);
 
-                await _appConfigStorage.Save(config);
+            if (!await cachedService.Connect(config.ServiceUrl))
+            {
+                await ShowMessageAsync("Cannot connect to working service");
+            }
 
-                if (!await cachedService.Connect(config.ServiceUrl))
-                {
-                    await ShowMessageAsync("Cannot connect to working service");
-                    return;
-                }
-
+            try
+            {
                 authContext.HostUrl = loginData.AuthUrl;
                 authContext.ShouldRemember = loginData.ShouldRemember;
 
-                if (long.TryParse(loginData.Username, out var phone))
-                {
-                    try
-                    {
-                        await authContext
-                            .LoginByPhone(phone, loginData.Password);
-                    }
-                    catch (Exception e)
-                    {
-                        await ShowMessageAsync(e.InnerException?.Message ?? e.Message);
-                    }
-                }
-
-                else
-                {
-                    try
-                    {
-                        await authContext
-                            .LoginByEmail(loginData.Username, loginData.Password);
-                    }
-                    catch (Exception e)
-                    {
-                        await ShowMessageAsync(e.InnerException?.Message ?? e.Message);
-                    }
-                }
+                await LoginToDomain0(loginData.Username, loginData.Password);
+            }
+            catch (Exception e)
+            {
+                await ShowMessageAsync(e.InnerException?.Message ?? e.Message);
             }
         }
+
+        private Task LoginToDomain0(string username, string password)
+            => long.TryParse(username, out var phone)
+                ? authContext.LoginByPhone(phone, password)
+                : authContext.LoginByEmail(username, password);
 
         private async Task<LoginWithUrlsDialogData> ShowLoginDialog(AppConfig config)
         {
@@ -165,12 +148,26 @@ namespace ReportServer.Desktop.ViewModels.General
 
         public async Task InitCachedServiceAsync(int tries)
         {
+            var config = await _appConfigStorage.Load();
+
+            if (!string.IsNullOrWhiteSpace(config.AuthUrl))
+            {
+                authContext.HostUrl = config.AuthUrl;
+                authContext.ShouldRemember = config.ShouldRemember;
+            }
+
+            if (!string.IsNullOrWhiteSpace(config.ServiceUrl))
+            {
+                await cachedService.Connect(config.ServiceUrl);
+            }
+
             while (tries-- > 0)
             {
-                await ConnectAndLogin();
-
-                if (!authContext.IsLoggedIn)
+                if (!authContext.IsLoggedIn || !cachedService.IsConnected)
+                {
+                    await LoginAndConnect(config);
                     continue;
+                }
 
                 cachedService.Init(authContext.Token);
 

@@ -18,6 +18,7 @@ namespace ReportServer.Desktop.Interfaces
         Dictionary<string, Type> DataExporters { get; set; }
 
         Task<bool> Connect(string serviceUri);
+        bool IsConnected { get; }
         bool Init(string token);
         Task<ServiceUserRole> GetUserRole(string token);
         void RefreshOperTemplates();
