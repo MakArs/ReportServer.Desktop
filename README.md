@@ -7,3 +7,8 @@ choco source add -n=totopolis -s="https://www.myget.org/F/totopolis/"
 choco install reportserverdesktop
 ReportServer.Desktop.exe
 ```
+
+Upgrade with Chocolatey
+```bat
+choco upgrade reportserverdesktop
+```
