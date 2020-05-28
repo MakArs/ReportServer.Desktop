@@ -9,11 +9,6 @@
     <FileVersion>1.0.0.1</FileVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
-    <WarningLevel>0</WarningLevel>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Autofac" Version="5.1.2" />
     <PackageReference Include="AutoMapper" Version="9.0.0" />
