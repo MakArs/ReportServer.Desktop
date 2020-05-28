@@ -421,6 +421,44 @@ namespace ReportServer.Desktop.Entities
         public string FilePath { get; set; }
     }
 
+    public class EmailImporterConfig : IOperationConfig
+    {
+        [PropertyOrder(0)]
+        [DisplayName("Server host")]
+        [Reactive]
+        public string ServerHost { get; set; }
+
+        [PropertyOrder(1)]
+        [DisplayName("Server port")]
+        [Reactive]
+        public int Port { get; set; }
+
+        [PropertyOrder(2)]
+        [DisplayName("Email address for login")]
+        [Reactive]
+        public string Email { get; set; }
+
+        [PropertyOrder(3)]
+        [DisplayName("Password for this login")]
+        [Reactive]
+        public string Password { get; set; }
+
+        [PropertyOrder(4)]
+        [DisplayName("Sender email")]
+        [Reactive]
+        public string SenderEmail { get; set; }
+
+        [PropertyOrder(5)]
+        [DisplayName("Attachment name")]
+        [Reactive]
+        public string AttachmentName { get; set; }
+
+        [Description("Number of days to search for emails, by default 0 (only execution day)")]
+        [DisplayName("History check depth")]
+        [Reactive]
+        public int SearchDays { get; set; }
+    }
+
     public class DbImporterConfig : IOperationConfig, IPackagedImporterConfig
     {
         [PropertyOrder(0)]
