@@ -252,6 +252,7 @@ namespace ReportServer.Desktop.Entities
         public string Login { get; set; }
 
         [DisplayName("Server user password")]
+        [Editor(typeof(PasswordEditor), typeof(PasswordEditor))]
         [Reactive]
         public string Password { get; set; }
 
@@ -330,6 +331,7 @@ namespace ReportServer.Desktop.Entities
         public string Login { get; set; }
 
         [DisplayName("Server user password")]
+        [Editor(typeof(PasswordEditor), typeof(PasswordEditor))]
         [Reactive]
         public string Password { get; set; }
 
@@ -413,6 +415,7 @@ namespace ReportServer.Desktop.Entities
         public string Login { get; set; }
 
         [DisplayName("Server user password")]
+        [Editor(typeof(PasswordEditor), typeof(PasswordEditor))]
         [Reactive]
         public string Password { get; set; }
 
@@ -434,12 +437,13 @@ namespace ReportServer.Desktop.Entities
         public int Port { get; set; }
 
         [PropertyOrder(2)]
-        [DisplayName("Email address for login")]
+        [DisplayName("Login")]
         [Reactive]
         public string Email { get; set; }
 
         [PropertyOrder(3)]
         [DisplayName("Password for this login")]
+        [Editor(typeof(PasswordEditor), typeof(PasswordEditor))]
         [Reactive]
         public string Password { get; set; }
 

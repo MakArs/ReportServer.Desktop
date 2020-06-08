@@ -9,6 +9,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReportServer.Desktop.Entities;
 using ReportServer.Desktop.Interfaces;
+using Xceed.Wpf.Toolkit;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
@@ -63,9 +64,9 @@ namespace ReportServer.Desktop.Views.WpfResources
                 new Delimiter {Value = ".", Name = "Dot"},
                 new Delimiter {Value = "\\r\\n", Name = "New line"},
             };
-            
+
             foreach (var delim in delimitersList)
-                coll.Add(delim.Value,delim.Name);
+                coll.Add(delim.Value, delim.Name);
 
             return coll;
         }
@@ -131,7 +132,7 @@ namespace ReportServer.Desktop.Views.WpfResources
             Grid.SetColumn(PathTextBox, 0);
             grid.Children.Add(PathTextBox);
 
-            TextBlock textBlockDefault = new TextBlock { Text = "Use default folder(for files from ssh)" };
+            TextBlock textBlockDefault = new TextBlock { Text = "Use default folder(for imported files)" };
             Grid.SetColumn(textBlockDefault, 1);
             grid.Children.Add(textBlockDefault);
 
@@ -159,7 +160,30 @@ namespace ReportServer.Desktop.Views.WpfResources
             return grid;
         }
     }
-    
+
+    public class PasswordEditor : ReactiveObject, ITypeEditor
+    {
+        [Reactive] public PropertyItem PathValue { get; set; }
+        [Reactive] public PasswordBox PasswordTextBox { get; set; }
+             
+        public FrameworkElement ResolveEditor(PropertyItem propertyItem)
+        {
+            PathValue = propertyItem;
+
+            PasswordTextBox = new PasswordBox
+            {
+                IsEnabled = true,
+            };
+           
+            PasswordTextBox.PasswordChanged += (sender, args) =>
+            {
+                PathValue.Value = PasswordTextBox.Password;
+            };
+            
+            return PasswordTextBox;
+        }
+    }
+
     public class ClearIntervalEditor : ReactiveObject, ITypeEditor
     {
         [Reactive] public PropertyItem ClearInterval { get; set; }
