@@ -57,6 +57,15 @@ namespace ReportServer.Desktop.Entities
         }
     }
 
+    public class TaskParameterInfos
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public bool IsRequired { get; set; }
+        public string Description { get; set; }
+        public string DefaultValue { get; set; }
+    }
+
     public class ApiOperTemplate
     {
         public int Id { get; set; }
@@ -94,6 +103,7 @@ namespace ReportServer.Desktop.Entities
         public long Id { get; set; }
         public string Name { get; set; }
         public string Parameters { get; set; }
+        public string ParameterInfos { get; set; }
         public ApiTaskDependence[] DependsOn { get; set; }
         public int? ScheduleId { get; set; }
         public ApiOperation[] BindedOpers { get; set; }

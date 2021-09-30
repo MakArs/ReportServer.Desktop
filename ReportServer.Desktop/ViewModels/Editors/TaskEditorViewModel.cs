@@ -43,11 +43,13 @@ namespace ReportServer.Desktop.ViewModels.Editors
 
         private readonly SourceList<DesktopOperation> bindedOpers;
         private readonly SourceList<TaskParameter> taskParameters;
+        private readonly SourceList<TaskParameterInfos> taskParameterInfos;
         private readonly SourceList<string> incomingPackages;
         private readonly SourceList<DesktopTaskNameId> tasks;
         private readonly SourceList<DesktopTaskDependence> taskDependencies;
         public ObservableCollectionExtended<DesktopOperation> BindedOpers { get; set; }
         public ObservableCollectionExtended<TaskParameter> TaskParameters { get; set; }
+        public ObservableCollectionExtended<TaskParameterInfos> TaskParameterInfos { get; set; }
         public ObservableCollectionExtended<DesktopTaskDependence> TaskDependencies { get; set; }
         public ReadOnlyObservableCollection<ApiSchedule> Schedules { get; set; }
         public ReadOnlyObservableCollection<string> IncomingPackages { get; set; }
@@ -87,6 +89,7 @@ namespace ReportServer.Desktop.ViewModels.Editors
             bindedOpers = new SourceList<DesktopOperation>();
             incomingPackages = new SourceList<string>();
             tasks = new SourceList<DesktopTaskNameId>();
+            taskParameterInfos = new SourceList<TaskParameterInfos>();
 
             DataImporters = cachedService.DataImporters;
             DataExporters = cachedService.DataExporters;
@@ -403,6 +406,22 @@ namespace ReportServer.Desktop.ViewModels.Editors
                             Value = pair.Value
                         }));
 
+                var test = JsonConvert
+                    .DeserializeObject<TaskParameterInfos[]>(request.Task.ParameterInfos);
+
+                if (!string.IsNullOrEmpty(request.Task.ParameterInfos))
+                    taskParameterInfos.ClearAndAddRange(
+                        JsonConvert
+                        .DeserializeObject<TaskParameterInfos[]>(request.Task.ParameterInfos)
+                        .Select(item => new TaskParameterInfos
+                        {
+                            Name = item.Name,
+                            Type = item.Type,
+                            IsRequired = item.IsRequired,
+                            Description = item.Description,
+                            DefaultValue = item.DefaultValue
+                        }));
+
                 TaskDependencies = new ObservableCollectionExtended<DesktopTaskDependence>();
 
                 taskDependencies.Connect()
@@ -487,6 +506,9 @@ namespace ReportServer.Desktop.ViewModels.Editors
                     this.RaisePropertyChanged(nameof(TaskParameters));
                 });
 
+            TaskParameterInfos = new ObservableCollectionExtended<TaskParameterInfos>();
+
+            taskParameterInfos.Connect().Bind(TaskParameterInfos).Subscribe(_ => this.RaisePropertyChanged(nameof(taskParameterInfos)));
 
             ImplementationTypes = implementationTypes.SpawnCollection();
 
