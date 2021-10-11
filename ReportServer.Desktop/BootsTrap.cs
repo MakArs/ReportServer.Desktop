@@ -128,7 +128,10 @@ namespace ReportServer.Desktop
                     : JsonConvert.SerializeObject(s.TaskParameters
                         .ToDictionary(param => param.Name, param => param.Value))))
                 .ForMember("BindedOpers", opt => opt.Ignore())
-                .ForMember("DependsOn", opt => opt.Ignore());
+                .ForMember("DependsOn", opt => opt.Ignore())
+                .ForMember("ParameterInfos", opt => opt.MapFrom(s => s.TaskParameterInfos.Count == 0
+                    ? null
+                    : JsonConvert.SerializeObject(s.TaskParameterInfos)));
 
             CreateMap<ApiTaskDependence, DesktopTaskDependence>();
             CreateMap<DesktopTaskDependence, ApiTaskDependence>();
