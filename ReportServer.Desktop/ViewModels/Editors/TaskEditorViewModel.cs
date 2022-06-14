@@ -406,20 +406,18 @@ namespace ReportServer.Desktop.ViewModels.Editors
                             Value = pair.Value
                         }));
 
-                var test = JsonConvert
-                    .DeserializeObject<TaskParameterInfos[]>(request.Task.ParameterInfos);
-
                 if (!string.IsNullOrEmpty(request.Task.ParameterInfos))
                     taskParameterInfos.ClearAndAddRange(
                         JsonConvert
-                        .DeserializeObject<TaskParameterInfos[]>(request.Task.ParameterInfos)
+                        .DeserializeObject<TaskParameterInfos[]>(request.Task.ParameterInfos,new ValidationRule.ValidationRuleConverter())!
                         .Select(item => new TaskParameterInfos
                         {
                             Name = item.Name,
                             Type = item.Type,
                             IsRequired = item.IsRequired,
                             Description = item.Description,
-                            DefaultValue = item.DefaultValue
+                            DefaultValue = item.DefaultValue,
+                            Validation = item.Validation
                         }));
 
                 TaskDependencies = new ObservableCollectionExtended<DesktopTaskDependence>();
